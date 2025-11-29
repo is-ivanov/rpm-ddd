@@ -16,19 +16,53 @@
   <name>rpm-ddd</name>
   <description>DDD implementation RPM</description>
 
+  <modules>
+    <module>iam</module>
+    <module>testing-support</module>
+  </modules>
+
   <properties>
     <java.version>25</java.version>
 
     <!--dependency versions -->
     <checkstyle.version>12.1.2</checkstyle.version>
     <error-prone.version>2.44.0</error-prone.version>
+    <guava.version>33.5.0-jre</guava.version>
+    <jmolecules.version>2025.0.0</jmolecules.version>
     <nullaway.version>0.12.9</nullaway.version>
     <pmd.version>7.19.0</pmd.version>
+    <spring-modulith.version>2.0.0</spring-modulith.version>
 
     <!--plugin versions -->
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.modulith</groupId>
+        <artifactId>spring-modulith-bom</artifactId>
+        <version>${spring-modulith.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jmolecules</groupId>
+        <artifactId>jmolecules-bom</artifactId>
+        <version>${jmolecules.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava-bom</artifactId>
+        <version>${guava.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <!-- **** -->
@@ -56,6 +90,11 @@
               <version>${checkstyle.version}</version>
             </dependency>
           </dependencies>
+          <configuration>
+            <configLocation>google_checks.xml</configLocation>
+            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+            <violationSeverity>warning</violationSeverity>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -73,6 +112,11 @@
               <version>${pmd.version}</version>
             </dependency>
           </dependencies>
+          <configuration>
+            <includeTests>true</includeTests>
+            <printFailingErrors>true</printFailingErrors>
+            <analysisCache>true</analysisCache>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -114,19 +158,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <configLocation>google_checks.xml</configLocation>
-          <includeTestSourceDirectory>true</includeTestSourceDirectory>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>
-          <includeTests>true</includeTests>
-          <printFailingErrors>true</printFailingErrors>
-          <analysisCache>true</analysisCache>
-        </configuration>
       </plugin>
     </plugins>
   </build>
