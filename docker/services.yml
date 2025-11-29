@@ -1,0 +1,6 @@
+name: rpm-ddd
+services:
+  postgres:
+    extends:
+      file: postgres.yml
+      service: postgres

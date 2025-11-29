@@ -1,0 +1,21 @@
+# Проект test-инфраструктуры
+# test-инфраструктура хранит данные на docker tmpfs volume (данные не переживают перезапуск контейнера)
+# Тесты настроенны таким образом, что на старте пытаются подключиться к тестовой инфраструктуре и
+# запускают контейнеры через testcontainers только если не получается
+
+name: rpm-ddd-infra-tests
+
+services:
+  postgres:
+    extends:
+      file: postgres.yml
+      service: postgres
+    container_name: rpm-ddd-tests
+    environment:
+      PGDATA: /tmp/pgdata
+    tmpfs:
+      - /tmp
+    volumes:
+      - ./../testing-support/src/main/resources/db/pg-initdb.d:/docker-entrypoint-initdb.d/
+    ports:
+      - "54034:5432"
