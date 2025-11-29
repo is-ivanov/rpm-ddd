@@ -18,7 +18,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: target/checkstyle-cachefile
-          key:  ${{ runner.os }}-checkstyle-${{ hashFiles('**/*.java', 'config/checkstyle/*.xml') }}
+          key:  ${{ runner.os }}-checkstyle
       - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
