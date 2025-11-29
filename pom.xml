@@ -21,12 +21,25 @@
 
     <!--dependency versions -->
     <checkstyle.version>12.1.2</checkstyle.version>
+    <error-prone.version>2.44.0</error-prone.version>
+    <nullaway.version>0.12.9</nullaway.version>
     <pmd.version>7.19.0</pmd.version>
 
     <!--plugin versions -->
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
   </properties>
+
+  <dependencies>
+    <!-- **** -->
+    <!-- MAIN -->
+    <!-- **** -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
 
   <build>
 
@@ -65,6 +78,39 @@
     </pluginManagement>
 
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>com.google.errorprone</groupId>
+              <artifactId>error_prone_core</artifactId>
+              <version>${error-prone.version}</version>
+            </path>
+            <path>
+              <groupId>com.uber.nullaway</groupId>
+              <artifactId>nullaway</artifactId>
+              <version>${nullaway.version}</version>
+            </path>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-XDcompilePolicy=simple</arg>
+            <arg>--should-stop=ifError=FLOW</arg>
+            <arg>
+              -Xplugin:ErrorProne
+              -XepOpt:NullAway:AnnotatedPackages=by.iivanov.rpm
+              -Xep:NullAway:ERROR
+            </arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
