@@ -17,7 +17,6 @@
   <description>DDD implementation RPM</description>
 
   <modules>
-    <module>iam</module>
     <module>testing-support</module>
   </modules>
 
@@ -91,9 +90,8 @@
             </dependency>
           </dependencies>
           <configuration>
-            <configLocation>google_checks.xml</configLocation>
+            <configLocation>code-quality-config/checkstyle/my_checks.xml</configLocation>
             <includeTestSourceDirectory>true</includeTestSourceDirectory>
-            <violationSeverity>warning</violationSeverity>
           </configuration>
         </plugin>
         <plugin>
