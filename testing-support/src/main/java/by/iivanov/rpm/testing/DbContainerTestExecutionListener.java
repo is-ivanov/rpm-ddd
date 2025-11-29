@@ -1,5 +1,10 @@
 package by.iivanov.rpm.testing;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
@@ -8,12 +13,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
+/// DbContainerTestExecutionListener is an implementation of the [TestExecutionListener] interface
+/// designed to manage database setup and configuration during the execution of test plans.
+///
+/// This includes initializing local or containerized PostgreSQL databases,
+/// setting up system properties for test use, and handling database recreation as needed.
+/// This listener checks for test cases tagged with a specific database-related tag (e.g., "db") and
+/// ensures the necessary database environment is prepared.
+/// It interacts with PostgreSQL installations
+/// on the localhost or starts a test container if a local database server is not available.
+/// Key functionality includes:
+/// - Detecting and counting tests with the configured database tag.
+/// - Preparing the database by recreating the schema or initializing a test container.
+/// - Setting relevant Spring Boot properties for datasource configurations.
 public class DbContainerTestExecutionListener implements TestExecutionListener {
 
     private static final Logger log = LoggerFactory.getLogger(DbContainerTestExecutionListener.class);
@@ -68,8 +80,9 @@ public class DbContainerTestExecutionListener implements TestExecutionListener {
                         ResourceUtils.getFile("classpath:db/rpm-db-init.sql").toPath());
                 // Завершаем активные сессии к целевой БД, чтобы можно было сделать DROP
                 stmt.execute("""
-                        SELECT pg_terminate_backend(pid)
-                        FROM pg_stat_activity WHERE datname = '%s'""".formatted(TARGET_DB_NAME));
+                    SELECT pg_terminate_backend(pid)
+                    FROM pg_stat_activity WHERE datname = '%s'\
+                    """.formatted(TARGET_DB_NAME));
                 stmt.execute(initSql);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);

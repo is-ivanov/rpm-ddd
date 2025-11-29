@@ -1,11 +1,10 @@
 package by.iivanov.rpm.testing;
 
 import com.github.dockerjava.api.model.HostConfig;
+import java.util.Map;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.postgresql.PostgreSQLContainer;
-
-import java.util.Map;
 
 @Slf4j
 @UtilityClass
