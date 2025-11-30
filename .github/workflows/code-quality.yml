@@ -26,7 +26,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Run Checkstyle (Fail on violations)
-        run: mvn checkstyle:check
+        run: mvn checkstyle:check -B
 
   pmd:
     name: PMD
@@ -46,4 +46,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Run PMD (Fail on violations)
-        run: mvn pmd:check
+        run: mvn pmd:check -B
