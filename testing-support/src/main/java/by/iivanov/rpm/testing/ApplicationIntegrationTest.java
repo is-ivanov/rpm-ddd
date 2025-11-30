@@ -16,5 +16,4 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface ApplicationIntegrationTest {
-}
+public @interface ApplicationIntegrationTest {}

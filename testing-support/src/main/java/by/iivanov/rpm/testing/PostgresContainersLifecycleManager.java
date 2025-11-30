@@ -45,5 +45,4 @@ public final class PostgresContainersLifecycleManager {
         }
         return POSTGRES_CONTAINER;
     }
-
 }
