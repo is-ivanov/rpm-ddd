@@ -16,5 +16,4 @@ import org.springframework.modulith.test.ApplicationModuleTest;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface ModuleIntegrationTest {
-}
+public @interface ModuleIntegrationTest {}

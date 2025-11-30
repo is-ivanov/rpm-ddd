@@ -18,5 +18,4 @@ import org.springframework.test.context.ActiveProfiles;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface DbTest {
-}
+public @interface DbTest {}
