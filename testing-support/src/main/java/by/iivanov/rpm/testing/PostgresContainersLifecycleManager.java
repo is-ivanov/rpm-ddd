@@ -6,6 +6,16 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
+/**
+ * Utility class for managing the lifecycle of a PostgreSQL container used for testing purposes.
+ * The container is initialized and started in a reusable, idempotent way, ensuring consistent
+ * setup for integration tests.
+ *
+ * <p>Key Features:
+ * - Single instance of PostgreSQL container with idempotent initialization.
+ * - Configures the container with a temporary file system and auto-remove settings.
+ * - Ensures the container can be reused across test suites to avoid redundant initialization.
+ */
 @Slf4j
 @UtilityClass
 public final class PostgresContainersLifecycleManager {
@@ -13,9 +23,9 @@ public final class PostgresContainersLifecycleManager {
     private static final String POSTGRES_IMAGE = "postgres:18.1";
 
     private static final PostgreSQLContainer POSTGRES_CONTAINER = new PostgreSQLContainer(POSTGRES_IMAGE)
-            .withDatabaseName("rpm_ddd")
-            .withUsername("postgres")
-            .withPassword("postgres")
+            .withDatabaseName(Constants.TARGET_DB_NAME)
+            .withUsername(Constants.DB_USER)
+            .withPassword(Constants.DB_PASSWORD)
             .withExposedPorts(5432)
             .withTmpFs(Map.of("/var", "rw"))
             .withReuse(true)

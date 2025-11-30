@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
  * - Adds JUnit tag {@code db} for the TestExecutionListener plan detection;
  * - Activates {@code test} Spring profile by default.
  */
-@Tag("db")
+@Tag(Constants.DB_TEST_TAG)
 @ActiveProfiles("test")
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

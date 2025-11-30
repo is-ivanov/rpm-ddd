@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS rpm_ddd;
+
+CREATE DATABASE rpm_ddd;
