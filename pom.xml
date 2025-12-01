@@ -17,6 +17,7 @@
   <description>DDD implementation RPM</description>
 
   <modules>
+    <module>domain-shared</module>
     <module>testing-support</module>
   </modules>
 
@@ -25,7 +26,9 @@
 
     <!--dependency versions -->
     <checkstyle.version>12.1.2</checkstyle.version>
+    <commons-lang3.version>3.20.0</commons-lang3.version>
     <error-prone.version>2.44.0</error-prone.version>
+    <jetbrains-annotations.version>26.0.2-1</jetbrains-annotations.version>
     <guava.version>33.5.0-jre</guava.version>
     <jmolecules.version>2025.0.0</jmolecules.version>
     <nullaway.version>0.12.9</nullaway.version>
@@ -34,6 +37,7 @@
     <spring-modulith.version>2.0.0</spring-modulith.version>
 
     <!--plugin versions -->
+    <git-build-hook-maven-plugin.version>3.6.0</git-build-hook-maven-plugin.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
     <spotless-maven-plugin.version>3.1.0</spotless-maven-plugin.version>
@@ -70,9 +74,19 @@
     <!-- MAIN -->
     <!-- **** -->
     <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>${jetbrains-annotations.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
@@ -130,6 +144,16 @@
             </java>
           </configuration>
         </plugin>
+<!--        <plugin>-->
+<!--          <groupId>com.rudikershaw.gitbuildhook</groupId>-->
+<!--          <artifactId>git-build-hook-maven-plugin</artifactId>-->
+<!--          <version>${git-build-hook-maven-plugin.version}</version>-->
+<!--          <configuration>-->
+<!--            <installHooks>-->
+<!--              <pre-commit>git-hooks/pre-commit.sh</pre-commit>-->
+<!--            </installHooks>-->
+<!--          </configuration>-->
+<!--        </plugin>-->
       </plugins>
     </pluginManagement>
 
@@ -187,7 +211,17 @@
           </execution>
         </executions>
       </plugin>
-
+<!--      <plugin>-->
+<!--        <groupId>com.rudikershaw.gitbuildhook</groupId>-->
+<!--        <artifactId>git-build-hook-maven-plugin</artifactId>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <goals>-->
+<!--              <goal>install</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
     </plugins>
   </build>
 
