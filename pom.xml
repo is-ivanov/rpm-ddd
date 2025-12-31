@@ -27,7 +27,7 @@
     <checkstyle.version>12.1.2</checkstyle.version>
     <error-prone.version>2.44.0</error-prone.version>
     <guava.version>33.5.0-jre</guava.version>
-    <jmolecules.version>2025.0.0</jmolecules.version>
+    <jmolecules.version>2025.0.2</jmolecules.version>
     <nullaway.version>0.12.9</nullaway.version>
     <palantir-java-format.version>2.83.0</palantir-java-format.version>
     <pmd.version>7.19.0</pmd.version>
