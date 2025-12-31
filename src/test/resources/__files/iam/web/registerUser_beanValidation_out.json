@@ -1,0 +1,34 @@
+{
+  "detail": "One or more fields are invalid",
+  "instance": "/api/admin/users",
+  "status": 422,
+  "title": "Validation failed",
+  "type": "https://www.rpm-ddd.my/problem/constraint-violation",
+  "fieldErrors": [
+    {
+      "field": "firstName",
+      "message": "must not be blank",
+      "objectName": "registerUserRequest"
+    },
+    {
+      "field": "lastName",
+      "message": "must not be blank",
+      "objectName": "registerUserRequest"
+    },
+    {
+      "field": "login",
+      "message": "must not be blank",
+      "objectName": "registerUserRequest"
+    },
+    {
+      "field": "email",
+      "message": "must not be blank",
+      "objectName": "registerUserRequest"
+    },
+    {
+      "field": "password",
+      "message": "must not be blank",
+      "objectName": "registerUserRequest"
+    }
+  ]
+}
