@@ -6,13 +6,13 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
+    <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
   <groupId>by.iivanov.rpm</groupId>
   <artifactId>rpm-ddd</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
   <name>rpm-ddd</name>
   <description>DDD implementation RPM</description>
 
@@ -21,23 +21,214 @@
 
     <!--dependency versions -->
     <checkstyle.version>12.1.2</checkstyle.version>
+    <commons-lang3.version>3.20.0</commons-lang3.version>
     <error-prone.version>2.44.0</error-prone.version>
+    <guava.version>33.5.0-jre</guava.version>
+    <instancio.version>5.5.1</instancio.version>
+    <jetbrains-annotations.version>26.0.2-1</jetbrains-annotations.version>
+    <jmolecules.version>2025.0.2</jmolecules.version>
+    <json-unit.version>5.1.0</json-unit.version>
     <nullaway.version>0.12.9</nullaway.version>
+    <palantir-java-format.version>2.83.0</palantir-java-format.version>
     <pmd.version>7.19.0</pmd.version>
+    <spring-modulith.version>2.0.1</spring-modulith.version>
 
     <!--plugin versions -->
+    <git-build-hook-maven-plugin.version>3.6.0</git-build-hook-maven-plugin.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+    <spotless-maven-plugin.version>3.1.0</spotless-maven-plugin.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.modulith</groupId>
+        <artifactId>spring-modulith-bom</artifactId>
+        <version>${spring-modulith.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jmolecules</groupId>
+        <artifactId>jmolecules-bom</artifactId>
+        <version>${jmolecules.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava-bom</artifactId>
+        <version>${guava.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <!-- **** -->
     <!-- MAIN -->
     <!-- **** -->
+
+
+    <!-- Spring Boot -->
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.modulith</groupId>
+      <artifactId>spring-modulith-starter-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.modulith</groupId>
+      <artifactId>spring-modulith-starter-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <!-- jMolecules -->
+    <dependency>
+      <groupId>org.jmolecules.integrations</groupId>
+      <artifactId>jmolecules-starter-ddd</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jmolecules.integrations</groupId>
+      <artifactId>jmolecules-jpa</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jmolecules</groupId>
+      <artifactId>jmolecules-onion-architecture</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jmolecules.integrations</groupId>
+      <artifactId>jmolecules-bytebuddy-nodep</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Utilities -->
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>${jetbrains-annotations.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>net.xyzsd</groupId>-->
+    <!--      <artifactId>dichotomy</artifactId>-->
+    <!--      <version>1.1</version>-->
+    <!--      <type>module</type>-->
+    <!--    </dependency>-->
+
+
+    <!-- **** -->
+    <!-- TEST -->
+    <!-- **** -->
+
+    <!-- Spring Boot Test Dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.modulith</groupId>
+      <artifactId>spring-modulith-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-testcontainers</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- JUnit -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+    </dependency>
+
+    <!-- Testcontainers-->
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-postgresql</artifactId>
+    </dependency>
+
+    <!-- jMolecules -->
+    <dependency>
+      <groupId>org.jmolecules.integrations</groupId>
+      <artifactId>jmolecules-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>net.javacrumbs.json-unit</groupId>
+      <artifactId>json-unit-spring</artifactId>
+      <version>${json-unit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.instancio</groupId>
+      <artifactId>instancio-junit</artifactId>
+      <version>${instancio.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator-test-utils</artifactId>
+      <version>${hibernate-validator.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -56,6 +247,10 @@
               <version>${checkstyle.version}</version>
             </dependency>
           </dependencies>
+          <configuration>
+            <configLocation>code-quality-config/checkstyle/my_checks.xml</configLocation>
+            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -73,6 +268,41 @@
               <version>${pmd.version}</version>
             </dependency>
           </dependencies>
+          <configuration>
+            <includeTests>true</includeTests>
+            <printFailingErrors>true</printFailingErrors>
+            <analysisCache>true</analysisCache>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless-maven-plugin.version}</version>
+          <configuration>
+            <java>
+              <importOrder/>
+              <removeUnusedImports/>
+              <palantirJavaFormat>
+                <version>${palantir-java-format.version}</version>
+              </palantirJavaFormat>
+              <formatAnnotations/>
+            </java>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>net.bytebuddy</groupId>
+          <artifactId>byte-buddy-maven-plugin</artifactId>
+          <version>${byte-buddy.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>transform-extended</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <classPathDiscovery>true</classPathDiscovery>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -110,22 +340,58 @@
           </compilerArgs>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>
+            -Duser.country=US -Duser.language=en
+          </argLine>
+          <properties>
+            <configurationParameters>
+              junit.jupiter.execution.parallel.enabled = true
+              junit.jupiter.execution.parallel.mode.default = concurrent
+              junit.jupiter.execution.parallel.mode.classes.default = concurrent
+            </configurationParameters>
+          </properties>
+        </configuration>
+      </plugin>
+
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <configLocation>google_checks.xml</configLocation>
-          <includeTestSourceDirectory>true</includeTestSourceDirectory>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <includeTests>true</includeTests>
-          <printFailingErrors>true</printFailingErrors>
-          <analysisCache>true</analysisCache>
+          <excludes>
+            <exclude>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
