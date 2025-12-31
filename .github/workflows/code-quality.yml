@@ -12,7 +12,7 @@ jobs:
     name: Checkstyle
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Cache Checkstyle cache-file
         id: cache-checkstyle
         uses: actions/cache@v5
@@ -32,7 +32,7 @@ jobs:
     name: PMD
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Cache PMD cache-file
         id: cache-pmd
         uses: actions/cache@v5
