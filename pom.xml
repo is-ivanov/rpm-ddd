@@ -22,7 +22,7 @@
     <!--dependency versions -->
     <checkstyle.version>12.3.0</checkstyle.version>
     <commons-lang3.version>3.20.0</commons-lang3.version>
-    <error-prone.version>2.45.0</error-prone.version>
+    <error-prone.version>2.46.0</error-prone.version>
     <guava.version>33.5.0-jre</guava.version>
     <instancio.version>5.5.1</instancio.version>
     <jetbrains-annotations.version>26.0.2-1</jetbrains-annotations.version>
