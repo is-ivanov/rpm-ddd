@@ -31,7 +31,7 @@
     <nullaway.version>0.12.9</nullaway.version>
     <palantir-java-format.version>2.83.0</palantir-java-format.version>
     <pmd.version>7.20.0</pmd.version>
-    <spring-modulith.version>2.0.1</spring-modulith.version>
+    <spring-modulith.version>2.0.2</spring-modulith.version>
 
     <!--plugin versions -->
     <git-build-hook-maven-plugin.version>3.6.0</git-build-hook-maven-plugin.version>
