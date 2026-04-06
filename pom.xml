@@ -17,7 +17,7 @@
   <description>DDD implementation RPM</description>
 
   <properties>
-    <java.version>25</java.version>
+    <java.version>26</java.version>
 
     <!--dependency versions -->
     <checkstyle.version>13.0.0</checkstyle.version>
@@ -29,7 +29,7 @@
     <jmolecules.version>2025.0.2</jmolecules.version>
     <json-unit.version>5.1.0</json-unit.version>
     <nullaway.version>0.13.1</nullaway.version>
-    <palantir-java-format.version>2.83.0</palantir-java-format.version>
+    <palantir-java-format.version>2.90.0</palantir-java-format.version>
     <pmd.version>7.22.0</pmd.version>
     <spring-modulith.version>2.0.2</spring-modulith.version>
 
