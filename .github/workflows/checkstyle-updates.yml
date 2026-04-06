@@ -1,0 +1,120 @@
+name: Check for Checkstyle Google Style Updates
+
+on:
+  schedule:
+    # Run at 09:00 UTC on the 1st day of every month
+    - cron: '0 9 1 * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-google-style-updates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch latest google_checks.xml from upstream
+        run: |
+          curl -sL https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml \
+            -o /tmp/google_checks_upstream.xml
+
+      - name: Compare with local copy
+        id: diff
+        run: |
+          LOCAL_FILE="code-quality-config/checkstyle/google_checks.xml"
+
+          if [ ! -f "$LOCAL_FILE" ]; then
+            echo "Local google_checks.xml not found!"
+            exit 1
+          fi
+
+          # Generate diff
+          DIFF_OUTPUT=$(diff -u "$LOCAL_FILE" /tmp/google_checks_upstream.xml || true)
+
+          if [ -z "$DIFF_OUTPUT" ]; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "No changes detected in upstream google_checks.xml"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+
+            # Escape diff for GitHub Actions output (handle multiline)
+            DIFF_ESCAPED=$(echo "$DIFF_OUTPUT" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/$/\\n/' | tr -d '\n')
+            echo "diff<<DIFF_EOF" >> "$GITHUB_OUTPUT"
+            echo "$DIFF_OUTPUT" >> "$GITHUB_OUTPUT"
+            echo "DIFF_EOF" >> "$GITHUB_OUTPUT"
+
+            echo "Changes detected in upstream google_checks.xml:"
+            echo "$DIFF_OUTPUT"
+          fi
+
+      - name: Check diff with my_checks.xml
+        if: steps.diff.outputs.has_changes == 'true'
+        id: my_checks_diff
+        run: |
+          LOCAL_FILE="code-quality-config/checkstyle/google_checks.xml"
+
+          # Generate diff between local google_checks.xml and my_checks.xml
+          DIFF_OUTPUT=$(diff -u "$LOCAL_FILE" code-quality-config/checkstyle/my_checks.xml || true)
+
+          if [ -n "$DIFF_OUTPUT" ]; then
+            echo "my_diff_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "my_diff_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Issue if changes detected
+        if: steps.diff.outputs.has_changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const diffContent = `${{ steps.diff.outputs.diff }}`;
+            const myDiffExists = `${{ steps.my_checks_diff.outputs.my_diff_exists }}` === 'true';
+
+            const title = '📋 Upstream checkstyle google_checks.xml has been updated';
+
+            let body = `## Checkstyle Google Style Update Detected\n\n`;
+            body += `The upstream \`google_checks.xml\` from [checkstyle/checkstyle](https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml) has changed.\n\n`;
+            body += `### Diff (local → upstream)\n\n`;
+            body += `\`\`\`diff\n${diffContent}\n\`\`\`\n\n`;
+
+            if (myDiffExists) {
+              body += `### ⚠️ Note\n\n`;
+              body += `Your \`my_checks.xml\` differs from the local \`google_checks.xml\`. `;
+              body += `Review the upstream changes above and decide which changes should be applied to \`my_checks.xml\`.\n\n`;
+              body += `### Action Items\n\n`;
+              body += `- [ ] Review the diff above\n`;
+              body += `- [ ] Update \`code-quality-config/checkstyle/google_checks.xml\` with the latest upstream version\n`;
+              body += `- [ ] Apply relevant changes to \`code-quality-config/checkstyle/my_checks.xml\`\n`;
+              body += `- [ ] Run \`./mvnw checkstyle:check -B\` to verify\n`;
+            } else {
+              body += `### Action Items\n\n`;
+              body += `- [ ] Review the diff above\n`;
+              body += `- [ ] Update \`code-quality-config/checkstyle/google_checks.xml\` with the latest upstream version\n`;
+              body += `- [ ] Run \`./mvnw checkstyle:check -B\` to verify\n`;
+            }
+
+            // Check if a similar open issue already exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['checkstyle-update']
+            });
+
+            if (issues.data.length > 0) {
+              console.log('An open issue with checkstyle-update label already exists. Skipping issue creation.');
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['checkstyle-update', 'maintenance']
+            });
