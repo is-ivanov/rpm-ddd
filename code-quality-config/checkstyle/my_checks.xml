@@ -204,7 +204,14 @@
     <module name="FallThrough"/>
     <module name="UpperEll"/>
     <module name="ModifierOrder"/>
+    <!--
+        Temporarily disabled due to conflict with Palantir Java Format.
+        TextBlockGoogleStyleFormatting requires opening """ on a separate line,
+        but palantirJavaFormat keeps them on the same line as assignment/return.
+        See: https://github.com/palantir/palantir-java-format/issues/930
+        Re-enable when palantir-java-format adds proper text block support.
     <module name="TextBlockGoogleStyleFormatting"/>
+    -->
     <module name="EmptyLineSeparator">
       <property name="tokens"
                 value="PACKAGE_DEF, IMPORT, STATIC_IMPORT, CLASS_DEF, INTERFACE_DEF, ENUM_DEF,

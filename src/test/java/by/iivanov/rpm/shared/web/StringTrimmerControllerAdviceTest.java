@@ -33,8 +33,7 @@ class StringTrimmerControllerAdviceTest {
         @DisplayName("WHEN GET request with parameter name is empty string EXPECT response with null field")
         void getRequestWithParameterNameIsEmptyString_responseWithNullField(String name) {
             // GIVEN:
-            String expectedResponseBody =
-                """
+            String expectedResponseBody = """
                 {
                    "name": null
                 }
@@ -46,8 +45,7 @@ class StringTrimmerControllerAdviceTest {
         }
 
         @ParameterizedTest(name = "[{index}] case: {0}")
-        @CsvSource(textBlock =
-            """
+        @CsvSource(textBlock = """
             'trailing spaces    ',                  'trailing spaces'
             '    leading spaces',                   'leading spaces'
             '    leading and trailing spaces    ',  'leading and trailing spaces'
@@ -56,8 +54,7 @@ class StringTrimmerControllerAdviceTest {
         void when_getRequestWithParameterNameWithSpaces_expect_parameterIsTrimmed(
                 String name, String expectedResponseName) {
             // GIVEN:
-            String expectedResponseBody =
-                """
+            String expectedResponseBody = """
                 {
                    "name": "%s"
                 }
@@ -82,8 +79,7 @@ class StringTrimmerControllerAdviceTest {
         @DisplayName("WHEN POST request with empty string in body EXPECT response with null field")
         void getRequestWithParameterNameIsEmptyString_responseWithNullField(String name) {
             // GIVEN:
-            String expectedResponseBody =
-                """
+            String expectedResponseBody = """
                 {
                    "name": null
                 }
@@ -95,8 +91,7 @@ class StringTrimmerControllerAdviceTest {
         }
 
         @ParameterizedTest(name = "[{index}] case: {0}")
-        @CsvSource(textBlock =
-            """
+        @CsvSource(textBlock = """
             'trailing spaces    ',                  'trailing spaces'
             '    leading spaces',                   'leading spaces'
             '    leading and trailing spaces    ',  'leading and trailing spaces'
@@ -105,8 +100,7 @@ class StringTrimmerControllerAdviceTest {
         void when_getRequestWithParameterNameWithSpaces_expect_parameterIsTrimmed(
                 String name, String expectedResponseName) {
             // GIVEN:
-            String expectedResponseBody =
-                """
+            String expectedResponseBody = """
                 {
                    "name": "%s"
                 }
