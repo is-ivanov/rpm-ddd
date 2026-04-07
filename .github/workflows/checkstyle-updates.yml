@@ -46,6 +46,10 @@ jobs:
             echo "Changes detected and local file updated with upstream version"
           fi
 
+      - name: Generate date-based branch name
+        id: date
+        run: echo "branch_date=$(date -u '+%Y-%m-%d-%H-%M')" >> "$GITHUB_OUTPUT"
+
       - name: Create Pull Request
         if: steps.diff.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v7
@@ -55,8 +59,7 @@ jobs:
             Update google_checks.xml from upstream checkstyle
 
             Synced from checkstyle/checkstyle master branch
-          branch: chore/update-google-checks
-          branch-suffix: timestamp
+          branch: chore/update-google-checks-${{ steps.date.outputs.branch_date }}
           delete-branch: true
           title: 'chore: update google_checks.xml from upstream checkstyle'
           body: |

@@ -67,9 +67,8 @@ public class DbContainerTestExecutionListener implements TestExecutionListener {
                 // Terminate active sessions to the target database so that we can make a DROP
                 // language=PostgreSQL
                 stmt.execute("""
-                    SELECT pg_terminate_backend(pid)
-                    FROM pg_stat_activity WHERE datname = '%s'\
-                    """.formatted(Constants.TARGET_DB_NAME));
+                        SELECT PG_TERMINATE_BACKEND(pid)
+                        FROM pg_stat_activity WHERE datname = '%s'""".formatted(Constants.TARGET_DB_NAME));
                 stmt.execute(initSql);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
