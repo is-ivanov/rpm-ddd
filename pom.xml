@@ -28,7 +28,7 @@
     <jetbrains-annotations.version>26.1.0</jetbrains-annotations.version>
     <jmolecules.version>2025.0.2</jmolecules.version>
     <json-unit.version>5.1.1</json-unit.version>
-    <nullaway.version>0.13.3</nullaway.version>
+    <nullaway.version>0.13.4</nullaway.version>
     <palantir-java-format.version>2.90.0</palantir-java-format.version>
     <pmd.version>7.23.0</pmd.version>
     <spring-modulith.version>2.0.5</spring-modulith.version>
