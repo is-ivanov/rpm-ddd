@@ -1,0 +1,23 @@
+{
+  "detail": "Validation failed for object='loginRequest'. Error count: 2",
+  "instance": "/api/auth/login",
+  "status": 422,
+  "title": "Unprocessable Content",
+  "type": "https://www.rpm-ddd.my/problem/validation-failed",
+  "fieldErrors": [
+    {
+      "code": "REQUIRED_NOT_BLANK",
+      "property": "login",
+      "message": "must not be blank",
+      "rejectedValue": null,
+      "path": "login"
+    },
+    {
+      "code": "REQUIRED_NOT_BLANK",
+      "property": "password",
+      "message": "must not be blank",
+      "rejectedValue": null,
+      "path": "password"
+    }
+  ]
+}

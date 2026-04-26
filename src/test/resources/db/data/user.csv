@@ -1,0 +1,2 @@
+id;first_name;middle_name;last_name;email;login;password_hash;status;created_by;version
+019b76da-a800-7000-a957-f5fb8061a532;System;System;System;admin@localhost.com;admin;{noop}admin;ACTIVE;00000000-0000-0000-0000-000000000000;0

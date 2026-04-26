@@ -1,21 +1,42 @@
-# Проект test-инфраструктуры
-# test-инфраструктура хранит данные на docker tmpfs volume (данные не переживают перезапуск контейнера)
-# Тесты настроенны таким образом, что на старте пытаются подключиться к тестовой инфраструктуре и
-# запускают контейнеры через testcontainers только если не получается
+# Test infrastructure project
+# test infrastructure stores data on docker tmpfs volume (data does not survive container restart)
+# Tests are configured in such a way that at startup they try to connect to the test infrastructure and
+# run containers via testcontainers only if it fails
 
 name: rpm-ddd-infra-tests
 
 services:
   postgres:
-    extends:
-      file: postgres.yml
-      service: postgres
+    image: ${POSTGRES_TEST_IMAGE}
     container_name: rpm-ddd-tests
     environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rpm_ddd
       PGDATA: /tmp/pgdata
+    command: >
+      postgres
+      -c shared_buffers=${POSTGRES_SHARED_BUFFERS}
+      -c work_mem=${POSTGRES_WORK_MEM}
+      -c maintenance_work_mem=${POSTGRES_MAINTENANCE_WORK_MEM}
+      -c effective_cache_size=${POSTGRES_EFFECTIVE_CACHE_SIZE}
+      -c autovacuum=${POSTGRES_AUTOVACUUM}
+      -c fsync=${POSTGRES_FSYNC}
+      -c full_page_writes=${POSTGRES_FULL_PAGE_WRITES}
+      -c synchronous_commit=${POSTGRES_SYNCHRONOUS_COMMIT}
+      -c wal_level=${POSTGRES_WAL_LEVEL}
+      -c max_wal_senders=${POSTGRES_MAX_WAL_SENDERS}
+      -c archive_mode=${POSTGRES_ARCHIVE_MODE}
+      -c ssl=${POSTGRES_SSL}
+      -c max_connections=${POSTGRES_MAX_CONNECTIONS}
+      -c max_parallel_workers=${POSTGRES_MAX_PARALLEL_WORKERS}
+      -c checkpoint_timeout=${POSTGRES_CHECKPOINT_TIMEOUT}
     tmpfs:
       - /tmp
-    volumes:
-      - ./../testing-support/src/main/resources/db/pg-initdb.d:/docker-entrypoint-initdb.d/
     ports:
       - "54034:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10

@@ -1,0 +1,37 @@
+{
+  "detail": "Validation failed for object='registerUserRequest'. Error count: 4",
+  "instance": "/api/admin/users",
+  "status": 422,
+  "title": "Unprocessable Content",
+  "type": "https://www.rpm-ddd.my/problem/validation-failed",
+  "fieldErrors": [
+    {
+      "code": "REQUIRED_NOT_BLANK",
+      "property": "email",
+      "message": "must not be blank",
+      "rejectedValue": null,
+      "path": "email"
+    },
+    {
+      "code": "REQUIRED_NOT_BLANK",
+      "property": "lastName",
+      "message": "must not be blank",
+      "rejectedValue": null,
+      "path": "lastName"
+    },
+    {
+      "code": "REQUIRED_NOT_BLANK",
+      "property": "firstName",
+      "message": "must not be blank",
+      "rejectedValue": null,
+      "path": "firstName"
+    },
+    {
+      "code": "REQUIRED_NOT_BLANK",
+      "property": "login",
+      "message": "must not be blank",
+      "rejectedValue": null,
+      "path": "login"
+    }
+  ]
+}

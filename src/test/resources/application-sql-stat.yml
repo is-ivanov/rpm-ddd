@@ -1,0 +1,26 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration is used for logging SQL queries and statistics in tests.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html
+# ===================================================================
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.stat: debug
+    org.hibernate.orm.jdbc.bind: trace
+    org.springframework.transaction.support.TransactionSynchronizationUtils: debug
+    org.springframework.orm.jpa.JpaTransactionManager: debug

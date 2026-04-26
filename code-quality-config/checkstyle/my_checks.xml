@@ -437,6 +437,13 @@
                                  or self::RECORD_DEF or self::ENUM_DEF]
                                  [not(./MODIFIERS/LITERAL_PUBLIC)]]"/>
     </module>
+    <!-- Custom rule: skip MissingJavadocMethod check for standard Bean Validation annotation
+         parameters (message, groups, payload) since they are self-explanatory and well-known. -->
+    <module name="SuppressionXpathSingleFilter">
+      <property name="checks" value="MissingJavadocMethod"/>
+      <property name="query" value="//ANNOTATION_FIELD_DEF[ancestor::ANNOTATION_DEF]
+                                 [./IDENT[@text='message' or @text='groups' or @text='payload']]"/>
+    </module>
     <!-- Temporarily disabled due to lack of Markdown support
     <module name="MissingJavadocType">
       <property name="scope" value="protected"/>

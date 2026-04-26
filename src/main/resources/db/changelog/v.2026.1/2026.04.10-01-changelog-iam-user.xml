@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!-- 1. Enum type -->
+  <changeSet id="2026-04-10-01-create-user-status-type" author="i.s.ivanov">
+    <sql>
+      CREATE TYPE iam_user_status AS ENUM ('PENDING', 'ACTIVE', 'LOCKED', 'INACTIVE');
+    </sql>
+  </changeSet>
+
+  <!-- 2. Table -->
+  <changeSet id="2026-04-10-02-create-table-iam-user" author="i.s.ivanov">
+    <createTable tableName="iam_user">
+      <column name="id" type="uuid">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="first_name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="middle_name" type="varchar(255)"/>
+      <column name="last_name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="email" type="varchar(254)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="login" type="varchar(50)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="password_hash" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="iam_user_status">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_by" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="version" type="int" defaultValue="0">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <!-- 3. FK  -->
+  <changeSet id="2026-04-10-03-fk-iam-user-created-by" author="i.s.ivanov">
+    <addForeignKeyConstraint
+            baseTableName="iam_user"
+            baseColumnNames="created_by"
+            constraintName="fk_iam_user__created_by__iam_user"
+            referencedTableName="iam_user"
+            referencedColumnNames="id"/>
+  </changeSet>
+
+  <!-- 4. System user (self-reference) -->
+  <changeSet id="2026-04-10-04-insert-system-user" author="i.s.ivanov">
+    <insert tableName="iam_user">
+      <column name="id" value="00000000-0000-0000-0000-000000000000"/>
+      <column name="first_name" value="System"/>
+      <column name="last_name" value="User"/>
+      <column name="email" value="system@localhost.com"/>
+      <column name="login" value="system"/>
+      <column name="password_hash" value="$2a$10$7sYdummyhashdummyhashdummyhashdummyhashdummyhashdu"/>
+      <column name="status" value="ACTIVE"/>
+      <column name="created_by" value="00000000-0000-0000-0000-000000000000"/>
+      <column name="version" value="0"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>
