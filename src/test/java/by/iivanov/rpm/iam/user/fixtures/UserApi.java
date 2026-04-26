@@ -22,5 +22,4 @@ public class UserApi extends AbstractApi {
     public AssertionResponse registerUser(Object request, SessionContext session) {
         return post(BASE_URI, request, session);
     }
-
 }

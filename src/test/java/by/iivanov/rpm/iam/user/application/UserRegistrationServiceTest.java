@@ -77,6 +77,5 @@ class UserRegistrationServiceTest {
                     .isInstanceOf(EmailAlreadyExistsException.class)
                     .hasMessage("Email already exists: existing@example.com");
         }
-
     }
 }
