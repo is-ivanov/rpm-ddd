@@ -20,7 +20,7 @@ class PasswordPolicyTest {
     private final PasswordPolicy sut = new PasswordPolicy(encoder);
 
     @Nested
-    @DisplayName("hashPlain() — valid passwords")
+    @DisplayName("hashPlain() - valid passwords")
     class ValidPasswordTest {
 
         @Test
@@ -36,7 +36,7 @@ class PasswordPolicyTest {
     }
 
     @Nested
-    @DisplayName("hashPlain() — invalid passwords")
+    @DisplayName("hashPlain() - invalid passwords")
     class InvalidPasswordTest {
 
         @ParameterizedTest

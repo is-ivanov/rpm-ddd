@@ -2,7 +2,6 @@ package by.iivanov.rpm.iam.auth.fixtures;
 
 import by.iivanov.rpm.testing.session.SessionContext;
 import java.util.Objects;
-import org.intellij.lang.annotations.Language;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.client.ExchangeResult;
@@ -45,13 +44,12 @@ public final class AuthSessionFactory {
     }
 
     private String adminLoginRequest() {
-        @Language("JSON")
-        String loginRequestTemplate = """
+        // language=JSON
+        return """
                 {
                   "login": "%s",
                   "password": "%s"
                 }
-                """;
-        return loginRequestTemplate.formatted(ADMIN_LOGIN, ADMIN_PASSWORD);
+                """.formatted(ADMIN_LOGIN, ADMIN_PASSWORD);
     }
 }

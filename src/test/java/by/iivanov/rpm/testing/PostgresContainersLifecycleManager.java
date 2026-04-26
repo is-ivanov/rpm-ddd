@@ -1,5 +1,6 @@
 package by.iivanov.rpm.testing;
 
+import by.iivanov.rpm.shared.AppConstants;
 import com.github.dockerjava.api.model.HostConfig;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -78,7 +79,7 @@ public final class PostgresContainersLifecycleManager {
         for (var key : env.stringPropertyNames()) {
             if (key.startsWith("POSTGRES_") && !key.equals(IMAGE_PROPERTY)) {
                 // POSTGRES_FSYNC=off -> -c fsync=off
-                var pgParam = key.substring("POSTGRES_".length()).toLowerCase();
+                var pgParam = key.substring("POSTGRES_".length()).toLowerCase(AppConstants.DEFAULT_LOCALE);
                 args.add("-c");
                 args.add(pgParam + "=" + env.getProperty(key));
             }
