@@ -1,9 +1,17 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration is used for unit/integration tests.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html
+# ===================================================================
 spring:
   main:
     lazy-initialization: on
-#  datasource:
-#    url: jdbc:postgresql://localhost:54034/rpm_ddd
-#    username: postgres
-#    password: postgres
-#    hikari:
-#      driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-test.xml
+    contexts: test

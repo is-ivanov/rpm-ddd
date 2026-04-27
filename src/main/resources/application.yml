@@ -1,0 +1,40 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration will be overridden by the Spring profile you use,
+# for example application-dev.yml if you use the "dev" profile.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html
+# ===================================================================
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: off
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+  modulith:
+    events:
+      completion-mode: archive
+
+logging:
+  level:
+    io.github.wimdeblauwe.errorhandlingspringbootstarter.ProblemDetailFactory: warn
+    org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: error
+
+# ===================================================================
+# Error handling application properties.
+# Full reference is available at:
+# https://wimdeblauwe.github.io/error-handling-spring-boot-starter/current/#properties
+# ===================================================================
+error:
+  handling:
+    use-problem-detail-format: true
+    problem-detail-type-prefix: https://www.rpm-ddd.my/problem/
+    http-statuses:
+      org.springframework.security.authentication.BadCredentialsException: unauthorized
+      org.springframework.web.bind.MethodArgumentNotValidException: unprocessable-content

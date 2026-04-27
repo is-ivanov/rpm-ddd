@@ -2,11 +2,9 @@ package by.iivanov.rpm.testing;
 
 import java.util.Arrays;
 import java.util.List;
-import lombok.experimental.UtilityClass;
 import org.springframework.context.ApplicationContext;
 
-@UtilityClass
-public class TestContextValidator {
+public final class TestContextValidator {
 
     /**
      * Print all beans.
@@ -24,4 +22,6 @@ public class TestContextValidator {
         System.out.println("==============================\n");
         return Arrays.asList(beanNames);
     }
+
+    private TestContextValidator() {}
 }

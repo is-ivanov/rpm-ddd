@@ -22,6 +22,7 @@
     <!--dependency versions -->
     <checkstyle.version>13.4.0</checkstyle.version>
     <commons-lang3.version>3.20.0</commons-lang3.version>
+    <error-handling-spring-boot-starter.version>5.1.1</error-handling-spring-boot-starter.version>
     <error-prone.version>2.49.0</error-prone.version>
     <guava.version>33.6.0-jre</guava.version>
     <instancio.version>5.5.1</instancio.version>
@@ -30,8 +31,10 @@
     <json-unit.version>5.1.1</json-unit.version>
     <nullaway.version>0.13.4</nullaway.version>
     <palantir-java-format.version>2.90.0</palantir-java-format.version>
+    <passay.version>1.6.6</passay.version>
     <pmd.version>7.23.0</pmd.version>
     <spring-modulith.version>2.0.5</spring-modulith.version>
+    <uuid-creator.version>6.1.1</uuid-creator.version>
 
     <!--plugin versions -->
     <git-build-hook-maven-plugin.version>3.6.0</git-build-hook-maven-plugin.version>
@@ -88,11 +91,24 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.modulith</groupId>
-      <artifactId>spring-modulith-starter-jpa</artifactId>
+      <artifactId>spring-modulith-starter-jdbc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-liquibase</artifactId>
     </dependency>
 
     <!-- jMolecules -->
@@ -121,15 +137,18 @@
       <scope>runtime</scope>
     </dependency>
 
+    <!-- Other Spring Boot starters -->
+    <dependency>
+      <groupId>io.github.wimdeblauwe</groupId>
+      <artifactId>error-handling-spring-boot-starter</artifactId>
+      <version>${error-handling-spring-boot-starter.version}</version>
+    </dependency>
+
+
     <!-- Utilities -->
     <dependency>
       <groupId>org.jspecify</groupId>
       <artifactId>jspecify</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jetbrains</groupId>
@@ -144,6 +163,16 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.f4b6a3</groupId>
+      <artifactId>uuid-creator</artifactId>
+      <version>${uuid-creator.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.passay</groupId>
+      <artifactId>passay</artifactId>
+      <version>${passay.version}</version>
     </dependency>
     <!--    <dependency>-->
     <!--      <groupId>net.xyzsd</groupId>-->
@@ -324,10 +353,6 @@
               <artifactId>nullaway</artifactId>
               <version>${nullaway.version}</version>
             </path>
-            <path>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-            </path>
           </annotationProcessorPaths>
           <compilerArgs>
             <arg>-XDcompilePolicy=simple</arg>
@@ -335,6 +360,7 @@
             <arg>
               -Xplugin:ErrorProne
               -XepOpt:NullAway:AnnotatedPackages=by.iivanov.rpm
+              -XepOpt:NullAway:SuggestSuppressions=true
               -Xep:NullAway:ERROR
             </arg>
           </compilerArgs>
@@ -385,14 +411,6 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-            </exclude>
-          </excludes>
-        </configuration>
       </plugin>
     </plugins>
   </build>

@@ -3,7 +3,7 @@
 name: rpm-ddd-infra
 services:
   postgres:
-    image: postgres:18.1
+    image: ${POSTGRES_TEST_IMAGE}
     container_name: rpm-ddd
     environment:
       POSTGRES_USER: postgres
@@ -12,8 +12,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     command: postgres -c fsync=off -c synchronous_commit=off -c full_page_writes=off
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER}']
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 10
-

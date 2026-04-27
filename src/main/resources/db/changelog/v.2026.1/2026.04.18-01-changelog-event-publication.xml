@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet id="2026-04-18-01-create-event-publication-table" author="i.s.ivanov">
+    <createTable tableName="event_publication">
+      <column name="id" type="uuid">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="listener_id" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="event_type" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="serialized_event" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="publication_date" type="timestamptz">
+        <constraints nullable="false"/>
+      </column>
+      <column name="completion_date" type="timestamptz"/>
+      <column name="status" type="text"/>
+      <column name="completion_attempts" type="int"/>
+      <column name="last_resubmission_date" type="timestamptz"/>
+    </createTable>
+    <createIndex tableName="event_publication" indexName="event_publication_serialized_event_hash_idx" using="hash">
+      <column name="serialized_event"/>
+    </createIndex>
+    <createIndex tableName="event_publication" indexName="event_publication_by_completion_date_idx">
+      <column name="completion_date"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="2026-04-18-02-create-event-publication-archive-table" author="i.s.ivanov">
+    <createTable tableName="event_publication_archive">
+      <column name="id" type="uuid">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="listener_id" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="event_type" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="serialized_event" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="publication_date" type="timestamptz">
+        <constraints nullable="false"/>
+      </column>
+      <column name="completion_date" type="timestamptz"/>
+      <column name="status" type="text"/>
+      <column name="completion_attempts" type="int"/>
+      <column name="last_resubmission_date" type="timestamptz"/>
+    </createTable>
+    <createIndex tableName="event_publication_archive" indexName="event_publication_archive_serialized_event_hash_idx"
+                 using="hash">
+      <column name="serialized_event"/>
+    </createIndex>
+    <createIndex tableName="event_publication_archive" indexName="event_publication_archive_by_completion_date_idx">
+      <column name="completion_date"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>
