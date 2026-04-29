@@ -7,6 +7,7 @@ import org.passay.PasswordData;
 import org.passay.PasswordValidator;
 import org.passay.ValidationResult;
 import org.passay.data.EnglishCharacterData;
+import org.passay.resolver.PropertiesMessageResolver;
 import org.passay.rule.CharacterRule;
 import org.passay.rule.LengthRule;
 import org.passay.rule.WhitespaceRule;
@@ -19,6 +20,7 @@ public class PasswordPolicy {
     private static final int MAX_LENGTH = 128;
 
     private static final PasswordValidator VALIDATOR = new DefaultPasswordValidator(
+            new PropertiesMessageResolver(),
             new LengthRule(MIN_LENGTH, MAX_LENGTH),
             new CharacterRule(EnglishCharacterData.UpperCase, 1),
             new CharacterRule(EnglishCharacterData.LowerCase, 1),
