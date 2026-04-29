@@ -33,7 +33,7 @@
     <palantir-java-format.version>2.90.0</palantir-java-format.version>
     <passay.version>1.6.6</passay.version>
     <pmd.version>7.23.0</pmd.version>
-    <spring-modulith.version>2.0.5</spring-modulith.version>
+    <spring-modulith.version>2.0.6</spring-modulith.version>
     <uuid-creator.version>6.1.1</uuid-creator.version>
 
     <!--plugin versions -->
