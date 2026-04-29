@@ -20,7 +20,7 @@
     <java.version>25</java.version>
 
     <!--dependency versions -->
-    <checkstyle.version>13.4.0</checkstyle.version>
+    <checkstyle.version>13.4.1</checkstyle.version>
     <commons-lang3.version>3.20.0</commons-lang3.version>
     <error-handling-spring-boot-starter.version>5.1.1</error-handling-spring-boot-starter.version>
     <error-prone.version>2.49.0</error-prone.version>
