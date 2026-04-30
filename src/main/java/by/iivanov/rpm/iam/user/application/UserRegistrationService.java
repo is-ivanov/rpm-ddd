@@ -1,15 +1,18 @@
 package by.iivanov.rpm.iam.user.application;
 
 import by.iivanov.rpm.iam.user.domain.EmailAlreadyExistsException;
-import by.iivanov.rpm.iam.user.domain.InvalidPasswordException;
 import by.iivanov.rpm.iam.user.domain.LoginAlreadyExistsException;
-import by.iivanov.rpm.iam.user.domain.PasswordGenerator;
-import by.iivanov.rpm.iam.user.domain.PasswordPolicy;
+import by.iivanov.rpm.iam.user.domain.Password;
 import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.iam.user.domain.UserId;
 import by.iivanov.rpm.iam.user.domain.UserRegistrationPolicy;
 import by.iivanov.rpm.iam.user.domain.UserRepository;
 import by.iivanov.rpm.shared.infrastructure.ApplicationService;
+import java.time.Clock;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.UUID;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 @ApplicationService
@@ -17,45 +20,51 @@ public class UserRegistrationService {
 
     private final UserRepository userRepository;
     private final UserRegistrationPolicy registrationPolicy;
-    private final PasswordPolicy passwordPolicy;
-    private final PasswordGenerator passwordGenerator;
+    private final PasswordEncoder passwordEncoder;
+    private final Clock clock;
 
     /** Constructor. */
     public UserRegistrationService(
             UserRepository userRepository,
             UserRegistrationPolicy registrationPolicy,
-            PasswordPolicy passwordPolicy,
-            PasswordGenerator passwordGenerator) {
+            PasswordEncoder passwordEncoder,
+            Clock clock) {
         this.userRepository = userRepository;
         this.registrationPolicy = registrationPolicy;
-        this.passwordPolicy = passwordPolicy;
-        this.passwordGenerator = passwordGenerator;
+        this.passwordEncoder = passwordEncoder;
+        this.clock = clock;
     }
 
     /**
-     * Registers a new user in the system using the provided registration details.
-     * Automatically generates a temporary password for the user, verifies registration
-     * policies, hashes the password for security, and persists the user.
+     * Registers a new user in the system using the provided registration command and the identifier of the user
+     * who initiated the creation.
      *
-     * @param command    the details required to register the user, including the user's name, login, and email
-     * @param createdBy  the identifier of the user performing the registration
-     * @return           the unique identifier of the newly registered user
-     * @throws LoginAlreadyExistsException if the specified login is already in use
-     * @throws EmailAlreadyExistsException if the specified email is already in use
-     * @throws InvalidPasswordException    if the generated password does not meet complexity requirements
+     * @param command the {@code RegisterUserCommand} containing details of the user to be registered,
+     *                including username, login, and email.
+     * @param createdBy the identifier of the user who initiated the registration process.
+     * @return the unique identifier of the newly registered user.
+     * @throws LoginAlreadyExistsException if the provided login is already in use.
+     * @throws EmailAlreadyExistsException if the provided email address is already in use.
+     * @throws NullPointerException if any required parameter in the registration process is null.
      */
     @Transactional
     public UserId registerUser(RegisterUserCommand command, UserId createdBy) {
         var personName = command.userName();
         var login = command.login();
         var email = command.email();
-        var plainPassword = passwordGenerator.generate();
 
         registrationPolicy.verifyCanRegister(login, email);
 
-        var hashedPassword = passwordPolicy.hashPlain(plainPassword);
+        var placeholderHash =
+                Objects.requireNonNull(passwordEncoder.encode(UUID.randomUUID().toString()));
         var user = User.register(
-                userRepository.nextId(), personName, email, login, hashedPassword, plainPassword, createdBy);
+                userRepository.nextId(),
+                personName,
+                email,
+                login,
+                new Password(placeholderHash),
+                createdBy,
+                Instant.now(clock));
 
         return userRepository.save(user).getId();
     }

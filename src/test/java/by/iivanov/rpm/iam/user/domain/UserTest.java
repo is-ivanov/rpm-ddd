@@ -3,6 +3,7 @@ package by.iivanov.rpm.iam.user.domain;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import by.iivanov.rpm.testing.assertj.RpmSoftAssertions;
+import java.time.Instant;
 import java.util.UUID;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -26,14 +27,14 @@ class UserTest {
         private final EmailAddress email = new EmailAddress("ivan@example.com");
         private final Login login = new Login("ivanov");
         private final Password password = new Password("$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy");
-        private final String plainPassword = "Temp@Pass1!";
         private final UserId createdBy = new UserId(UUID.fromString("123e4567-e89b-12d3-a456-426614174023"));
+        private final Instant now = Instant.parse("2026-04-30T12:00:00Z");
 
         @Test
         @DisplayName("WHEN register EXPECT status is PENDING")
         void when_register_expect_statusPending() {
             // WHEN:
-            var user = User.register(id, personName, email, login, password, plainPassword, createdBy);
+            var user = User.register(id, personName, email, login, password, createdBy, now);
             // THEN:
             then(user.getStatus()).isEqualTo(UserStatus.PENDING);
         }
@@ -42,7 +43,7 @@ class UserTest {
         @DisplayName("WHEN register EXPECT createdBy is set")
         void when_register_expect_createdByIsSet() {
             // WHEN:
-            var user = User.register(id, personName, email, login, password, plainPassword, createdBy);
+            var user = User.register(id, personName, email, login, password, createdBy, now);
             // THEN:
             then(user.getCreatedBy().getId()).isEqualTo(createdBy);
         }
@@ -51,7 +52,7 @@ class UserTest {
         @DisplayName("WHEN register EXPECT version is 0")
         void when_register_expect_versionIsZero() {
             // WHEN:
-            var user = User.register(id, personName, email, login, password, plainPassword, createdBy);
+            var user = User.register(id, personName, email, login, password, createdBy, now);
             // THEN:
             then(user.getVersion()).isEqualTo(0);
         }
@@ -60,7 +61,7 @@ class UserTest {
         @DisplayName("WHEN register EXPECT UserRegisteredEvent is published")
         void when_register_expect_eventPublished() {
             // WHEN:
-            var user = User.register(id, personName, email, login, password, plainPassword, createdBy);
+            var user = User.register(id, personName, email, login, password, createdBy, now);
             // THEN:
             softly.then(user)
                     .hasEventsSize(1)
@@ -70,7 +71,6 @@ class UserTest {
                         then(event.userId()).isEqualTo(id);
                         then(event.login()).isEqualTo(login);
                         then(event.email()).isEqualTo(email);
-                        then(event.temporaryPasswordPlain()).isEqualTo(plainPassword);
                     });
         }
     }

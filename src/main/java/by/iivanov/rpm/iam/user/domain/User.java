@@ -4,6 +4,7 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import java.time.Instant;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.jmolecules.ddd.types.AggregateRoot;
@@ -18,6 +19,7 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
     private final PersonName personName;
     private final EmailAddress email;
     private final Association<User, UserId> createdBy;
+    private final Instant registeredAt;
 
     private Login login;
 
@@ -31,31 +33,33 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
     private int version;
 
     private User(
-            UserId id, PersonName personName, EmailAddress email, Login login, Password password, UserId createdBy) {
+            UserId id,
+            PersonName personName,
+            EmailAddress email,
+            Login login,
+            Password password,
+            UserId createdBy,
+            Instant registeredAt) {
         this.id = id;
         this.personName = personName;
         this.email = email;
         this.login = login;
         this.password = password;
+        this.registeredAt = registeredAt;
         this.status = UserStatus.PENDING;
         this.createdBy = Association.forId(createdBy);
     }
 
-    /**
-     * Factory method for registering a new user.
-     *
-     * @param temporaryPasswordPlain plain-text temporary password for email delivery
-     */
     public static User register(
             UserId id,
             PersonName personName,
             EmailAddress email,
             Login login,
             Password password,
-            String temporaryPasswordPlain,
-            UserId createdBy) {
-        var user = new User(id, personName, email, login, password, createdBy);
-        user.registerEvent(new UserRegisteredEvent(id, login, email, temporaryPasswordPlain));
+            UserId createdBy,
+            Instant now) {
+        var user = new User(id, personName, email, login, password, createdBy, now);
+        user.registerEvent(new UserRegisteredEvent(id, login, email));
         return user;
     }
 
