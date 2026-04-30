@@ -38,3 +38,14 @@ error:
     http-statuses:
       org.springframework.security.authentication.BadCredentialsException: unauthorized
       org.springframework.web.bind.MethodArgumentNotValidException: unprocessable-content
+
+
+# ===================================================================
+# Specific application properties.
+# ===================================================================
+rpm:
+  iam:
+    activation:
+      jwt:
+        secret: Y2hhbmdlLXRoaXMtdG8tYS1sb25nLXNlY3JldC1rZXktaW4tcHJvZHVjdGlvbg==
+        expiration: 24h

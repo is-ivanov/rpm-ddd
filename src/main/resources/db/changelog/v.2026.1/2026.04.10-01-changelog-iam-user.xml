@@ -39,6 +39,9 @@
       <column name="created_by" type="uuid">
         <constraints nullable="false"/>
       </column>
+      <column name="registered_at" type="timestamptz">
+        <constraints nullable="false"/>
+      </column>
       <column name="version" type="int" defaultValue="0">
         <constraints nullable="false"/>
       </column>
@@ -66,6 +69,7 @@
       <column name="password_hash" value="$2a$10$7sYdummyhashdummyhashdummyhashdummyhashdummyhashdu"/>
       <column name="status" value="ACTIVE"/>
       <column name="created_by" value="00000000-0000-0000-0000-000000000000"/>
+      <column name="registered_at" valueDate="2026-01-01T00:00:00"/>
       <column name="version" value="0"/>
     </insert>
   </changeSet>

@@ -27,6 +27,7 @@
     <guava.version>33.6.0-jre</guava.version>
     <instancio.version>5.5.1</instancio.version>
     <jetbrains-annotations.version>26.1.0</jetbrains-annotations.version>
+    <jjwt.version>0.13.0</jjwt.version>
     <jmolecules.version>2025.0.2</jmolecules.version>
     <json-unit.version>5.1.1</json-unit.version>
     <nullaway.version>0.13.4</nullaway.version>
@@ -63,6 +64,13 @@
         <groupId>com.google.guava</groupId>
         <artifactId>guava-bom</artifactId>
         <version>${guava.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-bom</artifactId>
+        <version>${jjwt.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -168,6 +176,26 @@
       <groupId>com.github.f4b6a3</groupId>
       <artifactId>uuid-creator</artifactId>
       <version>${uuid-creator.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-impl</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-jackson</artifactId>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.passay</groupId>

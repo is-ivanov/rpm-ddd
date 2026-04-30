@@ -6,8 +6,5 @@ package by.iivanov.rpm.iam.user.infrastructure.notification;
  */
 public interface EmailNotificationSender {
 
-    /**
-     * Sends a temporary password notification to the user.
-     */
-    void sendTemporaryPassword(String toEmail, String login, String temporaryPassword);
+    void sendActivationToken(String toEmail, String login, String activationToken);
 }

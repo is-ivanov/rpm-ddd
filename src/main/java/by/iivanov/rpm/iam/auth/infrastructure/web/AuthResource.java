@@ -43,7 +43,7 @@ class AuthResource {
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
         var authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.login(), request.password()));
+                UsernamePasswordAuthenticationToken.unauthenticated(request.login(), request.password()));
 
         SecurityContext context = securityContextHolderStrategy.createEmptyContext();
         context.setAuthentication(authentication);

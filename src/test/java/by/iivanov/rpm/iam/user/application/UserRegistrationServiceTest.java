@@ -8,11 +8,12 @@ import by.iivanov.rpm.iam.user.domain.EmailAddress;
 import by.iivanov.rpm.iam.user.domain.EmailAlreadyExistsException;
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.LoginAlreadyExistsException;
-import by.iivanov.rpm.iam.user.domain.PasswordGenerator;
-import by.iivanov.rpm.iam.user.domain.PasswordPolicy;
 import by.iivanov.rpm.iam.user.domain.UserId;
 import by.iivanov.rpm.iam.user.domain.UserRegistrationPolicy;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,8 +39,8 @@ class UserRegistrationServiceTest {
         sut = new UserRegistrationService(
                 userRepository,
                 new UserRegistrationPolicy(userRepository),
-                new PasswordPolicy(NoOpPasswordEncoder.getInstance()),
-                new PasswordGenerator());
+                NoOpPasswordEncoder.getInstance(),
+                Clock.fixed(Instant.parse("2026-04-30T12:00:00Z"), ZoneOffset.UTC));
     }
 
     @Nested
