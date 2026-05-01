@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: rpm-ddd
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: main
+    dockerContext: .
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: RPM_IAM_ACTIVATION_JWT_SECRET
+        sync: false
+      - key: JAVA_OPTS
+        value: "-Xmx512m -XX:+UseG1GC"
+      - key: PORT
+        value: "10000"
