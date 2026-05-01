@@ -9,13 +9,35 @@ on:
 
 jobs:
   build-and-push:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
       - uses: actions/checkout@v6
+
+      - name: Download JAR artifact
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          name: app-jar
+          path: target
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Prepare build context
+        id: prepare
+        run: |
+          if ls target/*.jar 1>/dev/null 2>&1; then
+            mkdir -p deploy-context
+            cp target/*.jar deploy-context/app.jar
+            cp Dockerfile.deploy deploy-context/Dockerfile
+            echo "dockerfile=deploy-context/Dockerfile" >> "$GITHUB_OUTPUT"
+            echo "context=./deploy-context" >> "$GITHUB_OUTPUT"
+          else
+            echo "dockerfile=Dockerfile" >> "$GITHUB_OUTPUT"
+            echo "context=." >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set up Docker BuildX
         uses: docker/setup-buildx-action@v3
@@ -40,9 +62,18 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ${{ steps.prepare.outputs.context }}
+          file: ${{ steps.prepare.outputs.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Trigger Render deploy
+        run: |
+          curl -s -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+            -H "Accept: application/json" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -d '{"clearCache": "do_not_clear"}'
