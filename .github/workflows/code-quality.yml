@@ -2,9 +2,23 @@ name: Run Code Quality Tools
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "pom.xml"
+      - ".mvn/**"
+      - "mvnw"
+      - "code-quality-config/**"
+      - ".github/workflows/code-quality.yml"
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "pom.xml"
+      - ".mvn/**"
+      - "mvnw"
+      - "code-quality-config/**"
+      - ".github/workflows/code-quality.yml"
 
 jobs:
 

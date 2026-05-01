@@ -1,11 +1,11 @@
 services:
   - type: web
     name: rpm-ddd
-    runtime: docker
+    runtime: image
     plan: free
     region: frankfurt
-    branch: main
-    dockerImage: ghcr.io/is-ivanov/rpm-ddd:latest
+    image:
+      url: ghcr.io/is-ivanov/rpm-ddd:latest
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
