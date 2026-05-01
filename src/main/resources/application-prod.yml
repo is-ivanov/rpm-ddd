@@ -1,35 +1,20 @@
+# ===================================================================
+# Spring Boot configuration for the "prod" profile.
+#
+# This configuration overrides the application.yml file.
+# ===================================================================
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: off
-  liquibase:
-    change-log: classpath:/db/changelog/db.changelog-master.xml
-  modulith:
-    events:
-      completion-mode: archive
 
-logging:
-  level:
-    io.github.wimdeblauwe.errorhandlingspringbootstarter.ProblemDetailFactory: warn
-    org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: error
-
-error:
-  handling:
-    use-problem-detail-format: true
-    problem-detail-type-prefix: https://www.rpm-ddd.my/problem/
-    http-statuses:
-      org.springframework.security.authentication.BadCredentialsException: unauthorized
-      org.springframework.web.bind.MethodArgumentNotValidException: unprocessable-content
-
+# ===================================================================
+# Specific application properties.
+# ===================================================================
 rpm:
   iam:
     activation:
       jwt:
         secret: ${RPM_IAM_ACTIVATION_JWT_SECRET}
-        expiration: 24h
