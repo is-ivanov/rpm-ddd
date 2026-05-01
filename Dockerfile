@@ -1,6 +1,6 @@
 # Stage: build application JAR
 FROM eclipse-temurin:25-jdk-alpine AS builder
-WORKDIR /application
+WORKDIR /builder
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
@@ -10,8 +10,8 @@ RUN --mount=type=cache,target=/root/.m2 ./mvnw package -DskipTests -Dspotless.ch
 
 # Stage: extract Spring Boot application layers
 FROM eclipse-temurin:25-jre-alpine AS layers
-WORKDIR /application
-COPY --from=builder /application/target/*.jar app.jar
+WORKDIR /layers
+COPY --from=builder /builder/target/*.jar app.jar
 RUN java -Djarmode=tools -jar app.jar extract --layers --destination extracted
 
 # Stage: final runtime image
@@ -26,10 +26,10 @@ USER spring-user
 WORKDIR /application
 
 # Copy Spring Boot application layers
-COPY --from=layers /application/extracted/dependencies/ ./
-COPY --from=layers /application/extracted/spring-boot-loader/ ./
-COPY --from=layers /application/extracted/snapshot-dependencies/ ./
-COPY --from=layers /application/extracted/application/ ./
+COPY --from=layers /layers/extracted/dependencies/ ./
+COPY --from=layers /layers/extracted/spring-boot-loader/ ./
+COPY --from=layers /layers/extracted/snapshot-dependencies/ ./
+COPY --from=layers /layers/extracted/application/ ./
 
 EXPOSE 10000
-ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} org.springframework.boot.loader.launch.JarLauncher --server.port=${PORT:-10000}"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

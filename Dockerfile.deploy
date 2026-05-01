@@ -22,4 +22,4 @@ COPY --from=layers /application/extracted/snapshot-dependencies/ ./
 COPY --from=layers /application/extracted/application/ ./
 
 EXPOSE 10000
-ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} org.springframework.boot.loader.launch.JarLauncher --server.port=${PORT:-10000}"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
