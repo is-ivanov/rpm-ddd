@@ -1,14 +1,8 @@
-.git
-.idea
-*.iml
-target
-.mvn/wrapper/maven-wrapper.jar
-docs
-docker
-*.md
-LICENSE
-.editorconfig
-code-quality-config
-.github
-amplicode.xml
-.env
+# Ignore everything by default
+*
+
+# Include what we need
+!**/src
+!.mvn
+!**/pom.xml
+!mvnw

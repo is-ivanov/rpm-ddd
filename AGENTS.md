@@ -15,6 +15,9 @@ Use the Maven wrapper:
 - `./mvnw spotless:apply` reformats Java sources with Palantir Java Format.
 - `./mvnw spring-boot:run` starts the application locally.
 
+## Comments Policy
+**Do not add comments unless explicitly asked.** However, **always preserve existing comments** when editing files — comments are part of the codebase and must not be silently removed during refactoring, rewriting, or any other file modification.
+
 ## Coding Style & Naming Conventions
 Follow `.editorconfig`: UTF-8, spaces, 4-space indentation, final newline, and a 120-character line limit. Java formatting is enforced by Spotless with Palantir Java Format, so run `./mvnw spotless:apply` before a PR. Keep package names lowercase, classes in `UpperCamelCase`, methods and fields in `lowerCamelCase`, and tests named `*Test` or `*IntegrationTest`. Preserve the package split by responsibility, for example `iam.application`, `iam.domain`, and `iam.web`.
 
