@@ -10,9 +10,25 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "pom.xml"
+      - ".mvn/**"
+      - "mvnw"
+      - "Dockerfile"
+      - ".github/workflows/build.yml"
+      - "code-quality-config/**"
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "pom.xml"
+      - ".mvn/**"
+      - "mvnw"
+      - "Dockerfile"
+      - ".github/workflows/build.yml"
+      - "code-quality-config/**"
 
 jobs:
   build:

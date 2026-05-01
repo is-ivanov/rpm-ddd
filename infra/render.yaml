@@ -5,8 +5,7 @@ services:
     plan: free
     region: frankfurt
     branch: main
-    dockerContext: .
-    dockerfilePath: ./Dockerfile
+    dockerImage: ghcr.io/is-ivanov/rpm-ddd:latest
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
