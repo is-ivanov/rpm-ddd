@@ -37,6 +37,6 @@ class UserRegistrationIntegrationTest extends AbstractApplicationIntegrationTest
 
         // THEN: user is registered AND response contains location header
         response.assertCreated()
-                .assertLocationIdMatches("/api/admin/users/", UUID::fromString, UuidUtil::isRandomBased);
+                .assertLocationIdMatches("/api/admin/users/", UUID::fromString, UuidUtil::isTimeOrderedEpoch);
     }
 }
