@@ -31,6 +31,8 @@
 *.yaml          text
 *.yml           text
 
+mvnw            text eol=lf
+
 # Documents
 *.doc           diff=astextplain
 *.DOC           diff=astextplain

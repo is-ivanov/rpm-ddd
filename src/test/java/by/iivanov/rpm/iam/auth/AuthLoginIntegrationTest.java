@@ -4,15 +4,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
 import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
-import by.iivanov.rpm.testing.ApplicationIntegrationTest;
+import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
-@ApplicationIntegrationTest
-class AuthLoginIntegrationTest {
+class AuthLoginIntegrationTest extends AbstractApplicationIntegrationTest {
 
     private final RestTestClient restClient;
     private final AuthApi authApi;
