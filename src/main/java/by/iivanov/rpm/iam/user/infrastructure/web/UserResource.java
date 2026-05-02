@@ -32,7 +32,7 @@ class UserResource {
     ResponseEntity<Void> registerUser(@RequestBody @Valid RegisterUserRequest payload) {
         UserId createdBy = currentActorProvider.currentUserId();
         UserId userId = userRegistrationService.registerUser(payload.toCommand(), createdBy);
-        URI location = UriComponentsBuilder.fromPath("/api/admin/users/{id}").build(userId);
+        URI location = UriComponentsBuilder.fromPath("/api/admin/users/{id}").build(userId.id());
         return ResponseEntity.created(location).build();
     }
 }

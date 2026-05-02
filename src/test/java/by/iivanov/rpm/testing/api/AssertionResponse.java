@@ -7,6 +7,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import net.javacrumbs.jsonunit.core.Option;
 import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.Nullable;
@@ -127,6 +129,30 @@ public class AssertionResponse {
                 .as("Location header must starts with <%s>", pathPrefix)
                 .startsWith(pathPrefix);
         return Objects.requireNonNull(location, "that assert only for NullAway").substring(pathPrefix.length());
+    }
+
+    /**
+     * Asserts that the location ID extracted from the response matches the expected format.
+     * The method first extracts the location ID based on the provided path prefix,
+     * verifies it can be parsed into the expected type, and validates it using the provided predicate.
+     *
+     * @param pathPrefix the expected prefix of the location header value,
+     *                   used to extract the unique identifier
+     * @param parser     a function to parse the extracted location ID into a specific type
+     * @param validator  a predicate to validate the parsed location ID
+     * @return the {@code AssertionResponse} instance, allowing method chaining
+     */
+    public <T> AssertionResponse assertLocationIdMatches(
+            String pathPrefix, Function<String, T> parser, Predicate<T> validator) {
+        String rawId = extractCreatedId(pathPrefix);
+        Assertions.assertThatCode(() -> parser.apply(rawId))
+                .as("Location id <%s> must be parseable", rawId)
+                .doesNotThrowAnyException();
+        T id = parser.apply(rawId);
+        Assertions.assertThat(id)
+                .as("Location id <%s> must pass validation", rawId)
+                .matches(validator, "is valid ID");
+        return this;
     }
 
     public RestTestClient.ResponseSpec unwrap() {

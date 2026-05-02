@@ -1,11 +1,10 @@
 package by.iivanov.rpm.iam.user;
 
-import static org.assertj.core.api.BDDAssertions.then;
-
 import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.iam.user.fixtures.UserApi;
 import by.iivanov.rpm.iam.user.infrastructure.web.RegisterUserRequest;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
+import com.github.f4b6a3.uuid.util.UuidUtil;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,9 +33,10 @@ class UserRegistrationIntegrationTest extends AbstractApplicationIntegrationTest
                 "ivanov_ivan_" + uniqueSuffix + "@example.com");
 
         // WHEN: admin registers a new user
-        var location = userApi.registerUser(request, admin).assertCreated().extractLocation();
+        var response = userApi.registerUser(request, admin);
 
         // THEN: user is registered AND response contains location header
-        then(location).startsWith("/api/admin/users/");
+        response.assertCreated()
+                .assertLocationIdMatches("/api/admin/users/", UUID::fromString, UuidUtil::isTimeOrderedEpoch);
     }
 }
