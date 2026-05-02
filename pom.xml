@@ -376,7 +376,6 @@
           <configuration>
             <excludes>
               <exclude>by/iivanov/rpm/RpmDddApplication*</exclude>
-              <exclude>by/iivanov/rpm/iam/auth/infrastructure/SecurityConfig*</exclude>
               <exclude>by/iivanov/rpm/shared/time/infrastructure/ClockConfiguration*</exclude>
             </excludes>
           </configuration>
