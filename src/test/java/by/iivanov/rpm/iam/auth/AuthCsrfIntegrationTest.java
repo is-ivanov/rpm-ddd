@@ -1,12 +1,11 @@
 package by.iivanov.rpm.iam.auth;
 
 import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
-import by.iivanov.rpm.testing.ApplicationIntegrationTest;
+import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@ApplicationIntegrationTest
-class AuthCsrfIntegrationTest {
+class AuthCsrfIntegrationTest extends AbstractApplicationIntegrationTest {
 
     private final AuthApi authApi;
 
