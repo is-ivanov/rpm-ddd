@@ -44,6 +44,15 @@ jobs:
     - name: Build with Maven
       run: mvn verify -B
 
+    - name: Upload coverage to Codecov
+      if: always()
+      uses: codecov/codecov-action@v5
+      with:
+        files: target/site/jacoco/jacoco.xml
+        fail_ci_if_error: true
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
     - name: Upload JAR artifact
       if: github.ref == 'refs/heads/main'
       uses: actions/upload-artifact@v4

@@ -1,0 +1,13 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 70%
+        threshold: 1%
+    patch:
+      default:
+        target: 70%
+ignore:
+  - "by/iivanov/rpm/RpmDddApplication*"
+  - "by/iivanov/rpm/iam/auth/infrastructure/SecurityConfig*"
+  - "by/iivanov/rpm/shared/time/infrastructure/ClockConfiguration*"
