@@ -45,7 +45,7 @@ jobs:
       run: mvn verify -B
 
     - name: Upload coverage to Codecov
-      if: always()
+      if: always() && github.actor != 'dependabot[bot]'
       uses: codecov/codecov-action@v6
       with:
         files: target/site/jacoco/jacoco.xml
