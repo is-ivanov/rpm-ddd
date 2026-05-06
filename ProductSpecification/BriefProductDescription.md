@@ -1,16 +1,16 @@
 # Brief Product Description
 
-<!-- Describe your product in 4-5 numbered points:
-1. What is it? (e.g., "It's a personal finance tracker")
-2. What does the user do? (core interaction model)
-3. What's the main goal? (value proposition)
-4. What's the underlying logic? (key workflows as bullet points)
--->
+1. It's a SaaS platform for Remote Patient Monitoring (RPM) serving medical agencies, physicians, and insurance companies.
 
-1. It's a remote patient monitoring application.
-2. User manages patients and their health data.
-3. The main goal is to provide a secure and efficient way to monitor patients remotely.
-4. The underlying logic is:
-   - [workflow step 1]
-   - [workflow step 2]
-   - [workflow step 3]
+2. Agency staff find and onboard patients, create monitoring orders, issue IoT blood-pressure devices, plan home-visit routes, and generate insurance documents. Physicians upload medical orders confirming the need for remote monitoring. Patient vitals are collected automatically from IoT devices.
+
+3. The main goal is to provide continuous patient monitoring with automated alerts on abnormal readings, reducing manual effort and improving quality of care.
+
+4. Key workflows:
+   - Patient onboarding and monitoring order creation
+   - Collecting physician orders that confirm the medical necessity of monitoring
+   - Issuing IoT devices to patients and managing device inventory
+   - Automated collection and monitoring of vital signs (blood pressure, etc.)
+   - Alerting when readings deviate from normal ranges
+   - Route planning for agency staff home visits
+   - Generating digital documents and reports for insurance companies
