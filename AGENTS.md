@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-`rpm-ddd` is a Maven-based Spring Boot 4 project targeting Java 26. The intended architecture is a modular monolith with DDD boundaries enforced through Spring Modulith first, with Maven modules extracted later.  Code-quality rules are stored in `code-quality-config/checkstyle/`.
+`rpm-ddd` is a Maven-based Spring Boot 4 project targeting Java 25 (planned upgrade to 26). The intended architecture is a modular monolith with DDD boundaries enforced through Spring Modulith first, with Maven modules extracted later.  Code-quality rules are stored in `code-quality-config/checkstyle/`.
 
 Older experimental folders such as `agency-management/`, `patient-management/`, `full-app/`, `configuration/`, and `tech-shared/` came from earlier modularization attempts. Treat them as historical or temporary unless a task explicitly targets them.
 

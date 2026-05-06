@@ -2,31 +2,31 @@
 
 tech-profile:
   backend: java-spring
-  frontend: react-ts
+  frontend: vue-ts
   css: tailwind
-  browser-testing: selenium
+  browser-testing: playwright
 
 ## Backend
 
 | Concern | Technology |
 |---------|-----------|
-| Language | Java 17+ |
-| Framework | Spring Boot 3.2 |
-| Build tool | Gradle (multi-module) |
+| Language | Java 25 (planned upgrade to 26) |
+| Framework | Spring Boot 4 |
+| Build tool | Maven (multi-module) |
 | DI | Spring (@Service, @RequiredArgsConstructor) |
 | Web | Spring Web (controllers, ResponseEntity) |
 | Persistence | JPA / Hibernate |
-| Database | H2 (dev), PostgreSQL (prod) |
+| Database | PostgreSQL (dev & prod) |
 | Migrations | Liquibase |
 | Mail | Spring Mail |
-| Code generation | Lombok (@Data, @Builder, @Value, @RequiredArgsConstructor) |
+| IoT protocol | MQTT (via Spring Integration / Eclipse Paho) |
 
 ## Frontend
 
 | Concern | Technology |
 |---------|-----------|
 | Language | TypeScript |
-| Framework | React 18 |
+| Framework | Vue 3 (Composition API, <script setup>) |
 | Build tool | Vite |
 | Test runner | Vitest |
 | HTTP mocking | MSW (Mock Service Worker) |
@@ -36,14 +36,14 @@ tech-profile:
 | Concern | Technology |
 |---------|-----------|
 | Framework | Tailwind CSS |
-| Icons | lucide-react |
+| Icons | lucide-vue-next |
 
 ## Browser Testing
 
 | Concern | Technology |
 |---------|-----------|
-| Framework | Selenium WebDriver |
-| Async assertions | Awaitility |
+| Framework | Playwright |
+| Assertions | Playwright assertions (expect) |
 
 ## Testing (Backend)
 
@@ -60,7 +60,8 @@ tech-profile:
 | Concern | Technology |
 |---------|-----------|
 | Containerization | Docker / docker-compose |
-| Mail server (dev) | MailHog |
+| Mail server (dev) | Mailpit (via Testcontainers) |
+| MQTT broker (dev) | Mosquitto |
 
 ## Conventions
 
@@ -70,10 +71,10 @@ tech-profile:
 |---------|-----------|
 | Test disable marker | @Disabled |
 | Not-implemented marker | throw UnsupportedOperationException() |
-| Run command | ./gradlew :backend:application:bootRun |
-| Test command | ./gradlew :backend:{module}:test |
-| Acceptance test command | ./gradlew backendTest |
-| Coverage report | JaCoCo XML in build/reports/jacoco/ |
+| Run command | ./mvnw spring-boot:run |
+| Test command | ./mvnw test -pl backend/{module} |
+| Acceptance test command | ./mvnw verify -B |
+| Coverage report | JaCoCo XML in target/site/jacoco/ |
 | Health endpoint | /actuator/health |
 | Spring config syntax | ${VAR:fallback} |
 | Docker config syntax | ${VAR:-fallback} |
@@ -91,4 +92,4 @@ tech-profile:
 
 | Concern | Convention |
 |---------|-----------|
-| Acceptance test command | ./gradlew frontendTest |
+| Acceptance test command | ./mvnw verify -B -Pfrontend |
