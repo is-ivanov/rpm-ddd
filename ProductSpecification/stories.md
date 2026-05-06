@@ -2,12 +2,12 @@
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra |
 |---|-------|------|------|------|-------|-----|------|-------|
+| 1 | User login | 🔧 | — | — | — | — | — | — |
 
 # Backlog
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra |
 |---|-------|------|------|------|-------|-----|------|-------|
-| 1 | User login | · | · | · | · | · | · | · |
 | 2 | Email integration: send email on user registration | · | · | · | · | · | · | · |
 | 3 | User management: roles, agencies, basic permissions | · | · | · | · | · | · | · |
 | 4 | Patient creation | · | · | · | · | · | · | · |
