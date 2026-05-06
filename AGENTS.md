@@ -30,7 +30,7 @@ Follow `.editorconfig`: UTF-8, spaces, 4-space indentation, final newline, and a
 Recent history uses short imperative subjects such as `Add architecture tests and some shared.web classes`; dependency bumps follow Dependabot’s `Bump ... from ... to ...` pattern. Keep commit titles concise and scoped to one change. For pull requests, include the problem, approach, linked issue if one exists, and verification run (`./mvnw test`, `./mvnw verify`, `./mvnw checkstyle:check`, or `./mvnw pmd:check`). Screenshots are only needed for HTTP or UI-facing changes.
 
 ## Continue Framework (TDD/ATDD Workflow)
-The project uses the Continue framework (ported from Claude Code) for structured TDD-driven story development. The framework lives in `.opencode/` and provides:
+The project uses the Continue framework for structured TDD-driven story development. The framework lives in `.opencode/` and provides:
 
 - **`/continue`** — Central dispatcher. Reads `progress.md`, executes next atomic work unit.
 - **28 slash commands** — `/story`, `/task`, `/interview`, `/refactor`, `/architecture`, etc. See `.opencode/commands/`.
