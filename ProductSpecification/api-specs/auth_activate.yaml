@@ -1,0 +1,95 @@
+openapi: 3.0.3
+info:
+  title: Auth Activation
+  version: 1.0.0
+
+paths:
+  /api/auth/activate:
+    get:
+      summary: Validate activation token and return user info
+      operationId: getActivationInfo
+      tags:
+        - auth
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JWT activation token
+      responses:
+        '200':
+          description: Token valid, user info returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivationInfoResponse'
+        '400':
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+
+    post:
+      summary: Set password and activate account
+      operationId: activateAccount
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateRequest'
+      responses:
+        '200':
+          description: Account activated successfully
+        '400':
+          description: Invalid token, expired token, or password policy violation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    ActivationInfoResponse:
+      type: object
+      properties:
+        login:
+          type: string
+          description: User login
+        email:
+          type: string
+          description: User email address
+
+    ActivateRequest:
+      type: object
+      required:
+        - token
+        - newPassword
+      properties:
+        token:
+          type: string
+          description: JWT activation token
+        newPassword:
+          type: string
+          description: New password (12-128 chars, upper, lower, digit, special, no whitespace)
+          minLength: 12
+          maxLength: 128
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
