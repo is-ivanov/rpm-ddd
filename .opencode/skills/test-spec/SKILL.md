@@ -18,7 +18,7 @@ Generate BDD-style test specifications for a story in 6 categories. Each categor
 
 ### Phase 1: Context & Story Selection
 
-Read before generating: `ProductSpecification/BriefProductDescription.txt`, `ProductSpecification/stories.md`, `ProductSpecification/ExpectedLoad.txt`, story folder (`stories/*/`): mockups, `*.md`, `endpoints.md`, `interview.md`.
+Read before generating: `ProductSpecification/BriefProductDescription.md`, `ProductSpecification/stories.md`, `ProductSpecification/ExpectedLoad.md`, story folder (`stories/*/`): mockups, `*.md`, `endpoints.md`, `interview.md`.
 
 Parse input: by name (`"Login/Logout"`), by number (`5`), or interactive (list and ask).
 
@@ -56,5 +56,5 @@ Report: folder path, files created, test counts per file.
 
 - English, Gherkin in Markdown, DSL only (no technical details in steps)
 - Main files: critical path (~27-34 total), Extended files: edge cases
-- Reference ExpectedLoad.txt for load tests
+- Reference ExpectedLoad.md for load tests
 - **Security**: generate stack-aware scenarios only — see relevance filtering and checklist in `test-spec-format.md`. Skip technologies not in the stack (NoSQL, LDAP, XXE). Skip cross-cutting concerns tested globally (security headers, CORS, HTTPS). Include IDOR for resource-by-ID endpoints (`tasks/{id}`, `boards/{id}`), JWT security for auth stories, input validation for task fields. Merge related scenarios (e.g., one SQL injection test covering all fields). Target 6-10 focused scenarios per story.
