@@ -1,11 +1,9 @@
 # Expected Load
 
-<!-- Define the expected scale. Examples:
-- Single-user or multi-tenant?
-- How many concurrent users?
-- Data volume limits?
-- Request rate expectations?
--->
-
-- [user model, e.g., "Single-user application" or "Multi-tenant SaaS"]
-- [data volume constraint, e.g., "No more than 10,000 records per tenant"]
+- Target: 20,000 patients within 2 years
+- Each patient submits ~2 vital readings per day via IoT devices
+- Daily ingestion: ~40,000 readings/day; annual: ~14.6M readings/year
+- Single agency, multiple hospitals/physician groups (shared DB, org-level isolation)
+- 10-50 concurrent staff and physicians during peak hours
+- IoT data ingestion is asynchronous — no strict real-time latency requirement
+- Historical data retention per regulatory requirements
