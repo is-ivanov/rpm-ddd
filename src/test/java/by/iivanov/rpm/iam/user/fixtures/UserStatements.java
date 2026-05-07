@@ -31,4 +31,13 @@ public class UserStatements {
                 .create();
         userRepository.save(existingUser);
     }
+
+    /** Saves a user instance with the provided login and status. */
+    public void givenUserWithLoginAndStatus(String login, by.iivanov.rpm.iam.user.domain.UserStatus status) {
+        User existingUser = Instancio.of(User.class)
+                .set(field(User::getLogin), new Login(login))
+                .set(field(User::getStatus), status)
+                .create();
+        userRepository.save(existingUser);
+    }
 }

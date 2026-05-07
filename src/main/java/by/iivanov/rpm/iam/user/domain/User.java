@@ -10,6 +10,7 @@ import org.hibernate.type.SqlTypes;
 import org.jmolecules.ddd.types.AggregateRoot;
 import org.jmolecules.ddd.types.Association;
 import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Table(name = "iam_user")
 public class User extends AbstractAggregateRoot<User> implements AggregateRoot<User, UserId> {
@@ -94,5 +95,14 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
 
     public EmailAddress getEmail() {
         return email;
+    }
+
+    public void authenticate(Password passwordToValidate, PasswordEncoder encoder) {
+        if (status != UserStatus.ACTIVE) {
+            throw new UserNotActivatedException("Account not activated");
+        }
+        if (!encoder.matches(passwordToValidate.hash(), this.password.hash())) {
+            throw new UserNotActivatedException("Account not activated");
+        }
     }
 }

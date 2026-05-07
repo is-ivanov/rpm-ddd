@@ -12,7 +12,7 @@
 ### Scenario 1.1: Login with PENDING user returns 401
 - [x] red-acceptance
 - [x] design
-- [ ] red-usecase
+- [~] red-usecase
 - [ ] green-usecase
 - [ ] adapters-discovery
 - [ ] green-acceptance
