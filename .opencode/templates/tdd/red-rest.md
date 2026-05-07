@@ -16,6 +16,6 @@ Create in the adapter's DTO directory with `toUsecaseRequest()` conversion metho
 |--------------|-----------------|
 | Successful creation | `201 Created` |
 | Successful query | `200 OK` |
-| Validation error | `400 Bad Request` |
+| Validation error | `422 Unprocessable Content` |
 | Authentication error | `401 Unauthorized` |
 | Not found | `404 Not Found` |

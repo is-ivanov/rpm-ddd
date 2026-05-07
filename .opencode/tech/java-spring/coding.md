@@ -97,3 +97,4 @@ Tech binding for `coding-rules.md`. Shared section structure: `.opencode/templat
 ## Error Handling
 
 - Domain exceptions extend `RuntimeException`. Bubble to `GlobalExceptionHandler`.
+- Library: `io.github.wimdeblauwe:error-handling-spring-boot-starter`. Configured in `application.yml` under `error.handling.*`.

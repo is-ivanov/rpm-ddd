@@ -45,8 +45,8 @@ describe('Registration API Client', () => {
     server.use(
       http.post(`${BASE}/api/v1/auth/register`, () => {
         return HttpResponse.json(
-          { error: 'ValidationException', message: 'Invalid email format', timestamp: '2026-01-01T00:00:00Z' },
-          { status: 400 }
+          { type: 'https://www.rpm-ddd.my/problem/validation-failed', title: 'Unprocessable Content', status: 422, detail: 'Invalid email format' },
+          { status: 422 }
         )
       })
     )

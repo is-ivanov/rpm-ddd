@@ -102,5 +102,5 @@ Each bounded context is a Spring Modulith module. Module boundaries are enforced
 ## Error Handling
 
 - Domain exceptions extend the language's base unchecked exception, no framework dependencies. Let them bubble to the centralized exception handler.
-- Mapping: ValidationException→400, UserNotFoundException→404, InvalidCredentialsException→401.
-- Error response format: `{"error": "...", "message": "...", "timestamp": "..."}`.
+- Mapping: ValidationException→422 (Unprocessable Content), UserNotFoundException→404, InvalidCredentialsException→401.
+- Error responses use RFC 9457 Problem Detail format: `{"type": "...", "title": "...", "status": N, "detail": "...", "instance": "..."}`. Validation errors additionally include a `fieldErrors` array with per-field details (`code`, `property`, `message`, `rejectedValue`, `path`).
