@@ -50,7 +50,7 @@ class AuthenticationServiceTest {
                     .create();
             userStatements.userRepository.save(pendingUser);
 
-            var command = new AuthenticateUserCommand(new Login(PENDING_LOGIN), new Password(PENDING_PASSWORD));
+            var command = new AuthenticateUserCommand(new Login(PENDING_LOGIN), PENDING_PASSWORD);
 
             // WHEN:
             Exception caughtException = catchException(() -> sut.authenticate(command));

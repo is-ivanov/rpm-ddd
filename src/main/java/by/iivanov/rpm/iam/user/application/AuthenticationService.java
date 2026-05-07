@@ -1,5 +1,6 @@
 package by.iivanov.rpm.iam.user.application;
 
+import by.iivanov.rpm.iam.user.domain.Password;
 import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.iam.user.domain.UserNotActivatedException;
 import by.iivanov.rpm.iam.user.domain.UserRepository;
@@ -21,6 +22,6 @@ public class AuthenticationService {
         User user = userRepository
                 .findByLogin(command.login())
                 .orElseThrow(() -> new UserNotActivatedException("Account not activated"));
-        user.authenticate(command.password(), passwordEncoder);
+        user.authenticate(new Password(command.password()), passwordEncoder);
     }
 }
