@@ -46,7 +46,7 @@ Scenario: Activation with a JWT whose payload was modified fails
   Given a registered user with login "alice" in PENDING status
   And a valid activation token was issued for alice
   When a POST /api/auth/activate is sent with the token payload modified (changed login to "bob") and re-signed with a random secret
-  Then the response status is 401
+  Then the response status is 422
   And the response body contains error "Invalid activation token"
 ```
 
@@ -54,7 +54,7 @@ Scenario: Activation with a JWT whose payload was modified fails
 Scenario: Activation with a JWT signed with the wrong secret fails
   Given a registered user with login "alice" in PENDING status
   When a POST /api/auth/activate is sent with a token signed with "wrong-secret-key" instead of the application secret
-  Then the response status is 401
+  Then the response status is 422
   And the response body contains error "Invalid activation token"
 ```
 
@@ -65,7 +65,7 @@ Scenario: Activation with an expired JWT token fails
   Given a registered user with login "alice" in PENDING status
   And an activation token was issued with expiry in the past
   When a POST /api/auth/activate is sent with that expired token
-  Then the response status is 401
+  Then the response status is 422
   And the response body contains error "Activation token has expired"
 ```
 
@@ -98,7 +98,7 @@ Scenario: Password exceeding maximum length is rejected during activation
   Given a registered user with login "alice" in PENDING status
   And a valid activation token for alice
   When a POST /api/auth/activate is sent with a password of 200 characters
-  Then the response status is 400
+  Then the response status is 422
   And the response body contains error describing password length constraint
 ```
 
@@ -112,9 +112,9 @@ Scenario: Password exceeding maximum length is rejected during activation
 | 5.1 (password injection) | POST | /api/auth/login | status 401, error message on SQL injection payload in password field |
 | 5.2 | POST | /api/auth/login | status 429 on 5th attempt, 429 on correct password during lockout |
 | 5.3 | DB query | direct JDBC | stored password != plaintext, starts with "$2a$" |
-| 5.4 (tampered payload) | POST | /api/auth/activate | status 401, error "Invalid activation token" |
-| 5.4 (wrong secret) | POST | /api/auth/activate | status 401, error "Invalid activation token" |
-| 5.5 | POST | /api/auth/activate | status 401, error "Activation token has expired" |
+| 5.4 (tampered payload) | POST | /api/auth/activate | status 422, error "Invalid activation token" |
+| 5.4 (wrong secret) | POST | /api/auth/activate | status 422, error "Invalid activation token" |
+| 5.5 | POST | /api/auth/activate | status 422, error "Activation token has expired" |
 | 5.6 | POST | /api/auth/activate | status 403 without CSRF token |
 | 5.7 | POST | /api/auth/activate | status 200, role unchanged, status from normal flow |
-| 5.8 | POST | /api/auth/activate | status 400, password length error |
+| 5.8 | POST | /api/auth/activate | status 422, password length error |

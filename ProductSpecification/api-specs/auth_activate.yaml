@@ -24,12 +24,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ActivationInfoResponse'
-        '400':
-          description: Invalid or expired token
+        '422':
+          description: Invalid or expired token (validation error)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetailResponse'
         '500':
           description: Internal server error
 
@@ -47,12 +47,12 @@ paths:
       responses:
         '200':
           description: Account activated successfully
-        '400':
+        '422':
           description: Invalid token, expired token, or password policy violation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetailResponse'
         '500':
           description: Internal server error
 
@@ -83,13 +83,45 @@ components:
           minLength: 12
           maxLength: 128
 
-    ErrorResponse:
+    ProblemDetailResponse:
+      type: object
+      required:
+        - type
+        - title
+        - status
+        - detail
+      properties:
+        type:
+          type: string
+          description: URI reference to the error type
+        title:
+          type: string
+          description: Short human-readable summary
+        status:
+          type: integer
+          description: HTTP status code
+        detail:
+          type: string
+          description: Specific explanation of the error
+        instance:
+          type: string
+          description: URI reference to the specific occurrence
+        fieldErrors:
+          type: array
+          description: Per-field validation details (present for validation errors)
+          items:
+            $ref: '#/components/schemas/FieldError'
+
+    FieldError:
       type: object
       properties:
-        error:
+        code:
+          type: string
+        property:
           type: string
         message:
           type: string
-        timestamp:
+        rejectedValue:
           type: string
-          format: date-time
+        path:
+          type: string

@@ -70,13 +70,26 @@ components:
             type: string
           description: User roles
 
-    ErrorResponse:
+    ProblemDetailResponse:
       type: object
+      required:
+        - type
+        - title
+        - status
+        - detail
       properties:
-        error:
+        type:
           type: string
-        message:
+          description: URI reference to the error type
+        title:
           type: string
-        timestamp:
+          description: Short human-readable summary
+        status:
+          type: integer
+          description: HTTP status code
+        detail:
           type: string
-          format: date-time
+          description: Specific explanation of the error
+        instance:
+          type: string
+          description: URI reference to the specific occurrence

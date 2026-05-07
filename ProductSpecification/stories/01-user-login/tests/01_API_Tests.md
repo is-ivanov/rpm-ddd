@@ -43,14 +43,14 @@
 
 **Given** an expired activation token
 **When** the activation token is validated
-**Then** the response status is 400
+**Then** the response status is 422
 **And** the response contains an error indicating the token has expired
 
 ### 2.3 Invalid activation token returns error
 
 **Given** an invalid activation token
 **When** the activation token is validated
-**Then** the response status is 400
+**Then** the response status is 422
 **And** the response contains an error indicating the token is invalid
 
 ---
@@ -61,14 +61,14 @@
 
 **Given** a pending user with a valid activation token
 **When** the user submits activation with password "weak"
-**Then** the response status is 400
+**Then** the response status is 422
 **And** the response contains validation errors for password policy violations
 
 ### 3.2 Activate with expired token returns error
 
 **Given** an expired activation token
 **When** the user submits activation with a valid password
-**Then** the response status is 400
+**Then** the response status is 422
 **And** the response contains an error indicating the token has expired
 
 ---
@@ -120,10 +120,10 @@
 | 1.2 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Аккаунт заблокирован" |
 | 1.3 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Аккаунт деактивирован" |
 | 2.1 | GET | /api/auth/activate?token={token} | No | — | 200 | Response body contains `login` and `email` |
-| 2.2 | GET | /api/auth/activate?token={token} | No | — | 400 | Error indicates expired token |
-| 2.3 | GET | /api/auth/activate?token={token} | No | — | 400 | Error indicates invalid token |
-| 3.1 | POST | /api/auth/activate | No | `{ token, password: "weak" }` | 400 | Validation errors for password policy (12-128 chars, upper, lower, digit, special, no whitespace) |
-| 3.2 | POST | /api/auth/activate | No | `{ token, password }` | 400 | Error indicates expired token |
+| 2.2 | GET | /api/auth/activate?token={token} | No | — | 422 | Error indicates expired token |
+| 2.3 | GET | /api/auth/activate?token={token} | No | — | 422 | Error indicates invalid token |
+| 3.1 | POST | /api/auth/activate | No | `{ token, password: "weak" }` | 422 | Validation errors for password policy (12-128 chars, upper, lower, digit, special, no whitespace) |
+| 3.2 | POST | /api/auth/activate | No | `{ token, password }` | 422 | Error indicates expired token |
 | 4.1 | POST | /api/auth/activate | No | `{ token, password }` | 200 | Follow-up login succeeds with session cookie |
 | 5.1 | GET | /api/auth/me | JSESSIONID | — | 200 | Response contains userId, login, email, firstName, lastName, status, roles |
 | 5.2 | GET | /api/auth/me | None | — | 401 | — |
