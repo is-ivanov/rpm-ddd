@@ -12,7 +12,6 @@ import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,6 @@ class AuthenticationServiceTest {
     class AuthenticateTest {
 
         @Test
-        @Disabled("TDD Red Phase - Not yet implemented")
         @DisplayName("WHEN user status is PENDING EXPECT UserNotActivatedException with 'Account not activated'")
         void when_userStatusIsPending_expect_exception() {
             // GIVEN:
@@ -52,7 +50,7 @@ class AuthenticationServiceTest {
                     .create();
             userStatements.userRepository.save(pendingUser);
 
-            var command = new AuthenticateUserCommand(PENDING_LOGIN, PENDING_PASSWORD);
+            var command = new AuthenticateUserCommand(new Login(PENDING_LOGIN), new Password(PENDING_PASSWORD));
 
             // WHEN:
             Exception caughtException = catchException(() -> sut.authenticate(command));
