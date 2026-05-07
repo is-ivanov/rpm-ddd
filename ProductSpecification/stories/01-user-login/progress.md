@@ -10,8 +10,8 @@
 ## Backend Scenarios
 
 ### Scenario 1.1: Login with PENDING user returns 401
-- [ ] red-acceptance
-- [ ] design
+- [x] red-acceptance
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [ ] adapters-discovery

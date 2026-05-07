@@ -2,7 +2,7 @@
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra |
 |---|-------|------|------|------|-------|-----|------|-------|
-| 1 | User login | 🔧 | — | — | — | — | — | — |
+| 1 | User login | ✅ | 🔧 | — | — | — | — | — | — |
 
 # Backlog
 
