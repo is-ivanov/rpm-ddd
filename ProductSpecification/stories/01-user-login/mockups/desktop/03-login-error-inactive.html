@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1400">
-    <title>Вход в систему — Аккаунт не активирован</title>
+    <title>Sign In — Account Not Activated</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -172,28 +172,28 @@
 <body>
     <div class="card">
         <div class="logo">RPM</div>
-        <div class="title">Вход в систему</div>
+        <div class="title">Sign In</div>
         <div class="error-banner">
             <i data-lucide="alert-triangle" style="width:16px;height:16px;"></i>
-            <span>Аккаунт не активирован. Проверьте электронную почту для ссылки на активацию.</span>
+            <span>Account not activated. Check your email for the activation link.</span>
         </div>
         <form>
             <div class="form-group">
-                <label class="form-label" for="login">Логин</label>
+                <label class="form-label" for="login">Username</label>
                 <input class="form-input" type="text" id="login" name="login" value="iivanov">
             </div>
             <div class="form-group">
-                <label class="form-label" for="password">Пароль</label>
+                <label class="form-label" for="password">Password</label>
                 <div class="input-wrapper">
                     <input class="form-input password-field" type="password" id="password" name="password" value="password123">
-                    <button type="button" class="toggle-password" aria-label="Показать пароль">
+                    <button type="button" class="toggle-password" aria-label="Show password">
                         <i data-lucide="eye" style="width:18px;height:18px;"></i>
                     </button>
                 </div>
             </div>
-            <button type="submit" class="btn-primary">Войти</button>
+            <button type="submit" class="btn-primary">Sign In</button>
         </form>
-        <a href="#" class="forgot-link">Забыли пароль?</a>
+        <a href="#" class="forgot-link">Forgot password?</a>
     </div>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>lucide.createIcons();</script>

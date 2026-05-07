@@ -11,21 +11,21 @@
 **Given** a registered user with status PENDING
 **When** the user attempts to log in with correct credentials
 **Then** the response status is 401
-**And** the response contains error message "Аккаунт не активирован"
+**And** the response contains error message "Account not activated"
 
 ### 1.2 Login with LOCKED user returns 401 with locked message
 
 **Given** a registered user with status LOCKED
 **When** the user attempts to log in with correct credentials
 **Then** the response status is 401
-**And** the response contains error message "Аккаунт заблокирован"
+**And** the response contains error message "Account locked"
 
 ### 1.3 Login with INACTIVE user returns 401 with deactivated message
 
 **Given** a registered user with status INACTIVE
 **When** the user attempts to log in with correct credentials
 **Then** the response status is 401
-**And** the response contains error message "Аккаунт деактивирован"
+**And** the response contains error message "Account deactivated"
 
 ---
 
@@ -116,9 +116,9 @@
 
 | Scenario | Method | Path | Auth | Request Body | Success Status | Key Assertions |
 |---|---|---|---|---|---|---|
-| 1.1 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Аккаунт не активирован" |
-| 1.2 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Аккаунт заблокирован" |
-| 1.3 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Аккаунт деактивирован" |
+| 1.1 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Account not activated" |
+| 1.2 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Account locked" |
+| 1.3 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Account deactivated" |
 | 2.1 | GET | /api/auth/activate?token={token} | No | — | 200 | Response body contains `login` and `email` |
 | 2.2 | GET | /api/auth/activate?token={token} | No | — | 422 | Error indicates expired token |
 | 2.3 | GET | /api/auth/activate?token={token} | No | — | 422 | Error indicates invalid token |

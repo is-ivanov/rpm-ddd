@@ -6,6 +6,12 @@ tech-profile:
   css: tailwind
   browser-testing: playwright
 
+## Application
+
+| Concern | Value |
+|---------|-------|
+| Language | English |
+
 ## Backend
 
 | Concern | Technology |

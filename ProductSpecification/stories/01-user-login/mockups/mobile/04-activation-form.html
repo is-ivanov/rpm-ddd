@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=375">
-  <title>Установка пароля</title>
+  <title>Set Password</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -131,10 +131,10 @@
 <body>
   <div class="card">
     <div class="logo">RPM</div>
-    <div class="title">Установка пароля</div>
-    <div class="subtitle">Для аккаунта iivanov (ivan@example.com)</div>
+    <div class="title">Set Password</div>
+    <div class="subtitle">For account iivanov (ivan@example.com)</div>
     <div class="field">
-      <label for="password">Новый пароль</label>
+      <label for="password">New password</label>
       <div class="input-wrapper">
         <input type="password" id="password" value="MyStr0ng">
         <button type="button" class="toggle-password">
@@ -144,40 +144,40 @@
       <ul class="rules">
         <li class="met">
           <i data-lucide="check" style="width:14px;height:14px;"></i>
-          Минимум 12 символов
+           At least 12 characters
         </li>
         <li class="met">
           <i data-lucide="check" style="width:14px;height:14px;"></i>
-          Хотя бы одна заглавная буква
+           At least one uppercase letter
         </li>
         <li class="met">
           <i data-lucide="check" style="width:14px;height:14px;"></i>
-          Хотя бы одна строчная буква
+           At least one lowercase letter
         </li>
         <li>
           <i data-lucide="check" style="width:14px;height:14px;"></i>
-          Хотя бы одна цифра
+           At least one digit
         </li>
         <li>
           <i data-lucide="check" style="width:14px;height:14px;"></i>
-          Хотя бы один специальный символ
+           At least one special character
         </li>
         <li>
           <i data-lucide="x" style="width:14px;height:14px;"></i>
-          Без пробелов
+           No spaces
         </li>
       </ul>
     </div>
     <div class="field">
-      <label for="confirm-password">Подтвердите пароль</label>
+      <label for="confirm-password">Confirm password</label>
       <div class="input-wrapper">
-        <input type="password" id="confirm-password" placeholder="Повторите пароль">
+        <input type="password" id="confirm-password" placeholder="Re-enter password">
         <button type="button" class="toggle-password">
           <i data-lucide="eye" style="width:20px;height:20px;"></i>
         </button>
       </div>
     </div>
-    <button class="btn-primary">Активировать аккаунт</button>
+    <button class="btn-primary">Activate Account</button>
   </div>
   <script>lucide.createIcons();</script>
 </body>
