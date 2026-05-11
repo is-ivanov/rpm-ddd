@@ -2,16 +2,12 @@ package by.iivanov.rpm.iam.user.application;
 
 import static org.assertj.core.api.BDDAssertions.catchException;
 import static org.assertj.core.api.BDDAssertions.then;
-import static org.instancio.Select.field;
 
 import by.iivanov.rpm.iam.user.domain.Login;
-import by.iivanov.rpm.iam.user.domain.Password;
-import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.iam.user.domain.UserAuthenticationService;
 import by.iivanov.rpm.iam.user.domain.UserNotActivatedException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
-import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,13 +39,7 @@ class AuthenticationServiceTest {
         @Test
         @DisplayName("WHEN user status is PENDING EXPECT UserNotActivatedException with 'Account not activated'")
         void when_userStatusIsPending_expect_exception() {
-            // GIVEN:
-            User pendingUser = Instancio.of(User.class)
-                    .set(field(User::getLogin), new Login(PENDING_LOGIN))
-                    .set(field(User::getStatus), UserStatus.PENDING)
-                    .set(field(User::getPassword), new Password(PENDING_PASSWORD))
-                    .create();
-            userStatements.userRepository.save(pendingUser);
+            userStatements.givenUserWithLoginPasswordAndStatus(PENDING_LOGIN, PENDING_PASSWORD, UserStatus.PENDING);
 
             var command = new AuthenticateUserCommand(new Login(PENDING_LOGIN), PENDING_PASSWORD);
 

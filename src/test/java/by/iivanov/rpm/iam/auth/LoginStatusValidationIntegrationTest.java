@@ -4,7 +4,6 @@ import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
 import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import org.intellij.lang.annotations.Language;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +21,6 @@ class LoginStatusValidationIntegrationTest extends AbstractApplicationIntegratio
     }
 
     @Test
-    @Disabled("TDD Red Phase - Not yet implemented")
     @DisplayName("Login with PENDING user returns 401 with activation message")
     void should_return401_when_loginWithPendingUser() {
         var csrfToken = authSessionFactory.getCsrfToken();

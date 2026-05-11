@@ -2,7 +2,9 @@ package by.iivanov.rpm.iam.auth.infrastructure;
 
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.User;
+import by.iivanov.rpm.iam.user.domain.UserNotActivatedException;
 import by.iivanov.rpm.iam.user.domain.UserRepository;
+import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.shared.infrastructure.InfrastructureComponent;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +24,9 @@ class RpmUserDetailsService implements UserDetailsService {
         User user = userRepository
                 .findByLogin(new Login(loginValue))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + loginValue));
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new UserNotActivatedException("Account not activated");
+        }
         return new RpmUserDetails(user.getId(), user.getLogin(), user.getPassword());
     }
 }
