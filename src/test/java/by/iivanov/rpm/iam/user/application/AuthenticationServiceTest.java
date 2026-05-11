@@ -7,6 +7,7 @@ import static org.instancio.Select.field;
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.Password;
 import by.iivanov.rpm.iam.user.domain.User;
+import by.iivanov.rpm.iam.user.domain.UserAuthenticationService;
 import by.iivanov.rpm.iam.user.domain.UserNotActivatedException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
@@ -32,7 +33,7 @@ class AuthenticationServiceTest {
     void setUp() {
         userStatements = new UserStatements();
         passwordEncoder = NoOpPasswordEncoder.getInstance();
-        sut = new AuthenticationService(userStatements.userRepository, passwordEncoder);
+        sut = new AuthenticationService(new UserAuthenticationService(userStatements.userRepository), passwordEncoder);
     }
 
     @Nested
