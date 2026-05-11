@@ -5,6 +5,7 @@ import static org.instancio.Select.field;
 import by.iivanov.rpm.iam.user.domain.EmailAddress;
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.User;
+import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.infrastructure.InMemoryUserRepository;
 import org.instancio.Instancio;
 
@@ -33,7 +34,7 @@ public class UserStatements {
     }
 
     /** Saves a user instance with the provided login and status. */
-    public void givenUserWithLoginAndStatus(String login, by.iivanov.rpm.iam.user.domain.UserStatus status) {
+    public void givenUserWithLoginAndStatus(String login, UserStatus status) {
         User existingUser = Instancio.of(User.class)
                 .set(field(User::getLogin), new Login(login))
                 .set(field(User::getStatus), status)
