@@ -17,6 +17,11 @@ Each file type has its own fallback pattern:
 - Spring YAML: `${VAR:fallback}` (colon only)
 - Docker Compose, shell scripts: `${VAR:-fallback}` (colon-dash)
 
+## Static Analysis (Pre-Commit)
+
+- Run before every commit: `./mvnw checkstyle:check -B`
+- If violations are found, fix them before committing.
+
 ## Acceptance Tests
 
 - `test-acceptance.sh` exports env vars then runs Gradle: `./gradlew backendTest` or `./gradlew frontendTest`.
