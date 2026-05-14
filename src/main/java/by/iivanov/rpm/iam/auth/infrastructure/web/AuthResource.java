@@ -1,9 +1,13 @@
 package by.iivanov.rpm.iam.auth.infrastructure.web;
 
+import by.iivanov.rpm.iam.auth.infrastructure.RpmUserDetails;
+import by.iivanov.rpm.iam.user.application.AuthenticateUserCommand;
+import by.iivanov.rpm.iam.user.application.AuthenticationService;
+import by.iivanov.rpm.iam.user.domain.Login;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.security.authentication.AuthenticationManager;
+import java.util.Collections;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
@@ -19,15 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/auth")
 class AuthResource {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
     private final SecurityContextHolderStrategy securityContextHolderStrategy;
     private final SecurityContextRepository securityContextRepository;
 
     AuthResource(
-            AuthenticationManager authenticationManager,
+            AuthenticationService authenticationService,
             SecurityContextHolderStrategy securityContextHolderStrategy,
             SecurityContextRepository securityContextRepository) {
-        this.authenticationManager = authenticationManager;
+        this.authenticationService = authenticationService;
         this.securityContextHolderStrategy = securityContextHolderStrategy;
         this.securityContextRepository = securityContextRepository;
     }
@@ -42,9 +46,12 @@ class AuthResource {
             @RequestBody @Valid LoginRequest request,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
-        var authentication = authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken.unauthenticated(request.login(), request.password()));
+        var command = new AuthenticateUserCommand(new Login(request.login()), request.password());
+        var user = authenticationService.authenticate(command);
 
+        var principal = new RpmUserDetails(user.getId(), user.getLogin(), user.getPassword());
+        var authentication =
+                UsernamePasswordAuthenticationToken.authenticated(principal, null, Collections.emptyList());
         SecurityContext context = securityContextHolderStrategy.createEmptyContext();
         context.setAuthentication(authentication);
         securityContextHolderStrategy.setContext(context);
