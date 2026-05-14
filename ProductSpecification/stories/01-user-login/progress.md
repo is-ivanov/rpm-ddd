@@ -18,8 +18,8 @@
 - [x] green-acceptance
 
 ### Scenario 1.2: Login with LOCKED user returns 401
-- [ ] red-acceptance
-- [ ] design
+- [x] red-acceptance
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [ ] adapters-discovery
