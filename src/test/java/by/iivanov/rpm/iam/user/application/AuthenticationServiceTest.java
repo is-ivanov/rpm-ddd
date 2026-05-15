@@ -9,6 +9,7 @@ import by.iivanov.rpm.iam.user.domain.UserNotActivatedException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ class AuthenticationServiceTest {
 
     private static final String PENDING_LOGIN = "pending_user";
     private static final String PENDING_PASSWORD = "Pending@123";
+    private static final String LOCKED_LOGIN = "locked_user";
+    private static final String LOCKED_PASSWORD = "Locked@123";
 
     private AuthenticationService sut;
     private UserStatements userStatements;
@@ -48,6 +51,21 @@ class AuthenticationServiceTest {
 
             // THEN:
             then(caughtException).isInstanceOf(UserNotActivatedException.class).hasMessage("Account not activated");
+        }
+
+        @Test
+        @DisplayName("Login with LOCKED user returns 401 with locked message")
+        @Disabled("TDD Red Phase - message is 'Account not activated' but should be 'Account locked' for LOCKED status")
+        void when_userStatusIsLocked_expect_accountLockedMessage() {
+            userStatements.givenUserWithLoginPasswordAndStatus(LOCKED_LOGIN, LOCKED_PASSWORD, UserStatus.LOCKED);
+
+            var command = new AuthenticateUserCommand(new Login(LOCKED_LOGIN), LOCKED_PASSWORD);
+
+            // WHEN:
+            Exception caughtException = catchException(() -> sut.authenticate(command));
+
+            // THEN:
+            then(caughtException).isInstanceOf(UserNotActivatedException.class).hasMessage("Account locked");
         }
     }
 }
