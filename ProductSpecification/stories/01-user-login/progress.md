@@ -29,12 +29,12 @@
 - [x] green-acceptance
 
 ### Scenario 1.3: Login with INACTIVE user returns 401
-- [~] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] red-acceptance
+- [S] design (feature already implemented: UserStatus.INACTIVE handled by existing authentication code)
+- [S] red-usecase (feature already implemented: UserStatus.authenticationErrorMessage() covers INACTIVE)
+- [S] green-usecase (feature already implemented)
+- [S] adapters-discovery (feature already implemented: same code path as PENDING/LOCKED)
+- [x] green-acceptance
 
 ### Scenario 2.1: Valid activation token returns user info
 - [ ] red-acceptance

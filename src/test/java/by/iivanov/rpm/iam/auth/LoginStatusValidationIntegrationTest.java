@@ -12,6 +12,8 @@ class LoginStatusValidationIntegrationTest extends AbstractApplicationIntegratio
     private static final String PENDING_USER_PASSWORD = "Pending@123";
     private static final String LOCKED_USER_LOGIN = "locked_user";
     private static final String LOCKED_USER_PASSWORD = "Locked@123";
+    private static final String INACTIVE_USER_LOGIN = "inactive_user";
+    private static final String INACTIVE_USER_PASSWORD = "Inactive@123";
 
     private final AuthApi authApi;
     private final AuthSessionFactory authSessionFactory;
@@ -32,6 +34,13 @@ class LoginStatusValidationIntegrationTest extends AbstractApplicationIntegratio
     @DisplayName("Login with LOCKED user returns 401 with locked message")
     void should_return401_when_loginWithLockedUser() {
         assertLoginRejected(LOCKED_USER_LOGIN, LOCKED_USER_PASSWORD, "Account locked", "authentication-failed");
+    }
+
+    @Test
+    @DisplayName("Login with INACTIVE user returns 401 with deactivated message")
+    void should_return401_when_loginWithInactiveUser() {
+        assertLoginRejected(
+                INACTIVE_USER_LOGIN, INACTIVE_USER_PASSWORD, "Account deactivated", "authentication-failed");
     }
 
     private void assertLoginRejected(String login, String password, String expectedDetail, String expectedType) {
