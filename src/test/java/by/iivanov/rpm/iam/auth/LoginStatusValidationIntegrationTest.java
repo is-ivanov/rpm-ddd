@@ -3,7 +3,6 @@ package by.iivanov.rpm.iam.auth;
 import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
 import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +29,6 @@ class LoginStatusValidationIntegrationTest extends AbstractApplicationIntegratio
     }
 
     @Test
-    @Disabled("TDD Red Phase - Not yet implemented")
     @DisplayName("Login with LOCKED user returns 401 with locked message")
     void should_return401_when_loginWithLockedUser() {
         assertLoginRejected(LOCKED_USER_LOGIN, LOCKED_USER_PASSWORD, "Account locked", "authentication-failed");

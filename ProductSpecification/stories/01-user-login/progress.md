@@ -22,11 +22,14 @@
 - [x] design
 - [x] red-usecase
 - [x] green-usecase
-- [~] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery
+  - Check 1 (ports): UserRepository — sufficient (findByLogin already implemented from 1.1); PasswordEncoder — sufficient (Spring bean)
+  - Check 2 (exceptions): rest — sufficient (UserAuthenticationException already mapped in application.yml from 1.1)
+  - Check 3 (response shape): rest — sufficient (error-handling-starter generates ProblemDetail for UserAuthenticationException, same as 1.1)
+- [x] green-acceptance
 
 ### Scenario 1.3: Login with INACTIVE user returns 401
-- [ ] red-acceptance
+- [~] red-acceptance
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
