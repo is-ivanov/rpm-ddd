@@ -14,10 +14,8 @@ public class UserAuthenticationService {
     public User authenticate(Login login) {
         User user = userRepository
                 .findByLogin(login)
-                .orElseThrow(() -> new UserNotActivatedException("Account not activated"));
-        if (user.getStatus() != UserStatus.ACTIVE) {
-            throw new UserNotActivatedException("Account not activated");
-        }
+                .orElseThrow(() -> new UserAuthenticationException("Account not activated"));
+        user.validateActiveForAuthentication();
         return user;
     }
 }

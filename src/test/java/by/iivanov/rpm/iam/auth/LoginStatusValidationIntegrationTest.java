@@ -26,14 +26,14 @@ class LoginStatusValidationIntegrationTest extends AbstractApplicationIntegratio
     @DisplayName("Login with PENDING user returns 401 with activation message")
     void should_return401_when_loginWithPendingUser() {
         assertLoginRejected(
-                PENDING_USER_LOGIN, PENDING_USER_PASSWORD, "Account not activated", "account-not-activated");
+                PENDING_USER_LOGIN, PENDING_USER_PASSWORD, "Account not activated", "authentication-failed");
     }
 
     @Test
     @Disabled("TDD Red Phase - Not yet implemented")
     @DisplayName("Login with LOCKED user returns 401 with locked message")
     void should_return401_when_loginWithLockedUser() {
-        assertLoginRejected(LOCKED_USER_LOGIN, LOCKED_USER_PASSWORD, "Account locked", "account-locked");
+        assertLoginRejected(LOCKED_USER_LOGIN, LOCKED_USER_PASSWORD, "Account locked", "authentication-failed");
     }
 
     private void assertLoginRejected(String login, String password, String expectedDetail, String expectedType) {

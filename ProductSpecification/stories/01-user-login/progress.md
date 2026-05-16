@@ -21,8 +21,8 @@
 - [x] red-acceptance
 - [x] design
 - [x] red-usecase
-- [~] green-usecase
-- [ ] adapters-discovery
+- [x] green-usecase
+- [~] adapters-discovery
 - [ ] green-acceptance
 
 ### Scenario 1.3: Login with INACTIVE user returns 401

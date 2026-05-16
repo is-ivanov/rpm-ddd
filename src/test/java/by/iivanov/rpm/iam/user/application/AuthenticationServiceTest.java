@@ -4,12 +4,11 @@ import static org.assertj.core.api.BDDAssertions.catchException;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import by.iivanov.rpm.iam.user.domain.Login;
+import by.iivanov.rpm.iam.user.domain.UserAuthenticationException;
 import by.iivanov.rpm.iam.user.domain.UserAuthenticationService;
-import by.iivanov.rpm.iam.user.domain.UserNotActivatedException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,7 @@ class AuthenticationServiceTest {
     class AuthenticateTest {
 
         @Test
-        @DisplayName("WHEN user status is PENDING EXPECT UserNotActivatedException with 'Account not activated'")
+        @DisplayName("WHEN user status is PENDING EXPECT UserAuthenticationException with 'Account not activated'")
         void when_userStatusIsPending_expect_exception() {
             userStatements.givenUserWithLoginPasswordAndStatus(PENDING_LOGIN, PENDING_PASSWORD, UserStatus.PENDING);
 
@@ -50,12 +49,13 @@ class AuthenticationServiceTest {
             Exception caughtException = catchException(() -> sut.authenticate(command));
 
             // THEN:
-            then(caughtException).isInstanceOf(UserNotActivatedException.class).hasMessage("Account not activated");
+            then(caughtException)
+                    .isInstanceOf(UserAuthenticationException.class)
+                    .hasMessage("Account not activated");
         }
 
         @Test
         @DisplayName("Login with LOCKED user returns 401 with locked message")
-        @Disabled("TDD Red Phase - message is 'Account not activated' but should be 'Account locked' for LOCKED status")
         void when_userStatusIsLocked_expect_accountLockedMessage() {
             userStatements.givenUserWithLoginPasswordAndStatus(LOCKED_LOGIN, LOCKED_PASSWORD, UserStatus.LOCKED);
 
@@ -65,7 +65,9 @@ class AuthenticationServiceTest {
             Exception caughtException = catchException(() -> sut.authenticate(command));
 
             // THEN:
-            then(caughtException).isInstanceOf(UserNotActivatedException.class).hasMessage("Account locked");
+            then(caughtException)
+                    .isInstanceOf(UserAuthenticationException.class)
+                    .hasMessage("Account locked");
         }
     }
 }

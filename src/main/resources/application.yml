@@ -38,10 +38,10 @@ error:
     http-statuses:
       org.springframework.security.authentication.BadCredentialsException: unauthorized
       org.springframework.security.authentication.InternalAuthenticationServiceException: unauthorized
-      by.iivanov.rpm.iam.user.domain.UserNotActivatedException: unauthorized
+      by.iivanov.rpm.iam.user.domain.UserAuthenticationException: unauthorized
       org.springframework.web.bind.MethodArgumentNotValidException: unprocessable-content
     codes:
-      by.iivanov.rpm.iam.user.domain.UserNotActivatedException: account-not-activated
+      by.iivanov.rpm.iam.user.domain.UserAuthenticationException: authentication-failed
 
 
 # ===================================================================

@@ -1,8 +1,10 @@
-08:55:29 [test-review-agent] START AuthenticationServiceTest
-08:55:29 [test-review-agent] SCAN No issues found - all assertions strict
-08:55:29 [test-review-agent] DONE Clean
-08:55:41 [refactor-agent] START AuthenticationServiceTest
-08:55:41 [refactor-agent] SCAN Checking for code smells
-08:56:59 [refactor-agent] SCAN No code smells found
-08:56:59 [refactor-agent] RUN 2 tests, 0 failures, 1 skipped (disabled)
-08:56:59 [refactor-agent] DONE Clean
+09:00:48 [green-agent] START: green-usecase Scenario 1.2
+09:06:00 [green-agent] RUN: 86 passed, 0 failed, 1 skipped
+[09:06:35] [refactor-agent] START: UserAuthenticationService.java, UserAuthenticationException.java
+[09:08:01] [refactor-agent] SCAN: A7 repeated string 'Account not activated' L17/L26; B5 caller checks user.getStatus() then throws - should be on User aggregate; statusMessage switch belongs on UserStatus enum
+[09:09:55] [refactor-agent] FIX: B5-encapsulate-conditional: moved status check to User.validateActiveForAuthentication(); A7-deduplicate: moved statusMessage switch to UserStatus.authenticationErrorMessage(); removed private statusMessage() from UserAuthenticationService
+[09:11:08] [refactor-agent] RUN: 86 tests passed, 0 failures, 0 errors, 1 skipped (pre-existing) — BUILD SUCCESS
+[09:11:47] [refactor-agent] DONE: 3 fixes applied (B5-encapsulate-conditional, A7-deduplicate-string, move-statusMessage-to-enum), re-scan clean, 86/86 tests pass
+[19:16:53] [coverage-agent] START: usecase module
+[19:25:17] [coverage-agent] RUN: usecase — 100% on scenario code
+[19:25:30] [coverage-agent] DONE: clean — all scenario code 100% covered

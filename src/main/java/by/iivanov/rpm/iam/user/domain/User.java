@@ -92,6 +92,12 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
         return personName;
     }
 
+    public void validateActiveForAuthentication() {
+        if (status != UserStatus.ACTIVE) {
+            throw new UserAuthenticationException(status.authenticationErrorMessage());
+        }
+    }
+
     public EmailAddress getEmail() {
         return email;
     }
