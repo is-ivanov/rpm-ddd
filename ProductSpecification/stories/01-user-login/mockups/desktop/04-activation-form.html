@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1400">
+  <title>Set Password</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-primary: #f8f9fa;
+      --bg-white: #ffffff;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --text-placeholder: #adb5bd;
+      --border: #dee2e6;
+      --border-focus: #4dabf7;
+      --accent: #228be6;
+      --accent-hover: #1c7ed6;
+      --danger: #fa5252;
+      --danger-bg: #fff5f5;
+      --success: #40c057;
+      --success-bg: #ebfbee;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--bg-white);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      padding: 24px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      height: 40px;
+      padding: 0 40px 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.15);
+    }
+
+    .input-wrapper input::placeholder {
+      color: var(--text-placeholder);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      padding: 4px;
+    }
+
+    .toggle-password:hover {
+      color: var(--text-primary);
+    }
+
+    .rules {
+      margin-bottom: 16px;
+      margin-top: 8px;
+    }
+
+    .rule {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .rule.met {
+      color: var(--success);
+    }
+
+    .rule-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      height: 40px;
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">RPM</div>
+    <div class="title">Set Password</div>
+    <div class="subtitle">For account iivanov (ivan@example.com)</div>
+
+    <div class="form-group">
+      <label for="password">New password</label>
+      <div class="input-wrapper">
+        <input type="password" id="password" value="MyStr0ng">
+        <button type="button" class="toggle-password">
+          <i data-lucide="eye" class="rule-icon"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="rules">
+      <div class="rule met">
+        <i data-lucide="check" class="rule-icon"></i>
+        At least 12 characters
+      </div>
+      <div class="rule met">
+        <i data-lucide="check" class="rule-icon"></i>
+        At least one uppercase letter
+      </div>
+      <div class="rule met">
+        <i data-lucide="check" class="rule-icon"></i>
+        At least one lowercase letter
+      </div>
+      <div class="rule">
+        <i data-lucide="check" class="rule-icon"></i>
+        At least one digit
+      </div>
+      <div class="rule">
+        <i data-lucide="check" class="rule-icon"></i>
+        At least one special character
+      </div>
+      <div class="rule">
+        <i data-lucide="check" class="rule-icon"></i>
+        No spaces
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirm">Confirm password</label>
+      <div class="input-wrapper">
+        <input type="password" id="confirm" placeholder="Re-enter password">
+        <button type="button" class="toggle-password">
+          <i data-lucide="eye-off" class="rule-icon"></i>
+        </button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn">Activate Account</button>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -37,7 +37,11 @@ error:
     problem-detail-type-prefix: https://www.rpm-ddd.my/problem/
     http-statuses:
       org.springframework.security.authentication.BadCredentialsException: unauthorized
+      org.springframework.security.authentication.InternalAuthenticationServiceException: unauthorized
+      by.iivanov.rpm.iam.user.domain.UserAuthenticationException: unauthorized
       org.springframework.web.bind.MethodArgumentNotValidException: unprocessable-content
+    codes:
+      by.iivanov.rpm.iam.user.domain.UserAuthenticationException: authentication-failed
 
 
 # ===================================================================

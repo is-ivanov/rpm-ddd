@@ -1,0 +1,95 @@
+openapi: 3.0.3
+info:
+  title: Auth Session
+  version: 1.0.0
+
+paths:
+  /api/auth/me:
+    get:
+      summary: Get current authenticated user info
+      operationId: getCurrentUser
+      tags:
+        - auth
+      responses:
+        '200':
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUserResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+
+  /api/auth/logout:
+    post:
+      summary: Invalidate session and clear cookie
+      operationId: logout
+      tags:
+        - auth
+      responses:
+        '200':
+          description: Logged out successfully
+        '401':
+          description: Not authenticated
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    CurrentUserResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: User unique identifier
+        login:
+          type: string
+          description: User login
+        email:
+          type: string
+          description: User email address
+        firstName:
+          type: string
+          description: First name
+        lastName:
+          type: string
+          description: Last name
+        status:
+          type: string
+          enum: [ACTIVE, PENDING, LOCKED, INACTIVE]
+          description: User status
+        roles:
+          type: array
+          items:
+            type: string
+          description: User roles
+
+    ProblemDetailResponse:
+      type: object
+      required:
+        - type
+        - title
+        - status
+        - detail
+      properties:
+        type:
+          type: string
+          description: URI reference to the error type
+        title:
+          type: string
+          description: Short human-readable summary
+        status:
+          type: integer
+          description: HTTP status code
+        detail:
+          type: string
+          description: Specific explanation of the error
+        instance:
+          type: string
+          description: URI reference to the specific occurrence

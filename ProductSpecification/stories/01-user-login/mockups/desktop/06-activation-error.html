@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1400">
+  <title>Link Expired</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-primary: #f8f9fa;
+      --bg-white: #ffffff;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --text-placeholder: #adb5bd;
+      --border: #dee2e6;
+      --border-focus: #4dabf7;
+      --accent: #228be6;
+      --accent-hover: #1c7ed6;
+      --danger: #fa5252;
+      --danger-bg: #fff5f5;
+      --success: #40c057;
+      --success-bg: #ebfbee;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--bg-white);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      padding: 24px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .icon-wrapper {
+      margin-bottom: 16px;
+    }
+
+    .icon-wrapper i {
+      width: 48px;
+      height: 48px;
+      color: var(--danger);
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      height: 40px;
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      line-height: 40px;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">RPM</div>
+    <div class="icon-wrapper">
+      <i data-lucide="x-circle"></i>
+    </div>
+    <div class="title">Link Expired</div>
+    <div class="description">The activation link is invalid or has expired. Please request a new one.</div>
+    <a href="#" class="btn">Request New Link</a>
+  </div>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>

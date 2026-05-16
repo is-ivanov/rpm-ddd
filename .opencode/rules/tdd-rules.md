@@ -68,6 +68,7 @@ Never write production code without a failing test first.
 - GREEN → commit the implementation
 - REFACTOR → commit the refactoring
 - When asked to commit, only commit work from the current phase. If both red and green completed without committing, inform the user and ask how to proceed (separate commits recommended).
+- **Before every commit, run the project's static analysis checker on changed files.** If violations are found, fix them before committing. See the tech binding for the specific command.
 
 ## Testing Patterns
 

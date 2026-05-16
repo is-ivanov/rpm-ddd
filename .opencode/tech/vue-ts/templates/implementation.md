@@ -34,7 +34,7 @@ export async function registerUser(request: RegistrationRequest): Promise<Regist
 
   if (!response.ok) {
     const error = await response.json()
-    throw new Error(error.message)
+    throw new Error(error.detail)
   }
 
   return response.json()

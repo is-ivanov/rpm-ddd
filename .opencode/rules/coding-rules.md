@@ -78,6 +78,9 @@ Each bounded context is a Spring Modulith module. Module boundaries are enforced
 ## Usecases
 
 - Application services are orchestrators, not logic holders. All domain-specific business rules must be delegated to the domain layer. Application services should be unaware of underlying technologies and integration protocols.
+- Data entering the application layer must arrive as Value Objects. Controllers or incoming request classes (Command/DTO) should convert raw input into validated Value Objects before passing to application services.
+- If no existing Value Object matches the incoming data, propose options to the user: create a new Value Object in the domain layer, or use an existing one if semantics align. Value Objects provide validation, type safety, and self-documentation.
+- Exception: Command classes may contain a combination of Value Objects and raw primitive data when creating a Value Object is not justified (e.g., ephemeral request tokens, dynamic field collections, or when the data has no invariant to enforce).
 - Fetch everything upfront: an application service should call one storage port that returns a rich aggregate containing all data needed for the operation. Never inject multiple storage ports to make sequential queries mid-execution (fetch board → per column: fetch tasks → per task: fetch subtasks). Instead, design the aggregate and the port so the storage layer delivers it in one shot.
 - If an application service has 2+ storage port dependencies queried in sequence, the aggregate is too thin — push the data assembly into the storage port and enrich the domain aggregate.
 - Compute-then-side-effect: separate pure computation from side effects — compute all results upfront as an immutable list, then try the side effect (API call), return the original results or error-mapped results on failure. Don't interleave computation with side effects.
@@ -102,5 +105,5 @@ Each bounded context is a Spring Modulith module. Module boundaries are enforced
 ## Error Handling
 
 - Domain exceptions extend the language's base unchecked exception, no framework dependencies. Let them bubble to the centralized exception handler.
-- Mapping: ValidationException→400, UserNotFoundException→404, InvalidCredentialsException→401.
-- Error response format: `{"error": "...", "message": "...", "timestamp": "..."}`.
+- Mapping: ValidationException→422 (Unprocessable Content), UserNotFoundException→404, InvalidCredentialsException→401.
+- Error responses use RFC 9457 Problem Detail format: `{"type": "...", "title": "...", "status": N, "detail": "...", "instance": "..."}`. Validation errors additionally include a `fieldErrors` array with per-field details (`code`, `property`, `message`, `rejectedValue`, `path`).
