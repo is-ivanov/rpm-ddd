@@ -5,7 +5,6 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.UserAuthenticationException;
-import by.iivanov.rpm.iam.user.domain.UserAuthenticationService;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +30,7 @@ class AuthenticationServiceTest {
     void setUp() {
         userStatements = new UserStatements();
         passwordEncoder = NoOpPasswordEncoder.getInstance();
-        sut = new AuthenticationService(new UserAuthenticationService(userStatements.userRepository), passwordEncoder);
+        sut = new AuthenticationService(userStatements.userRepository, passwordEncoder);
     }
 
     @Nested
