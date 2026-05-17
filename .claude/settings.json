@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(egrep *)",
+      "Bash(fgrep *)",
+      "Bash(rg *)",
+      "Bash(fd *)",
+      "Bash(fdfind *)",
+      "Bash(tree *)",
+      "Bash(file *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(basename *)",
+      "Bash(dirname *)",
+      "Bash(realpath *)",
+      "Bash(readlink *)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
