@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls *)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(grep -v '^\\\\+\\\\+$')",
+      "Bash(grep -v '^\\\\-\\\\-$')"
+    ]
+  }
+}
