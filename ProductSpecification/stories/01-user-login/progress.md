@@ -37,7 +37,7 @@
 - [x] green-acceptance
 
 ### Scenario 2.1: Valid activation token returns user info
-- [ ] red-acceptance
+- [x] red-acceptance
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
