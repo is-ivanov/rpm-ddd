@@ -16,43 +16,79 @@ Domain tests are OPTIONAL — create them when the domain object has testable lo
 
 **Skip** when: the domain object is a plain data holder (no validation, no behavior, just getters). Coverage through usecase tests is sufficient.
 
-## Test Class Rules
+## Tech-Specific Rules
 
 - Plain JUnit 5 — no Spring context, no base class
-- `sut` naming for system under test
+- `sut` naming for system under test (services/policies); no `sut` for value objects
 - `@Nested` inner classes grouping tests by method or behavior
 - `@DisplayName` with `WHEN ... EXPECT ...` pattern
 - `// GIVEN:`, `// WHEN:`, `// THEN:` section comments
 - No mocks — construct real objects
-- Use AssertJ BDD: `then()`, `catchException()`, `catchThrowable()`, `assertThatThrownBy()`
+- Use AssertJ BDD: `then()`, `catchException()` (for exceptions), `catchThrowable()` (for throwables)
+- **Never use `assertThatThrownBy()`** — use `catchException()` + `then(caughtException)` pattern instead
+
+## Parameterized Test Variants
+
+| Variant | Use when | Example |
+|---------|----------|---------|
+| `@ValueSource` | Single invalid parameter, same expected behavior | `@ValueSource(strings = {"short", "No1!"})` |
+| `@CsvSource` | Parameter + expected message pairs | `@CsvSource({"lowercase1!, Password must contain..."})` |
+| `@MethodSource` + `Arguments.argumentSet()` | Multiple parameter sets with named cases, or when testing both valid AND invalid values | `Arguments.argumentSet("null value", null, "Login must not be blank")` |
 
 ## Value Object Tests
 
-Parameterized tests for validity/invalidity:
+Test BOTH valid and invalid values. Use `@MethodSource` with `Arguments.argumentSet()` for named argument sets:
 
 ```java
+import static org.assertj.core.api.BDDAssertions.catchException;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.junit.jupiter.params.provider.Arguments.argumentSet;
+
 class LoginTest {
 
     @Nested
-    @DisplayName("constructor validation")
-    class ValidationTest {
+    @DisplayName("constructor")
+    class ConstructorTest {
 
         @ParameterizedTest
-        @ValueSource(strings = {"", "ab", "a".repeat(129)})
-        @DisplayName("WHEN invalid value EXPECT ConstraintViolationException")
-        void when_invalidValue_expect_exception(String value) {
-            assertThatThrownBy(() -> new Login(value))
-                    .isInstanceOf(ConstraintViolationException.class);
+        @MethodSource("invalidValues")
+        @DisplayName("WHEN invalid value EXPECT DomainValidationException with message")
+        void when_invalidValue_expect_exception(String value, String expectedMessage) {
+            var caughtException = catchException(() -> new Login(value));
+            then(caughtException)
+                    .isInstanceOf(DomainValidationException.class)
+                    .hasMessage(expectedMessage);
+        }
+
+        static Stream<Arguments> invalidValues() {
+            return Stream.of(
+                    argumentSet("null value", null, "Login must not be blank"),
+                    argumentSet("blank value", "  \t  ", "Login must not be blank"),
+                    argumentSet("exceeds max size", "a".repeat(51), "Login must not exceed 50..."));
+        }
+
+        @ParameterizedTest
+        @MethodSource("validValues")
+        @DisplayName("WHEN valid value EXPECT Login created")
+        void when_validValue_expect_loginCreated(String value, String expected) {
+            var login = new Login(value);
+            then(login.login()).isEqualTo(expected);
+        }
+
+        static Stream<Arguments> validValues() {
+            return Stream.of(
+                    argumentSet("simple login", "ivanov", "ivanov"),
+                    argumentSet("with spaces trimmed", "  ivanov  ", "ivanov"));
         }
     }
 }
 ```
 
-Use `@ValueSource` for single-parameter invalid cases.
-Use `@CsvSource` for parameter + expected error message pairs.
-Use `@MethodSource` for complex test data generation.
-
-For assertions on domain events, use `RpmSoftAssertions` and `AggregateRootAssert`.
+Key conventions:
+- Variable name `caughtException` for the captured exception
+- `then(caughtException).isInstanceOf(...).hasMessage(expectedMessage)` — exact message match for value objects
+- Catch exceptions via `catchException()` not `catchThrowable()` (it's a narrower type)
+- `@MethodSource` method returns `Stream<Arguments>`, each entry via `argumentSet(name, args...)`
 
 ## Entity / Aggregate Tests
 
@@ -79,21 +115,48 @@ class UserTest {
 
 ## Domain Service / Policy Tests
 
-Test business rules with InMemory fakes:
+Test business rules with InMemory fakes. Use `@ValueSource` for simple invalid inputs, `@CsvSource` for value + expected message pairs:
 
 ```java
-class UserRegistrationPolicyTest {
-    private final InMemoryUserRepository userRepository = new InMemoryUserRepository();
-    private final UserRegistrationPolicy sut = new UserRegistrationPolicy(userRepository);
+import static org.assertj.core.api.BDDAssertions.catchThrowable;
+import static org.assertj.core.api.BDDAssertions.then;
 
-    @Test
-    void when_loginExists_expect_exception() {
-        userRepository.save(existingUser);
-        assertThatThrownBy(() -> sut.ensureLoginIsUnique(new Login("existing")))
-                .isInstanceOf(LoginAlreadyExistsException.class);
+class PasswordPolicyTest {
+    private final PasswordPolicy sut = new PasswordPolicy(encoder);
+
+    @Nested
+    @DisplayName("hashPlain() - invalid passwords")
+    class InvalidPasswordTest {
+
+        @ParameterizedTest
+        @ValueSource(strings = {"short", "No1!", "aaaaaaaaaaa"})
+        @DisplayName("WHEN password too short EXPECT InvalidPasswordException")
+        void when_tooShort_expect_exception(String password) {
+            Throwable thrown = catchThrowable(() -> sut.hashPlain(password));
+            then(thrown)
+                    .isInstanceOf(InvalidPasswordException.class)
+                    .hasMessageContaining("Password must be 12 or more characters in length.");
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+            "lowercase1!, Password must contain 1 or more uppercase characters.",
+            "UPPERCASE1!, Password must contain 1 or more lowercase characters."
+        })
+        @DisplayName("WHEN invalid password EXPECT InvalidPasswordException with specific violation")
+        void when_invalidPassword_expect_exceptionWithViolation(String password, String expectedViolation) {
+            Throwable thrown = catchThrowable(() -> sut.hashPlain(password));
+            then(thrown).isInstanceOf(InvalidPasswordException.class).hasMessageContaining(expectedViolation);
+        }
     }
 }
 ```
+
+Key conventions:
+- `sut` for system under test (services/policies only — NOT for value objects)
+- `catchThrowable()` for policies/services (may throw any Throwable)
+- `then(thrown).hasMessageContaining()` — partial message match (policy messages may have extra context)
+- `then(caughtException).hasMessage()` — exact message match for value objects
 
 ## Reference (read before generating)
 
