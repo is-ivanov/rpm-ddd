@@ -53,11 +53,10 @@ Verified against current story progress (`ProductSpecification/stories/01-user-l
 **Files changed:**
 - `.claude/tech/java-spring/tdd.md` — three sections updated/added
 
-### 7. Parallel execution rules (LOW)
-**Gap:** TESTING.md specifies parallel for unit/web, sequential for e2e/@DataJpaTest.
-**Files to fix:**
-- `.claude/tech/java-spring/tdd.md`
-**Story 1 impact:** None — test execution is already configured via meta-annotations.
+### 7. Parallel execution rules ✅ DONE
+**Status:** Fixed. Added Parallel Execution section to java-spring/tdd.md — parallel for unit/web, sequential for e2e (@ApplicationIntegrationTest) and @DataJpaTest (@RepositoryTest). Meta-annotations enforce this, no manual @Execution needed.
+**Files changed:**
+- `.claude/tech/java-spring/tdd.md` — added Parallel Execution section
 
 ### 8. Test API class reuse check in red-agent (MODERATE)
 **Gap:** Red-agent doesn't check for existing `@WebApi`/`AbstractApi` classes before creating new ones.

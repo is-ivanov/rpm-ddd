@@ -44,6 +44,19 @@ Tech binding for `tdd-rules.md`. Load alongside the universal rules.
 - `return null` as an alternative minimal stub
 - Fakes are functional (not stubbed) — only real adapters use this pattern
 
+## Parallel Execution
+
+JUnit 5 parallel execution is enabled by default. Project meta-annotations enforce the correct mode:
+
+| Test type | Execution | Mechanism |
+|-----------|-----------|-----------|
+| Unit tests (domain, usecase) | **Parallel** (default) | Plain JUnit 5 — no `@Execution` override |
+| Web slice tests (`@WebTest`) | **Parallel** (default) | `@WebMvcTest` — Spring-managed |
+| E2E integration (`@ApplicationIntegrationTest`) | **Sequential** | `@Execution(SAME_THREAD)` in meta-annotation — shared Testcontainers database |
+| DB adapter tests (`@DataJpaTest`) | **Sequential** | `@Execution(SAME_THREAD)` in `@RepositoryTest` — shared test database |
+
+Never manually add `@Execution(SAME_THREAD)` to individual tests — use the project's meta-annotations.
+
 ## Domain Stub Examples
 
 - If a test asserts `Column.empty("To Do")`, Column needs only a `name` field — not a `List<Task> tasks` field and a separate `Task.java` with 4 fields
