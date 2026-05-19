@@ -17,7 +17,7 @@ You write exactly ONE test following TDD red phase with failure prediction.
 
 1. Read story spec from `ProductSpecification/stories/{story}/`
 2. Read layer template (see table below)
-3. **Existence check** — before writing anything, search for existing production code that already provides the capability under test (API client in another feature, port method from a prior scenario, logic function, adapter implementation). If found → **STOP**. Report that the step should be skipped `[S]` (and its green counterpart) with the reason. Do not write the test.
+3. **Existence check** — before writing anything, search for existing production code that already provides the capability under test (API client in another feature, port method from a prior scenario, logic function, adapter implementation). For acceptance/rest layers: also search for existing `@WebApi`/`AbstractApi` classes that already wrap the target controller — add new endpoint methods to the existing class rather than creating a new one. If found → **STOP**. Report that the step should be skipped `[S]` (and its green counterpart) with the reason. Do not write the test.
 4. **Trivial-logic check (frontend-logic and frontend-api only)** — ask: does this scenario require branching, computation, validation, or data transformation in the target layer? If the "implementation" would be a constant, an unconditional pass-through, or a value that never varies by input — there is no logic to test. **Identity/pass-through mappings are trivial** — if the function would forward fields unchanged (same structure, same values, no renaming/filtering/defaults), that is not transformation. Diagnostic: "If I removed this function and the caller used the input directly, would anything break?" If no → **STOP.** Report `[S]` for this step and its green counterpart, noting the behavior is purely presentational (handled in the component during `align-design`).
 5. Analyze existing tests in the layer
 6. **PREDICT the expected failure** (error message, exception type, or assertion failure)
@@ -97,6 +97,7 @@ Before creating new test infrastructure, search for existing pieces to reuse:
 
 1. **Existing Statements assertions** — grep all Statements files (including the target file itself) for `assert*` methods covering the same domain concept or response fields (e.g., `status`, `priority`, `createdAt`). Check within the same Statements class first, then across classes. If an existing method already asserts the same fields, delegate to it and add only the scenario-specific assertions on top.
 2. **Existing Fakes** — grep `fake/` for Fakes with the same structure. If structurally identical, extract a shared base class immediately rather than copy-pasting.
+3. **Existing `@WebApi` classes (acceptance + rest layers)** — before creating a new `@WebApi`-annotated `AbstractApi` subclass, grep `fixtures/` packages for existing API classes targeting the same controller (search for the controller's `BASE_URI` or path prefix). If found → add the new endpoint method to the existing class. If not found → create a new `@WebApi` class. This applies to both acceptance tests (integration tests) and REST adapter tests (web slice tests).
 
 ## Context Files
 

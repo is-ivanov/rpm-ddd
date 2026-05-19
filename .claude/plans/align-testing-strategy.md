@@ -58,14 +58,10 @@ Verified against current story progress (`ProductSpecification/stories/01-user-l
 **Files changed:**
 - `.claude/tech/java-spring/tdd.md` — added Parallel Execution section
 
-### 8. Test API class reuse check in red-agent (MODERATE)
-**Gap:** Red-agent doesn't check for existing `@WebApi`/`AbstractApi` classes before creating new ones.
-**Files to fix:**
-- `.claude/agents/red-agent.md` — add `@WebApi` check to existence check
-**Story 1 impact:** Scenarios 2.1-6.1 — `AuthApi` already exists, new endpoints should reuse it.
+### 8. Test API class reuse check in red-agent ✅ DONE
+**Status:** Fixed. Added @WebApi/AbstractApi check to existence check (step 3) and reuse checks (item 3). Red-agent now searches fixtures/ for existing API classes before creating new ones.
+**Files changed:**
+- `.claude/agents/red-agent.md` — step 3 existence check + reuse check item 3
 
-### 9. Test naming convention alignment (LOW)
-**Gap:** TESTING.md says `*Test.java` and `*IntegrationTest.java`. Templates use different suffixes.
-**Files to fix:**
-- All test-class templates
-**Story 1 impact:** Minor — existing tests already follow `*IntegrationTest.java` for e2e and `*Test.java` for others.
+### 9. Test naming convention alignment ✅ DONE
+**Status:** Already aligned. Templates updated in points 1-2 use `*Test.java` and `*IntegrationTest.java`. Naming section added to java-spring/tdd.md in point 6.
