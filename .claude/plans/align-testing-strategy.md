@@ -22,7 +22,7 @@ Verified against current story progress (`ProductSpecification/stories/01-user-l
 **Files changed:**
 - `.claude/tech/java-spring/templates/acceptance/test-class.md` — full rewrite
 - `.claude/tech/java-spring/templates/usecase/test-class.md` — full rewrite
-- `.claude/tech/java-spring/templates/h2/test-class.md` — full rewrite (also added complexity filter for point 4)
+- `.claude/tech/java-spring/templates/db/test-class.md` — full rewrite (renamed from h2) (also added complexity filter for point 4)
 - `.claude/templates/tdd/red-acceptance.md` — updated architecture description
 
 ### 3. Domain tests (Level 4) not in workflow (SUBSTANTIAL)

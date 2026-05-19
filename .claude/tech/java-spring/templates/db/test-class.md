@@ -1,11 +1,12 @@
-# H2 Storage Test Template
+# DB Storage Test Template
 
 > TESTING.md: Infrastructure tests are ad-hoc — only for complex queries (`@Query`, native SQL, Specifications, JOIN FETCH).
 > Simple Spring Data derived queries (`findByXxx`) are framework boilerplate — skip them.
+> Database: PostgreSQL via Testcontainers (`@DbTest` + `DbContainerTestExecutionListener`).
 
-## When to Create H2 Tests
+## When to Create DB Tests
 
-Create H2 adapter tests ONLY when the storage adapter has:
+Create DB adapter tests ONLY when the storage adapter has:
 - Custom `@Query` with JPQL — syntax errors are easy to miss
 - Native SQL queries — no type safety
 - JPA Specifications — complex composition logic
@@ -15,10 +16,10 @@ Create H2 adapter tests ONLY when the storage adapter has:
 
 ## Adapter Discovery Filter
 
-When `adapters-discovery` Check 1 produces a potential H2 step, apply this filter:
+When `adapters-discovery` Check 1 produces a potential `db` step, apply this filter:
 1. Read the repository method the adapter calls.
 2. If it's a simple derived query → mark `[S]` with reason "simple Spring Data derived query".
-3. If it's custom `@Query`, native SQL, Specification, or JOIN FETCH → add `red-adapter h2` / `green-adapter h2`.
+3. If it's custom `@Query`, native SQL, Specification, or JOIN FETCH → add `red-adapter db` / `green-adapter db`.
 
 ## Test Class Rules
 
@@ -27,8 +28,9 @@ When `adapters-discovery` Check 1 produces a potential H2 step, apply this filte
 - Autowire the Spring Data repository under test
 - Use `@DisplayName` with Gherkin-style description
 - `@Disabled` in RED phase
+- Database: PostgreSQL via Testcontainers (auto-started by `DbContainerTestExecutionListener`)
 
-## H2-Specific Failure Patterns
+## Failure Patterns
 
 | Current Implementation | Expected Test Failure |
 |----------------------|----------------------|
@@ -43,6 +45,8 @@ When `adapters-discovery` Check 1 produces a potential H2 step, apply this filte
 ## Reference (read before generating)
 
 - `@DbTest`: `src/test/java/by/iivanov/rpm/testing/DbTest.java`
+- `@RepositoryTest` (when available): combines `@DataJpaTest` + `@DbTest` + `@Execution(SAME_THREAD)`
+- `DbContainerTestExecutionListener`: `src/test/java/by/iivanov/rpm/testing/DbContainerTestExecutionListener.java`
 - `Constants.DB_TEST_TAG`: `src/test/java/by/iivanov/rpm/testing/Constants.java`
 - Example entity: search `src/main/java/` for `@Entity` classes
 - Example repository: search `src/main/java/` for `@Repository` or `extends JpaRepository`

@@ -31,7 +31,7 @@ Create `ProductSpecification/tasks/{N}-{type}-{slug}/` where slug is lowercase-h
 
 Gather from user:
 
-**All types:** Problem, Solution, Affected Layers (domain, usecase, h2, rest, email, frontend), Key Files.
+**All types:** Problem, Solution, Affected Layers (domain, usecase, db, rest, email, frontend), Key Files.
 
 **Bug only:** Reproduction steps.
 

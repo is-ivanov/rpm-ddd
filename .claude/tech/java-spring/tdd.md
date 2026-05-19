@@ -63,7 +63,7 @@ Tech binding for `tdd-rules.md`. Load alongside the universal rules.
 
 ## Test Data & Isolation — Java/Spring Specifics
 
-- H2 adapter tests: `@DataJpaTest` + `FixtureCleanerExtension`
+- DB adapter tests: `@DataJpaTest` + `@DbTest` + `@Execution(SAME_THREAD)` with PostgreSQL Testcontainers
 - REST adapter tests: `@SpringBootTest` + `MockMvc`
 - Mockito: reset mocks/fakes before each test (`@BeforeEach` reset or `Mockito.reset()`)
 
