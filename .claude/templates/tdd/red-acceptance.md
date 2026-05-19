@@ -1,51 +1,51 @@
 # Acceptance Test Template -- Universal
 
-## 3-Tier DSL Architecture
+## Architecture
+
+Three tiers:
 
 | Tier | Purpose |
 |------|---------|
-| Test Class (DSL Layer) | Disabled test, scenario in description, extends base test setup |
-| Statements Class (Service Layer) | Assertions, reuses other Statements |
-| Adapter Layer (Client) | Raw HTTP operations, no assertions |
-
-## Standard Directory Structure
-
-Each tier lives in a standard location under the `acceptance/` module. Tech profiles provide the exact paths.
-
-| Tier | Standard location |
-|------|-------------------|
-| Test Class | `tests/backend/{story}/` or `tests/frontend/{story}/` |
-| Statements | `statements/` or `statements/{feature}/` |
-| Client | `clients/application/` |
-| DTOs | `clients/application/dto/{feature}/` |
-
-## Test Types
-
-Two test categories with separate base classes and tags:
-
-| Type | Purpose |
-|------|---------|
-| Backend API | HTTP endpoint tests against the running backend |
-| Frontend UI | Browser tests via Selenium/Playwright |
-
-Each type has its own base class, tag/marker, and directory. Tech profiles specify the exact class names and tag syntax.
+| Test Class | Disabled test, scenario in description, extends base test class |
+| Test API Classes (`@WebApi`) | Raw HTTP operations, no assertions — extend `AbstractApi`, use `RestTestClient` |
+| Session Factory | Login flow orchestration, returns `SessionContext` |
 
 ## Test Class Rules
 
 - Multi-step test bodies with setup/action/assertion phases
-- **Statements methods must be FULLY FUNCTIONAL in RED** -- real assertions, real setup. NEVER stub Statements with the not-implemented marker (that marker is for real adapter implementations only).
-- Gherkin-style scenario in test description
-- **NEVER call mocks, clients, or adapters directly** -- all infrastructure interactions must be hidden behind Statements. Test class reads like pure business DSL.
+- Extends the project's integration test base class (tech profile provides exact name)
+- **Test API classes must be FULLY FUNCTIONAL in RED** — real HTTP methods, real `RestTestClient` calls
+- Gherkin-style scenario in `@DisplayName`
+- **NEVER call HTTP client directly** — all HTTP calls go through `@WebApi`-annotated API class methods
+- Use `// GIVEN:`, `// WHEN:`, `// THEN:` section comments
+
+## Session-First Pattern
+
+Keep login flow separate from controller APIs:
+- `AuthSessionFactory` performs login → returns `SessionContext` (sessionId + csrfToken)
+- Pass `SessionContext` explicitly to API methods that require authentication
+- This keeps API classes reusable across authenticated and unauthenticated tests
+
+## Test Types
+
+Two test categories with separate base classes:
+
+| Type | Purpose |
+|------|---------|
+| Backend API | HTTP endpoint tests against the running backend |
+| Frontend UI | Browser tests via Playwright/Selenium |
+
+Tech profiles specify exact base class names, annotation, and directory structure.
 
 ## Reference Files (read before generating)
 
 Before writing a new acceptance test, read existing examples in the project:
 
-1. **Test example** -- an existing test class to follow for structure and conventions
-2. **Base class** -- the abstract base providing test infrastructure
-3. **Statements example** -- an existing Statements class for DSL patterns
-4. **Client** -- the application HTTP client for endpoint calls
-5. **TestData** -- shared constants for test data
+1. **Test example** — an existing integration test class to follow for structure and conventions
+2. **Base class** — the abstract base providing test infrastructure (clock, etc.)
+3. **Test API example** — an existing `@WebApi` class for HTTP call patterns
+4. **Session factory** — the authentication orchestration class
+5. **SessionContext** — session data class
 
 Tech profiles provide exact paths for each reference file.
 

@@ -11,13 +11,18 @@ Run this checklist when the `[ ] adapters-discovery` step is reached. Walk all t
 
 Read the usecase constructor. For each injected port:
 
-1. Find the adapter module that implements it (e.g., `BoardStorage` → `h2`)
+1. Find the adapter module that implements it (e.g., `BoardStorage` → `db`)
 2. Check the adapter implementation against what this scenario needs:
    - **Missing**: no implementation exists → add `red-adapter {module}` / `green-adapter {module}`
    - **Stubbed**: method throws the not-implemented marker → add steps
    - **Insufficient**: implementation exists from a prior scenario but doesn't support the current one (e.g., returns hardcoded data instead of reading from storage, persists a subset of fields, ignores a new parameter). Read the acceptance test to understand what end-to-end behavior is expected — if the adapter can't support it, add steps.
    - **Sufficient**: implementation already handles this scenario's needs → `[S]` with reason
 3. Check each method the usecase calls on the port, not just the port as a whole — one method may be sufficient while another is stubbed or insufficient
+4. **DB adapter complexity filter** — for storage ports (db adapter), apply the filter BEFORE adding steps:
+   - Read the repository method that the adapter calls (e.g., `findByLogin`, `findByActivationToken`).
+   - **Simple Spring Data derived query** (method name follows `findBy`/`existsBy`/`countBy` pattern without `@Query`, native SQL, or Specification) → `[S]` with reason "simple Spring Data derived query — no adapter test needed".
+   - **Custom `@Query`, native SQL, Specifications, JOIN FETCH** → only then add `red-adapter db` / `green-adapter db`.
+   - See `.claude/tech/java-spring/templates/db/test-class.md` for the full filter.
 
 ## Check 2: Domain Exceptions → Inbound Adapter Error Handling
 

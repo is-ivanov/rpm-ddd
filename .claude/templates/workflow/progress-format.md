@@ -19,13 +19,17 @@
 - [~] design               <- MANDATORY for every scenario needing new implementation
 - [ ] red-usecase
 - [ ] green-usecase
+- [S] red-domain (optional: created only when coverage or design-preview identifies need)
+- [S] green-domain
 - [ ] adapters-discovery
 - [ ] green-acceptance
 
 #### After adapters-discovery resolves (example):
-- [x] adapters-discovery (h2, rest)
-- [ ] red-adapter h2
-- [ ] green-adapter h2
+- [S] red-domain (no testable domain logic)
+- [S] green-domain
+- [x] adapters-discovery (db, rest)
+- [ ] red-adapter db
+- [ ] green-adapter db
 - [ ] red-adapter rest
 - [ ] green-adapter rest
 - [ ] green-acceptance
@@ -37,6 +41,8 @@
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
+- [S] red-domain
+- [S] green-domain
 - [ ] adapters-discovery
 - [ ] green-acceptance
 
@@ -59,6 +65,8 @@
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
+- [S] red-domain
+- [S] green-domain
 - [ ] adapters-discovery
 - [ ] green-acceptance
 
@@ -69,6 +77,8 @@
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
+- [S] red-domain
+- [S] green-domain
 - [ ] adapters-discovery
 - [ ] green-acceptance
 
@@ -79,6 +89,8 @@
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
+- [S] red-domain
+- [S] green-domain
 - [ ] adapters-discovery
 - [ ] green-acceptance
 ```
@@ -117,8 +129,8 @@ Type: refactoring
 ## Fix
 
 ### Step 1: Step description
-- [~] red-adapter h2                  <- CURRENT
-- [ ] green-adapter h2
+- [~] red-adapter db                  <- CURRENT
+- [ ] green-adapter db
 
 ### Step 2: Step description
 - [ ] refactor usecase

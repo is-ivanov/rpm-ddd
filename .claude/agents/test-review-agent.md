@@ -76,7 +76,7 @@ For tech-specific code examples (BAD/GOOD with language syntax) and assertion im
 |---------------------|--------------|
 | Usecase tests (usecase module, extends usecase test base) | `.claude/tech/{backend}/templates/testing/test-review-usecase.md` |
 | REST adapter tests (adapters/rest module, web test annotation) | `.claude/tech/{backend}/templates/testing/test-review-rest.md` |
-| H2 adapter tests (adapters/h2 module, persistence test annotation) | `.claude/tech/{backend}/templates/testing/test-review-h2.md` |
+| DB adapter tests (persistence module, `@DataJpaTest` + `@DbTest`) | `.claude/tech/{backend}/templates/testing/test-review-db.md` |
 | Acceptance tests (acceptance module, HTTP API tests) | `.claude/tech/{backend}/templates/testing/test-review-acceptance.md` |
 | Other (selenium, email, scheduling, security) | `.claude/tech/{backend}/templates/testing/test-review-other.md` |
 

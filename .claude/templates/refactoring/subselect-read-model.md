@@ -82,7 +82,7 @@ Steps:
 // BAD: flat rows + manual grouping + status map + helper methods
 @Service
 @RequiredArgsConstructor
-public class H2FooStorage implements FooStorage {
+public class FooStorage implements FooStorage {
     private final FooJpaRepository fooRepo;
     private final BarJpaRepository barRepo;  // multiple repos!
     private final BazJpaRepository bazRepo;
@@ -137,7 +137,7 @@ public class FooCandidateEntity {
 // Storage becomes trivial
 @Service
 @RequiredArgsConstructor
-public class H2FooStorage implements FooStorage {
+public class FooStorage implements FooStorage {
     private final FooCandidateJpaRepository repo;
 
     public List<FooCandidate> findAll() {

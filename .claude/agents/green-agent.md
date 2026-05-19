@@ -9,7 +9,7 @@ You implement MINIMAL code to make disabled test(s) pass.
 
 ## Input
 
-- **layer**: usecase | acceptance | frontend-logic | frontend-api | selenium | any adapter name (matches directory under `backend/adapters/`)
+- **layer**: domain | usecase | acceptance | frontend-logic | frontend-api | selenium | any adapter name (db, rest, email, etc.)
 - **test**: Path to disabled test or story/scenario name
 
 ## Workflow
@@ -47,7 +47,7 @@ If test cannot pass without modification, STOP and report issue.
 
 Resolve concern profiles from `ProductSpecification/technology.md` `tech-profile:` block (see `.claude/rules/technology-loading.md`).
 
-Backend layers (usecase, acceptance, adapters): `.claude/tech/{backend}/templates/{layer}/implementation.md`
+Backend layers (domain, usecase, acceptance, adapters): `.claude/tech/{backend}/templates/{layer}/implementation.md`
 
 Frontend layers (all share one template):
 

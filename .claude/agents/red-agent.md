@@ -9,7 +9,7 @@ You write exactly ONE test following TDD red phase with failure prediction.
 
 ## Input
 
-- **layer**: usecase | acceptance | frontend-logic | frontend-api | selenium | any adapter name (matches directory under `backend/adapters/`)
+- **layer**: domain | usecase | acceptance | frontend-logic | frontend-api | selenium | any adapter name (db, rest, email, etc.)
 - **story**: Story name or number
 - **scenario**: Scenario to test
 
@@ -17,7 +17,7 @@ You write exactly ONE test following TDD red phase with failure prediction.
 
 1. Read story spec from `ProductSpecification/stories/{story}/`
 2. Read layer template (see table below)
-3. **Existence check** — before writing anything, search for existing production code that already provides the capability under test (API client in another feature, port method from a prior scenario, logic function, adapter implementation). If found → **STOP**. Report that the step should be skipped `[S]` (and its green counterpart) with the reason. Do not write the test.
+3. **Existence check** — before writing anything, search for existing production code that already provides the capability under test (API client in another feature, port method from a prior scenario, logic function, adapter implementation). For acceptance/rest layers: also search for existing `@WebApi`/`AbstractApi` classes that already wrap the target controller — add new endpoint methods to the existing class rather than creating a new one. If found → **STOP**. Report that the step should be skipped `[S]` (and its green counterpart) with the reason. Do not write the test.
 4. **Trivial-logic check (frontend-logic and frontend-api only)** — ask: does this scenario require branching, computation, validation, or data transformation in the target layer? If the "implementation" would be a constant, an unconditional pass-through, or a value that never varies by input — there is no logic to test. **Identity/pass-through mappings are trivial** — if the function would forward fields unchanged (same structure, same values, no renaming/filtering/defaults), that is not transformation. Diagnostic: "If I removed this function and the caller used the input directly, would anything break?" If no → **STOP.** Report `[S]` for this step and its green counterpart, noting the behavior is purely presentational (handled in the component during `align-design`).
 5. Analyze existing tests in the layer
 6. **PREDICT the expected failure** (error message, exception type, or assertion failure)
@@ -38,7 +38,7 @@ Before writing the test, document prediction. See `.claude/templates/workflow/re
 
 Resolve concern profiles from `ProductSpecification/technology.md` `tech-profile:` block (see `.claude/rules/technology-loading.md`).
 
-Backend layers (usecase, acceptance, adapters): `.claude/tech/{backend}/templates/{layer}/test-class.md`
+Backend layers (domain, usecase, acceptance, adapters): `.claude/tech/{backend}/templates/{layer}/test-class.md`
 
 Frontend layers:
 
@@ -69,9 +69,19 @@ Acceptance tests need a live backend. Predictions must be about feature behavior
 3. If the feature is already fully implemented and the test would pass, the prediction is "test passes" — skip straight to `green-acceptance` (mark red-usecase/green-usecase/adapters as `[S]` with reason)
 4. If the test fails (new implementation needed), verify that `progress.md` has a `design` step after `red-acceptance`. If missing, add it — `design` is mandatory for every scenario requiring new implementation.
 
+## Domain Layer: Optional, One Test Class per Domain Class
+
+Domain tests are OPTIONAL — only create when the domain object has testable logic (validation, state transitions, computed fields, business rules). Skip when: the class is a plain data holder with no behavior.
+
+ONE test means **one test class per domain class** (value object, entity, policy, enum). The class may contain multiple test methods (valid cases, invalid cases via parameterized tests).
+
+- Use **class-level** `@Disabled` marker
+- Predict failure for each test method
+- Parameterized tests count as one test method for prediction purposes
+
 ## Adapter Layer: Multiple Test Methods
 
-For adapter layers (h2, rest, email, security), ONE test means **one test class per port method**. The class may contain multiple test methods covering different cases (happy path, error, edge) of the same port method.
+For adapter layers (db, rest, email, security), ONE test means **one test class per port method**. The class may contain multiple test methods covering different cases (happy path, error, edge) of the same port method.
 
 - Use **class-level** test disable marker (not per-method) — one marker disables all methods
 - Predict failure for **each** test method separately
@@ -87,6 +97,7 @@ Before creating new test infrastructure, search for existing pieces to reuse:
 
 1. **Existing Statements assertions** — grep all Statements files (including the target file itself) for `assert*` methods covering the same domain concept or response fields (e.g., `status`, `priority`, `createdAt`). Check within the same Statements class first, then across classes. If an existing method already asserts the same fields, delegate to it and add only the scenario-specific assertions on top.
 2. **Existing Fakes** — grep `fake/` for Fakes with the same structure. If structurally identical, extract a shared base class immediately rather than copy-pasting.
+3. **Existing `@WebApi` classes (acceptance + rest layers)** — before creating a new `@WebApi`-annotated `AbstractApi` subclass, grep `fixtures/` packages for existing API classes targeting the same controller (search for the controller's `BASE_URI` or path prefix). If found → add the new endpoint method to the existing class. If not found → create a new `@WebApi` class. This applies to both acceptance tests (integration tests) and REST adapter tests (web slice tests).
 
 ## Context Files
 

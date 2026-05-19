@@ -38,8 +38,8 @@ Each progress.md checkbox maps to sub-skills. Dispatch per `workflow.md` sequenc
 |----------|-----------|
 | Spec items (`interview`, `story`, `mockups`, `api-spec`, `test-spec`) | `/{item}` then commit |
 | `design` | `/design-preview` → user approves (optionally with ADR) or `/architecture` → commit (if ADR produced) |
-| `red-*` (acceptance, usecase, adapter, selenium, frontend, frontend-api) | `red-agent.md` → `/test-review` → `/refactor` → commit |
-| `green-usecase`, `green-adapter X` | `green-agent.md` → `/refactor` → `/test-coverage {module} --focus` → commit |
+| `red-*` (acceptance, usecase, domain, adapter, selenium, frontend, frontend-api) | `red-agent.md` → `/test-review` → `/refactor` → commit |
+| `green-usecase`, `green-domain`, `green-adapter X` | `green-agent.md` → `/refactor` → `/test-coverage {module} --focus` → commit |
 | `adapters-discovery` | Load `.claude/templates/workflow/adapter-discovery-checklist.md`, run all 3 checks (ports, exceptions, response shape), mark `[x] adapters-discovery`, insert concrete `red-adapter X` / `green-adapter X` steps (or `[S]`) → commit progress.md |
 | `green-acceptance` | Run inline (no subagent): read `green-agent.md` workflow, load acceptance implementation template, enable the disabled test (remove disable marker — only allowed test change), run acceptance tests, verify GREEN → commit |
 | `green-frontend`, `green-frontend-api` | `green-agent.md` → `/refactor` → commit |
@@ -71,7 +71,7 @@ ALL sub-skills dispatch via Agent tool for context isolation:
 | `/test-review` | `Agent tool` (subagent_type: `test-review-agent`) |
 | `/test-coverage` | `Agent tool` (subagent_type: `coverage-agent`) |
 
-Derive the layer from the checkbox (e.g., `red-adapter h2` → layer `h2`, `green-usecase` → layer `usecase`). Both red-agent and green-agent receive: layer, story folder path, scenario name, and ADR content (if loaded in step 5). The agent resolves test files and templates from its own workflow.
+Derive the layer from the checkbox (e.g., `red-adapter db` → layer `db`, `green-usecase` → layer `usecase`). Both red-agent and green-agent receive: layer, story folder path, scenario name, and ADR content (if loaded in step 5). The agent resolves test files and templates from its own workflow.
 
 **CHAINING: After each sub-step completes (Agent tool return), echo a 1-2 line status summary (agent name, outcome, pass/fail counts) to the user, then immediately dispatch the next sub-step. Do NOT wait for user input between sub-steps — the echo is informational only.**
 
@@ -87,7 +87,7 @@ Derive the layer from the checkbox (e.g., `red-adapter h2` → layer `h2`, `gree
 
 - Execute exactly ONE work unit per invocation — a work unit includes ALL sub-skills through the commit. Never stop between sub-skills.
 - Always commit after a work unit (include progress.md in the commit)
-- Task commit prefix: `task:` (e.g., `task: red-adapter h2 (Task 1, Step 1)`)
+- Task commit prefix: `task:` (e.g., `task: red-adapter db (Task 1, Step 1)`)
 - If a sub-skill fails, stop immediately -- do NOT mark the step complete
 - Mandatory sub-skills per phase: see `workflow.md` sequences
 

@@ -18,7 +18,7 @@ description: Review tests to replace loose validation (contains, isNotNull, isNo
 | `.claude/templates/testing/test-review-patterns.md` | Universal rules, anti-pattern catalog, assertion rules |
 | `.claude/tech/{backend}/templates/testing/test-review-usecase.md` | Usecase test patterns (Statements purity, 3-tier DSL) |
 | `.claude/tech/{backend}/templates/testing/test-review-rest.md` | REST controller test patterns (mock matching) |
-| `.claude/tech/{backend}/templates/testing/test-review-h2.md` | Persistence test patterns |
+| `.claude/tech/{backend}/templates/testing/test-review-db.md` | Persistence test patterns |
 | `.claude/tech/{backend}/templates/testing/test-review-acceptance.md` | Acceptance test patterns (HTTP response assertions) |
 | `.claude/tech/{backend}/templates/testing/test-review-other.md` | Selenium, email, scheduling, security patterns |
 

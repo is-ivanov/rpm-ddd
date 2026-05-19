@@ -103,9 +103,9 @@ Templates often have multiple distinct sections that need coordinated updates:
 
 ### Layer-specific: new adapter convention
 
-**Input:** "H2 adapter tests should use FixtureCleanerExtension"
-**Classification:** Layer-specific to h2 adapter → `templates/h2/test-class.md`
-**Action:** Add to the h2 test template, not to universal rules.
+**Input:** "DB adapter tests should use Testcontainers PostgreSQL"
+**Classification:** Layer-specific to db adapter → `templates/db/test-class.md`
+**Action:** Add to the db test template, not to universal rules.
 
 ## Tech-Agnostic Verification
 

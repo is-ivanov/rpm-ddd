@@ -10,16 +10,52 @@ Tech binding for `tdd-rules.md`. Load alongside the universal rules.
 - In GREEN: remove `@Disabled` (the only test modification allowed)
 - In commit discipline: RED commits include `@Disabled` tests
 
-## Test Description
+## Test Structure Conventions
 
-- Use `@Description("...")` on test classes to document the scenario in English
-- Test class DSL should match the abstraction level of its `@Description`
+### @Nested Grouping
+
+- Use `@Nested` inner classes to group tests by method or behavior
+- Inner class `@DisplayName` describes the method/behavior under test (e.g., `"constructor"`, `"hashPlain() - invalid passwords"`)
+- Test method `@DisplayName` describes the specific case: `WHEN ... EXPECT ...`
+
+### Section Comments
+
+- Use `// GIVEN:`, `// WHEN:`, `// THEN:` section comments in every test method
+- Each section separated by blank line from the code
+
+### Naming Conventions
+
+| Element | Pattern | Example |
+|---------|--------|---------|
+| Test class | `{ClassUnderTest}Test.java` | `LoginTest.java`, `PasswordPolicyTest.java` |
+| Integration test class | `{Feature}IntegrationTest.java` | `LoginStatusValidationIntegrationTest.java` |
+| Test method | `when_{condition}_expect_{outcome}()` | `when_invalidValue_expect_exception()` |
+| Statements class | `{Feature}Statements.java` | `UserStatements.java` |
+| System under test | `sut` (services/policies only) | `private final PasswordPolicy sut = ...` |
+
+### SUT Naming
+
+- `sut` — for domain services, policies, application services
+- No `sut` — for value objects (test the object itself)
 
 ## Stub Pattern
 
 - `throw new UnsupportedOperationException()` for real adapter stubs in RED
 - `return null` as an alternative minimal stub
 - Fakes are functional (not stubbed) — only real adapters use this pattern
+
+## Parallel Execution
+
+JUnit 5 parallel execution is enabled by default. Project meta-annotations enforce the correct mode:
+
+| Test type | Execution | Mechanism |
+|-----------|-----------|-----------|
+| Unit tests (domain, usecase) | **Parallel** (default) | Plain JUnit 5 — no `@Execution` override |
+| Web slice tests (`@WebTest`) | **Parallel** (default) | `@WebMvcTest` — Spring-managed |
+| E2E integration (`@ApplicationIntegrationTest`) | **Sequential** | `@Execution(SAME_THREAD)` in meta-annotation — shared Testcontainers database |
+| DB adapter tests (`@DataJpaTest`) | **Sequential** | `@Execution(SAME_THREAD)` in `@RepositoryTest` — shared test database |
+
+Never manually add `@Execution(SAME_THREAD)` to individual tests — use the project's meta-annotations.
 
 ## Domain Stub Examples
 
@@ -57,25 +93,54 @@ Tech binding for `tdd-rules.md`. Load alongside the universal rules.
 - No `for`, `while`, `if` — control flow belongs in Statements
 - No private methods, no inner records/classes
 
-### Scope
-- Lombok `@Builder` with `@Builder.Default` values for optional fields
-- Example: `@Builder.Default Optional<String> email = Optional.empty()`
+### Usecase Test Data
+
+Usecase tests use Instancio for request objects and Statements for setup (not Scope/Builder). See `.claude/tech/java-spring/templates/usecase/test-class.md`.
 
 ## Test Data & Isolation — Java/Spring Specifics
 
-- H2 adapter tests: `@DataJpaTest` + `FixtureCleanerExtension`
-- REST adapter tests: `@SpringBootTest` + `MockMvc`
+- DB adapter tests: `@DataJpaTest` + `@DbTest` + `@Execution(SAME_THREAD)` with PostgreSQL Testcontainers
+- REST adapter tests: `@WebTest` + `RestTestClient` via `AbstractApi` (auto-mocks via `ControllerDependencyAutoMockRegistrar`)
 - Mockito: reset mocks/fakes before each test (`@BeforeEach` reset or `Mockito.reset()`)
 
-## Assertion Library (AssertJ)
+### Test Data Generation — Instancio
 
-- Strict equality: `assertThat(actual).isEqualTo(expected)`
-- Non-null (last resort): `assertThat(actual).isNotNull()`
-- Timestamp bounds: `assertThat(timestamp).isAfter(now.minus(Duration.ofSeconds(30)))`
-- Exception assertions: `assertThatThrownBy(() -> ...).isInstanceOf(ValidationException.class)`
-- Recursive comparison: `assertThat(actual).usingRecursiveComparison().isEqualTo(expected)`
-- List recursive comparison: `assertThat(list).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrderElementsOf(expected)`
+Use Instancio for generating test objects with `bean.validation.enabled=true`:
+
+```java
+User existingUser = Instancio.of(User.class)
+        .set(field(User::getLogin), new Login(login))
+        .set(field(User::getStatus), status)
+        .create();
+```
+
+Configuration in `src/test/resources/instancio.properties`:
+```properties
+bean.validation.enabled=true
+```
+
+Avoid hard-coded magic values. Use Instancio `create()` for default-filled objects, overriding only relevant fields via `.set()`.
+
+## Assertion Library (AssertJ BDD)
+
+Project uses AssertJ BDD style exclusively. **Never use `assertThat()` or `assertThatThrownBy()`** — use BDD equivalents:
+
+- Strict equality: `then(actual).isEqualTo(expected)`
+- Non-null (last resort): `then(actual).isNotNull()`
+- Exception capture: `var caughtException = catchException(() -> ...)` then `then(caughtException).isInstanceOf(...).hasMessage(expected)`
+- Throwable capture: `Throwable thrown = catchThrowable(() -> ...)` then `then(thrown).isInstanceOf(...)`
+- Exact message: `.hasMessage(expectedMessage)` — for value objects
+- Partial message: `.hasMessageContaining(expectedSubstring)` — for domain services/policies
+- Recursive comparison: `then(actual).usingRecursiveComparison().isEqualTo(expected)`
+- List recursive comparison: `then(list).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrderElementsOf(expected)`
 - Reserve per-field assertions only when custom comparators or field exclusions are needed
+
+Import convention:
+```java
+import static org.assertj.core.api.BDDAssertions.catchException;
+import static org.assertj.core.api.BDDAssertions.catchThrowable;
+import static org.assertj.core.api.BDDAssertions.then;
+```
 
 ## Async Wait Pattern (Awaitility)
 

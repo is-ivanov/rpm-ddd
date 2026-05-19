@@ -11,6 +11,6 @@ Universal formats and rules: `.claude/templates/workflow/red-phase-formats.md`
 Class-level (adapter tests):
 
 ```java
-@Disabled("TDD Red Phase - H2TaskStorage.findByBoardId not implemented")
-class H2TaskStorageFindByBoardIdTest {
+@Disabled("TDD Red Phase - TaskStorage.findByBoardId not implemented")
+class TaskStorageFindByBoardIdTest {
 ```
