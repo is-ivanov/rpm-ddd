@@ -48,11 +48,10 @@ Verified against current story progress (`ProductSpecification/stories/01-user-l
 - `.claude/tech/java-spring/templates/rest/dto-validation-test.md` — NEW
 - `.claude/tech/java-spring/templates/rest/test-class.md` — added reference to dto-validation-test.md
 
-### 6. @Nested, Instancio, GIVEN/WHEN/THEN conventions (LOW)
-**Gap:** Templates don't reference these conventions already used in project tests.
-**Files to fix:**
-- `.claude/tech/java-spring/tdd.md` — add sections
-**Story 1 impact:** Minor — new tests should follow existing conventions.
+### 6. @Nested, Instancio, GIVEN/WHEN/THEN conventions ✅ DONE
+**Status:** Fixed. Added Test Structure Conventions section to java-spring/tdd.md covering @Nested, GIVEN/WHEN/THEN, naming conventions, sut naming. Added Instancio section. Fixed AssertJ section to use BDD style (catchException/catchThrowable/then) instead of assertThat/assertThatThrownBy. Fixed REST adapter test pattern (@WebTest not @SpringBootTest + MockMvc).
+**Files changed:**
+- `.claude/tech/java-spring/tdd.md` — three sections updated/added
 
 ### 7. Parallel execution rules (LOW)
 **Gap:** TESTING.md specifies parallel for unit/web, sequential for e2e/@DataJpaTest.
