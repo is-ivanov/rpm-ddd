@@ -47,9 +47,10 @@ For success responses: `assertOk("__files/.../out.json")` or inline JSON string.
 - ONE web test method with `@Disabled` covers all validation rules.
 - Use a JSON request body that violates all constraints at once.
 
-**Nested/Complex DTO** (nested objects, custom validators):
+**Nested/Complex DTO** (nested objects, custom validators, 3+ distinct constraints):
 - Web test: verify exactly ONE invalid variant — confirms `@Valid` is present and returns error response.
-- DTO unit test: create `*CommandTest.java` in same package, using `Validator validator = Validation.buildDefaultValidatorFactory().getValidator()` to test ALL validation rules individually.
+- DTO validation test: create `*RequestTest.java` in same package, using `Validator validator = Validation.buildDefaultValidatorFactory().getValidator()` to test ALL validation rules individually.
+- See `.claude/tech/java-spring/templates/rest/dto-validation-test.md` for the full template.
 
 ## Reference (read before generating)
 

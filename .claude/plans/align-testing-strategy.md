@@ -42,11 +42,11 @@ Verified against current story progress (`ProductSpecification/stories/01-user-l
 - `.claude/templates/workflow/adapter-discovery-checklist.md` — added step 4 (DB complexity filter)
 - `.claude/tech/java-spring/templates/db/test-class.md` — already contains the filter (done in H2→db rename)
 
-### 5. DTO validation tests not in workflow (MODERATE)
-**Gap:** TESTING.md Level 2 calls for `Validator` tests for complex DTOs; not in workflow.
-**Files to fix:**
-- `.claude/tech/java-spring/templates/rest/test-class.md` — add DTO validation test rule
-**Story 1 impact:** Scenario 3.1 (activation with password policy) — `ActivateAccountRequest` DTO may be complex.
+### 5. DTO validation tests not in workflow ✅ DONE
+**Status:** Fixed. Created `dto-validation-test.md` template for Bean Validation unit tests (Validator API). Linked from REST test-class.md. DTO validation tests are created during `red-adapter rest` for complex DTOs — not a separate workflow step.
+**Files changed:**
+- `.claude/tech/java-spring/templates/rest/dto-validation-test.md` — NEW
+- `.claude/tech/java-spring/templates/rest/test-class.md` — added reference to dto-validation-test.md
 
 ### 6. @Nested, Instancio, GIVEN/WHEN/THEN conventions (LOW)
 **Gap:** Templates don't reference these conventions already used in project tests.
