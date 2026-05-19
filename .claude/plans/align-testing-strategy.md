@@ -8,7 +8,8 @@ Verified against current story progress (`ProductSpecification/stories/01-user-l
 
 ## Items
 
-### 1. REST adapter template — wrong test pattern (CRITICAL)
+### 1. REST adapter template — wrong test pattern ✅ DONE
+**Status:** Fixed. Templates now reference `@WebTest`, `RestTestClient`, `AbstractApi`, `AssertionResponse`, `@WebApi`.
 **Gap:** Templates use `@AutoConfigureMockMvc` + `@MockBean` but project uses `@WebTest` + `RestTestClient` + `AbstractApi`.
 **Files to fix:**
 - `.claude/tech/java-spring/templates/rest/test-class.md`
@@ -16,14 +17,13 @@ Verified against current story progress (`ProductSpecification/stories/01-user-l
 - `.claude/templates/tdd/green-rest.md`
 **Story 1 impact:** Scenarios 2.1-6.1 will need `red-adapter rest` steps. Templates must reference `@WebTest`, `AbstractApi`, `AssertionResponse`, `@WebApi`.
 
-### 2. Reference paths in ALL templates point to non-existent classes (CRITICAL)
-**Gap:** Templates reference `AbstractBackendTest`, `ApplicationTest`, `RestTest`, `H2Test`, `ApplicationClient` — none exist in project.
-**Files to fix:**
-- `.claude/tech/java-spring/templates/acceptance/test-class.md`
-- `.claude/tech/java-spring/templates/usecase/test-class.md`
-- `.claude/tech/java-spring/templates/rest/test-class.md`
-- `.claude/tech/java-spring/templates/h2/test-class.md`
-**Story 1 impact:** All future scenarios need correct reference paths.
+### 2. Reference paths in ALL templates point to non-existent classes ✅ DONE
+**Status:** Fixed. All templates now reference actual project classes: `AbstractApplicationIntegrationTest`, `@WebTest`, `@DbTest`, `AuthSessionFactory`, `SessionContext`, `InMemoryUserRepository`, `RpmSoftAssertions`.
+**Files changed:**
+- `.claude/tech/java-spring/templates/acceptance/test-class.md` — full rewrite
+- `.claude/tech/java-spring/templates/usecase/test-class.md` — full rewrite
+- `.claude/tech/java-spring/templates/h2/test-class.md` — full rewrite (also added complexity filter for point 4)
+- `.claude/templates/tdd/red-acceptance.md` — updated architecture description
 
 ### 3. Domain tests (Level 4) not in workflow (SUBSTANTIAL)
 **Gap:** TESTING.md defines Level 4 as separate concern; workflow covers domain only via usecase coverage.

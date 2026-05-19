@@ -2,41 +2,53 @@
 
 > Universal rules: `.claude/templates/tdd/red-usecase.md`
 
-## 3-Tier Locations
+## Architecture
 
-| Layer | Location |
-|-------|----------|
-| Test Class | `{feature}/{Feature}UseCaseTest.java` |
-| Statements | `statements/{Feature}Statements.java` |
-| Scope | `scope/{Feature}RequestScope.java` |
+| Tier | Class | Purpose |
+|------|-------|---------|
+| Test Class | `{Service}Test.java` | Thin DSL, plain JUnit 5 (no base class) |
+| Statements | `{Feature}Statements.java` | Setup methods + in-memory fakes |
+| InMemory Fakes | `InMemory{Port}.java` | In-memory implementations of domain ports |
+| Request DTO | `{Action}Command.java` | Request data, use Instancio to create |
 
 ## Tech-Specific Rules
 
-- Extend `ApplicationTest`
-- Add `@Disabled` annotation
-- Use `@Description` with Gherkin format
-- `@RequiredArgsConstructor` on Statements, `@Builder` + `@Default` on Scope
+- Plain JUnit 5 — no Spring context, no base class
+- Add `@Disabled` annotation in RED
+- `@Nested` inner classes grouping tests by method
+- `@DisplayName` with `WHEN ... EXPECT ...` pattern
+- `// GIVEN:`, `// WHEN:`, `// THEN:` section comments
+- `sut` naming for system under test
+- Use `catchException()` for exception assertions, `then()` for value assertions (AssertJ BDD)
+- Use Instancio for test data generation (`Instancio.of(Command.class).set(...).create()`)
 - Not-implemented marker: `throw new UnsupportedOperationException("Not implemented yet")`
-- Empty values: `null` for nullable fields, `List.of()` for collections
+
+## Statements Class
+
+- Plain Java class (no annotation needed)
+- Exposes in-memory fakes as public fields
+- Setup methods named `given*()` — create and save domain objects
+- Uses Instancio to generate default-filled domain objects, overriding only relevant fields
+
+## InMemory Fakes
+
+- Placed in `infrastructure/` subpackage of the subdomain's test sources (same package as the port interface)
+- Implement domain repository/port interfaces using `Map` or `List` storage
+- Functional in RED — not stubbed
 
 ## Reference (read before generating)
 
-- Test class: `backend/usecase/src/test/java/com/example/usecase/task/create/CreateTaskUseCaseTest.java`
-- Statements: `backend/usecase/src/test/java/com/example/usecase/statements/TaskStatements.java`
-- Scope: `backend/usecase/src/test/java/com/example/usecase/scope/CreateTaskRequestScope.java`
-- Base class: `backend/usecase/src/test/java/com/example/usecase/ApplicationTest.java`
-- TestData: `backend/usecase/src/test/java/com/example/usecase/scope/TestData.java`
-- Fake example: `backend/usecase/src/test/java/com/example/usecase/fake/task/FakeTaskStorage.java`
-
-## Update ApplicationTest
-
-Add new use-case and statements to `ApplicationTest.java` if needed (follow the existing `// ==================== USECASES ====================` and `// ==================== TEST STATEMENTS ====================` sections).
+- Example test: `src/test/java/by/iivanov/rpm/iam/user/application/AuthenticationServiceTest.java`
+- Example Statements: `src/test/java/by/iivanov/rpm/iam/user/fixtures/UserStatements.java`
+- Example InMemory fake: `src/test/java/by/iivanov/rpm/iam/user/infrastructure/InMemoryUserRepository.java`
+- Example request DTO: `src/main/java/by/iivanov/rpm/iam/user/application/RegisterUserCommand.java`
+- RpmSoftAssertions: `src/test/java/by/iivanov/rpm/testing/assertj/RpmSoftAssertions.java`
+- AggregateRootAssert: `src/test/java/by/iivanov/rpm/testing/assertj/AggregateRootAssert.java`
 
 ## Key Paths
 
-- Tests: `backend/usecase/src/test/java/com/example/usecase/{feature}/`
-- Production: `backend/usecase/src/main/java/com/example/usecase/{feature}/`
-- Base class: `backend/usecase/src/test/java/com/example/usecase/ApplicationTest.java`
-- Statements: `backend/usecase/src/test/java/com/example/usecase/statements/`
-- Scopes: `backend/usecase/src/test/java/com/example/usecase/scope/`
-- Fakes: `backend/usecase/src/test/java/com/example/usecase/fake/`
+- Tests: `src/test/java/by/iivanov/rpm/{context}/{subdomain}/application/`
+- Statements: `src/test/java/by/iivanov/rpm/{context}/{subdomain}/fixtures/`
+- InMemory fakes: `src/test/java/by/iivanov/rpm/{context}/{subdomain}/infrastructure/`
+- Production services: `src/main/java/by/iivanov/rpm/{context}/{subdomain}/application/`
+- Request DTOs: `src/main/java/by/iivanov/rpm/{context}/{subdomain}/application/`
