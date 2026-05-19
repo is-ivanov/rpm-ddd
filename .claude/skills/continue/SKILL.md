@@ -38,8 +38,8 @@ Each progress.md checkbox maps to sub-skills. Dispatch per `workflow.md` sequenc
 |----------|-----------|
 | Spec items (`interview`, `story`, `mockups`, `api-spec`, `test-spec`) | `/{item}` then commit |
 | `design` | `/design-preview` → user approves (optionally with ADR) or `/architecture` → commit (if ADR produced) |
-| `red-*` (acceptance, usecase, adapter, selenium, frontend, frontend-api) | `red-agent.md` → `/test-review` → `/refactor` → commit |
-| `green-usecase`, `green-adapter X` | `green-agent.md` → `/refactor` → `/test-coverage {module} --focus` → commit |
+| `red-*` (acceptance, usecase, domain, adapter, selenium, frontend, frontend-api) | `red-agent.md` → `/test-review` → `/refactor` → commit |
+| `green-usecase`, `green-domain`, `green-adapter X` | `green-agent.md` → `/refactor` → `/test-coverage {module} --focus` → commit |
 | `adapters-discovery` | Load `.claude/templates/workflow/adapter-discovery-checklist.md`, run all 3 checks (ports, exceptions, response shape), mark `[x] adapters-discovery`, insert concrete `red-adapter X` / `green-adapter X` steps (or `[S]`) → commit progress.md |
 | `green-acceptance` | Run inline (no subagent): read `green-agent.md` workflow, load acceptance implementation template, enable the disabled test (remove disable marker — only allowed test change), run acceptance tests, verify GREEN → commit |
 | `green-frontend`, `green-frontend-api` | `green-agent.md` → `/refactor` → commit |

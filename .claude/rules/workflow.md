@@ -18,6 +18,7 @@ For each scenario in `tests/01_API_Tests.md`:
 2. `design` → `/design-preview` → user approves (optionally with ADR) or escalates to `/architecture` → commit (if ADR produced)
 3. `red-usecase` → `/red-usecase` → `/test-review` → `/refactor` (MANDATORY) → commit
 4. `green-usecase` → `/green-usecase` → `/refactor` (MANDATORY) → `/test-coverage usecase --focus` → commit
+4a. `red-domain` / `green-domain` (OPTIONAL) — only when coverage-agent finds uncovered domain branches after step 4, OR when design-preview identifies domain objects with testable logic (value object validation, entity state transitions, domain policies). Follows same TDD cycle: `red-domain` → `/test-review` → `/refactor` → `green-domain` → `/refactor` → commit. Otherwise `[S]`.
 5. `adapters-discovery` → adapter discovery: identify ports and map to adapters, mark `[x] adapters-discovery`, insert concrete `red-adapter X` / `green-adapter X` steps below it (or `[S]` if no new adapters), commit progress.md
 6. `red-adapter X` → `/red-adapter X` → `/test-review` → `/refactor` (MANDATORY) → commit (one per port)
 7. `green-adapter X` → `/green-adapter X` → `/refactor` (MANDATORY) → `/test-coverage {adapter} --focus` → commit (one per port)
@@ -97,7 +98,7 @@ If no `progress.md` exists, create one by:
 2. Reading the story's test specs (`tests/01_API_Tests.md`, `tests/06_Integration_Tests.md` if exists, `tests/02_UI_Tests.md`, `tests/05_Security_Tests.md` if exists, `tests/03_Load_Tests.md` if exists, `tests/04_Infrastructure_Tests.md` if exists)
 3. Scanning existing test classes and production code for completed steps
 4. Marking completed steps as `[x]`, next step as `[~]`, rest as `[ ]`
-5. For backend/integration/security scenarios, **always include `design` after `red-acceptance`** — it is mandatory for every scenario that needs new implementation. Only omit it when the entire scenario is `[S]` (existing implementation covers everything). Include `[ ] adapters-discovery` after `green-usecase` — adapter discovery runs when this step is reached.
+5. For backend/integration/security scenarios, **always include `design` after `red-acceptance`** — it is mandatory for every scenario that needs new implementation. Only omit it when the entire scenario is `[S]` (existing implementation covers everything). Include `[ ] adapters-discovery` after `green-usecase` — adapter discovery runs when this step is reached. Include `[ ] red-domain` / `[ ] green-domain` after `green-usecase` as `[S]` by default — they are activated only when coverage-agent or design-preview identifies need.
 6. For frontend scenarios, include `demo` as the final step per scenario
 
 ## Atomic Work Units

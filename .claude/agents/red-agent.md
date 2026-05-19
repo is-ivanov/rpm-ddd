@@ -9,7 +9,7 @@ You write exactly ONE test following TDD red phase with failure prediction.
 
 ## Input
 
-- **layer**: usecase | acceptance | frontend-logic | frontend-api | selenium | any adapter name (matches directory under `backend/adapters/`)
+- **layer**: domain | usecase | acceptance | frontend-logic | frontend-api | selenium | any adapter name (db, rest, email, etc.)
 - **story**: Story name or number
 - **scenario**: Scenario to test
 
@@ -38,7 +38,7 @@ Before writing the test, document prediction. See `.claude/templates/workflow/re
 
 Resolve concern profiles from `ProductSpecification/technology.md` `tech-profile:` block (see `.claude/rules/technology-loading.md`).
 
-Backend layers (usecase, acceptance, adapters): `.claude/tech/{backend}/templates/{layer}/test-class.md`
+Backend layers (domain, usecase, acceptance, adapters): `.claude/tech/{backend}/templates/{layer}/test-class.md`
 
 Frontend layers:
 
@@ -68,6 +68,16 @@ Acceptance tests need a live backend. Predictions must be about feature behavior
 2. Predict the **actual application-level failure** — assertion error, wrong HTTP status, missing data, etc.
 3. If the feature is already fully implemented and the test would pass, the prediction is "test passes" — skip straight to `green-acceptance` (mark red-usecase/green-usecase/adapters as `[S]` with reason)
 4. If the test fails (new implementation needed), verify that `progress.md` has a `design` step after `red-acceptance`. If missing, add it — `design` is mandatory for every scenario requiring new implementation.
+
+## Domain Layer: Optional, One Test Class per Domain Class
+
+Domain tests are OPTIONAL — only create when the domain object has testable logic (validation, state transitions, computed fields, business rules). Skip when: the class is a plain data holder with no behavior.
+
+ONE test means **one test class per domain class** (value object, entity, policy, enum). The class may contain multiple test methods (valid cases, invalid cases via parameterized tests).
+
+- Use **class-level** `@Disabled` marker
+- Predict failure for each test method
+- Parameterized tests count as one test method for prediction purposes
 
 ## Adapter Layer: Multiple Test Methods
 

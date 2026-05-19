@@ -19,10 +19,14 @@
 - [~] design               <- MANDATORY for every scenario needing new implementation
 - [ ] red-usecase
 - [ ] green-usecase
+- [S] red-domain (optional: created only when coverage or design-preview identifies need)
+- [S] green-domain
 - [ ] adapters-discovery
 - [ ] green-acceptance
 
 #### After adapters-discovery resolves (example):
+- [S] red-domain (no testable domain logic)
+- [S] green-domain
 - [x] adapters-discovery (db, rest)
 - [ ] red-adapter db
 - [ ] green-adapter db
@@ -37,6 +41,8 @@
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
+- [S] red-domain
+- [S] green-domain
 - [ ] adapters-discovery
 - [ ] green-acceptance
 
@@ -59,6 +65,8 @@
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
+- [S] red-domain
+- [S] green-domain
 - [ ] adapters-discovery
 - [ ] green-acceptance
 
@@ -69,6 +77,8 @@
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
+- [S] red-domain
+- [S] green-domain
 - [ ] adapters-discovery
 - [ ] green-acceptance
 
@@ -79,6 +89,8 @@
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
+- [S] red-domain
+- [S] green-domain
 - [ ] adapters-discovery
 - [ ] green-acceptance
 ```

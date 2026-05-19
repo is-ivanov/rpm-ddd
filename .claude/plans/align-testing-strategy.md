@@ -25,13 +25,16 @@ Verified against current story progress (`ProductSpecification/stories/01-user-l
 - `.claude/tech/java-spring/templates/db/test-class.md` — full rewrite (renamed from h2) (also added complexity filter for point 4)
 - `.claude/templates/tdd/red-acceptance.md` — updated architecture description
 
-### 3. Domain tests (Level 4) not in workflow (SUBSTANTIAL)
-**Gap:** TESTING.md defines Level 4 as separate concern; workflow covers domain only via usecase coverage.
-**Files to fix:**
-- `.claude/tech/java-spring/templates/domain/test-class.md` (NEW)
-- `.claude/rules/workflow.md` — add optional domain step
-- `.claude/agents/red-agent.md` — add `domain` to layers
-**Story 1 impact:** Scenarios 2.1-6.1 may need domain-level tests (e.g., `ActivationToken` value object validation).
+### 3. Domain tests (Level 4) not in workflow ✅ DONE
+**Status:** Fixed. Created domain template, added `domain` as optional layer in red/green agents, added step 4a in workflow.md. Domain tests default to `[S]` — activated only when coverage-agent or design-preview identifies testable domain logic.
+**Files changed:**
+- `.claude/tech/java-spring/templates/domain/test-class.md` — NEW
+- `.claude/tech/java-spring/templates/domain/implementation.md` — NEW
+- `.claude/agents/red-agent.md` — added `domain` layer + Domain Layer rules section
+- `.claude/agents/green-agent.md` — added `domain` layer
+- `.claude/rules/workflow.md` — added step 4a (optional domain), updated bootstrapping
+- `.claude/skills/continue/SKILL.md` — added domain to dispatch table
+- `.claude/templates/workflow/progress-format.md` — added domain to all backend scenario sections
 
 ### 4. H2 adapter tests for simple CRUD (SUBSTANTIAL)
 **Gap:** Adapter discovery creates H2 steps for every port method, but TESTING.md says ad-hoc only for complex queries.
