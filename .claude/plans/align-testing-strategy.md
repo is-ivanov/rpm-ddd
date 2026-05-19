@@ -36,11 +36,11 @@ Verified against current story progress (`ProductSpecification/stories/01-user-l
 - `.claude/skills/continue/SKILL.md` — added domain to dispatch table
 - `.claude/templates/workflow/progress-format.md` — added domain to all backend scenario sections
 
-### 4. H2 adapter tests for simple CRUD (SUBSTANTIAL)
-**Gap:** Adapter discovery creates H2 steps for every port method, but TESTING.md says ad-hoc only for complex queries.
-**Files to fix:**
-- `.claude/templates/workflow/adapter-discovery-checklist.md` — add complexity filter
-**Story 1 impact:** Scenarios 2.1-6.1 — check if new repository methods are simple derived queries (→ `[S]`).
+### 4. H2 adapter tests for simple CRUD ✅ DONE
+**Status:** Fixed. DB complexity filter added to adapter-discovery-checklist.md Check 1 step 4. Simple derived queries (`findByXxx`) → `[S]`. Only custom `@Query`, native SQL, Specifications, JOIN FETCH trigger adapter steps.
+**Files changed:**
+- `.claude/templates/workflow/adapter-discovery-checklist.md` — added step 4 (DB complexity filter)
+- `.claude/tech/java-spring/templates/db/test-class.md` — already contains the filter (done in H2→db rename)
 
 ### 5. DTO validation tests not in workflow (MODERATE)
 **Gap:** TESTING.md Level 2 calls for `Validator` tests for complex DTOs; not in workflow.
