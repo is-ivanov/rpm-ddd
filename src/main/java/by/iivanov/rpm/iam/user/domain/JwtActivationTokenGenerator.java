@@ -8,6 +8,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -28,7 +29,8 @@ public class JwtActivationTokenGenerator {
     }
 
     public UserId parseActivationClaim(String token) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var jwt = Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(token);
+        return new UserId(UUID.fromString(jwt.getPayload().getSubject()));
     }
 
     public String generateToken(UserId userId, String jti) {

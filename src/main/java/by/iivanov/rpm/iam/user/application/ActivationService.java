@@ -2,6 +2,7 @@ package by.iivanov.rpm.iam.user.application;
 
 import by.iivanov.rpm.iam.user.domain.JwtActivationTokenGenerator;
 import by.iivanov.rpm.iam.user.domain.User;
+import by.iivanov.rpm.iam.user.domain.UserNotFoundException;
 import by.iivanov.rpm.iam.user.domain.UserRepository;
 import by.iivanov.rpm.shared.infrastructure.ApplicationService;
 
@@ -17,6 +18,7 @@ public class ActivationService {
     }
 
     public User validateToken(String token) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var userId = tokenGenerator.parseActivationClaim(token);
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 }

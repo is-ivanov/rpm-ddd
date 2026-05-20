@@ -6,12 +6,10 @@ import by.iivanov.rpm.iam.user.fixtures.UserStatements;
 import java.time.Clock;
 import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@Disabled("TDD Red Phase - ActivationService.validateToken not implemented")
 class ActivationServiceTest {
 
     private static final String TEST_JWT_SECRET = "Y2hhbmdlLXRoaXMtdG8tYS1sb25nLXNlY3JldC1rZXktaW4tcHJvZHVjdGlvbg==";

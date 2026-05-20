@@ -1,0 +1,9 @@
+[00:54:57] [green-agent] RUN: running ActivationServiceTest
+[00:56:12] [green-agent] RUN: running all tests in module
+[00:56:52] [green-agent] DONE: ActivationServiceTest passed, all 159 module tests green
+[01:02:42] [refactor-agent] FIX: B5 - added UserNotFoundException domain exception, replaced bare orElseThrow()
+[01:02:42] [refactor-agent] RUN: 159 tests passed, 0 failures, 1 skipped
+[01:02:42] [refactor-agent] DONE: all violations resolved
+[01:06:02] [coverage-agent] START: usecase --focus
+[01:13:20] [coverage-agent] RUN: usecase — ActivationService 100%, JwtActivationTokenGenerator 100%, UserNotFoundException 0%
+[01:14:00] [coverage-agent] DONE: 1 gap found (UserNotFoundException 0% — no existing scenario covers it)
