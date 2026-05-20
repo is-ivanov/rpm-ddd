@@ -27,13 +27,10 @@ public class JwtActivationTokenGenerator {
         this.clock = clock;
     }
 
-    /**
-     * Generates a JWT activation token for the given user.
-     *
-     * @param userId the identifier of the user for whom the token is generated
-     * @param jti the unique identifier for the token
-     * @return the compact serialized JWT activation token
-     */
+    public UserId parseActivationClaim(String token) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
     public String generateToken(UserId userId, String jti) {
         var now = Instant.now(clock);
         return Jwts.builder()
