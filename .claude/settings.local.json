@@ -4,7 +4,27 @@
       "Bash(ls *)",
       "Bash(echo \"EXIT:$?\")",
       "Bash(grep -v '^\\\\+\\\\+$')",
-      "Bash(grep -v '^\\\\-\\\\-$')"
+      "Bash(grep -v '^\\\\-\\\\-$')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/actuator/health)",
+      "Bash(./mvnw test *)",
+      "Bash(./mvnw spotless:apply -B)",
+      "Bash(./mvnw dependency:tree -Dincludes=com.fasterxml.jackson.core:jackson-databind -B)",
+      "Bash(./mvnw dependency:tree -B)",
+      "Bash(./mvnw dependency:resolve -DincludeArtifactIds=jjwt-jackson-3 -B)",
+      "Bash(./mvnw dependency:resolve -DincludeArtifactIds=jjwt-gson -B)",
+      "Bash(./mvnw help:effective-pom -B)",
+      "Bash(./mvnw dependency:tree -Dincludes=io.jsonwebtoken:jjwt-jackson,com.fasterxml.jackson.core:jackson-databind -B)",
+      "Bash(curl -s \"https://api.github.com/repos/jwtk/jjwt/issues/1029\")",
+      "Bash(curl -s \"https://api.github.com/repos/jwtk/jjwt/releases?per_page=5\")",
+      "Bash(curl -s \"https://search.maven.org/solrsearch/select?q=g:io.jsonwebtoken+AND+a:jjwt-jackson*&rows=10&wt=json\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/jwtk/jjwt/refs/heads/master/README.md\")",
+      "Bash(./mvnw spring-boot:run -DskipTests)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(curl -s http://localhost:8080/actuator/health)",
+      "PowerShell(Get-Command *)",
+      "Bash(audio-hooks test *)",
+      "Bash(audio-hooks theme *)",
+      "Bash(C:/Users/ivan/AppData/Local/Programs/Python/Python312/python.exe *)"
     ]
   }
 }

@@ -38,8 +38,8 @@
 
 ### Scenario 2.1: Valid activation token returns user info
 - [x] red-acceptance
-- [ ] design
-- [ ] red-usecase
+- [x] design
+- [~] red-usecase
 - [ ] green-usecase
 - [ ] adapters-discovery
 - [ ] green-acceptance
