@@ -45,8 +45,8 @@
   - Check 1 (ports): UserRepository.findById — sufficient (simple Spring Data derived query); JwtActivationTokenGenerator — domain service, not a port
   - Check 2 (exceptions): rest — sufficient (UserNotFoundException not triggered in happy path; will be needed for Scenarios 2.2/2.3)
   - Check 3 (response shape): rest — MISSING endpoint GET /api/auth/activate?token=... with response DTO {login, email}
-- [~] red-adapter rest
-- [ ] green-adapter rest
+- [x] red-adapter rest
+- [~] green-adapter rest
 - [ ] green-acceptance
 
 ### Scenario 2.2: Expired activation token returns error
