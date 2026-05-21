@@ -33,6 +33,7 @@ public class JwtActivationTokenGenerator {
         return new UserId(UUID.fromString(jwt.getPayload().getSubject()));
     }
 
+    /** Generate a JWT activation token for the given user. */
     public String generateToken(UserId userId, String jti) {
         var now = Instant.now(clock);
         return Jwts.builder()

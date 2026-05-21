@@ -1,9 +1,10 @@
-[00:54:57] [green-agent] RUN: running ActivationServiceTest
-[00:56:12] [green-agent] RUN: running all tests in module
-[00:56:52] [green-agent] DONE: ActivationServiceTest passed, all 159 module tests green
-[01:02:42] [refactor-agent] FIX: B5 - added UserNotFoundException domain exception, replaced bare orElseThrow()
-[01:02:42] [refactor-agent] RUN: 159 tests passed, 0 failures, 1 skipped
-[01:02:42] [refactor-agent] DONE: all violations resolved
-[01:06:02] [coverage-agent] START: usecase --focus
-[01:13:20] [coverage-agent] RUN: usecase — ActivationService 100%, JwtActivationTokenGenerator 100%, UserNotFoundException 0%
-[01:14:00] [coverage-agent] DONE: 1 gap found (UserNotFoundException 0% — no existing scenario covers it)
+[22:43:30] [green-agent] START: green-adapter rest - Scenario 2.1 validateActivationToken
+[22:46:31] [green-agent] DONE: green-adapter rest - 2 pass, 0 fail, 160 total suite pass
+[22:48:01] [refactor-agent] START: AuthResource + AuthResourceTest (adapter rest)
+[22:48:52] [refactor-agent] SCAN: A1(login 13L), A8(command pass-through), B6(missing ActivationTokenResponse.from())
+[22:57:29] [refactor-agent] FIX: ActivationTokenResponse.from(User), inline command var, extract establishSecurityContext, extract givenUserWithActivationToken
+[22:57:44] [refactor-agent] RUN: 160 tests, 0 failures, BUILD SUCCESS
+[22:57:57] [refactor-agent] DONE: adapter rest refactoring complete
+[23:02:17] [coverage-agent] START: adapter rest (Scenario 2.1, focus mode)
+[23:05:02] [coverage-agent] RUN: AuthResource 100%, ActivationTokenResponse 100% (all branches covered)
+[23:05:02] [coverage-agent] DONE: clean — no coverage gaps in focused files

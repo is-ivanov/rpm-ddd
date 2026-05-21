@@ -5,6 +5,7 @@ import by.iivanov.rpm.iam.user.application.ActivationService;
 import by.iivanov.rpm.iam.user.application.AuthenticateUserCommand;
 import by.iivanov.rpm.iam.user.application.AuthenticationService;
 import by.iivanov.rpm.iam.user.domain.Login;
+import by.iivanov.rpm.iam.user.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -48,7 +49,8 @@ class AuthResource {
 
     @GetMapping("/activate")
     ActivationTokenResponse validateActivationToken(@RequestParam String token) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        var user = activationService.validateToken(token);
+        return ActivationTokenResponse.from(user);
     }
 
     @PostMapping("/login")
@@ -56,9 +58,12 @@ class AuthResource {
             @RequestBody @Valid LoginRequest request,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
-        var command = new AuthenticateUserCommand(new Login(request.login()), request.password());
-        var user = authenticationService.authenticate(command);
+        var user = authenticationService.authenticate(
+                new AuthenticateUserCommand(new Login(request.login()), request.password()));
+        establishSecurityContext(user, httpRequest, httpResponse);
+    }
 
+    private void establishSecurityContext(User user, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         SecurityContext context = securityContextHolderStrategy.createEmptyContext();
         context.setAuthentication(UsernamePasswordAuthenticationToken.authenticated(
                 new RpmUserDetails(user.getId(), user.getLogin(), user.getPassword()), null, Collections.emptyList()));

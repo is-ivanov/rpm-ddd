@@ -1,5 +1,6 @@
 package by.iivanov.rpm.iam.auth.infrastructure.web;
 
+import static org.instancio.Select.field;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
@@ -9,11 +10,10 @@ import by.iivanov.rpm.iam.user.domain.EmailAddress;
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.testing.WebTest;
-import org.junit.jupiter.api.Disabled;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 @WebTest
 class AuthResourceTest {
@@ -39,17 +39,13 @@ class AuthResourceTest {
     }
 
     @Nested
-    @Disabled("TDD Red Phase - validateActivationToken returns 500 instead of 200 with user info")
     @DisplayName("test GET '/auth/activate' endpoint")
     class ValidateActivationTokenTest {
 
         @Test
         @DisplayName("Valid activation token returns user info")
         void should_returnUserInfo_when_validActivationToken() {
-            var user = Mockito.mock(User.class);
-            given(user.getLogin()).willReturn(new Login("testuser"));
-            given(user.getEmail()).willReturn(new EmailAddress("test@example.com"));
-            given(activationService.validateToken(eq("valid-token"))).willReturn(user);
+            givenUserWithActivationToken();
 
             var response = authApi.validateActivationToken("valid-token");
 
@@ -59,6 +55,14 @@ class AuthResourceTest {
                         "email": "test@example.com"
                     }
                     """);
+        }
+
+        private void givenUserWithActivationToken() {
+            var user = Instancio.of(User.class)
+                    .set(field(User::getLogin), new Login("testuser"))
+                    .set(field(User::getEmail), new EmailAddress("test@example.com"))
+                    .create();
+            given(activationService.validateToken(eq("valid-token"))).willReturn(user);
         }
     }
 }
