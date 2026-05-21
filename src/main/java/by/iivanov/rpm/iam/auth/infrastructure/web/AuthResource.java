@@ -1,9 +1,11 @@
 package by.iivanov.rpm.iam.auth.infrastructure.web;
 
 import by.iivanov.rpm.iam.auth.infrastructure.RpmUserDetails;
+import by.iivanov.rpm.iam.user.application.ActivationService;
 import by.iivanov.rpm.iam.user.application.AuthenticateUserCommand;
 import by.iivanov.rpm.iam.user.application.AuthenticationService;
 import by.iivanov.rpm.iam.user.domain.Login;
+import by.iivanov.rpm.iam.user.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,14 +27,17 @@ import org.springframework.web.bind.annotation.RestController;
 class AuthResource {
 
     private final AuthenticationService authenticationService;
+    private final ActivationService activationService;
     private final SecurityContextHolderStrategy securityContextHolderStrategy;
     private final SecurityContextRepository securityContextRepository;
 
     AuthResource(
             AuthenticationService authenticationService,
+            ActivationService activationService,
             SecurityContextHolderStrategy securityContextHolderStrategy,
             SecurityContextRepository securityContextRepository) {
         this.authenticationService = authenticationService;
+        this.activationService = activationService;
         this.securityContextHolderStrategy = securityContextHolderStrategy;
         this.securityContextRepository = securityContextRepository;
     }
@@ -41,19 +47,26 @@ class AuthResource {
         return token;
     }
 
+    @GetMapping("/activate")
+    ActivationTokenResponse validateActivationToken(@RequestParam String token) {
+        var user = activationService.validateToken(token);
+        return ActivationTokenResponse.from(user);
+    }
+
     @PostMapping("/login")
     void login(
             @RequestBody @Valid LoginRequest request,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
-        var command = new AuthenticateUserCommand(new Login(request.login()), request.password());
-        var user = authenticationService.authenticate(command);
+        var user = authenticationService.authenticate(
+                new AuthenticateUserCommand(new Login(request.login()), request.password()));
+        establishSecurityContext(user, httpRequest, httpResponse);
+    }
 
-        var principal = new RpmUserDetails(user.getId(), user.getLogin(), user.getPassword());
-        var authentication =
-                UsernamePasswordAuthenticationToken.authenticated(principal, null, Collections.emptyList());
+    private void establishSecurityContext(User user, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         SecurityContext context = securityContextHolderStrategy.createEmptyContext();
-        context.setAuthentication(authentication);
+        context.setAuthentication(UsernamePasswordAuthenticationToken.authenticated(
+                new RpmUserDetails(user.getId(), user.getLogin(), user.getPassword()), null, Collections.emptyList()));
         securityContextHolderStrategy.setContext(context);
         securityContextRepository.saveContext(context, httpRequest, httpResponse);
     }

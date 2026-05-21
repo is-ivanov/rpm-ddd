@@ -8,6 +8,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -27,13 +28,12 @@ public class JwtActivationTokenGenerator {
         this.clock = clock;
     }
 
-    /**
-     * Generates a JWT activation token for the given user.
-     *
-     * @param userId the identifier of the user for whom the token is generated
-     * @param jti the unique identifier for the token
-     * @return the compact serialized JWT activation token
-     */
+    public UserId parseActivationClaim(String token) {
+        var jwt = Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(token);
+        return new UserId(UUID.fromString(jwt.getPayload().getSubject()));
+    }
+
+    /** Generate a JWT activation token for the given user. */
     public String generateToken(UserId userId, String jti) {
         var now = Instant.now(clock);
         return Jwts.builder()

@@ -84,6 +84,10 @@ tech-profile:
 | Health endpoint | /actuator/health |
 | Spring config syntax | ${VAR:fallback} |
 | Docker config syntax | ${VAR:-fallback} |
+| Commit format | Short imperative subjects (e.g., "Add architecture tests") |
+| PR requirements | Problem, approach, linked issue, verification commands |
+| Verification commands | ./mvnw test, ./mvnw verify, ./mvnw checkstyle:check, ./mvnw pmd:check |
+| Screenshots for | HTTP or UI-facing changes only |
 
 ### Frontend
 

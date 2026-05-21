@@ -49,4 +49,14 @@ public class AuthApi extends AbstractApi {
     public AssertionResponse login(String jsonBody, String csrfToken) {
         return post(loginUri(), jsonBody, csrfToken);
     }
+
+    //  ==== activation token validation ====
+
+    private String activateUri() {
+        return BASE_URI + "/activate";
+    }
+
+    public AssertionResponse validateActivationToken(String token) {
+        return get(activateUri() + "?token=" + token);
+    }
 }

@@ -1,5 +1,6 @@
 package by.iivanov.rpm.iam.user.fixtures;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.instancio.Select.field;
 
 import by.iivanov.rpm.iam.user.domain.EmailAddress;
@@ -51,5 +52,23 @@ public class UserStatements {
                 .set(field(User::getStatus), status)
                 .create();
         userRepository.save(existingUser);
+    }
+
+    /** Saves a PENDING user with the provided login and email. */
+    public User givenPendingUserWithLoginAndEmail(String login, String email) {
+        User user = Instancio.of(User.class)
+                .set(field(User::getLogin), new Login(login))
+                .set(field(User::getEmail), new EmailAddress(email))
+                .set(field(User::getStatus), UserStatus.PENDING)
+                .create();
+        return userRepository.save(user);
+    }
+
+    /** Asserts that the validated user matches the expected user in all domain fields. */
+    public void assertValidatedUser(User actual, User expected) {
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*domainEvents", ".*clearingMark")
+                .isEqualTo(expected);
     }
 }

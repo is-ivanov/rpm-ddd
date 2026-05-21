@@ -1,10 +1,10 @@
-09:00:48 [green-agent] START: green-usecase Scenario 1.2
-09:06:00 [green-agent] RUN: 86 passed, 0 failed, 1 skipped
-[09:06:35] [refactor-agent] START: UserAuthenticationService.java, UserAuthenticationException.java
-[09:08:01] [refactor-agent] SCAN: A7 repeated string 'Account not activated' L17/L26; B5 caller checks user.getStatus() then throws - should be on User aggregate; statusMessage switch belongs on UserStatus enum
-[09:09:55] [refactor-agent] FIX: B5-encapsulate-conditional: moved status check to User.validateActiveForAuthentication(); A7-deduplicate: moved statusMessage switch to UserStatus.authenticationErrorMessage(); removed private statusMessage() from UserAuthenticationService
-[09:11:08] [refactor-agent] RUN: 86 tests passed, 0 failures, 0 errors, 1 skipped (pre-existing) — BUILD SUCCESS
-[09:11:47] [refactor-agent] DONE: 3 fixes applied (B5-encapsulate-conditional, A7-deduplicate-string, move-statusMessage-to-enum), re-scan clean, 86/86 tests pass
-[19:16:53] [coverage-agent] START: usecase module
-[19:25:17] [coverage-agent] RUN: usecase — 100% on scenario code
-[19:25:30] [coverage-agent] DONE: clean — all scenario code 100% covered
+[22:43:30] [green-agent] START: green-adapter rest - Scenario 2.1 validateActivationToken
+[22:46:31] [green-agent] DONE: green-adapter rest - 2 pass, 0 fail, 160 total suite pass
+[22:48:01] [refactor-agent] START: AuthResource + AuthResourceTest (adapter rest)
+[22:48:52] [refactor-agent] SCAN: A1(login 13L), A8(command pass-through), B6(missing ActivationTokenResponse.from())
+[22:57:29] [refactor-agent] FIX: ActivationTokenResponse.from(User), inline command var, extract establishSecurityContext, extract givenUserWithActivationToken
+[22:57:44] [refactor-agent] RUN: 160 tests, 0 failures, BUILD SUCCESS
+[22:57:57] [refactor-agent] DONE: adapter rest refactoring complete
+[23:02:17] [coverage-agent] START: adapter rest (Scenario 2.1, focus mode)
+[23:05:02] [coverage-agent] RUN: AuthResource 100%, ActivationTokenResponse 100% (all branches covered)
+[23:05:02] [coverage-agent] DONE: clean — no coverage gaps in focused files
