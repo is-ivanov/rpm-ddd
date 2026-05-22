@@ -10,34 +10,36 @@
 ## Backend Scenarios
 
 ### Scenario 1.1: Login with valid ACTIVE user returns session
-- [~] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
-- [S] red-domain
+- [x] red-acceptance (AuthLoginIntegrationTest — already passes)
+- [S] design (feature already implemented)
+- [S] red-usecase (happy path covered by Level 1 acceptance)
+- [S] green-usecase (no new usecase code needed)
+- [S] red-domain (no testable domain logic in this scenario)
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery (existing adapters sufficient)
+- [x] green-acceptance
 
 ### Scenario 1.2: Login with non-ACTIVE user returns 401
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
-- [S] red-domain
+- [x] red-acceptance (LoginStatusValidationIntegrationTest — 3 tests for PENDING/LOCKED/INACTIVE)
+- [x] design (existing implementation)
+- [x] red-usecase (AuthenticationServiceTest — PENDING and LOCKED cases)
+- [x] green-usecase
+- [S] red-domain (per-message variations covered by acceptance tests; UserStatus.authenticationErrorMessage() branches covered at L1)
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery (existing adapters sufficient: SecurityConfig maps UserAuthenticationException)
+- [x] green-acceptance
 
 ### Scenario 2.1: Valid activation token returns user info
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
-- [S] red-domain
+- [x] red-acceptance (ActivationTokenValidationIntegrationTest — @Disabled)
+- [x] design
+- [x] red-usecase (ActivationServiceTest.ValidateTokenTest)
+- [x] green-usecase
+- [S] red-domain (no testable domain logic)
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery
+- [x] red-adapter rest (AuthResourceTest.ValidateActivationTokenTest)
+- [x] green-adapter rest
+- [~] green-acceptance
 
 ### Scenario 2.2: Invalid or expired activation token returns error
 - [ ] red-acceptance

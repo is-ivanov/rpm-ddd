@@ -2,7 +2,7 @@
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |---|-------|------|------|------|-------|-----|------|-------|-------|----|
-| 1 | User login | ✅ | 🔧 | n/a | — | — | — | — | 0/30 | 0% |
+| 1 | User login | ✅ | 🔧 | n/a | — | — | — | — | 2/30 | 7% |
 
 # Backlog
 
