@@ -4,6 +4,24 @@
 
 Never write production code without a failing test first.
 
+## Test Pyramid Alignment
+
+Each test level covers only what is NOT tested by the level above it. Per `TESTING.md`:
+
+| Level | Scope | What to test | What NOT to test |
+|-------|-------|-------------|-----------------|
+| 1 — e2e acceptance | `@ApplicationIntegrationTest`, full context, HTTP | Happy path (1-2 tests per use case) | Error cases, validation, corner cases |
+| 2 — web slice | `@WebTest`, auto-mocked dependencies | Validation errors, business exception → HTTP status mapping | Happy path (covered by Level 1) |
+| 3 — usecase unit | Pure unit, InMemory fakes, no Spring | Corner cases of business logic | Happy path (covered by Level 1) |
+| 4 — domain unit | No mocks, pure Java | Value object validation, entity state transitions, policies | Happy path (covered by Level 1) |
+| Infra (ad-hoc) | `@RepositoryTest` / `@DataJpaTest` | Complex queries only (`@Query`, native SQL, Specifications) | Simple `findByXxx` queries |
+
+**Rules:**
+- When writing a test at level N, verify the same behavior is not already covered by level N-1.
+- **Adapter tests are optional**: skip (`[S]`) when the adapter is a simple delegation with no validation/error logic.
+- **One acceptance scenario per endpoint behavior category** — NOT one per business variant. If 5 domain states produce the same HTTP response (same status, different message), that's ONE acceptance scenario. Per-state message variations belong in domain unit tests (Level 4).
+- Acceptance tests are the "long" tests. Keep them few. Move detail to cheaper lower levels.
+
 ### RED Phase
 - Create: test class, test methods, Statements/Scope helpers, minimal production stubs (using the not-implemented marker from the Conventions table in `technology.md`). **Never delegate to a working method** — delegating returns a valid result, which is partial implementation, not a stub.
 - **Domain stubs: only what the test touches.** Domain entities and value objects created in RED must contain only the fields the current test actually references or asserts. Don't preemptively add fields, relationships, or entire classes from the ADR/design that future scenarios will need. Add fields when a test demands them, not before.

@@ -1,6 +1,6 @@
 # Test Spec — Category Formats & Ordering
 
-## 01_API_Tests.md (8-12 tests)
+## 01_API_Tests.md (5-8 tests)
 
 Tests are ordered for **sequential TDD implementation** — each section builds on the previous one. You can implement group N without needing group N+1.
 
@@ -9,6 +9,19 @@ Start every generated file with this header:
 > **Implementation Order**: Tests are numbered for sequential TDD implementation.
 > Start with [story-specific progression summary].
 ```
+
+**Test Pyramid Alignment (CRITICAL):**
+
+Follow `TESTING.md`. Acceptance tests (Level 1, e2e) cover **happy path only**. Do NOT generate a separate acceptance scenario for every business variant that shares the same HTTP code path.
+
+| Rule | Example |
+|------|---------|
+| One happy path per endpoint | POST /login → 200 with session |
+| One representative error per endpoint (if the endpoint can fail) | POST /login → 401 (wrong password) |
+| Multiple business variants of the SAME error → merge into ONE scenario, test variants at lower levels (domain/usecase) | PENDING/LOCKED/INACTIVE all return 401 with different messages → ONE acceptance test "Login with non-ACTIVE user returns 401", individual messages tested at domain level |
+| Validation errors with different field combinations → ONE scenario per endpoint, test individual constraint violations at DTO/web level | Password too short + missing uppercase + missing digit → ONE "Password policy violation" scenario |
+
+**Acceptance ≠ exhaustive.** If 5 different domain states produce the same HTTP response (same status, same error structure, different message), that is ONE acceptance scenario — not 5. The per-state message variations belong in domain unit tests (Level 4).
 
 **Ordering principles (apply in this priority):**
 1. **Prerequisite guards first** — generate guard scenarios for every prerequisite listed in the story spec. See Prerequisite Guard Checklist below. Do NOT include generic auth (401 for unauthenticated) tests — those are tested globally by the security filter, not per-story.
