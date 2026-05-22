@@ -49,8 +49,8 @@
 - [S] red-domain
 - [S] green-domain
 - [x] adapters-discovery (rest: JWT exceptions unmapped → 422)
-- [ ] red-adapter rest
-- [ ] green-adapter rest
+- [x] red-adapter rest (AuthResourceTest.ValidateActivationTokenTest — @Disabled: invalid + expired token)
+- [~] green-adapter rest
 - [S] green-acceptance (no acceptance test to enable)
 
 ### Scenario 3.1: Activate with password violating policy returns validation errors
