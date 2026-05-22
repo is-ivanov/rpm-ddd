@@ -42,8 +42,8 @@
 - [x] green-acceptance
 
 ### Scenario 2.2: Invalid or expired activation token returns error
-- [ ] red-acceptance
-- [ ] design
+- [x] red-acceptance (ActivationTokenValidationIntegrationTest — @Disabled: invalid + expired token tests)
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain
