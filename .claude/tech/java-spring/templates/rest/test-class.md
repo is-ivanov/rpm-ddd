@@ -25,6 +25,11 @@ Project uses `@WebTest` meta-annotation that auto-mocks ALL controller dependenc
 - `@Test` method: call API → `AssertionResponse.assert*()`
 - ONE `@Test` method per test class in RED; add `@Disabled`
 
+**What to test at this level** (Level 2 — Web Slice, per `TESTING.md`):
+- Validation errors: `assertBindingError("__files/.../out.json")`
+- Business exception → HTTP status code mapping: mock service to throw exception, assert status + error body
+- Do NOT test happy path — covered by acceptance tests (Level 1, `@ApplicationIntegrationTest`)
+
 ## Test API Class Rules
 
 - Extend `AbstractApi`, annotate with `@WebApi`
@@ -58,9 +63,10 @@ For success responses: `assertOk("__files/.../out.json")` or inline JSON string.
 - `AbstractApi`: `src/test/java/by/iivanov/rpm/testing/api/AbstractApi.java`
 - `AssertionResponse`: `src/test/java/by/iivanov/rpm/testing/api/AssertionResponse.java`
 - `@WebApi`: `src/test/java/by/iivanov/rpm/testing/api/WebApi.java`
-- Example test class: `src/test/java/by/iivanov/rpm/iam/auth/infrastructure/web/AuthResourceTest.java`
 - Example API class: `src/test/java/by/iivanov/rpm/iam/auth/fixtures/AuthApi.java`
 - JSON template: `src/test/resources/__files/iam/auth/web/login_beanValidation_out.json`
+
+**Note:** `AuthResourceTest.java` contains a happy-path test at Level 2 — this pattern is being corrected. Do NOT use it as a template for new web slice tests. New tests at this level should cover validation errors and error response mapping only.
 
 ## Key Paths
 

@@ -49,6 +49,11 @@ List domain exceptions thrown by the usecase or its domain objects.
    - Response exists but is missing fields the test asserts → needs adapter steps
    - Response matches test expectations → `[S]`
 
+**Pyramid filter — before adding steps, apply this gate:**
+- **Simple delegation endpoint** (extracts params → calls usecase → returns response, no request validation) → `[S]` with reason "simple delegation — acceptance test covers happy path". Example: `GET /activate?token=...` that just calls `activationService.validateToken(token)` and returns the result.
+- **Validation endpoint** (has `@Valid` request body, DTO constraints) → add `red-adapter rest` / `green-adapter rest`.
+- **Error-mapping endpoint** (controller must catch business exceptions and map to HTTP status codes) → add adapter steps. Example: controller catches `TokenExpiredException` → 422 response.
+
 ### Example: missed happy-path
 
 **Scenario:** "Create task with title only" — acceptance test expects `{ id, title, position, createdAt }`.

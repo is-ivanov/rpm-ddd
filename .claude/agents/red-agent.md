@@ -19,16 +19,20 @@ You write exactly ONE test following TDD red phase with failure prediction.
 2. Read layer template (see table below)
 3. **Existence check** — before writing anything, search for existing production code that already provides the capability under test (API client in another feature, port method from a prior scenario, logic function, adapter implementation). For acceptance/rest layers: also search for existing `@WebApi`/`AbstractApi` classes that already wrap the target controller — add new endpoint methods to the existing class rather than creating a new one. If found → **STOP**. Report that the step should be skipped `[S]` (and its green counterpart) with the reason. Do not write the test.
 4. **Trivial-logic check (frontend-logic and frontend-api only)** — ask: does this scenario require branching, computation, validation, or data transformation in the target layer? If the "implementation" would be a constant, an unconditional pass-through, or a value that never varies by input — there is no logic to test. **Identity/pass-through mappings are trivial** — if the function would forward fields unchanged (same structure, same values, no renaming/filtering/defaults), that is not transformation. Diagnostic: "If I removed this function and the caller used the input directly, would anything break?" If no → **STOP.** Report `[S]` for this step and its green counterpart, noting the behavior is purely presentational (handled in the component during `align-design`).
-5. Analyze existing tests in the layer
-6. **PREDICT the expected failure** (error message, exception type, or assertion failure)
-7. **Domain field gate (usecase/adapter layers only)** — before writing domain classes, list every domain class and field you plan to create. For each field, cite the exact Statements line that reads or asserts it. See `.claude/templates/workflow/red-phase-formats.md` for the domain field gate table format. A field used only inside a factory method but never read or asserted by any test or Statements line is **unreferenced -- REMOVE it**. Only KEEP fields survive to code. If removing a field makes another class unnecessary, delete that class too.
-8. Write ONE test WITHOUT the test disable marker
-9. **Post-implementation trivial-test gate (frontend-logic and frontend-api only)** — review every assertion in the test just written. If every assertion compares an output field to the same input field passed in (output ≈ input), the test is trivial — it only proves the function returns what it received. **STOP.** Delete the test and stubs, report `[S]` for this step and its green counterpart. This catches cases where step 4 misjudged.
-10. **RUN the test** to verify it fails
-11. **COMPARE -- field by field.** Write the comparison table from `.claude/templates/workflow/red-phase-formats.md`. Compare Type, Message, and Status fields. "Both are AssertionError" does NOT mean the messages match. Compare the message text literally.
-12. **If ANY cell says NO: loop back.** Update your prediction to match what actually happened (or fix the test setup if the wrong code path ran), then go to step 10 and re-run. Keep looping until ALL cells say YES. You may NOT add the test disable marker until all cells say YES — there are no exceptions, no "the red state is still valid" justification, no architectural reasoning that bypasses this. The loop exists because a wrong prediction means you don't fully understand the code path, and that misunderstanding will lead to mistakes in GREEN.
-13. **All cells say YES → add the test disable marker.**
-14. Report: files created, domain field gate table, comparison table from final iteration (all YES), next step
+5. **Pyramid gate (adapter layers only)** — before writing an adapter test, verify the test is needed at this level per `TESTING.md`:
+   - **rest**: does the endpoint have validation logic (request body/DTO validation) or error-response mapping (business exception → HTTP status)? If the endpoint is a simple delegation with no validation → `[S]`. Happy path is covered by acceptance tests.
+   - **db**: is the query a custom `@Query`, native SQL, or Specification? Simple Spring Data derived query → `[S]`.
+   - If `[S]`, report the skip reason and stop. Do not write the test.
+6. Analyze existing tests in the layer
+7. **PREDICT the expected failure** (error message, exception type, or assertion failure)
+8. **Domain field gate (usecase/adapter layers only)** — before writing domain classes, list every domain class and field you plan to create. For each field, cite the exact Statements line that reads or asserts it. See `.claude/templates/workflow/red-phase-formats.md` for the domain field gate table format. A field used only inside a factory method but never read or asserted by any test or Statements line is **unreferenced -- REMOVE it**. Only KEEP fields survive to code. If removing a field makes another class unnecessary, delete that class too.
+9. Write ONE test WITHOUT the test disable marker
+10. **Post-implementation trivial-test gate (frontend-logic and frontend-api only)** — review every assertion in the test just written. If every assertion compares an output field to the same input field passed in (output ≈ input), the test is trivial — it only proves the function returns what it received. **STOP.** Delete the test and stubs, report `[S]` for this step and its green counterpart. This catches cases where step 4 misjudged.
+11. **RUN the test** to verify it fails
+12. **COMPARE -- field by field.** Write the comparison table from `.claude/templates/workflow/red-phase-formats.md`. Compare Type, Message, and Status fields. "Both are AssertionError" does NOT mean the messages match. Compare the message text literally.
+13. **If ANY cell says NO: loop back.** Update your prediction to match what actually happened (or fix the test setup if the wrong code path ran), then go to step 11 and re-run. Keep looping until ALL cells say YES. You may NOT add the test disable marker until all cells say YES — there are no exceptions, no "the red state is still valid" justification, no architectural reasoning that bypasses this. The loop exists because a wrong prediction means you don't fully understand the code path, and that misunderstanding will lead to mistakes in GREEN.
+14. **All cells say YES → add the test disable marker.**
+15. Report: files created, domain field gate table, comparison table from final iteration (all YES), next step
 
 ## Failure Prediction Format
 
@@ -81,7 +85,21 @@ ONE test means **one test class per domain class** (value object, entity, policy
 
 ## Adapter Layer: Multiple Test Methods
 
-For adapter layers (db, rest, email, security), ONE test means **one test class per port method**. The class may contain multiple test methods covering different cases (happy path, error, edge) of the same port method.
+For adapter layers, follow the test pyramid from `TESTING.md`. Each level tests only what is NOT covered by the level above.
+
+**rest adapter** (Level 2 — web slice):
+- ONE test class per controller endpoint that has validation or error-handling logic.
+- **Test**: validation errors (422), business-exception-to-status-code mapping (401, 404, 422).
+- **Do NOT test**: happy path — covered by acceptance tests (Level 1).
+- **Skip `[S]`**: when the endpoint is a simple delegation (controller → usecase → response) with no request validation and no error mapping.
+- Happy-path response shape is verified by the acceptance test.
+
+**db adapter** (infrastructure):
+- Only for custom `@Query`, native SQL, Specifications, JOIN FETCH — see `.claude/tech/java-spring/templates/db/test-class.md`.
+- Simple Spring Data derived queries (`findByXxx`, `existsByXxx`) → `[S]`.
+
+**email / security / other adapters**:
+- Only corner cases not covered by acceptance tests.
 
 - Use **class-level** test disable marker (not per-method) — one marker disables all methods
 - Predict failure for **each** test method separately
