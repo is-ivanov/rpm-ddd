@@ -43,12 +43,12 @@
 
 ### Scenario 2.2: Invalid or expired activation token returns error
 - [S] red-acceptance (error cases tested at Level 2 web slice, not Level 1 acceptance)
-- [~] design
+- [x] design
 - [S] red-usecase (trivial delegation — exception propagates from domain)
 - [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
+- [~] adapters-discovery
 - [S] green-acceptance (no acceptance test to enable)
 
 ### Scenario 3.1: Activate with password violating policy returns validation errors
