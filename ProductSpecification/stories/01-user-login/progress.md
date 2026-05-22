@@ -39,7 +39,7 @@
 - [x] adapters-discovery
 - [x] red-adapter rest (AuthResourceTest.ValidateActivationTokenTest)
 - [x] green-adapter rest
-- [~] green-acceptance
+- [x] green-acceptance
 
 ### Scenario 2.2: Invalid or expired activation token returns error
 - [ ] red-acceptance

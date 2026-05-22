@@ -8,11 +8,9 @@ import by.iivanov.rpm.iam.user.fixtures.UserApi;
 import by.iivanov.rpm.iam.user.infrastructure.web.RegisterUserRequest;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import java.util.UUID;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Disabled("TDD Red Phase - Not yet implemented")
 class ActivationTokenValidationIntegrationTest extends AbstractApplicationIntegrationTest {
 
     private final AuthApi authApi;
