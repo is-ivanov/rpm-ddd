@@ -48,7 +48,9 @@
 - [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [~] adapters-discovery
+- [x] adapters-discovery (rest: JWT exceptions unmapped → 422)
+- [ ] red-adapter rest
+- [ ] green-adapter rest
 - [S] green-acceptance (no acceptance test to enable)
 
 ### Scenario 3.1: Activate with password violating policy returns validation errors
