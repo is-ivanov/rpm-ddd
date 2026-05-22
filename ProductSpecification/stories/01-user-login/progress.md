@@ -44,13 +44,13 @@
 ### Scenario 2.2: Invalid or expired activation token returns error
 - [S] red-acceptance (error cases tested at Level 2 web slice, not Level 1 acceptance)
 - [x] design
-- [S] red-usecase (trivial delegation — exception propagates from domain)
-- [S] green-usecase (no new usecase code needed)
+- [~] red-usecase
+- [ ] green-usecase
 - [S] red-domain
 - [S] green-domain
 - [x] adapters-discovery (rest: JWT exceptions unmapped → 422)
 - [x] red-adapter rest (AuthResourceTest.ValidateActivationTokenTest — @Disabled: invalid + expired token)
-- [~] green-adapter rest
+- [ ] green-adapter rest
 - [S] green-acceptance (no acceptance test to enable)
 
 ### Scenario 3.1: Activate with password violating policy returns validation errors
