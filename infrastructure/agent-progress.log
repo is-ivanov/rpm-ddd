@@ -1,10 +1,22 @@
-[22:43:30] [green-agent] START: green-adapter rest - Scenario 2.1 validateActivationToken
-[22:46:31] [green-agent] DONE: green-adapter rest - 2 pass, 0 fail, 160 total suite pass
-[22:48:01] [refactor-agent] START: AuthResource + AuthResourceTest (adapter rest)
-[22:48:52] [refactor-agent] SCAN: A1(login 13L), A8(command pass-through), B6(missing ActivationTokenResponse.from())
-[22:57:29] [refactor-agent] FIX: ActivationTokenResponse.from(User), inline command var, extract establishSecurityContext, extract givenUserWithActivationToken
-[22:57:44] [refactor-agent] RUN: 160 tests, 0 failures, BUILD SUCCESS
-[22:57:57] [refactor-agent] DONE: adapter rest refactoring complete
-[23:02:17] [coverage-agent] START: adapter rest (Scenario 2.1, focus mode)
-[23:05:02] [coverage-agent] RUN: AuthResource 100%, ActivationTokenResponse 100% (all branches covered)
-[23:05:02] [coverage-agent] DONE: clean — no coverage gaps in focused files
+[17:50:00] [red-agent] START: Scenario 2.2 — Invalid/expired token usecase domain exception wrapping
+[17:51:00] [red-agent] PREDICT: ExpiredJwtException/MalformedJwtException bubble up, not InvalidActivationTokenException
+[17:57:44] [red-agent] RUN: 2 failures - ExpiredJwtException/MalformedJwtException bubble up, not InvalidActivationTokenException
+[01:00:15] [red-agent] DONE: ActivationServiceTest — 2 tests @Disabled, InvalidActivationTokenException created
+[01:01:30] [test-review-agent] START: ActivationServiceTest.java
+[01:01:30] [test-review-agent] SCAN: assertions already strict — no loose assertions found
+17:45:00 test-review-agent START: ActivationServiceTest.java
+01:15:09 [test-review-agent] START: ActivationServiceTest — ValidateTokenErrorTest inner class
+01:16:57 [test-review-agent] SCAN: running mandatory 28-item checklist on ActivationServiceTest.java
+01:18:00 [test-review-agent] FIX: moving inline assertions to UserStatements — ValidateTokenErrorTest lines 70, 76
+01:19:03 [test-review-agent] RUN: executing ActivationServiceTest after refactor
+01:21:44 [test-review-agent] DONE: 2 violations fixed. Tests: 3/3 pass.
+
+01:24:55 [refactor-agent] START: Post-green-usecase refactoring scan
+
+01:26:14 [refactor-agent] SCAN: A32 inlined dep call in ActivationService, A11 dead code in UserStatements
+
+01:26:59 [refactor-agent] FIX: A32 extracted dep call to local in ActivationService; A11 removed unused givenUserWithLoginAndStatus
+
+01:28:28 [refactor-agent] RUN: 8 tests passed, 0 failures
+
+01:28:28 [refactor-agent] DONE: 2 violations fixed (A32, A11), re-scan clean

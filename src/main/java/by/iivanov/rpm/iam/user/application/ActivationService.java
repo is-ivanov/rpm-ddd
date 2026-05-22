@@ -19,6 +19,7 @@ public class ActivationService {
 
     public User validateToken(String token) {
         var userId = tokenGenerator.parseActivationClaim(token);
-        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        var optionalUser = userRepository.findById(userId);
+        return optionalUser.orElseThrow(UserNotFoundException::new);
     }
 }
