@@ -1,22 +1,10 @@
-[17:50:00] [red-agent] START: Scenario 2.2 — Invalid/expired token usecase domain exception wrapping
-[17:51:00] [red-agent] PREDICT: ExpiredJwtException/MalformedJwtException bubble up, not InvalidActivationTokenException
-[17:57:44] [red-agent] RUN: 2 failures - ExpiredJwtException/MalformedJwtException bubble up, not InvalidActivationTokenException
-[01:00:15] [red-agent] DONE: ActivationServiceTest — 2 tests @Disabled, InvalidActivationTokenException created
-[01:01:30] [test-review-agent] START: ActivationServiceTest.java
-[01:01:30] [test-review-agent] SCAN: assertions already strict — no loose assertions found
-17:45:00 test-review-agent START: ActivationServiceTest.java
-01:15:09 [test-review-agent] START: ActivationServiceTest — ValidateTokenErrorTest inner class
-01:16:57 [test-review-agent] SCAN: running mandatory 28-item checklist on ActivationServiceTest.java
-01:18:00 [test-review-agent] FIX: moving inline assertions to UserStatements — ValidateTokenErrorTest lines 70, 76
-01:19:03 [test-review-agent] RUN: executing ActivationServiceTest after refactor
-01:21:44 [test-review-agent] DONE: 2 violations fixed. Tests: 3/3 pass.
-
-01:24:55 [refactor-agent] START: Post-green-usecase refactoring scan
-
-01:26:14 [refactor-agent] SCAN: A32 inlined dep call in ActivationService, A11 dead code in UserStatements
-
-01:26:59 [refactor-agent] FIX: A32 extracted dep call to local in ActivationService; A11 removed unused givenUserWithLoginAndStatus
-
-01:28:28 [refactor-agent] RUN: 8 tests passed, 0 failures
-
-01:28:28 [refactor-agent] DONE: 2 violations fixed (A32, A11), re-scan clean
+[] [refactor-agent] START: refactor adapter rest Scenario 2.2
+23:41:56 [refactor-agent] START: refactor adapter rest Scenario 2.2
+23:50:58 [refactor-agent] SCAN: running on AuthResourceTest.java + AuthResource.java
+23:51:39 [refactor-agent] FIX: Extract Method — assertUnprocessableContent helper for duplicated 422 assertion block
+23:54:24 [refactor-agent] RUN: running adapter tests
+23:55:08 [refactor-agent] SCAN: re-scan after Extract Method (A1, A7, A0)
+23:55:33 [refactor-agent] DONE: Extract Method applied, 4/4 tests pass, violations resolved
+23:00:00 [coverage-agent] START: coverage rest adapter Scenario 2.2
+23:57:00 [coverage-agent] RUN: AuthResource 100% lines, 100% branches (no branches)
+23:58:00 [coverage-agent] DONE: clean — no gaps (AuthResource 100% lines, 0 branches; zero production Java files changed)
