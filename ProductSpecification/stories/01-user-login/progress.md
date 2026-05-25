@@ -56,8 +56,8 @@
 ### Scenario 3.1: Activate with password violating policy returns validation errors
 - [x] red-acceptance
 - [x] design
-- [~] red-usecase
-- [ ] green-usecase
+- [x] red-usecase
+- [~] green-usecase
 - [S] red-domain
 - [S] green-domain
 - [ ] adapters-discovery

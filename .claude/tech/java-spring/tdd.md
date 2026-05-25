@@ -167,3 +167,31 @@ Grep patterns for the test-review-agent checklist. Each entry maps to a checklis
 
 - `MutableClock.advance(Duration)` to simulate time passing
 - Example: `clock.advance(Duration.ofDays(31))` to expire a 30-day session
+
+### Usecase Test Setup with MutableClock
+
+- **Always configure `sut` in `@BeforeEach`.** Never create a separate service instance inside a test method — the `sut` field is shared across all tests in the class.
+- Use `MutableClock` as the clock for `sut` in `@BeforeEach` when the test class contains time-dependent tests (token expiration, session timeout). Tests that need a "current" time work fine with a fixed instant — `MutableClock` doesn't affect them.
+- To test expiration: generate data → advance clock past expiry → call `sut` method → assert exception.
+- Never create a second generator/service/clock inside a test method to test expiration. Advance the shared `clock` instead.
+
+```java
+private MutableClock clock;
+private ActivationService sut;
+
+@BeforeEach
+void setUp() {
+    clock = MutableClock.of(Instant.parse("2026-01-01T00:00:00Z"), ZoneOffset.UTC);
+    tokenGenerator = new JwtActivationTokenGenerator(SECRET, Duration.ofHours(24), clock);
+    sut = new ActivationService(userRepository, tokenGenerator, passwordPolicy);
+}
+
+@Test
+void when_expiredToken_expect_throwsExpiredJwtException() {
+    var token = tokenGenerator.generateToken(userId, jti);
+    clock.add(Duration.ofHours(25));
+    // uses the same sut, same clock — now past expiry
+    assertThatThrownBy(() -> sut.validateToken(token))
+            .isInstanceOf(ExpiredJwtException.class);
+}
+```
