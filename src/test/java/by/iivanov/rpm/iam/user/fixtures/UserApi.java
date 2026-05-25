@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.client.RestTestClient;
 public class UserApi extends AbstractApi {
 
     private static final String BASE_URI = "/api/admin/users";
+    private static final String PATH_PREFIX = BASE_URI + "/";
 
     public UserApi(RestTestClient restClient) {
         super(restClient);
@@ -21,5 +22,9 @@ public class UserApi extends AbstractApi {
 
     public AssertionResponse registerUser(Object request, SessionContext session) {
         return post(BASE_URI, request, session);
+    }
+
+    public String extractCreatedUserId(AssertionResponse response) {
+        return response.extractCreatedId(PATH_PREFIX);
     }
 }
