@@ -65,4 +65,8 @@ public class AuthApi extends AbstractApi {
     public AssertionResponse activate(Object body, String csrfToken) {
         return post(activateUri(), body, csrfToken);
     }
+
+    public AssertionResponse activate(String jsonBody) {
+        return post(activateUri(), jsonBody);
+    }
 }

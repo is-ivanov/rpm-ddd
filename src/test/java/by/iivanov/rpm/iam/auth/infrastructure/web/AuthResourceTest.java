@@ -15,6 +15,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import net.javacrumbs.jsonunit.core.Option;
 import org.instancio.Instancio;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -104,6 +105,46 @@ class AuthResourceTest {
             var response = authApi.validateActivationToken("expired-token");
 
             assertUnprocessableContent(response);
+        }
+    }
+
+    @Nested
+    @DisplayName("test POST '/auth/activate' endpoint")
+    class ActivateAccountTest {
+
+        @Test
+        @Disabled("TDD Red Phase — @Size annotation not yet on ActivateAccountRequest.password")
+        @DisplayName("WHEN password too short EXPECT 422 with SIZE validation error")
+        void should_return422WithSizeError_when_passwordTooShort() {
+            var response = authApi.activate(weakPasswordRequest());
+
+            response.assertBindingError("""
+                    {
+                      "detail": "Validation failed for object='activateAccountRequest'. Error count: 1",
+                      "instance": "/api/auth/activate",
+                      "status": 422,
+                      "title": "Unprocessable Content",
+                      "type": "https://www.rpm-ddd.my/problem/validation-failed",
+                      "fieldErrors": [
+                    {
+                      "code": "SIZE",
+                      "property": "password",
+                      "message": "size must be between 12 and 128",
+                      "rejectedValue": "weak",
+                      "path": "password"
+                    }
+                  ]
+                    }
+                    """);
+        }
+
+        private static String weakPasswordRequest() {
+            return """
+                    {
+                      "token": "some-valid-token",
+                      "password": "weak"
+                    }
+                    """;
         }
     }
 }

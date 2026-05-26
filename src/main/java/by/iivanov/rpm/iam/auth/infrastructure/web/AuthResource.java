@@ -53,6 +53,11 @@ class AuthResource {
         return ActivationTokenResponse.from(user);
     }
 
+    @PostMapping("/activate")
+    void activate(@RequestBody @Valid ActivateAccountRequest request) {
+        throw new UnsupportedOperationException();
+    }
+
     @PostMapping("/login")
     void login(
             @RequestBody @Valid LoginRequest request,

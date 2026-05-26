@@ -61,7 +61,7 @@
 - [S] red-domain
 - [S] green-domain
 - [x] adapters-discovery (ports sufficient; exceptions N/A for binding validation; rest adapter missing)
-- [ ] red-adapter rest
+- [x] red-adapter rest
 - [ ] green-adapter rest
 - [ ] green-acceptance
 
