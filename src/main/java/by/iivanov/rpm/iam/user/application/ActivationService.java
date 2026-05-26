@@ -22,12 +22,24 @@ public class ActivationService {
     }
 
     public User validateToken(String token) {
-        var userId = tokenGenerator.parseActivationClaim(token);
-        var optionalUser = userRepository.findById(userId);
-        return optionalUser.orElseThrow(UserNotFoundException::new);
+        return findUserByToken(token);
     }
 
+    /**
+     * Activates a user account by validating the token and setting the password.
+     *
+     * @throws UserNotFoundException if the user referenced by the token does not exist
+     * @throws InvalidPasswordException if the password does not meet complexity requirements
+     */
     public void activate(String token, String plainPassword) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        var user = findUserByToken(token);
+        var hashedPassword = passwordPolicy.hashPlain(plainPassword);
+        user.activate(hashedPassword);
+        userRepository.save(user);
+    }
+
+    private User findUserByToken(String token) {
+        var userId = tokenGenerator.parseActivationClaim(token);
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 }

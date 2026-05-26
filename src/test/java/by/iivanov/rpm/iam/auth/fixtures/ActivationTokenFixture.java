@@ -27,6 +27,7 @@ public class ActivationTokenFixture {
         return tokenGenerator.generateToken(userId, JtiGenerator.generate());
     }
 
+    /** Registers a pending user via API and generates a valid activation token for them. */
     public ActivatedUserRegistration registerPendingUserWithToken() {
         var admin = authSessionFactory.loginAsAdmin();
         var uniqueSuffix = UUID.randomUUID().toString();

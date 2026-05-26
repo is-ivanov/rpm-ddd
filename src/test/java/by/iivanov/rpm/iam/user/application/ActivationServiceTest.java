@@ -7,7 +7,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -82,7 +81,6 @@ class ActivationServiceTest {
     }
 
     @Nested
-    @Disabled("AssertionError: activate() throws UnsupportedOperationException, not InvalidPasswordException")
     @DisplayName("activate() — password policy errors")
     class ActivatePasswordPolicyTest {
 

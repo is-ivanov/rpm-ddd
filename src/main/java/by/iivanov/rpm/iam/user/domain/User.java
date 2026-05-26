@@ -101,4 +101,9 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
     public EmailAddress getEmail() {
         return email;
     }
+
+    public void activate(Password hashedPassword) {
+        this.password = hashedPassword;
+        this.status = UserStatus.ACTIVE;
+    }
 }

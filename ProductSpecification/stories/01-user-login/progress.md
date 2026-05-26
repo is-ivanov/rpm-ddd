@@ -57,10 +57,10 @@
 - [x] red-acceptance
 - [x] design
 - [x] red-usecase
-- [~] green-usecase
+- [x] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
+- [~] adapters-discovery
 - [ ] green-acceptance
 
 ### Scenario 3.2: Activate with expired token returns error
