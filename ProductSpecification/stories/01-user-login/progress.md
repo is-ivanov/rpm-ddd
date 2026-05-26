@@ -60,7 +60,9 @@
 - [x] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [~] adapters-discovery
+- [x] adapters-discovery (ports sufficient; exceptions N/A for binding validation; rest adapter missing)
+- [ ] red-adapter rest
+- [ ] green-adapter rest
 - [ ] green-acceptance
 
 ### Scenario 3.2: Activate with expired token returns error
