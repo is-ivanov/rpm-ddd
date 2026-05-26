@@ -56,7 +56,9 @@ STOP after every commit. A single `/continue` invocation executes exactly ONE wo
 
 ## Pre-Commit Checklist
 
-Before committing, verify: (1) primary skill ran, (2) `/test-review` ran (red phases), (3) `/refactor` ran (all phases except `green-acceptance`/`green-selenium`/`demo`/spec items). If `/refactor` was skipped -- run it before committing.
+Before committing, verify: (1) primary skill ran, (2) `/test-review` ran (red phases), (3) `/refactor` ran (all phases except `green-acceptance`/`green-selenium`/`demo`/spec items), (4) static analysis passes. If `/refactor` was skipped -- run it before committing.
+
+**Static analysis** (step 4): run `./mvnw checkstyle:check -pl . -q && ./mvnw pmd:check -pl . -q`. If violations are found, fix them before committing. Do NOT skip this step — it catches issues (missing Javadoc, PMD violations) that the agents don't check.
 
 ## Sub-Skill Dispatch
 
