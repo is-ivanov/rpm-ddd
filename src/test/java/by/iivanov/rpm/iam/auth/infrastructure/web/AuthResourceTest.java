@@ -11,11 +11,11 @@ import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.testing.WebTest;
 import by.iivanov.rpm.testing.api.AssertionResponse;
+import by.iivanov.rpm.testing.api.FieldError;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import net.javacrumbs.jsonunit.core.Option;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -59,11 +59,11 @@ class AuthResourceTest {
             var response = authApi.validateActivationToken("valid-token");
 
             response.assertOk("""
-                    {
-                        "login": "testuser",
-                        "email": "test@example.com"
-                    }
-                    """);
+                {
+                    "login": "testuser",
+                    "email": "test@example.com"
+                }
+                """);
         }
 
         private void givenUserWithActivationToken() {
@@ -77,12 +77,12 @@ class AuthResourceTest {
         private void assertUnprocessableContent(AssertionResponse response) {
             response.assertStatus(HttpStatus.UNPROCESSABLE_CONTENT);
             response.assertBodyMatches("""
-                    {
-                      "status": 422,
-                      "detail": "${json-unit.any-string}",
-                      "instance": "/api/auth/activate"
-                    }
-                    """, Option.IGNORING_EXTRA_FIELDS);
+                {
+                  "status": 422,
+                  "detail": "${json-unit.any-string}",
+                  "instance": "/api/auth/activate"
+                }
+                """, Option.IGNORING_EXTRA_FIELDS);
         }
 
         @Test
@@ -113,38 +113,30 @@ class AuthResourceTest {
     class ActivateAccountTest {
 
         @Test
-        @Disabled("TDD Red Phase — @Size annotation not yet on ActivateAccountRequest.password")
-        @DisplayName("WHEN password too short EXPECT 422 with SIZE validation error")
-        void should_return422WithSizeError_when_passwordTooShort() {
-            var response = authApi.activate(weakPasswordRequest());
-
-            response.assertBindingError("""
-                    {
-                      "detail": "Validation failed for object='activateAccountRequest'. Error count: 1",
-                      "instance": "/api/auth/activate",
-                      "status": 422,
-                      "title": "Unprocessable Content",
-                      "type": "https://www.rpm-ddd.my/problem/validation-failed",
-                      "fieldErrors": [
-                    {
-                      "code": "SIZE",
-                      "property": "password",
-                      "message": "size must be between 12 and 128",
-                      "rejectedValue": "weak",
-                      "path": "password"
-                    }
-                  ]
-                    }
-                    """);
-        }
-
-        private static String weakPasswordRequest() {
-            return """
-                    {
-                      "token": "some-valid-token",
-                      "password": "weak"
-                    }
-                    """;
+        @DisplayName("WHEN password too short and token is blank EXPECT 422 with SIZE validation errors")
+        void should_return422WithSizeError_when_requestInvalid() {
+            // GIVEN: short password
+            String token = "   ";
+            String password = "weak";
+            // WHEN:
+            var response = authApi.activate("""
+                {
+                  "token": "%s",
+                  "password": "%s"
+                }
+                """.formatted(token, password));
+            // THEN:
+            response.assertBindingError(
+                    FieldError.notBlank()
+                            .property("token")
+                            .message("must not be blank")
+                            .rejectedValue(null)
+                            .path("token"),
+                    FieldError.size()
+                            .property("password")
+                            .message("size must be between 12 and 128")
+                            .rejectedValue(password)
+                            .path("password"));
         }
     }
 }

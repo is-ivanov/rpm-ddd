@@ -61,6 +61,34 @@ public class AssertionResponse {
         return assertBodyMatches(expectedBody, Option.IGNORING_ARRAY_ORDER);
     }
 
+    /**
+     * Asserts that the response indicates a binding error, validating error details
+     * and structure against the provided list of {@code FieldError} instances.
+     *
+     * <p>This method ensures the response status is {@code 422 Unprocessable Content}
+     * and that the body follows a specific JSON structure including the provided field errors.
+     */
+    public void assertBindingError(FieldError... fieldErrors) {
+        assertStatus(HttpStatus.UNPROCESSABLE_CONTENT);
+        responseSpec.expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON);
+        assertBodyMatches("""
+            {
+              "status": 422,
+              "title": "Unprocessable Content",
+              "type": "https://www.rpm-ddd.my/problem/validation-failed"
+            }
+            """, Option.IGNORING_EXTRA_FIELDS);
+        responseSpec
+                .expectBody()
+                .jsonPath("$.detail")
+                .value(
+                        String.class,
+                        d -> Assertions.assertThat(d).contains("Error count: %d".formatted(fieldErrors.length)))
+                .consumeWith(json().node("fieldErrors")
+                        .when(Option.IGNORING_ARRAY_ORDER)
+                        .isEqualTo(fieldErrors));
+    }
+
     public AssertionResponse assertBodyMatches(String expected) {
         return assertBodyMatches(expected, new Option[0]);
     }

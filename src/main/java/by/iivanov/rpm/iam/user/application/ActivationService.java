@@ -29,7 +29,6 @@ public class ActivationService {
      * Activates a user account by validating the token and setting the password.
      *
      * @throws UserNotFoundException if the user referenced by the token does not exist
-     * @throws InvalidPasswordException if the password does not meet complexity requirements
      */
     public void activate(String token, String plainPassword) {
         var user = findUserByToken(token);

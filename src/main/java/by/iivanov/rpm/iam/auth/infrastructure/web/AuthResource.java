@@ -55,7 +55,7 @@ class AuthResource {
 
     @PostMapping("/activate")
     void activate(@RequestBody @Valid ActivateAccountRequest request) {
-        throw new UnsupportedOperationException();
+        activationService.activate(request.token(), request.password());
     }
 
     @PostMapping("/login")

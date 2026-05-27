@@ -16,8 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @DomainService
 public class PasswordPolicy {
 
-    private static final int MIN_LENGTH = 12;
-    private static final int MAX_LENGTH = 128;
+    public static final int MIN_LENGTH = 12;
+    public static final int MAX_LENGTH = 128;
 
     private static final PasswordValidator VALIDATOR = new DefaultPasswordValidator(
             new PropertiesMessageResolver(),
