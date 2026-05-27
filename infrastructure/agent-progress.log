@@ -1,9 +1,8 @@
- [red-agent] START: red-adapter rest Scenario 3.1 — activate with weak password binding validation
-22:05:51 [red-agent] START: red-adapter rest Scenario 3.1 - activate with weak password binding validation
-22:06:30 [red-agent] PREDICT: 500 ISE - @Size not on DTO, validation passes, stub throws UnsupportedOperationException
-22:08:12 [red-agent] RUN: executing ActivateAccountTest.should_return422WithSizeError_when_passwordTooShort
-22:13:43 [red-agent] DONE: red-adapter rest Scenario 3.1 - ActivateAccountTest @Disabled, 1 test, build SUCCESS
-22:19:44 [test-review-agent] START: AuthResourceTest.ActivateAccountTest
-22:20:43 [test-review-agent] SCAN: no loose assertions found in ActivateAccountTest
-22:21:42 [test-review-agent] RUN: 5 tests, 0 failures, 1 skipped (disabled) - BUILD SUCCESS
-22:21:54 [test-review-agent] DONE: no issues found in AuthResourceTest.ActivateAccountTest
+[00:02:10] [refactor-agent] START: Scanning 9 files from commit 7d240c8
+[00:04:58] [refactor-agent] SCAN: Near-duplicate blocks in AuthResourceTest (A7b), assertBindingError >10 lines in AssertionResponse (A1)
+[00:08:10] [refactor-agent] FIX: Parameterized near-duplicate token validation tests (AuthResourceTest), extracted assertUnprocessableProblemJson + assertFieldErrors (AssertionResponse), removed WHAT-describing Javadocs to meet 200-line limit
+[00:08:21] [refactor-agent] RUN: Executing affected tests
+[00:09:09] [refactor-agent] RUN: All 11 tests passed (0 failures, 0 errors)
+[00:09:29] [refactor-agent] DONE: Re-scan clean. 2 violations fixed, 0 remaining.
+[00:13:59] [coverage-agent] RUN: 102 passed, 0 failed — Lines: 100%, Branches: 100%
+[00:15:23] [coverage-agent] DONE: clean — 100% branch coverage on all 4 focused classes

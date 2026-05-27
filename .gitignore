@@ -36,3 +36,6 @@ amplicode.xml
 .env
 /continue/
 .claude/settings.local.json
+
+# Agent progress log (malformed absolute-path variant on Windows)
+D*infrastructureagent-progress.log

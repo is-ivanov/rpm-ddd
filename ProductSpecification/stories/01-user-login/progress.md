@@ -60,13 +60,13 @@
 - [x] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [x] adapters-discovery (ports sufficient; exceptions N/A for binding validation; rest adapter missing)
+- [x] adapters-discovery
 - [x] red-adapter rest
-- [ ] green-adapter rest
-- [ ] green-acceptance
+- [x] green-adapter rest
+- [S] green-acceptance (validation tested at adapter level; acceptance test removed)
 
 ### Scenario 3.2: Activate with expired token returns error
-- [ ] red-acceptance
+- [~] red-acceptance
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
@@ -76,14 +76,14 @@
 - [ ] green-acceptance
 
 ### Scenario 4.1: Activate with valid token and password succeeds
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [x] red-acceptance (ActivateAccountIntegrationTest — already passes)
+- [S] design (existing implementation from Scenario 3.1)
+- [S] red-usecase (happy path covered by Level 1 acceptance)
+- [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery (existing adapters from Scenario 3.1)
+- [x] green-acceptance
 
 ### Scenario 5.1: Authenticated user retrieves own info
 - [ ] red-acceptance

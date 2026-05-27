@@ -60,9 +60,9 @@ class ActivateAccountRequestTest {
 
     static Stream<Arguments> invalidFields() {
         String blankToken = " \t \n";
-        String blankPassword =  " ".repeat(PasswordPolicy.MIN_LENGTH);
-        String shortPassword =  "a".repeat(PasswordPolicy.MIN_LENGTH - 1);
-        String longPassword =  "a".repeat(PasswordPolicy.MAX_LENGTH + 1);
+        String blankPassword = " ".repeat(PasswordPolicy.MIN_LENGTH);
+        String shortPassword = "a".repeat(PasswordPolicy.MIN_LENGTH - 1);
+        String longPassword = "a".repeat(PasswordPolicy.MAX_LENGTH + 1);
         return Stream.of(
                 // token
                 argumentSet(

@@ -7,5 +7,4 @@ import jakarta.validation.constraints.Size;
 public record ActivateAccountRequest(
         @NotBlank String token,
 
-        @NotBlank @Size(min = PasswordPolicy.MIN_LENGTH, max = PasswordPolicy.MAX_LENGTH)
-        String password) {}
+        @NotBlank @Size(min = PasswordPolicy.MIN_LENGTH, max = PasswordPolicy.MAX_LENGTH) String password) {}

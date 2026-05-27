@@ -74,37 +74,36 @@ class AuthResourceTest {
             given(activationService.validateToken(eq("valid-token"))).willReturn(user);
         }
 
-        private void assertUnprocessableContent(AssertionResponse response) {
-            response.assertStatus(HttpStatus.UNPROCESSABLE_CONTENT);
-            response.assertBodyMatches("""
-                {
-                  "status": 422,
-                  "detail": "${json-unit.any-string}",
-                  "instance": "/api/auth/activate"
-                }
-                """, Option.IGNORING_EXTRA_FIELDS);
-        }
-
         @Test
         @DisplayName("Invalid activation token returns 422")
         void should_return422_when_invalidActivationToken() {
-            given(activationService.validateToken(eq("invalid-token")))
-                    .willThrow(new MalformedJwtException("Invalid token"));
-
+            givenTokenValidationFails("invalid-token", new MalformedJwtException("Invalid token"));
             var response = authApi.validateActivationToken("invalid-token");
-
-            assertUnprocessableContent(response);
+            assertUnprocessable(response, "Invalid token");
         }
 
         @Test
         @DisplayName("Expired activation token returns 422")
         void should_return422_when_expiredActivationToken() {
-            given(activationService.validateToken(eq("expired-token")))
-                    .willThrow(new ExpiredJwtException(null, null, "Token expired"));
-
+            givenTokenValidationFails("expired-token", new ExpiredJwtException(null, null, "Token expired"));
             var response = authApi.validateActivationToken("expired-token");
+            assertUnprocessable(response, "Token expired");
+        }
 
-            assertUnprocessableContent(response);
+        private void givenTokenValidationFails(String token, RuntimeException exception) {
+            given(activationService.validateToken(eq(token))).willThrow(exception);
+        }
+
+        private void assertUnprocessable(AssertionResponse response, String detail) {
+            response.assertStatus(HttpStatus.UNPROCESSABLE_CONTENT);
+            response.assertBodyMatches("""
+                    {
+                      "status": 422,
+                      "title": "Unprocessable Content",
+                      "detail": "%s",
+                      "instance": "/api/auth/activate"
+                    }
+                    """.formatted(detail), Option.IGNORING_EXTRA_FIELDS);
         }
     }
 

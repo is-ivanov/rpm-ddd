@@ -59,6 +59,7 @@ Each bounded context is a Spring Modulith module. Module boundaries are enforced
 
 ## Code Style
 
+- **Do not delete existing Javadoc.** Checkstyle `MissingJavadocMethod` requires Javadoc on all `public`/`protected` methods with 3+ lines (unless annotated `@Override` or `@Test`). Existing Javadoc is never redundant — removing it will break `checkstyle:check`.
 - Use code generation for boilerplate: DTOs get data accessors, builders for construction, constructor injection for DI, immutability markers for value types.
 - Naming: value objects = simple noun, DTOs = `{Name}Dto`, requests = `{Action}Request`, responses = `{Action}Response`, fakes = `Fake{Interface}`, persistence entities = `{Name}Entity`. Variables: name by source when disambiguating same-typed values in one scope.
 - Methods: application services = verb+noun (`registerUser`), factory = `create`/`of`/`from`, converters = `toDto`/`toEntity`/`toDomain`.
