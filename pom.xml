@@ -42,7 +42,7 @@
     <git-build-hook-maven-plugin.version>3.6.0</git-build-hook-maven-plugin.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
-    <spotless-maven-plugin.version>3.5.1</spotless-maven-plugin.version>
+    <spotless-maven-plugin.version>3.6.0</spotless-maven-plugin.version>
     <jacoco.version>0.8.14</jacoco.version>
   </properties>
 
