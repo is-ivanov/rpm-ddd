@@ -1,17 +1,14 @@
 package by.iivanov.rpm.iam.user.fixtures;
 
+import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.anUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.instancio.Select.field;
 
 import by.iivanov.rpm.iam.user.application.ActivationService;
 import by.iivanov.rpm.iam.user.application.AuthenticationService;
-import by.iivanov.rpm.iam.user.domain.EmailAddress;
 import by.iivanov.rpm.iam.user.domain.InvalidPasswordException;
 import by.iivanov.rpm.iam.user.domain.JtiGenerator;
 import by.iivanov.rpm.iam.user.domain.JwtActivationTokenGenerator;
-import by.iivanov.rpm.iam.user.domain.Login;
-import by.iivanov.rpm.iam.user.domain.Password;
 import by.iivanov.rpm.iam.user.domain.PasswordPolicy;
 import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.iam.user.domain.UserId;
@@ -20,7 +17,6 @@ import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.infrastructure.InMemoryUserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import org.instancio.Instancio;
 
 public class UserStatements {
 
@@ -34,45 +30,37 @@ public class UserStatements {
 
     /** Saves a user instance with the provided login. */
     public void givenUserWithLogin(String login) {
-        User existingUser = Instancio.of(User.class)
-                .set(field(User::getLogin), new Login(login))
-                .create();
+        User existingUser = anUser().withLogin(login).build();
         userRepository.save(existingUser);
     }
 
     /** Saves a user instance with the provided email. */
     public void givenUserWithEmail(String email) {
-        User existingUser = Instancio.of(User.class)
-                .set(field(User::getEmail), new EmailAddress(email))
-                .create();
+        User existingUser = anUser().withEmail(email).build();
         userRepository.save(existingUser);
     }
 
     /** Saves a user instance with the provided login, password, and status. */
     public void givenUserWithLoginPasswordAndStatus(String login, String password, UserStatus status) {
-        User existingUser = Instancio.of(User.class)
-                .set(field(User::getLogin), new Login(login))
-                .set(field(User::getPassword), new Password(password))
-                .set(field(User::getStatus), status)
-                .create();
+        User existingUser = anUser().withLogin(login)
+                .withPassword(password)
+                .withStatus(status)
+                .build();
         userRepository.save(existingUser);
     }
 
     /** Saves a user with ACTIVE status and returns it. */
     public User givenActiveUser() {
-        User user = Instancio.of(User.class)
-                .set(field(User::getStatus), UserStatus.ACTIVE)
-                .create();
+        User user = anUser().withStatus(UserStatus.ACTIVE).build();
         return userRepository.save(user);
     }
 
     /** Saves a PENDING user with the provided login and email. */
     public User givenPendingUserWithLoginAndEmail(String login, String email) {
-        User user = Instancio.of(User.class)
-                .set(field(User::getLogin), new Login(login))
-                .set(field(User::getEmail), new EmailAddress(email))
-                .set(field(User::getStatus), UserStatus.PENDING)
-                .create();
+        User user = anUser().withLogin(login)
+                .withEmail(email)
+                .withStatus(UserStatus.PENDING)
+                .build();
         return userRepository.save(user);
     }
 
