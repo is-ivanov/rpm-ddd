@@ -1,11 +1,21 @@
 package by.iivanov.rpm.iam.user.application;
 
+import static org.assertj.core.api.BDDAssertions.catchException;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.junit.jupiter.params.provider.Arguments.argumentSet;
+
+import by.iivanov.rpm.iam.user.domain.Login;
+import by.iivanov.rpm.iam.user.domain.UserAuthenticationException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,18 +42,33 @@ class AuthenticationServiceTest {
     @DisplayName("authenticate()")
     class AuthenticateTest {
 
-        @Test
-        @DisplayName("WHEN user status is PENDING EXPECT UserAuthenticationException with 'Account not activated'")
-        void when_userStatusIsPending_expect_exception() {
-            userStatements.assertAuthenticationFails(
-                    sut, PENDING_LOGIN, PENDING_PASSWORD, UserStatus.PENDING, "Account not activated");
+        @ParameterizedTest
+        @MethodSource("nonActiveStatuses")
+        @DisplayName("WHEN user status is not ACTIVE EXPECT UserAuthenticationException")
+        void when_nonActiveStatus_expect_exception(
+                String login, String password, UserStatus status, String expectedMessage) {
+            // GIVEN:
+            userStatements.givenUserWithLoginPasswordAndStatus(login, password, status);
+            var command = new AuthenticateUserCommand(new Login(login), password);
+
+            // WHEN:
+            var caughtException = catchException(() -> sut.authenticate(command));
+
+            // THEN:
+            then(caughtException)
+                    .isInstanceOf(UserAuthenticationException.class)
+                    .hasMessage(expectedMessage);
         }
 
-        @Test
-        @DisplayName("Login with LOCKED user returns 401 with locked message")
-        void when_userStatusIsLocked_expect_accountLockedMessage() {
-            userStatements.assertAuthenticationFails(
-                    sut, LOCKED_LOGIN, LOCKED_PASSWORD, UserStatus.LOCKED, "Account locked");
+        static Stream<Arguments> nonActiveStatuses() {
+            return Stream.of(
+                    argumentSet(
+                            "PENDING user",
+                            PENDING_LOGIN,
+                            PENDING_PASSWORD,
+                            UserStatus.PENDING,
+                            "Account not activated"),
+                    argumentSet("LOCKED user", LOCKED_LOGIN, LOCKED_PASSWORD, UserStatus.LOCKED, "Account locked"));
         }
     }
 
