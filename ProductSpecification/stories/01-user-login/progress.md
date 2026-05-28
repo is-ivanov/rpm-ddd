@@ -66,14 +66,14 @@
 - [S] green-acceptance (validation tested at adapter level; acceptance test removed)
 
 ### Scenario 3.2: Activate with expired token returns error
-- [~] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (error case tested at Level 2 web slice, not Level 1 acceptance)
+- [S] design (existing implementation — activate() calls findUserByToken() which throws ExpiredJwtException, already mapped to 422)
+- [S] red-usecase (same findUserByToken() path already tested by ValidateTokenErrorTest)
+- [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery (existing REST adapter + global ExpiredJwtException→422 mapping already tested via GET endpoint)
+- [S] green-acceptance (no acceptance test to enable)
 
 ### Scenario 4.1: Activate with valid token and password succeeds
 - [x] red-acceptance (ActivateAccountIntegrationTest — already passes)
@@ -86,8 +86,8 @@
 - [x] green-acceptance
 
 ### Scenario 5.1: Authenticated user retrieves own info
-- [ ] red-acceptance
-- [ ] design
+- [x] red-acceptance (CurrentUserInfoIntegrationTest — @Disabled)
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain

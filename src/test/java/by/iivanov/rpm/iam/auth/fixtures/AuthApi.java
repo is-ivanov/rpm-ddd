@@ -33,6 +33,12 @@ public class AuthApi extends AbstractApi {
         return get(csrfUri());
     }
 
+    //  ==== current user info ====
+
+    public AssertionResponse me(SessionContext session) {
+        return get(BASE_URI + "/me", session);
+    }
+
     //  ==== login ====
 
     private String loginUri() {
