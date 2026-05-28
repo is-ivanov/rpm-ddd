@@ -92,7 +92,9 @@
 - [x] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [~] adapters-discovery
+- [x] adapters-discovery (rest: simple delegation — acceptance test covers happy path, adapter code created in green-acceptance; db: findById is simple Spring Data query → [S])
+- [S] red-adapter rest (simple delegation — acceptance test covers happy path)
+- [S] green-adapter rest
 - [ ] green-acceptance
 
 ### Scenario 6.1: Logout invalidates session

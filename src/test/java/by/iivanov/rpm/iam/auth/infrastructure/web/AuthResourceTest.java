@@ -1,7 +1,6 @@
 package by.iivanov.rpm.iam.auth.infrastructure.web;
 
 import static org.instancio.Select.field;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
@@ -71,7 +70,7 @@ class AuthResourceTest {
                     .set(field(User::getLogin), new Login("testuser"))
                     .set(field(User::getEmail), new EmailAddress("test@example.com"))
                     .create();
-            given(activationService.validateToken(eq("valid-token"))).willReturn(user);
+            given(activationService.validateToken("valid-token")).willReturn(user);
         }
 
         @Test
@@ -91,7 +90,7 @@ class AuthResourceTest {
         }
 
         private void givenTokenValidationFails(String token, RuntimeException exception) {
-            given(activationService.validateToken(eq(token))).willThrow(exception);
+            given(activationService.validateToken(token)).willThrow(exception);
         }
 
         private void assertUnprocessable(AssertionResponse response, String detail) {
