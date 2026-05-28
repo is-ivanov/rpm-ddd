@@ -1,5 +1,6 @@
 package by.iivanov.rpm.iam.auth.fixtures;
 
+import by.iivanov.rpm.iam.auth.infrastructure.web.LoginRequest;
 import by.iivanov.rpm.testing.api.AbstractApi;
 import by.iivanov.rpm.testing.api.AssertionResponse;
 import by.iivanov.rpm.testing.api.WebApi;
@@ -50,6 +51,10 @@ public class AuthApi extends AbstractApi {
         return post(loginUri(), jsonBody, csrfToken);
     }
 
+    public AssertionResponse login(LoginRequest request, String csrfToken) {
+        return post(loginUri(), request, csrfToken);
+    }
+
     //  ==== activation token validation ====
 
     private String activateUri() {
@@ -58,5 +63,15 @@ public class AuthApi extends AbstractApi {
 
     public AssertionResponse validateActivationToken(String token) {
         return get(activateUri() + "?token=" + token);
+    }
+
+    //  ==== account activation ====
+
+    public AssertionResponse activate(Object body, String csrfToken) {
+        return post(activateUri(), body, csrfToken);
+    }
+
+    public AssertionResponse activate(String jsonBody) {
+        return post(activateUri(), jsonBody);
     }
 }

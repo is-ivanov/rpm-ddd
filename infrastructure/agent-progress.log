@@ -1,10 +1,8 @@
-[22:43:30] [green-agent] START: green-adapter rest - Scenario 2.1 validateActivationToken
-[22:46:31] [green-agent] DONE: green-adapter rest - 2 pass, 0 fail, 160 total suite pass
-[22:48:01] [refactor-agent] START: AuthResource + AuthResourceTest (adapter rest)
-[22:48:52] [refactor-agent] SCAN: A1(login 13L), A8(command pass-through), B6(missing ActivationTokenResponse.from())
-[22:57:29] [refactor-agent] FIX: ActivationTokenResponse.from(User), inline command var, extract establishSecurityContext, extract givenUserWithActivationToken
-[22:57:44] [refactor-agent] RUN: 160 tests, 0 failures, BUILD SUCCESS
-[22:57:57] [refactor-agent] DONE: adapter rest refactoring complete
-[23:02:17] [coverage-agent] START: adapter rest (Scenario 2.1, focus mode)
-[23:05:02] [coverage-agent] RUN: AuthResource 100%, ActivationTokenResponse 100% (all branches covered)
-[23:05:02] [coverage-agent] DONE: clean — no coverage gaps in focused files
+[00:02:10] [refactor-agent] START: Scanning 9 files from commit 7d240c8
+[00:04:58] [refactor-agent] SCAN: Near-duplicate blocks in AuthResourceTest (A7b), assertBindingError >10 lines in AssertionResponse (A1)
+[00:08:10] [refactor-agent] FIX: Parameterized near-duplicate token validation tests (AuthResourceTest), extracted assertUnprocessableProblemJson + assertFieldErrors (AssertionResponse), removed WHAT-describing Javadocs to meet 200-line limit
+[00:08:21] [refactor-agent] RUN: Executing affected tests
+[00:09:09] [refactor-agent] RUN: All 11 tests passed (0 failures, 0 errors)
+[00:09:29] [refactor-agent] DONE: Re-scan clean. 2 violations fixed, 0 remaining.
+[00:13:59] [coverage-agent] RUN: 102 passed, 0 failed — Lines: 100%, Branches: 100%
+[00:15:23] [coverage-agent] DONE: clean — 100% branch coverage on all 4 focused classes

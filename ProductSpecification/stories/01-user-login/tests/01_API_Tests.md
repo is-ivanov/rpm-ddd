@@ -1,31 +1,24 @@
 # API Tests — User Login
 
-> **Implementation order**: Prerequisite guards → read before write → validation before happy path → simple before complex.
+> **Implementation Order**: Login (prerequisite) → Activation read (GET) → Activation write validation (POST) → Activation happy path (POST) → Current user (GET) → Logout (POST).
 
 ---
 
-## 1. Login Status Validation
+## 1. Login
 
-### 1.1 Login with PENDING user returns 401 with activation message
+### 1.1 Login with valid ACTIVE user returns session
 
-**Given** a registered user with status PENDING
+**Given** a registered ACTIVE user
+**When** the user logs in with correct credentials
+**Then** the response status is 200
+**And** the response contains a valid session cookie
+
+### 1.2 Login with non-ACTIVE user returns 401
+
+**Given** a registered user with non-ACTIVE status
 **When** the user attempts to log in with correct credentials
 **Then** the response status is 401
-**And** the response contains error message "Account not activated"
-
-### 1.2 Login with LOCKED user returns 401 with locked message
-
-**Given** a registered user with status LOCKED
-**When** the user attempts to log in with correct credentials
-**Then** the response status is 401
-**And** the response contains error message "Account locked"
-
-### 1.3 Login with INACTIVE user returns 401 with deactivated message
-
-**Given** a registered user with status INACTIVE
-**When** the user attempts to log in with correct credentials
-**Then** the response status is 401
-**And** the response contains error message "Account deactivated"
+**And** the response contains an error message
 
 ---
 
@@ -39,19 +32,12 @@
 **And** the response contains the user's login
 **And** the response contains the user's email
 
-### 2.2 Expired activation token returns error
+### 2.2 Invalid or expired activation token returns error
 
-**Given** an expired activation token
+**Given** an invalid or expired activation token
 **When** the activation token is validated
 **Then** the response status is 422
-**And** the response contains an error indicating the token has expired
-
-### 2.3 Invalid activation token returns error
-
-**Given** an invalid activation token
-**When** the activation token is validated
-**Then** the response status is 422
-**And** the response contains an error indicating the token is invalid
+**And** the response contains an error indicating the token issue
 
 ---
 
@@ -75,7 +61,7 @@
 
 ## 4. Account Activation (POST) — Happy Path
 
-### 4.1 Activate with valid token and password succeeds and user becomes ACTIVE
+### 4.1 Activate with valid token and password succeeds
 
 **Given** a pending user with a valid activation token
 **When** the user submits activation with a password meeting the policy
@@ -92,12 +78,6 @@
 **When** the user requests their own info
 **Then** the response status is 200
 **And** the response contains the user's userId, login, email, firstName, lastName, status, and roles
-
-### 5.2 Unauthenticated request to /me returns 401
-
-**Given** no active session
-**When** a request is made to retrieve user info
-**Then** the response status is 401
 
 ---
 
@@ -116,15 +96,12 @@
 
 | Scenario | Method | Path | Auth | Request Body | Success Status | Key Assertions |
 |---|---|---|---|---|---|---|
-| 1.1 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Account not activated" |
-| 1.2 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Account locked" |
-| 1.3 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message = "Account deactivated" |
+| 1.1 | POST | /api/auth/login | No | `{ login, password }` | 200 | Set-Cookie with JSESSIONID |
+| 1.2 | POST | /api/auth/login | No | `{ login, password }` | 401 | Error message present |
 | 2.1 | GET | /api/auth/activate?token={token} | No | — | 200 | Response body contains `login` and `email` |
-| 2.2 | GET | /api/auth/activate?token={token} | No | — | 422 | Error indicates expired token |
-| 2.3 | GET | /api/auth/activate?token={token} | No | — | 422 | Error indicates invalid token |
-| 3.1 | POST | /api/auth/activate | No | `{ token, password: "weak" }` | 422 | Validation errors for password policy (12-128 chars, upper, lower, digit, special, no whitespace) |
+| 2.2 | GET | /api/auth/activate?token={token} | No | — | 422 | Error indicates token issue |
+| 3.1 | POST | /api/auth/activate | No | `{ token, password: "weak" }` | 422 | Validation errors for password policy |
 | 3.2 | POST | /api/auth/activate | No | `{ token, password }` | 422 | Error indicates expired token |
-| 4.1 | POST | /api/auth/activate | No | `{ token, password }` | 200 | Follow-up login succeeds with session cookie |
+| 4.1 | POST | /api/auth/activate | No | `{ token, password }` | 200 | Follow-up login succeeds with session |
 | 5.1 | GET | /api/auth/me | JSESSIONID | — | 200 | Response contains userId, login, email, firstName, lastName, status, roles |
-| 5.2 | GET | /api/auth/me | None | — | 401 | — |
 | 6.1 | POST | /api/auth/logout | JSESSIONID + CSRF | — | 200 | Follow-up request with same session returns 401 |

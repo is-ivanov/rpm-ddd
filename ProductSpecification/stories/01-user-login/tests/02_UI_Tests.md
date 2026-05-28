@@ -1,6 +1,6 @@
 # UI Tests — User Login
 
-Implementation order: page display → basic interaction → form submission → validation feedback → server response → navigation
+> **Implementation Order**: Page display → basic interaction → form submission → validation feedback → server response → navigation.
 
 ## 1. Login Page Display
 

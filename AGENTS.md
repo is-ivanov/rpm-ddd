@@ -5,6 +5,9 @@
 
 Older experimental folders such as `agency-management/`, `patient-management/`, `full-app/`, `configuration/`, and `tech-shared/` came from earlier modularization attempts. Treat them as historical or temporary unless a task explicitly targets them.
 
+## Branch Policy
+**Never commit directly to `main`.** Before making any commit, ask the user which branch to use. If the current branch is `main`, switch to a story/task branch first. Story branches follow the naming pattern `story/N-story-slug` (e.g., `story/1-user-login`). Task branches follow `task/N-slug`.
+
 ## Build, Test, and Development Commands
 Use the Maven wrapper:
 

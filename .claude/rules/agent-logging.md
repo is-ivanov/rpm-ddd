@@ -4,7 +4,7 @@ When running as a sub-agent (spawned by `/continue` or another orchestrator), wr
 
 ## Format
 
-Append lines using `echo "..." >> infrastructure/agent-progress.log`. One line per milestone.
+Append lines using `echo "..." >> infrastructure/agent-progress.log`. **Always use this exact relative path — never the absolute path.** On Windows, absolute paths with backslashes create a malformed file in the project root instead.
 
 ```
 [TIMESTAMP] [AGENT_NAME] PHASE: Brief description

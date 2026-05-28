@@ -28,8 +28,13 @@ public class JwtActivationTokenGenerator {
         this.clock = clock;
     }
 
+    /** Parse and validate a JWT activation token, extracting the user ID. */
     public UserId parseActivationClaim(String token) {
-        var jwt = Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(token);
+        var jwt = Jwts.parser()
+                .verifyWith(signingKey)
+                .clock(() -> Date.from(Instant.now(clock)))
+                .build()
+                .parseSignedClaims(token);
         return new UserId(UUID.fromString(jwt.getPayload().getSubject()));
     }
 

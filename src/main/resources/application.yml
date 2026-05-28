@@ -40,6 +40,8 @@ error:
       org.springframework.security.authentication.InternalAuthenticationServiceException: unauthorized
       by.iivanov.rpm.iam.user.domain.UserAuthenticationException: unauthorized
       org.springframework.web.bind.MethodArgumentNotValidException: unprocessable-content
+      io.jsonwebtoken.ExpiredJwtException: unprocessable-content
+      io.jsonwebtoken.MalformedJwtException: unprocessable-content
     codes:
       by.iivanov.rpm.iam.user.domain.UserAuthenticationException: authentication-failed
 

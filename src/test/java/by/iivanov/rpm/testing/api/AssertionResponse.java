@@ -56,9 +56,41 @@ public class AssertionResponse {
     }
 
     public AssertionResponse assertBindingError(String expectedBody) {
+        assertUnprocessableProblemJson();
+        return assertBodyMatches(expectedBody, Option.IGNORING_ARRAY_ORDER);
+    }
+
+    /**
+     * Asserts that the response indicates a binding error, validating error details
+     * and structure against the provided list of {@code FieldError} instances.
+     */
+    public void assertBindingError(FieldError... fieldErrors) {
+        assertUnprocessableProblemJson();
+        assertBodyMatches("""
+                {
+                  "status": 422,
+                  "title": "Unprocessable Content",
+                  "type": "https://www.rpm-ddd.my/problem/validation-failed"
+                }
+                """, Option.IGNORING_EXTRA_FIELDS);
+        assertFieldErrors(fieldErrors);
+    }
+
+    private void assertUnprocessableProblemJson() {
         assertStatus(HttpStatus.UNPROCESSABLE_CONTENT);
         responseSpec.expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON);
-        return assertBodyMatches(expectedBody, Option.IGNORING_ARRAY_ORDER);
+    }
+
+    private void assertFieldErrors(FieldError... fieldErrors) {
+        responseSpec
+                .expectBody()
+                .jsonPath("$.detail")
+                .value(
+                        String.class,
+                        d -> Assertions.assertThat(d).contains("Error count: %d".formatted(fieldErrors.length)))
+                .consumeWith(json().node("fieldErrors")
+                        .when(Option.IGNORING_ARRAY_ORDER)
+                        .isEqualTo(fieldErrors));
     }
 
     public AssertionResponse assertBodyMatches(String expected) {
@@ -67,12 +99,9 @@ public class AssertionResponse {
 
     /**
      * Asserts that the body of the response matches the expected JSON structure.
-     * The expected JSON can either be provided as a raw JSON string or as a file path
-     * to a JSON file. Additional options can be used to customize the assertion behavior.
      *
      * @param expected the expected JSON structure, either as a raw JSON string or a file path
      * @param options  optional settings to customize the JSON comparison behavior
-     * @return the {@code AssertionResponse} instance, allowing for method chaining
      */
     public AssertionResponse assertBodyMatches(String expected, Option... options) {
         String resolved = resolveExpected(expected);
@@ -116,10 +145,8 @@ public class AssertionResponse {
      * after validating that the location header exists and its value starts with
      * the specified path prefix.
      *
-     * @param pathPrefix the expected prefix of the location header value,
-     *                   which is used to strip the prefix and extract the unique identifier
-     * @return the extracted unique identifier from the location header value,
-     *         with the path prefix removed
+     * @param pathPrefix the expected prefix of the location header value
+     * @return the extracted unique identifier with the path prefix removed
      */
     public String extractCreatedId(String pathPrefix) {
         String location = extractLocation();
@@ -133,14 +160,10 @@ public class AssertionResponse {
 
     /**
      * Asserts that the location ID extracted from the response matches the expected format.
-     * The method first extracts the location ID based on the provided path prefix,
-     * verifies it can be parsed into the expected type, and validates it using the provided predicate.
      *
-     * @param pathPrefix the expected prefix of the location header value,
-     *                   used to extract the unique identifier
+     * @param pathPrefix the expected prefix of the location header value
      * @param parser     a function to parse the extracted location ID into a specific type
      * @param validator  a predicate to validate the parsed location ID
-     * @return the {@code AssertionResponse} instance, allowing method chaining
      */
     public <T> AssertionResponse assertLocationIdMatches(
             String pathPrefix, Function<String, T> parser, Predicate<T> validator) {

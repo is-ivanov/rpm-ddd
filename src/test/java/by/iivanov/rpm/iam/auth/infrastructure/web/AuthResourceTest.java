@@ -10,10 +10,18 @@ import by.iivanov.rpm.iam.user.domain.EmailAddress;
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.testing.WebTest;
+import by.iivanov.rpm.testing.api.AssertionResponse;
+import by.iivanov.rpm.testing.api.FieldError;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import net.javacrumbs.jsonunit.core.Option;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.http.HttpStatus;
 
 @WebTest
 class AuthResourceTest {
@@ -40,6 +48,7 @@ class AuthResourceTest {
 
     @Nested
     @DisplayName("test GET '/auth/activate' endpoint")
+    @Execution(ExecutionMode.SAME_THREAD)
     class ValidateActivationTokenTest {
 
         @Test
@@ -50,11 +59,11 @@ class AuthResourceTest {
             var response = authApi.validateActivationToken("valid-token");
 
             response.assertOk("""
-                    {
-                        "login": "testuser",
-                        "email": "test@example.com"
-                    }
-                    """);
+                {
+                    "login": "testuser",
+                    "email": "test@example.com"
+                }
+                """);
         }
 
         private void givenUserWithActivationToken() {
@@ -63,6 +72,70 @@ class AuthResourceTest {
                     .set(field(User::getEmail), new EmailAddress("test@example.com"))
                     .create();
             given(activationService.validateToken(eq("valid-token"))).willReturn(user);
+        }
+
+        @Test
+        @DisplayName("Invalid activation token returns 422")
+        void should_return422_when_invalidActivationToken() {
+            givenTokenValidationFails("invalid-token", new MalformedJwtException("Invalid token"));
+            var response = authApi.validateActivationToken("invalid-token");
+            assertUnprocessable(response, "Invalid token");
+        }
+
+        @Test
+        @DisplayName("Expired activation token returns 422")
+        void should_return422_when_expiredActivationToken() {
+            givenTokenValidationFails("expired-token", new ExpiredJwtException(null, null, "Token expired"));
+            var response = authApi.validateActivationToken("expired-token");
+            assertUnprocessable(response, "Token expired");
+        }
+
+        private void givenTokenValidationFails(String token, RuntimeException exception) {
+            given(activationService.validateToken(eq(token))).willThrow(exception);
+        }
+
+        private void assertUnprocessable(AssertionResponse response, String detail) {
+            response.assertStatus(HttpStatus.UNPROCESSABLE_CONTENT);
+            response.assertBodyMatches("""
+                    {
+                      "status": 422,
+                      "title": "Unprocessable Content",
+                      "detail": "%s",
+                      "instance": "/api/auth/activate"
+                    }
+                    """.formatted(detail), Option.IGNORING_EXTRA_FIELDS);
+        }
+    }
+
+    @Nested
+    @DisplayName("test POST '/auth/activate' endpoint")
+    class ActivateAccountTest {
+
+        @Test
+        @DisplayName("WHEN password too short and token is blank EXPECT 422 with SIZE validation errors")
+        void should_return422WithSizeError_when_requestInvalid() {
+            // GIVEN: short password
+            String token = "   ";
+            String password = "weak";
+            // WHEN:
+            var response = authApi.activate("""
+                {
+                  "token": "%s",
+                  "password": "%s"
+                }
+                """.formatted(token, password));
+            // THEN:
+            response.assertBindingError(
+                    FieldError.notBlank()
+                            .property("token")
+                            .message("must not be blank")
+                            .rejectedValue(null)
+                            .path("token"),
+                    FieldError.size()
+                            .property("password")
+                            .message("size must be between 12 and 128")
+                            .rejectedValue(password)
+                            .path("password"));
         }
     }
 }
