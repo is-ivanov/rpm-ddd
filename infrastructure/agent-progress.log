@@ -1,9 +1,5 @@
-[12:57:07] red-agent START: Scenario 5.1 Authenticated user retrieves own info (acceptance)
-[12:58:07] red-agent PREDICT: 404 NOT_FOUND - endpoint /api/auth/me does not exist (Status expected:<200 OK> but was:<404 NOT_FOUND>)
-[14:51:32] red-agent RUN: executing CurrentUserInfoIntegrationTest
-[14:53:59] red-agent PREDICT (updated): 403 FORBIDDEN - endpoint /api/auth/me not in permit-all list, Spring Security blocks before dispatcher
-[14:58:05] red-agent DONE: CurrentUserInfoIntegrationTest created, @Disabled, full suite green (103 pass, 1 skip)
-15:04:51 refactor-agent START: CurrentUserInfoIntegrationTest, AuthApi
-15:13:52 refactor-agent SCAN: CurrentUserInfoIntegrationTest + AuthApi - no violations found
-15:14:01 refactor-agent RUN: CurrentUserInfoIntegrationTest - 1 skipped (disabled), BUILD SUCCESS
-15:14:09 refactor-agent DONE: no refactoring needed - code is clean
+[20:01:11] [refactor-agent] START: AuthenticationServiceTest red-usecase refactoring
+[20:01:12] [refactor-agent] SCAN: A39 violation - userRepository.nextId() leaked into test class; A3 feature envy on same line
+[20:01:15] [refactor-agent] FIX: Extract givenUnknownUserId() into UserStatements, replace direct userRepository access in test
+[20:01:15] [refactor-agent] RUN: AuthenticationServiceTest - 4 tests, 0 failures, BUILD SUCCESS
+[20:01:16] [refactor-agent] DONE: refactoring clean, all violations resolved

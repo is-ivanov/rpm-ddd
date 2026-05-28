@@ -87,8 +87,8 @@
 
 ### Scenario 5.1: Authenticated user retrieves own info
 - [x] red-acceptance (CurrentUserInfoIntegrationTest — @Disabled)
-- [~] design
-- [ ] red-usecase
+- [x] design
+- [x] red-usecase
 - [ ] green-usecase
 - [S] red-domain
 - [S] green-domain

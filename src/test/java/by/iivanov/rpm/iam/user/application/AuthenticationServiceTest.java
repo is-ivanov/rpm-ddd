@@ -8,6 +8,7 @@ import by.iivanov.rpm.iam.user.domain.UserAuthenticationException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -67,6 +68,39 @@ class AuthenticationServiceTest {
             then(caughtException)
                     .isInstanceOf(UserAuthenticationException.class)
                     .hasMessage("Account locked");
+        }
+    }
+
+    @Nested
+    @DisplayName("getCurrentUser()")
+    class GetCurrentUserTest {
+
+        @Test
+        @DisplayName("Authenticated user retrieves own info")
+        @Disabled("TDD Red Phase - Not yet implemented")
+        void when_userExists_expect_userReturned() {
+            // GIVEN:
+            var savedUser = userStatements.givenActiveUser();
+
+            // WHEN:
+            var actual = sut.getCurrentUser(savedUser.getId());
+
+            // THEN:
+            userStatements.assertValidatedUser(actual, savedUser);
+        }
+
+        @Test
+        @DisplayName("WHEN user not found EXPECT UserNotFoundException")
+        @Disabled("TDD Red Phase - Not yet implemented")
+        void when_userNotFound_expect_userNotFoundException() {
+            // GIVEN:
+            var unknownId = userStatements.givenUnknownUserId();
+
+            // WHEN:
+            userStatements.getCurrentUser(sut, unknownId);
+
+            // THEN:
+            userStatements.assertUserNotFound();
         }
     }
 }
