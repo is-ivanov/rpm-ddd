@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.instancio.Select.field;
 
 import by.iivanov.rpm.iam.user.application.ActivationService;
+import by.iivanov.rpm.iam.user.application.AuthenticateUserCommand;
 import by.iivanov.rpm.iam.user.application.AuthenticationService;
 import by.iivanov.rpm.iam.user.domain.EmailAddress;
 import by.iivanov.rpm.iam.user.domain.InvalidPasswordException;
@@ -14,6 +15,7 @@ import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.Password;
 import by.iivanov.rpm.iam.user.domain.PasswordPolicy;
 import by.iivanov.rpm.iam.user.domain.User;
+import by.iivanov.rpm.iam.user.domain.UserAuthenticationException;
 import by.iivanov.rpm.iam.user.domain.UserId;
 import by.iivanov.rpm.iam.user.domain.UserNotFoundException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
@@ -87,6 +89,15 @@ public class UserStatements {
     /** Generates a user ID that does not correspond to any saved user. */
     public UserId givenUnknownUserId() {
         return userRepository.nextId();
+    }
+
+    /** Authenticates with the given credentials and asserts a UserAuthenticationException with the expected message. */
+    public void assertAuthenticationFails(
+            AuthenticationService service, String login, String password, UserStatus status, String expectedMessage) {
+        givenUserWithLoginPasswordAndStatus(login, password, status);
+        var command = new AuthenticateUserCommand(new Login(login), password);
+        var caught = catchThrowable(() -> service.authenticate(command));
+        assertThat(caught).isInstanceOf(UserAuthenticationException.class).hasMessage(expectedMessage);
     }
 
     /** Asserts that the captured exception is a UserNotFoundException. */

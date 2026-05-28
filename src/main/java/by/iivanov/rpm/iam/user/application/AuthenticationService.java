@@ -46,6 +46,6 @@ public class AuthenticationService {
      * @throws UserNotFoundException if no user with the given ID exists
      */
     public User getCurrentUser(UserId userId) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 }
