@@ -33,7 +33,9 @@ class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(
             HttpSecurity http, UnauthorizedEntryPoint unauthorizedEntryPoint, AccessDeniedHandler accessDeniedHandler) {
-        return http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
+        return http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/me", "/api/auth/logout")
+                        .authenticated()
+                        .requestMatchers("/api/auth/**")
                         .permitAll()
                         .requestMatchers("/api/**")
                         .authenticated()

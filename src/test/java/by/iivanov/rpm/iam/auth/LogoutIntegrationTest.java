@@ -3,12 +3,10 @@ package by.iivanov.rpm.iam.auth;
 import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
 import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-@Disabled("TDD Red Phase - Not yet implemented")
 class LogoutIntegrationTest extends AbstractApplicationIntegrationTest {
 
     private final AuthApi authApi;

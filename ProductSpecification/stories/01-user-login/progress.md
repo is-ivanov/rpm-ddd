@@ -107,7 +107,7 @@
 - [x] adapters-discovery (ports: none; exceptions: none; response: simple delegation)
 - [S] red-adapter rest (simple delegation — no @Valid body, no error mapping; acceptance covers 200+401)
 - [S] green-adapter rest (logout endpoint created in green-acceptance)
-- [~] green-acceptance
+- [x] green-acceptance (logout endpoint + SecurityConfig auth on /me & /logout — see ADR)
 
 ## Integration Scenarios
 (none — no external service dependencies in this story)

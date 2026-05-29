@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,6 +64,12 @@ class AuthResource {
     @PostMapping("/activate")
     void activate(@RequestBody @Valid ActivateAccountRequest request) {
         activationService.activate(request.token(), request.password());
+    }
+
+    @PostMapping("/logout")
+    void logout(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+        var authentication = securityContextHolderStrategy.getContext().getAuthentication();
+        new SecurityContextLogoutHandler().logout(httpRequest, httpResponse, authentication);
     }
 
     @PostMapping("/login")
