@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.Collections;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -45,6 +46,12 @@ class AuthResource {
     @GetMapping("/csrf")
     CsrfToken csrf(CsrfToken token) {
         return token;
+    }
+
+    @GetMapping("/me")
+    CurrentUserResponse me(@AuthenticationPrincipal RpmUserDetails userDetails) {
+        var user = authenticationService.getCurrentUser(userDetails.userId());
+        return CurrentUserResponse.from(user);
     }
 
     @GetMapping("/activate")
