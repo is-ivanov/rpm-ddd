@@ -14,7 +14,7 @@ Logout invalidates an HTTP session and clears the security context — no busine
 ## Model
 
 - `AuthResource.logout(HttpServletRequest, HttpServletResponse)` — new web adapter method. No usecase, no domain, no response DTO.
-- `SecurityConfig` — `/api/auth/me` and `/api/auth/logout` moved to `authenticated()` (specific matchers ahead of the `/api/auth/**` `permitAll`). Required so an unauthenticated request after logout yields 401 via `UnauthorizedEntryPoint` instead of reaching the controller with a null principal (500). Discovered during green-acceptance — the prior `permitAll` was a latent gap that Scenario 5.1's happy-path-only test never exercised.
+- `SecurityConfig` — endpoint authorization is now an **allow-list (deny-by-default)**: only the public endpoints (`GET /api/auth/csrf`, `POST /api/auth/login`, `GET`/`POST /api/auth/activate`) are `permitAll`; `/api/**` is `authenticated()`; `anyRequest()` is `denyAll()`. So `/api/auth/me` and `/api/auth/logout` — and any future auth endpoint — require authentication by default. An unauthenticated request after logout yields 401 via `UnauthorizedEntryPoint` instead of reaching the controller with a null principal (500). Replaces the original `permitAll` on `/api/auth/**`, a latent gap that Scenario 5.1's happy-path-only test never exercised. Principle encoded in `.claude/rules/coding-rules.md` → Security.
 - No new ports.
 
 ## Edge Cases
