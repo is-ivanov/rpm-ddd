@@ -22,5 +22,14 @@ Type: refactoring
 - [x] verified locally (Step 1) that `mvn -Pfrontend package` bundles the static SPA into the JAR — CI uses the same path; `Dockerfile.deploy` / `infra/render.yaml` unchanged (deploy builds from the `app-jar` artifact; the Alpine fallback `Dockerfile` runs plain `mvn package` → skips frontend by design). Full CI verification happens on the merge-to-main run.
 
 ### Step 4: Verify deploy
-- [ ] local: build JAR, run `java -jar`, `curl /` returns the Vue page; `GET /api/auth/csrf` still works
-- [ ] document deploy verification (merge → CI builds JAR+image → GHCR `:latest` → Render redeploy → start page live)
+- [x] local: built JAR with `-Pfrontend`, ran `java -jar` against a throwaway Postgres. Verified: `GET /` → 200 text/html (real built `index.html` referencing `/assets/index-*.js|css`, `/favicon.svg`); `GET /login` → 200 (SPA fallback); `GET /assets/index-*.js` → 200 text/javascript; `GET /api/auth/csrf` → 200; `GET /api/auth/me` (unauth) → 401.
+- [x] deploy chain documented (below)
+
+## Deploy chain (Option A)
+
+On merge to `main`:
+1. `build.yml` ("Java CI with Maven") runs `mvn verify -B -Pfrontend` → frontend-maven-plugin builds `frontend/dist` and bundles it into the JAR under `static/`; uploads the `app-jar` artifact.
+2. `deploy.yml` downloads `app-jar`, wraps it via `Dockerfile.deploy`, pushes `ghcr.io/is-ivanov/rpm-ddd:latest`, then POSTs the Render deploy hook.
+3. Render redeploys the single `rpm-ddd` web service → the Vue start page is served at the service root; `/api/**` stays authenticated.
+
+No change needed to `Dockerfile.deploy` or `infra/render.yaml`. The Alpine fallback `Dockerfile` (plain `mvn package`, no `-Pfrontend`) intentionally ships a backend-only image.
