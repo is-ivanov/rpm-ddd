@@ -24,4 +24,20 @@ Each file type has its own fallback pattern:
 
 ## Acceptance Tests
 
-- `test-acceptance.sh` exports env vars then runs Gradle: `./gradlew backendTest` or `./gradlew frontendTest`.
+- Backend acceptance/integration tests run via Maven: `./mvnw verify -B` (see `ProductSpecification/technology.md` Conventions table).
+- They require the shared test DB — see "Test Database" below.
+
+## Test Database (DB-tagged tests)
+
+DB-backed tests carry `@Tag("db")` (acceptance/integration tests, `db` adapter tests). At JUnit-platform startup `DbContainerTestExecutionListener` resolves the datasource: it first tries the shared local Postgres at `jdbc:postgresql://localhost:54034/`, recreates the `rpm_ddd` schema, and reuses it (fast). Only if that connection fails does it start a Testcontainer — a slow cold-start paid on **every** run.
+
+**Before running any DB-tagged test, ensure the shared test DB is up. Both ways are idempotent (re-running on a live stack is a no-op):**
+
+1. **Preferred — IntelliJ MCP available:** run the `Infra-Tests-Up` run configuration via `mcp__idea__execute_run_configuration` (`configurationName: "Infra-Tests-Up"`, `projectPath` = project root, `waitForExit: true`, `timeout: 90000`). Confirm the IDE/MCP tools are actually available before relying on this — they require the IDE to be open.
+2. **Fallback — no IDE/MCP (headless/CI):**
+   ```bash
+   docker compose --env-file docker/.env -f docker/infra-tests.yml up -d --wait
+   ```
+
+- **Leave it running across runs** — never stop/`down` it. The next run reuses it; the listener recreates the schema each time, so reuse is safe (tmpfs data is ephemeral by design). On a fresh start allow a few seconds for the healthcheck.
+- Only start (idempotent) — never remove it. Parallel sessions/worktrees share this single test DB on the fixed `54034` port by design (see Process Safety).

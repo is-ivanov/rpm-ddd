@@ -13,6 +13,10 @@ Execute tests for a specific module and report results.
 - **testClass**: (optional) specific test class name
 - **tags**: (optional) for acceptance tests: backend | frontend
 
+## Pre-Check (DB-tagged tests)
+
+Before running `acceptance` or `db` adapter tests, ensure the shared test DB is up — see `.claude/tech/java-spring/infrastructure.md` → "Test Database". This skips the per-run Testcontainer cold-start. Idempotent; never stop it afterward.
+
 ## Test Commands by Module
 
 Use the Skill tool:
