@@ -2,6 +2,8 @@ package by.iivanov.rpm.iam.user.application;
 
 import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.iam.user.domain.UserAuthenticationException;
+import by.iivanov.rpm.iam.user.domain.UserId;
+import by.iivanov.rpm.iam.user.domain.UserNotFoundException;
 import by.iivanov.rpm.iam.user.domain.UserRepository;
 import by.iivanov.rpm.shared.infrastructure.ApplicationService;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,5 +36,16 @@ public class AuthenticationService {
             throw new BadCredentialsException("Bad credentials");
         }
         return user;
+    }
+
+    /**
+     * Retrieves the current authenticated user by their ID.
+     *
+     * @param userId the ID of the user to retrieve
+     * @return the user
+     * @throws UserNotFoundException if no user with the given ID exists
+     */
+    public User getCurrentUser(UserId userId) {
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 }

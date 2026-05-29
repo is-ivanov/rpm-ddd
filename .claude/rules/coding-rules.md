@@ -92,6 +92,13 @@ Each bounded context is a Spring Modulith module. Module boundaries are enforced
 - No business logic in web resources. Delegate immediately to application services.
 - HTTP status codes: 200 for success with body, 201 for resource creation, 204 for success without body. Errors via centralized exception handler.
 
+## Security
+
+- Endpoint authorization is an **allow-list (deny-by-default)**. Explicitly permit only the endpoints that must be public; everything else requires authentication; unmatched requests are denied. Never express the policy as a deny-list ("permit all except X, Y") — adding a new endpoint must require authentication by default, not silently become public.
+- Order the authorization rules most-specific first: the narrow public matchers come before the broad authenticated matcher, which comes before the catch-all deny. First match wins.
+- Prefer method+path matchers for public entries (e.g. permit only `GET /resource`, not the whole path) so an unintended verb on a public path is not exposed.
+- An endpoint requiring an authenticated principal must be unreachable when unauthenticated — authorization rejects it (401) before the handler runs. Never rely on a handler to null-check the principal.
+
 ## Storage Adapters
 
 - Domain entities may carry persistence annotations directly (active persistence pattern). When using this pattern, JPA annotations go on the domain entity, and the repository implementation wraps a framework repository that operates on domain types.

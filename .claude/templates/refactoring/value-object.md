@@ -75,7 +75,7 @@ Validation now happens in constructor — delete `validateEmail()` methods.
 5. [ ] Update fake storage in tests
 6. [ ] Update request classes (add `toX()`)
 7. [ ] Remove validation from usecase
-8. [ ] Run `./gradlew build`
+8. [ ] Run the project's full build/test suite (see the tech binding for the command)
 
 ## Common Pitfalls
 

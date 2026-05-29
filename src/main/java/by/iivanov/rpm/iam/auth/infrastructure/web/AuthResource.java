@@ -11,8 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.Collections;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +49,12 @@ class AuthResource {
         return token;
     }
 
+    @GetMapping("/me")
+    CurrentUserResponse me(@AuthenticationPrincipal RpmUserDetails userDetails) {
+        var user = authenticationService.getCurrentUser(userDetails.userId());
+        return CurrentUserResponse.from(user);
+    }
+
     @GetMapping("/activate")
     ActivationTokenResponse validateActivationToken(@RequestParam String token) {
         var user = activationService.validateToken(token);
@@ -56,6 +64,12 @@ class AuthResource {
     @PostMapping("/activate")
     void activate(@RequestBody @Valid ActivateAccountRequest request) {
         activationService.activate(request.token(), request.password());
+    }
+
+    @PostMapping("/logout")
+    void logout(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+        var authentication = securityContextHolderStrategy.getContext().getAuthentication();
+        new SecurityContextLogoutHandler().logout(httpRequest, httpResponse, authentication);
     }
 
     @PostMapping("/login")

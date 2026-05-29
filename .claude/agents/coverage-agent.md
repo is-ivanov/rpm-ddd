@@ -18,7 +18,7 @@ Runs after GREEN phase to find uncovered branches and plan remediation.
 
 1. **Run coverage for primary module** — load `.claude/tech/{backend}/templates/testing/coverage-commands.md` for tool-specific commands, and `.claude/templates/testing/coverage-commands.md` for universal workflow (focus mode, module mapping, report format)
 2. **Focus filter — all touched files** — see universal coverage-commands template. If the focus filter returns no classes but the green phase wrote new code with branches, the filter is wrong — investigate.
-3. **Multi-module coverage** — see universal coverage-commands template for module-to-test mapping. For each module OTHER than the primary that has touched files, run that module's coverage too.
+3. **Layer-to-test mapping** — see universal coverage-commands template. This is a single Maven module: one JaCoCo report covers all touched files (domain classes exercised by usecase tests already appear), so no extra coverage runs are needed. Layers map to packages, not modules — verify each touched file against the test suite that exercises its package (domain → usecase tests, usecase → usecase tests, adapter → that adapter's tests).
 4. **Check results** — if 100% branch coverage on focused classes across all modules → report clean, done
 5. **Extract gaps** — for each uncovered line, read the source file to see the actual code
 6. **Classify each gap** — determine what the uncovered branch represents:

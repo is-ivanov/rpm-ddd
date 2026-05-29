@@ -66,14 +66,14 @@
 - [S] green-acceptance (validation tested at adapter level; acceptance test removed)
 
 ### Scenario 3.2: Activate with expired token returns error
-- [~] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (error case tested at Level 2 web slice, not Level 1 acceptance)
+- [S] design (existing implementation — activate() calls findUserByToken() which throws ExpiredJwtException, already mapped to 422)
+- [S] red-usecase (same findUserByToken() path already tested by ValidateTokenErrorTest)
+- [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery (existing REST adapter + global ExpiredJwtException→422 mapping already tested via GET endpoint)
+- [S] green-acceptance (no acceptance test to enable)
 
 ### Scenario 4.1: Activate with valid token and password succeeds
 - [x] red-acceptance (ActivateAccountIntegrationTest — already passes)
@@ -86,24 +86,28 @@
 - [x] green-acceptance
 
 ### Scenario 5.1: Authenticated user retrieves own info
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [x] red-acceptance (CurrentUserInfoIntegrationTest — @Disabled)
+- [x] design
+- [x] red-usecase
+- [x] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery (rest: simple delegation — acceptance test covers happy path, adapter code created in green-acceptance; db: findById is simple Spring Data query → [S])
+- [S] red-adapter rest (simple delegation — acceptance test covers happy path)
+- [S] green-adapter rest
+- [x] green-acceptance
 
 ### Scenario 6.1: Logout invalidates session
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
-- [S] red-domain
+- [x] red-acceptance (LogoutIntegrationTest — @Disabled)
+- [x] design (ADR: logout-decision.md — web/security adapter method, no usecase/domain)
+- [S] red-usecase (no business logic — logout is pure infrastructure/security)
+- [S] green-usecase (no new usecase code needed)
+- [S] red-domain (no testable domain logic in this scenario)
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery (ports: none; exceptions: none; response: simple delegation)
+- [S] red-adapter rest (simple delegation — no @Valid body, no error mapping; acceptance covers 200+401)
+- [S] green-adapter rest (logout endpoint created in green-acceptance)
+- [x] green-acceptance (logout endpoint + SecurityConfig auth on /me & /logout — see ADR)
 
 ## Integration Scenarios
 (none — no external service dependencies in this story)

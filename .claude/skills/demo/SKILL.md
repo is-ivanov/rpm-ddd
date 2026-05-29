@@ -27,14 +27,7 @@ Read `.claude/tech/{backend}/templates/acceptance/` to find the UI test base cla
 
 ## Workflow
 
-### 1. Load Port Configuration
-
-Read ports from `infrastructure/.env`:
-```bash
-source infrastructure/.env
-```
-
-### 2. Apply Demo Changes
+### 1. Apply Demo Changes
 
 Locate the UI test base class and Browser statements class using tech profile template conventions.
 
@@ -47,15 +40,15 @@ Locate the UI test base class and Browser statements class using tech profile te
 - Add a demo delay method
 - Insert demo delay calls at the start of: navigation, find-element, find-elements methods
 
-### 3. Ensure Clean Environment
+### 2. Ensure Clean Environment
 
-- Kill any existing backend process: `infrastructure/scripts/stop-backend.sh`
+- Stop any backend you started earlier via the `/stop-backend` skill (never kill Java by name)
 - Clear test email inbox via infrastructure HTTP API
-- Start backend fresh: `infrastructure/scripts/run-backend.sh` (background)
-- Wait for backend to be UP: poll health endpoint (read from tech profile)
+- Start backend fresh via the `/run-backend` skill (background)
+- Wait for backend to be UP: poll the health endpoint (see backend tech binding → "Health Check")
 - Verify frontend is running (start with `/run-frontend` if not)
 
-### 4. Run the Test
+### 3. Run the Test
 
 Resolve the argument to a test filter using the acceptance test command pattern from Conventions table.
 
@@ -68,11 +61,11 @@ Resolve the argument to a test filter using the acceptance test command pattern 
 
 Use a generous timeout (180s) since delays add up.
 
-### 5. Revert All Changes (ALWAYS)
+### 4. Revert All Changes (ALWAYS)
 
-After the test finishes (pass or fail), revert both files to their original state — undo all changes from step 2.
+After the test finishes (pass or fail), revert both files to their original state — undo all changes from step 1.
 
-### 6. Report Result
+### 5. Report Result
 
 Report whether the test passed or failed. If it failed, include the error output.
 

@@ -1,23 +1,22 @@
 package by.iivanov.rpm.iam.user.fixtures;
 
+import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.aUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.instancio.Select.field;
 
 import by.iivanov.rpm.iam.user.application.ActivationService;
-import by.iivanov.rpm.iam.user.domain.EmailAddress;
+import by.iivanov.rpm.iam.user.application.AuthenticationService;
 import by.iivanov.rpm.iam.user.domain.InvalidPasswordException;
 import by.iivanov.rpm.iam.user.domain.JtiGenerator;
 import by.iivanov.rpm.iam.user.domain.JwtActivationTokenGenerator;
-import by.iivanov.rpm.iam.user.domain.Login;
-import by.iivanov.rpm.iam.user.domain.Password;
 import by.iivanov.rpm.iam.user.domain.PasswordPolicy;
 import by.iivanov.rpm.iam.user.domain.User;
+import by.iivanov.rpm.iam.user.domain.UserId;
+import by.iivanov.rpm.iam.user.domain.UserNotFoundException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.infrastructure.InMemoryUserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import org.instancio.Instancio;
 
 public class UserStatements {
 
@@ -31,37 +30,37 @@ public class UserStatements {
 
     /** Saves a user instance with the provided login. */
     public void givenUserWithLogin(String login) {
-        User existingUser = Instancio.of(User.class)
-                .set(field(User::getLogin), new Login(login))
-                .create();
+        User existingUser = aUser().withLogin(login).build();
         userRepository.save(existingUser);
     }
 
     /** Saves a user instance with the provided email. */
     public void givenUserWithEmail(String email) {
-        User existingUser = Instancio.of(User.class)
-                .set(field(User::getEmail), new EmailAddress(email))
-                .create();
+        User existingUser = aUser().withEmail(email).build();
         userRepository.save(existingUser);
     }
 
     /** Saves a user instance with the provided login, password, and status. */
     public void givenUserWithLoginPasswordAndStatus(String login, String password, UserStatus status) {
-        User existingUser = Instancio.of(User.class)
-                .set(field(User::getLogin), new Login(login))
-                .set(field(User::getPassword), new Password(password))
-                .set(field(User::getStatus), status)
-                .create();
+        User existingUser = aUser().withLogin(login)
+                .withPassword(password)
+                .withStatus(status)
+                .build();
         userRepository.save(existingUser);
+    }
+
+    /** Saves a user with ACTIVE status and returns it. */
+    public User givenActiveUser() {
+        User user = aUser().withStatus(UserStatus.ACTIVE).build();
+        return userRepository.save(user);
     }
 
     /** Saves a PENDING user with the provided login and email. */
     public User givenPendingUserWithLoginAndEmail(String login, String email) {
-        User user = Instancio.of(User.class)
-                .set(field(User::getLogin), new Login(login))
-                .set(field(User::getEmail), new EmailAddress(email))
-                .set(field(User::getStatus), UserStatus.PENDING)
-                .create();
+        User user = aUser().withLogin(login)
+                .withEmail(email)
+                .withStatus(UserStatus.PENDING)
+                .build();
         return userRepository.save(user);
     }
 
@@ -71,6 +70,24 @@ public class UserStatements {
                 .usingRecursiveComparison()
                 .ignoringFieldsMatchingRegexes(".*domainEvents", ".*clearingMark")
                 .isEqualTo(expected);
+    }
+
+    /** Generates a user ID that does not correspond to any saved user. */
+    public UserId givenUnknownUserId() {
+        return userRepository.nextId();
+    }
+
+    /** Asserts that the captured exception is a UserNotFoundException. */
+    public void assertUserNotFound() {
+        assertThat(thrownException)
+                .as("Should throw UserNotFoundException when user not found")
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage("User not found");
+    }
+
+    /** Calls getCurrentUser on the given service, capturing any thrown exception. */
+    public void getCurrentUser(AuthenticationService service, UserId userId) {
+        thrownException = catchThrowable(() -> service.getCurrentUser(userId));
     }
 
     /** Calls validateToken on the given service, capturing any thrown exception. */

@@ -102,7 +102,7 @@ import static com.example.domain.task.TaskStatus.*;
 6. [ ] Update API input DTO (parse via `Enum.from(string)`)
 7. [ ] Update entity (string <-> enum conversion via `statusName()`/`from()`)
 8. [ ] Update tests (static import enum values, compare to enum not string)
-9. [ ] Run `./gradlew build`
+9. [ ] Run the project's full build/test suite (see the tech binding for the command)
 
 ## Common Pitfalls
 

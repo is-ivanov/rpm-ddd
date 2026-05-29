@@ -57,6 +57,10 @@ Frontend layers (all share one template):
 | frontend-api | `.claude/tech/{frontend}/templates/implementation.md` |
 | selenium | `.claude/tech/{frontend}/templates/implementation.md` |
 
+## DB-Tagged Tests: Test DB Required
+
+Before running `acceptance` or `db` adapter tests (`@Tag("db")`), ensure the shared test DB is up — see `.claude/tech/java-spring/infrastructure.md` → "Test Database". Idempotent; reused across runs, never stopped.
+
 ## Implementation Rules
 
 1. **MINIMAL implementation** - only what's needed for this test to pass
