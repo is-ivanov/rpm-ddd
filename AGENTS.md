@@ -8,6 +8,13 @@ Older experimental folders such as `agency-management/`, `patient-management/`, 
 ## Branch Policy
 **Never commit directly to `main`.** Before making any commit, ask the user which branch to use. If the current branch is `main`, switch to a story/task branch first. Story branches follow the naming pattern `story/N-story-slug` (e.g., `story/1-user-login`). Task branches follow `task/N-slug`.
 
+## GitHub Operations
+**Default to the GitHub MCP server** for GitHub operations — pull requests, issues, reviews, and code/issue search. Its tools are structured and don't depend on a local `gh` install.
+
+**Use the `gh` CLI when the MCP server can't do the job** — operations bound to the local git state (`gh pr checkout`, building a PR branch locally), watching CI runs (`gh run watch`), releases, arbitrary endpoints via `gh api`, or as a fallback in headless/cron runs where the MCP server may be unavailable.
+
+The MCP server works against the remote API and does not see the local working tree: **`git push` the branch first, then open the PR** (via MCP or `gh`).
+
 ## Build, Test, and Development Commands
 Use the Maven wrapper:
 
