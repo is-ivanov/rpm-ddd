@@ -9,8 +9,14 @@ Execute tests for a specific module and report results.
 
 ## Input
 
+This is a single-module Maven project — `module` is a logical test grouping (a package / class-name pattern or JUnit tag), NOT a Maven module path.
+
 - **module**: usecase | adapter | acceptance
+  - `usecase` → `*.application` tests by class-name pattern (`*ServiceTest`, `*CommandTest`, `*RequestTest`)
+  - `adapter` → an adapter selector via the `adapter` arg below (`rest` → `*ResourceTest`; `db` → `-Dgroups=db`; `email` → notification-adapter tests)
+  - `acceptance` → `*IntegrationTest` (`@ApplicationIntegrationTest`, carries the `db` tag)
 - **testClass**: (optional) specific test class name
+- **adapter**: (optional) for the `adapter` module: rest | db | email
 - **tags**: (optional) for acceptance tests: backend | frontend
 
 ## Pre-Check (DB-tagged tests)

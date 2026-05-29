@@ -77,13 +77,15 @@ Never manually add `@Execution(SAME_THREAD)` to individual tests — use the pro
 
 - JaCoCo for Java code coverage
 - Reports in `target/site/jacoco/` (XML format)
-- Run per-module: domain files checked against usecase JaCoCo, adapter files checked against adapter JaCoCo
-- Scan touched files across `backend/*/src/main/` and `backend/adapters/*/src/main/`
+- Single Maven module: one JaCoCo report (`target/site/jacoco/`) covers the whole module — domain classes exercised by usecase tests already appear, no per-module runs needed
+- Test layers map to packages, not modules: domain → `*.domain`, usecase → `*.application`, web slice → `*.infrastructure.web`, acceptance → `*IntegrationTest`
+- Scan touched files under `src/main/**/*.java`
 
 ## Test Filter Flag
 
-- Maven: `-Dtest='*ClassName*'` to run a single test class
-- Example: `./mvnw test -pl backend/{module} -Dtest='*TaskTest*'`
+- Maven (single module): `-Dtest='*ClassName*'` to run a single test class
+- Example: `./mvnw test -Dtest='*TaskTest*'`
+- DB/acceptance group: `./mvnw test -Dgroups=db`
 - Acceptance: poll output file for `BUILD SUCCESS|BUILD FAILURE`
 
 ## 3-Tier Test Architecture — Java Specifics

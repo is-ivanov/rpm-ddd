@@ -4,7 +4,22 @@ Tech binding for `infrastructure.md`. Load alongside the universal rules.
 
 ## Health Check
 
-- Spring Actuator endpoint: `source infrastructure/.env && curl http://localhost:$BACKEND_PORT/actuator/health`
+- Spring Actuator endpoint (fixed port 8080, no port isolation): `curl http://localhost:8080/actuator/health`
+
+## Run (local)
+
+Backend main class `by.iivanov.rpm.RpmDddApplication`, Spring profile `local`, fixed port 8080.
+
+**Prerequisite — dev Postgres:** the `local` profile connects to `localhost:5432/rpm_ddd`. Start it first (idempotent):
+
+```bash
+docker compose -f docker/services.yml up -d
+```
+
+**Run the backend, two options:**
+
+1. **CLI:** `./mvnw spring-boot:run -Dspring-boot.run.profiles=local`
+2. **IntelliJ MCP:** run the `App-Local` run configuration via `mcp__idea__execute_run_configuration` (`configurationName: "App-Local"`). Confirm the IDE/MCP tools are actually available before relying on this — they require the IDE to be open.
 
 ## Process Safety
 

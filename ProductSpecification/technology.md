@@ -18,7 +18,7 @@ tech-profile:
 |---------|-----------|
 | Language | Java 25 (planned upgrade to 26) |
 | Framework | Spring Boot 4 |
-| Build tool | Maven (multi-module) |
+| Build tool | Maven (single module; modularity enforced by Spring Modulith + ArchUnit, not Maven modules) |
 | DI | Spring (@Service, @RequiredArgsConstructor) |
 | Web | Spring Web (controllers, ResponseEntity) |
 | Persistence | JPA / Hibernate |
@@ -78,7 +78,7 @@ tech-profile:
 | Test disable marker | @Disabled |
 | Not-implemented marker | throw UnsupportedOperationException() |
 | Run command | ./mvnw spring-boot:run |
-| Test command | ./mvnw test -pl backend/{module} |
+| Test command | ./mvnw test (single class: -Dtest='*ClassName*'; DB/acceptance group: -Dgroups=db) |
 | Acceptance test command | ./mvnw verify -B |
 | Coverage report | JaCoCo XML in target/site/jacoco/ |
 | Health endpoint | /actuator/health |
