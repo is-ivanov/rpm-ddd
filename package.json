@@ -1,0 +1,13 @@
+{
+  "name": "rpm-ddd-tooling",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Repo-wide tooling (Allure 3 test report renderer). Not the frontend app.",
+  "devDependencies": {
+    "allure": "^3.9.0"
+  },
+  "scripts": {
+    "report:serve": "allure watch target/allure-results",
+    "report": "allure generate target/allure-results"
+  }
+}
