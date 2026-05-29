@@ -14,7 +14,7 @@ public class UserBuilder {
 
     private final InstancioApi<User> builder = Instancio.of(User.class);
 
-    public static UserBuilder anUser() {
+    public static UserBuilder aUser() {
         return new UserBuilder();
     }
 

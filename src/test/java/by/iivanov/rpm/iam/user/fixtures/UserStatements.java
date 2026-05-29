@@ -1,6 +1,6 @@
 package by.iivanov.rpm.iam.user.fixtures;
 
-import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.anUser;
+import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.aUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
@@ -30,19 +30,19 @@ public class UserStatements {
 
     /** Saves a user instance with the provided login. */
     public void givenUserWithLogin(String login) {
-        User existingUser = anUser().withLogin(login).build();
+        User existingUser = aUser().withLogin(login).build();
         userRepository.save(existingUser);
     }
 
     /** Saves a user instance with the provided email. */
     public void givenUserWithEmail(String email) {
-        User existingUser = anUser().withEmail(email).build();
+        User existingUser = aUser().withEmail(email).build();
         userRepository.save(existingUser);
     }
 
     /** Saves a user instance with the provided login, password, and status. */
     public void givenUserWithLoginPasswordAndStatus(String login, String password, UserStatus status) {
-        User existingUser = anUser().withLogin(login)
+        User existingUser = aUser().withLogin(login)
                 .withPassword(password)
                 .withStatus(status)
                 .build();
@@ -51,13 +51,13 @@ public class UserStatements {
 
     /** Saves a user with ACTIVE status and returns it. */
     public User givenActiveUser() {
-        User user = anUser().withStatus(UserStatus.ACTIVE).build();
+        User user = aUser().withStatus(UserStatus.ACTIVE).build();
         return userRepository.save(user);
     }
 
     /** Saves a PENDING user with the provided login and email. */
     public User givenPendingUserWithLoginAndEmail(String login, String email) {
-        User user = anUser().withLogin(login)
+        User user = aUser().withLogin(login)
                 .withEmail(email)
                 .withStatus(UserStatus.PENDING)
                 .build();

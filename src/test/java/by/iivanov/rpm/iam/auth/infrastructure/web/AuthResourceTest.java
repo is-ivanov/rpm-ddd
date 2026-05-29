@@ -1,6 +1,6 @@
 package by.iivanov.rpm.iam.auth.infrastructure.web;
 
-import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.anUser;
+import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.aUser;
 import static org.mockito.BDDMockito.given;
 
 import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
@@ -63,7 +63,7 @@ class AuthResourceTest {
 
         private void givenUserWithActivationToken() {
             var user =
-                    anUser().withLogin("testuser").withEmail("test@example.com").build();
+                    aUser().withLogin("testuser").withEmail("test@example.com").build();
             given(activationService.validateToken("valid-token")).willReturn(user);
         }
 

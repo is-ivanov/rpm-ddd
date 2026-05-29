@@ -195,3 +195,45 @@ void when_expiredToken_expect_throwsExpiredJwtException() {
             .isInstanceOf(ExpiredJwtException.class);
 }
 ```
+
+## Test Data Builder Pattern
+
+When the same domain entity is constructed via raw Instancio calls in **3+ test files**, extract a Test Data Builder into the `fixtures` package.
+
+**Structure:**
+
+```java
+public class UserBuilder {
+
+    private final InstancioApi<User> builder = Instancio.of(User.class);
+
+    public static UserBuilder aUser() {
+        return new UserBuilder();
+    }
+
+    public UserBuilder withEmail(String email) {
+        builder.set(field(User::getEmail), new EmailAddress(email));
+        return this;
+    }
+
+    public User build() {
+        return builder.create();
+    }
+}
+```
+
+**Usage in Statements:**
+
+```java
+import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.aUser;
+
+User user = aUser().withLogin("admin").withStatus(UserStatus.ACTIVE).build();
+```
+
+**Naming:**
+- Class: `{Entity}Builder`
+- Factory method: `a{Entity}()` / `an{Entity}()` — correct English article by phonetics
+- With-methods: `with{Field}(String)` for VO fields (builder handles VO construction), `with{Field}(Enum)` for enum fields
+- Terminal: `build()`
+
+**Threshold:** 3+ raw `Instancio.of(Entity.class).set(...)...create()` call sites for the same entity type across test files. Do NOT extract for DTOs or value objects — use Instancio directly. Refactoring template: `.claude/templates/refactoring/test-data-builder.md`.
