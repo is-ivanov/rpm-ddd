@@ -104,8 +104,10 @@
 - [S] green-usecase (no new usecase code needed)
 - [S] red-domain (no testable domain logic in this scenario)
 - [S] green-domain
-- [~] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery (ports: none; exceptions: none; response: simple delegation)
+- [S] red-adapter rest (simple delegation — no @Valid body, no error mapping; acceptance covers 200+401)
+- [S] green-adapter rest (logout endpoint created in green-acceptance)
+- [~] green-acceptance
 
 ## Integration Scenarios
 (none — no external service dependencies in this story)
