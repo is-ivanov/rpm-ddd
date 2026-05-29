@@ -10,22 +10,21 @@ Runs the complete test suite: unit tests in parallel, then acceptance tests.
 ## Setup
 
 Read `ProductSpecification/technology.md` Conventions table for:
-- **Backend test command** pattern (with module substitution)
+- **Backend test command**
 - **Frontend test command**
 - **Acceptance test command**
 
-Discover backend adapter modules by listing directories under `backend/adapters/`.
+This is a single-module Maven project — there are no adapter module directories to discover. The full backend unit suite runs in one command; there is no per-module fan-out.
 
 ## Workflow
 
 ### Phase 1: Run Unit Tests in Parallel
 
-Run ALL of these commands in parallel using multiple Bash tool calls in a single message:
-- Backend usecase tests: `{Backend test command}` with module = usecase
-- Backend adapter tests: one `{Backend test command}` per adapter module discovered
+There are no separate backend modules to fan out across — the whole backend unit suite runs in one command. Run these in parallel using multiple Bash tool calls in a single message:
+- Backend unit tests (usecase + all adapters): `{Backend test command}` — the single-module suite covers `*.application` usecase tests and `*.infrastructure.*` adapter tests together
 - Frontend tests: `{Frontend test command}`
 
-Wait for all to complete. If any fail, report failures and STOP.
+Wait for both to complete. If either fails, report failures and STOP.
 
 ### Phase 2: Start Backend
 
@@ -52,7 +51,7 @@ Skill tool: skill="stop-backend"
 ## Output
 
 Report summary:
-- Backend unit tests: PASS/FAIL (usecase + each adapter)
+- Backend unit tests: PASS/FAIL (single-module suite — usecase + adapters)
 - Frontend unit tests: PASS/FAIL
 - Acceptance tests: PASS/FAIL (with details if failed)
 - Overall: PASS/FAIL

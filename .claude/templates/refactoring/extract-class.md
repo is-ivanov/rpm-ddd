@@ -127,4 +127,4 @@ private TaskResponseDto postTaskApi(UUID boardId, Object requestBody) { ... }
 5. [ ] Shared infrastructure extracted to base class (if applicable)
 6. [ ] Internal duplication consolidated within each class
 7. [ ] Size verified — `wc -l` on all resulting files, each ≤200 lines. If any exceeds, recurse (split further)
-8. [ ] Tests pass (`./gradlew build`)
+8. [ ] Tests pass — run the project's full build/test suite (see the tech binding for the command)

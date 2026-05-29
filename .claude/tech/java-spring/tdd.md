@@ -76,15 +76,17 @@ Never manually add `@Execution(SAME_THREAD)` to individual tests — use the pro
 ## Coverage Tool
 
 - JaCoCo for Java code coverage
-- Reports in `build/reports/jacoco/` (XML format)
-- Run per-module: domain files checked against usecase JaCoCo, adapter files checked against adapter JaCoCo
-- Scan touched files across `backend/*/src/main/` and `backend/adapters/*/src/main/`
+- Reports in `target/site/jacoco/` (XML format)
+- Single Maven module: one JaCoCo report (`target/site/jacoco/`) covers the whole module — domain classes exercised by usecase tests already appear, no per-module runs needed
+- Test layers map to packages, not modules: domain → `*.domain`, usecase → `*.application`, web slice → `*.infrastructure.web`, acceptance → `*IntegrationTest`
+- Scan touched files under `src/main/**/*.java`
 
 ## Test Filter Flag
 
-- Gradle: `--tests "*ClassName*"` to run a single test class
-- Example: `./gradlew :usecase:test --tests "*TaskTest*"`
-- Acceptance: poll output file for `FAILED|BUILD SUCCESSFUL|BUILD FAILED`
+- Maven (single module): `-Dtest='*ClassName*'` to run a single test class
+- Example: `./mvnw test -Dtest='*TaskTest*'`
+- DB/acceptance group: `./mvnw test -Dgroups=db`
+- Acceptance: poll output file for `BUILD SUCCESS|BUILD FAILURE`
 
 ## 3-Tier Test Architecture — Java Specifics
 
@@ -191,7 +193,49 @@ void when_expiredToken_expect_throwsExpiredJwtException() {
     var token = tokenGenerator.generateToken(userId, jti);
     clock.add(Duration.ofHours(25));
     // uses the same sut, same clock — now past expiry
-    assertThatThrownBy(() -> sut.validateToken(token))
-            .isInstanceOf(ExpiredJwtException.class);
+    Throwable thrown = catchThrowable(() -> sut.validateToken(token));
+    then(thrown).isInstanceOf(ExpiredJwtException.class);
 }
 ```
+
+## Test Data Builder Pattern
+
+When the same domain entity is constructed via raw Instancio calls in **3+ test files**, extract a Test Data Builder into the `fixtures` package.
+
+**Structure:**
+
+```java
+public class UserBuilder {
+
+    private final InstancioApi<User> builder = Instancio.of(User.class);
+
+    public static UserBuilder aUser() {
+        return new UserBuilder();
+    }
+
+    public UserBuilder withEmail(String email) {
+        builder.set(field(User::getEmail), new EmailAddress(email));
+        return this;
+    }
+
+    public User build() {
+        return builder.create();
+    }
+}
+```
+
+**Usage in Statements:**
+
+```java
+import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.aUser;
+
+User user = aUser().withLogin("admin").withStatus(UserStatus.ACTIVE).build();
+```
+
+**Naming:**
+- Class: `{Entity}Builder`
+- Factory method: `a{Entity}()` / `an{Entity}()` — correct English article by phonetics
+- With-methods: `with{Field}(String)` for VO fields (builder handles VO construction), `with{Field}(Enum)` for enum fields
+- Terminal: `build()`
+
+**Threshold:** 3+ raw `Instancio.of(Entity.class).set(...)...create()` call sites for the same entity type across test files. Do NOT extract for DTOs or value objects — use Instancio directly. Refactoring template: `.claude/templates/refactoring/test-data-builder.md`.

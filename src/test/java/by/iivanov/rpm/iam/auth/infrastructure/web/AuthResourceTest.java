@@ -1,21 +1,16 @@
 package by.iivanov.rpm.iam.auth.infrastructure.web;
 
-import static org.instancio.Select.field;
-import static org.mockito.ArgumentMatchers.eq;
+import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.aUser;
 import static org.mockito.BDDMockito.given;
 
 import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
 import by.iivanov.rpm.iam.user.application.ActivationService;
-import by.iivanov.rpm.iam.user.domain.EmailAddress;
-import by.iivanov.rpm.iam.user.domain.Login;
-import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.testing.WebTest;
 import by.iivanov.rpm.testing.api.AssertionResponse;
 import by.iivanov.rpm.testing.api.FieldError;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import net.javacrumbs.jsonunit.core.Option;
-import org.instancio.Instancio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -67,11 +62,9 @@ class AuthResourceTest {
         }
 
         private void givenUserWithActivationToken() {
-            var user = Instancio.of(User.class)
-                    .set(field(User::getLogin), new Login("testuser"))
-                    .set(field(User::getEmail), new EmailAddress("test@example.com"))
-                    .create();
-            given(activationService.validateToken(eq("valid-token"))).willReturn(user);
+            var user =
+                    aUser().withLogin("testuser").withEmail("test@example.com").build();
+            given(activationService.validateToken("valid-token")).willReturn(user);
         }
 
         @Test
@@ -91,19 +84,19 @@ class AuthResourceTest {
         }
 
         private void givenTokenValidationFails(String token, RuntimeException exception) {
-            given(activationService.validateToken(eq(token))).willThrow(exception);
+            given(activationService.validateToken(token)).willThrow(exception);
         }
 
         private void assertUnprocessable(AssertionResponse response, String detail) {
             response.assertStatus(HttpStatus.UNPROCESSABLE_CONTENT);
             response.assertBodyMatches("""
-                    {
-                      "status": 422,
-                      "title": "Unprocessable Content",
-                      "detail": "%s",
-                      "instance": "/api/auth/activate"
-                    }
-                    """.formatted(detail), Option.IGNORING_EXTRA_FIELDS);
+                {
+                  "status": 422,
+                  "title": "Unprocessable Content",
+                  "detail": "%s",
+                  "instance": "/api/auth/activate"
+                }
+                """.formatted(detail), Option.IGNORING_EXTRA_FIELDS);
         }
     }
 

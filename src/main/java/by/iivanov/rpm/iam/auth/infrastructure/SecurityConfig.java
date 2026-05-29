@@ -7,6 +7,7 @@ import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.ErrorMessageM
 import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.HttpStatusMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -33,7 +34,13 @@ class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(
             HttpSecurity http, UnauthorizedEntryPoint unauthorizedEntryPoint, AccessDeniedHandler accessDeniedHandler) {
-        return http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
+        return http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET, "/api/auth/csrf")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/activate")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/activate")
                         .permitAll()
                         .requestMatchers("/api/**")
                         .authenticated()

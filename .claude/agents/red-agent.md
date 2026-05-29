@@ -68,6 +68,7 @@ Frontend layers:
 
 Acceptance tests need a live backend. Predictions must be about feature behavior (see `tdd-rules.md`).
 
+0. Before running the test, ensure the shared test DB is up — see `.claude/tech/java-spring/infrastructure.md` → "Test Database" (idempotent; reused across runs, never stopped). This also applies when running a `db` adapter test (`@Tag("db")`).
 1. Before running the test, ensure the backend is up (`/run-backend` or check health endpoint)
 2. Predict the **actual application-level failure** — assertion error, wrong HTTP status, missing data, etc.
 3. If the feature is already fully implemented and the test would pass, the prediction is "test passes" — skip straight to `green-acceptance` (mark red-usecase/green-usecase/adapters as `[S]` with reason)

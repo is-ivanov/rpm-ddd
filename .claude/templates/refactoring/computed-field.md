@@ -70,7 +70,7 @@ Remove `taskCount` from test data construction — it's computed automatically.
 5. [ ] Update entity
 6. [ ] Update usecase response mapping
 7. [ ] Update all test data construction
-8. [ ] Run `./gradlew build`
+8. [ ] Run the project's full build/test suite (see the tech binding for the command)
 
 ## Common Pitfalls
 

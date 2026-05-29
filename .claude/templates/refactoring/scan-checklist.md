@@ -40,7 +40,7 @@ Produce structural data. Violation is numeric/objective.
 
 | # | Check | Enumerate | Violation |
 |---|-------|-----------|-----------|
-| A6 | Repeated construction | `.builder()` or `new Type(...)` calls, grouped by type | Same type constructed 2+ times |
+| A6 | Repeated construction | `.builder()`, `new Type(...)`, or `Instancio.of(Type.class).set(...)...create()` calls, grouped by type across all test files in the module | Same type constructed 3+ times for test data (2+ for production code) |
 | A7 | Repeated expressions | Same sub-expression appearing in multiple places | 2+ occurrences |
 | A7b | Near-duplicate blocks | Code blocks with identical structure but different literal values (same JSON template with different `status`/`amount`, same WireMock registration with different body). Group by structure, list the differing literals. | 2+ blocks sharing structure |
 
@@ -308,6 +308,7 @@ All templates live in `.claude/templates/refactoring/`.
 | Statements class with >8 injected dependencies | Split Statements by concern | `extract-class.md` |
 | Statements method that only delegates to another injected Statements | Remove middleman -- tests inject target Statements directly via base class | `simplify-expressions.md` |
 | `isNull()` assertion on domain VO field in test | Fix domain model — reject null in VO constructor (empty string / Optional / Null Object), update assertion | `value-object.md` |
+| `Instancio.of(Entity.class).set(...)...create()` repeated 3+ times across test files | Extract Test Data Builder into `fixtures` package | `test-data-builder.md` |
 
 ### Frontend Code Smells
 

@@ -18,6 +18,6 @@
 
 ## Notes
 
-- All auth endpoints are publicly accessible (no authentication required) except /api/auth/me and /api/auth/logout
+- Endpoint authorization is an allow-list (deny-by-default): only `GET /api/auth/csrf`, `POST /api/auth/login`, and `GET`/`POST /api/auth/activate` are public. Every other endpoint under `/api/**` — including `/api/auth/me`, `/api/auth/logout`, and any newly added endpoint — requires authentication automatically
 - Session-based auth via JSESSIONID cookie; CSRF token required for POST endpoints (except /api/auth/login which runs before CSRF is established)
 - Activation token is a JWT passed as query parameter; no Authorization header needed

@@ -62,6 +62,13 @@ Tech binding for `coding-rules.md`. Shared section structure: `.claude/templates
 - `ResponseEntity`: `ok()` → 200, `status(CREATED).body()` → 201, `noContent().build()` → 204.
 - Errors via `GlobalExceptionHandler`.
 
+## Security (HttpSecurity authorization)
+
+- `authorizeHttpRequests` is an allow-list: chain `.requestMatchers(HttpMethod.X, "/public/path").permitAll()` for each public endpoint, then `.requestMatchers("/api/**").authenticated()`, then `.anyRequest().denyAll()`. New endpoints fall through to `authenticated()` automatically.
+- Rules evaluate first-match-wins — put the specific `permitAll` matchers before the broad `authenticated`/`denyAll` ones.
+- Use `requestMatchers(HttpMethod.GET, …)` overloads so a public path is only open for its intended verb.
+- Never use a wildcard `permitAll` (`.requestMatchers("/api/auth/**").permitAll()`) — it exposes every current and future path under the prefix.
+
 ## Storage Adapters
 
 - JPA entities ≠ domain. `from(domain)` + `toDomain()`. Never expose outside adapter.

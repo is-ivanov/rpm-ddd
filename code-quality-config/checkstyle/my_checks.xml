@@ -459,9 +459,12 @@
       <property name="excludeScope" value="nothing"/>
     </module>
     -->
+    <!-- Deviation from Google Java Style: allows 'a' prefix before uppercase
+         for Test Data Builder factory methods (aUser(), anOrder()) while still
+         blocking other single-letter prefixes (bUser, cTask) and bare a(). -->
     <module name="MethodName">
       <property name="format"
-                value="^(?![a-z]$)(?![a-z][A-Z])[a-z][a-z0-9]*(?:[A-Z][a-z0-9]*)*(?:_[0-9]+)*$"/>
+                value="^(?![a-z]$)(?![b-z][A-Z])[a-z][a-z0-9]*(?:[A-Z][a-z0-9]*)*(?:_[0-9]+)*$"/>
       <message key="name.invalidPattern"
                value="Method name ''{0}'' must match pattern ''{1}''."/>
     </module>
