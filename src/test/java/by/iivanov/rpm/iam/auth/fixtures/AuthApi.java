@@ -39,6 +39,12 @@ public class AuthApi extends AbstractApi {
         return get(BASE_URI + "/me", session);
     }
 
+    //  ==== logout ====
+
+    public AssertionResponse logout(SessionContext session) {
+        return post(BASE_URI + "/logout", "", session);
+    }
+
     //  ==== login ====
 
     private String loginUri() {

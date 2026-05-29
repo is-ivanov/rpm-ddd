@@ -98,8 +98,8 @@
 - [x] green-acceptance
 
 ### Scenario 6.1: Logout invalidates session
-- [~] red-acceptance
-- [ ] design
+- [x] red-acceptance (LogoutIntegrationTest — @Disabled)
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain
