@@ -13,8 +13,8 @@ Type: refactoring
 
 ### Step 2: Serve the SPA from Spring Boot (allow-list + fallback)
 - [x] red: integration test — `GET /` → 200 `text/html` (index.html), a deep link (`GET /login`) → SPA shell, `GET /api/**` (unauthenticated) → still 401 (confirmed: 2 fail @401 vs 200, 1 pass)
-- [~] green: SecurityConfig allow-list static assets + SPA fallback (forward non-`/api` non-asset routes to `index.html`), keep `/api/**` authenticated and `anyRequest().denyAll()`
-- [ ] refactor (cleanup) + run affected tests
+- [x] green: SecurityConfig allow-lists `GET /,/index.html,/favicon.svg,/assets/**,/login,/activate`; `SpaForwardingController` forwards explicit SPA routes to `index.html`; `/api/**` stays authenticated + `anyRequest().denyAll()` (3 tests pass)
+- [x] refactor (cleanup): merged the two SPA-shell tests into a `@ParameterizedTest`; checkstyle 0 / pmd clean
 
 ### Step 3: Make CI build the frontend and ship it
 - [ ] add `-Pfrontend` to the `mvn verify` step in `.github/workflows/build.yml` (profile is NOT active by default)
