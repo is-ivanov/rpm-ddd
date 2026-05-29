@@ -9,7 +9,7 @@ Tech binding for `infrastructure.md`. Load alongside the universal rules.
 ## Process Safety
 
 - Never kill by executable name: `taskkill //IM java.exe` — use port-based stop scripts instead.
-- Never run `./gradlew --stop` — it kills ALL Gradle daemons system-wide, breaking parallel sessions.
+- Maven (the project's build tool) has no long-lived daemon — there is nothing to "stop". Just let `./mvnw` invocations exit on their own; never globally terminate Java/Maven processes (that would kill parallel sessions). See the universal "never kill processes by executable name" guidance in `.claude/rules/infrastructure.md`.
 
 ## Config Fallback Syntax
 
@@ -19,7 +19,7 @@ Each file type has its own fallback pattern:
 
 ## Static Analysis (Pre-Commit)
 
-- Run before every commit: `./mvnw checkstyle:check -B`
+- Run before every commit: `./mvnw checkstyle:check -B` and `./mvnw pmd:check -B` (both are listed as verification commands in the `ProductSpecification/technology.md` Conventions table).
 - If violations are found, fix them before committing.
 
 ## Acceptance Tests

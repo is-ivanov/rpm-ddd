@@ -76,15 +76,15 @@ Never manually add `@Execution(SAME_THREAD)` to individual tests — use the pro
 ## Coverage Tool
 
 - JaCoCo for Java code coverage
-- Reports in `build/reports/jacoco/` (XML format)
+- Reports in `target/site/jacoco/` (XML format)
 - Run per-module: domain files checked against usecase JaCoCo, adapter files checked against adapter JaCoCo
 - Scan touched files across `backend/*/src/main/` and `backend/adapters/*/src/main/`
 
 ## Test Filter Flag
 
-- Gradle: `--tests "*ClassName*"` to run a single test class
-- Example: `./gradlew :usecase:test --tests "*TaskTest*"`
-- Acceptance: poll output file for `FAILED|BUILD SUCCESSFUL|BUILD FAILED`
+- Maven: `-Dtest='*ClassName*'` to run a single test class
+- Example: `./mvnw test -pl backend/{module} -Dtest='*TaskTest*'`
+- Acceptance: poll output file for `BUILD SUCCESS|BUILD FAILURE`
 
 ## 3-Tier Test Architecture — Java Specifics
 
@@ -191,8 +191,8 @@ void when_expiredToken_expect_throwsExpiredJwtException() {
     var token = tokenGenerator.generateToken(userId, jti);
     clock.add(Duration.ofHours(25));
     // uses the same sut, same clock — now past expiry
-    assertThatThrownBy(() -> sut.validateToken(token))
-            .isInstanceOf(ExpiredJwtException.class);
+    Throwable thrown = catchThrowable(() -> sut.validateToken(token));
+    then(thrown).isInstanceOf(ExpiredJwtException.class);
 }
 ```
 
