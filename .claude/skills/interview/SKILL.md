@@ -26,9 +26,9 @@ Before asking any questions, silently read:
 4. **Existing story spec** (if any): `ProductSpecification/stories/NN-story-name/NN_StoryName.md`
 5. **Archived drafts**: `ProductSpecification/Archived/DraftStories/1st-iteration/` (scan for relevant files)
 6. **Existing interviews**: ALL existing `ProductSpecification/stories/*/interview.md` files
-7. **Existing domain code**: Scan `backend/domain/src/` and `backend/usecase/src/`
-8. **Existing adapters**: Scan `backend/adapters/*/src/`
-9. **Existing acceptance tests**: Scan `acceptance/`
+7. **Existing domain/usecase code**: Scan `src/main/java/` (domain in `**/domain`, usecase in `**/application` packages)
+8. **Existing adapters**: Scan `src/main/java/` adapter packages (`**/infrastructure/**`)
+9. **Existing acceptance tests**: Scan `src/test/java/` for `*IntegrationTest` classes
 10. **Existing test cases doc** (if any): `ProductSpecification/stories/NN-story-name/tests/01_API_Tests.md`
 
 ### Phase 2: Story Selection
