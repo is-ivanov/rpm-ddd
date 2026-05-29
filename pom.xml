@@ -21,6 +21,7 @@
 
     <!--dependency versions -->
     <checkstyle.version>13.4.2</checkstyle.version>
+    <allure.version>2.29.1</allure.version>
     <commons-lang3.version>3.20.0</commons-lang3.version>
     <error-handling-spring-boot-starter.version>5.1.1</error-handling-spring-boot-starter.version>
     <error-prone.version>2.49.0</error-prone.version>
@@ -73,6 +74,13 @@
         <groupId>io.jsonwebtoken</groupId>
         <artifactId>jjwt-bom</artifactId>
         <version>${jjwt.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-bom</artifactId>
+        <version>${allure.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -245,6 +253,13 @@
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-launcher</artifactId>
+    </dependency>
+
+    <!-- Allure (test reporting) -->
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-junit5</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <!-- Testcontainers-->
