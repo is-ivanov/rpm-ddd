@@ -34,6 +34,10 @@ Decisions taken at task creation:
 - Approach: **Option A** (single service; no CORS).
 - The deployed image path uses `Dockerfile.deploy` + the JAR artifact, so the frontend
   must be inside the JAR (built by Maven), not by a Node stage in `Dockerfile`.
+- The frontend build lives behind an **explicit `frontend` Maven profile** (NOT active
+  by default), activated with `-Pfrontend`. Rationale: everyday `./mvnw test` stays fast,
+  and the Alpine fallback `Dockerfile` (plain `mvn package`) skips the frontend by design
+  (avoids the glibc-Node-on-musl problem). CI (`build.yml`) must pass `-Pfrontend`.
 
 ## Key Files
 
