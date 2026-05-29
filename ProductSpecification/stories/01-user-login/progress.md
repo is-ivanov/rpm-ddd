@@ -114,8 +114,11 @@
 
 ## Frontend Scenarios
 
+**Setup: Initialize frontend application** — Vue 3 + TS + Vite + Vitest + Tailwind + Vue Router scaffold in `frontend/` with a simple main page (`/` → HomePage).
+- [x] scaffold-frontend
+
 ### Scenario 1.1: Login page shows login and password fields and submit button
-- [ ] red-selenium
+- [~] red-selenium
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
