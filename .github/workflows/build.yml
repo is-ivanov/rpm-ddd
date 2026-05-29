@@ -14,6 +14,7 @@ on:
     branches: ["main"]
     paths:
       - "src/**"
+      - "frontend/**"
       - "pom.xml"
       - ".mvn/**"
       - "mvnw"
@@ -27,6 +28,7 @@ on:
     branches: ["main"]
     paths:
       - "src/**"
+      - "frontend/**"
       - "pom.xml"
       - ".mvn/**"
       - "mvnw"
@@ -55,7 +57,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn verify -B
+      run: mvn verify -B -Pfrontend
 
     - name: Set up Node.js
       if: always() && github.actor != 'dependabot[bot]'

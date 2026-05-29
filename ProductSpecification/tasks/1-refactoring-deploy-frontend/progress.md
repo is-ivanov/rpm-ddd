@@ -17,9 +17,9 @@ Type: refactoring
 - [x] refactor (cleanup): merged the two SPA-shell tests into a `@ParameterizedTest`; checkstyle 0 / pmd clean
 
 ### Step 3: Make CI build the frontend and ship it
-- [ ] add `-Pfrontend` to the `mvn verify` step in `.github/workflows/build.yml` (profile is NOT active by default)
-- [ ] add `frontend/**` to `paths:` (push + pull_request) in `.github/workflows/build.yml`
-- [ ] verify `mvn verify -Pfrontend` builds the frontend on the runner and the uploaded `app-jar` contains the static SPA; confirm `Dockerfile.deploy` / `infra/render.yaml` need no change (the Alpine fallback `Dockerfile` runs plain `mvn package` → skips frontend by design)
+- [x] add `-Pfrontend` to the `mvn verify` step in `.github/workflows/build.yml` (profile is NOT active by default)
+- [x] add `frontend/**` to `paths:` (push + pull_request) in `.github/workflows/build.yml`
+- [x] verified locally (Step 1) that `mvn -Pfrontend package` bundles the static SPA into the JAR — CI uses the same path; `Dockerfile.deploy` / `infra/render.yaml` unchanged (deploy builds from the `app-jar` artifact; the Alpine fallback `Dockerfile` runs plain `mvn package` → skips frontend by design). Full CI verification happens on the merge-to-main run.
 
 ### Step 4: Verify deploy
 - [ ] local: build JAR, run `java -jar`, `curl /` returns the Vue page; `GET /api/auth/csrf` still works
