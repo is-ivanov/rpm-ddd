@@ -12,8 +12,8 @@ Type: refactoring
 - [x] verify: `./mvnw -Pfrontend -DskipTests package` produces a JAR containing `BOOT-INF/classes/static/index.html` and `static/assets/**`
 
 ### Step 2: Serve the SPA from Spring Boot (allow-list + fallback)
-- [ ] red: integration test — `GET /` → 200 `text/html` (index.html), a deep link (e.g. `GET /login`) → SPA shell, `GET /api/**` (unauthenticated) → still 401
-- [ ] green: SecurityConfig allow-list static assets + SPA fallback (forward non-`/api` non-asset routes to `index.html`), keep `/api/**` authenticated and `anyRequest().denyAll()`
+- [x] red: integration test — `GET /` → 200 `text/html` (index.html), a deep link (`GET /login`) → SPA shell, `GET /api/**` (unauthenticated) → still 401 (confirmed: 2 fail @401 vs 200, 1 pass)
+- [~] green: SecurityConfig allow-list static assets + SPA fallback (forward non-`/api` non-asset routes to `index.html`), keep `/api/**` authenticated and `anyRequest().denyAll()`
 - [ ] refactor (cleanup) + run affected tests
 
 ### Step 3: Make CI build the frontend and ship it
