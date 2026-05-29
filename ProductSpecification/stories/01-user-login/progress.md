@@ -99,12 +99,12 @@
 
 ### Scenario 6.1: Logout invalidates session
 - [x] red-acceptance (LogoutIntegrationTest — @Disabled)
-- [~] design
-- [ ] red-usecase
-- [ ] green-usecase
-- [S] red-domain
+- [x] design (ADR: logout-decision.md — web/security adapter method, no usecase/domain)
+- [S] red-usecase (no business logic — logout is pure infrastructure/security)
+- [S] green-usecase (no new usecase code needed)
+- [S] red-domain (no testable domain logic in this scenario)
 - [S] green-domain
-- [ ] adapters-discovery
+- [~] adapters-discovery
 - [ ] green-acceptance
 
 ## Integration Scenarios
