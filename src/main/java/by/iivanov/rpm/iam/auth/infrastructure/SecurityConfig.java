@@ -34,7 +34,10 @@ class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(
             HttpSecurity http, UnauthorizedEntryPoint unauthorizedEntryPoint, AccessDeniedHandler accessDeniedHandler) {
-        return http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET, "/api/auth/csrf")
+        return http.authorizeHttpRequests(auth -> auth.requestMatchers(
+                                HttpMethod.GET, "/", "/index.html", "/favicon.svg", "/assets/**", "/login", "/activate")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/csrf")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login")
                         .permitAll()
