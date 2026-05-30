@@ -28,4 +28,7 @@ Type: refactoring
 - [x] Repoint `deploy-report` to `needs: allure-report`
 
 ### Step 4: Stabilize
-- [~] Tune retries/timeouts, verify green and non-flaky
+- [x] Tune retries/timeouts, verify green and non-flaky
+  - `reuseExistingServer: !process.env.CI` (fresh server + hard fail on busy port in CI). Retries (2 in CI) and webServer timeout (120s) already sound — left as-is.
+  - Local `npm run test:e2e` green: vite booted via webServer, 1 skipped, exit 0. `npm run lint` clean.
+  - Final CI-green confirmation requires a PR→main run (workflow does not trigger on task-branch push).

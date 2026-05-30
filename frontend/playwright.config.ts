@@ -23,7 +23,7 @@ export default defineConfig({
   webServer: {
     command: 'npm run dev',
     url: appUrl,
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     env: {
       FRONTEND_PORT: String(frontendPort),
