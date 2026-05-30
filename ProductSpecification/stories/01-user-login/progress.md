@@ -121,9 +121,9 @@
 - [x] red-playwright (login-page.spec.ts — @skip; bootstrapped Playwright harness: playwright.config.ts, acceptance/tests/)
 - [S] red-frontend (pure display scenario — no input-varying logic; field visibility, password masking via type=password, fixed "Sign In" label are presentational constants handled in the component during align-design; visibility covered by red-playwright E2E)
 - [S] green-frontend (no logic produced in red-frontend)
-- [~] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend-api (no API interaction in this scenario — page-display only: fields visible, password masked via type=password, fixed "Sign In" label; login API client POST /api/auth/login belongs to credential-submission scenarios 3.1/3.2)
+- [S] green-frontend-api (no API client produced in red-frontend-api)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
