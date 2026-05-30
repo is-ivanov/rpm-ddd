@@ -23,20 +23,17 @@ class SmtpEmailNotificationSender implements EmailNotificationSender {
 
     private final JavaMailSender mailSender;
     private final ActivationEmailRenderer renderer;
-    private final String fromName;
-    private final String fromAddress;
+    private final EmailProperties emailProperties;
     private final String frontendBaseUrl;
 
     SmtpEmailNotificationSender(
             JavaMailSender mailSender,
             ActivationEmailRenderer renderer,
-            @Value("${app.mail.from-name}") String fromName,
-            @Value("${app.mail.from-address}") String fromAddress,
+            EmailProperties emailProperties,
             @Value("${app.frontend-base-url}") String frontendBaseUrl) {
         this.mailSender = mailSender;
         this.renderer = renderer;
-        this.fromName = fromName;
-        this.fromAddress = fromAddress;
+        this.emailProperties = emailProperties;
         this.frontendBaseUrl = frontendBaseUrl;
     }
 
@@ -54,7 +51,7 @@ class SmtpEmailNotificationSender implements EmailNotificationSender {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
-            helper.setFrom(fromAddress, fromName);
+            helper.setFrom(emailProperties.fromAddress(), emailProperties.fromName());
             helper.setTo(toEmail);
             helper.setSubject(content.subject());
             helper.setText(content.textBody(), content.htmlBody());
