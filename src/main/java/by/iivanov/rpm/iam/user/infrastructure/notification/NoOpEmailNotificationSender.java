@@ -3,13 +3,11 @@ package by.iivanov.rpm.iam.user.infrastructure.notification;
 import by.iivanov.rpm.shared.infrastructure.InfrastructureComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Primary;
 
 /**
  * Temporary no-op implementation of EmailNotificationSender.
  * Should be replaced with a real email service.
  */
-@Primary
 @InfrastructureComponent
 class NoOpEmailNotificationSender implements EmailNotificationSender {
 

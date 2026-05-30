@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +18,6 @@ class ActivationEmailRendererTest {
     private final ActivationEmailRenderer sut = new ActivationEmailRenderer();
 
     @Test
-    @Disabled("TDD Red Phase - Not yet implemented")
     @DisplayName("WHEN rendering with fixed login and link EXPECT subject, HTML, and text match approved fixtures")
     void when_fixedInputs_expect_renderedContentMatchesApprovedFixtures() {
         // GIVEN: deterministic login and activation link

@@ -21,8 +21,8 @@
   - Check 2 (exceptions): [S] — listener happy-path, no domain exceptions to map
   - Check 3 (response shape): [S] — inbound adapter is an event listener, no HTTP response
 - [x] red-adapter email
-- [~] green-adapter email
-- [ ] green-acceptance
+- [x] green-adapter email
+- [~] green-acceptance
 
 ## Integration Scenarios
 
