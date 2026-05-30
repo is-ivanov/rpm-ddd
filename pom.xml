@@ -48,7 +48,7 @@
     <spotless-maven-plugin.version>3.6.0</spotless-maven-plugin.version>
 
     <!--frontend build (activated by the 'frontend' profile) -->
-    <node.version>v22.12.0</node.version>
+    <node.version>v22.13.0</node.version>
     <npm.version>10.9.0</npm.version>
   </properties>
 
@@ -554,6 +554,16 @@
                 <phase>generate-resources</phase>
                 <configuration>
                   <arguments>ci</arguments>
+                </configuration>
+              </execution>
+              <execution>
+                <id>npm-lint</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <phase>generate-resources</phase>
+                <configuration>
+                  <arguments>run lint</arguments>
                 </configuration>
               </execution>
               <execution>
