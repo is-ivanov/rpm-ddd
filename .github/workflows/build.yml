@@ -59,26 +59,15 @@ jobs:
     - name: Build with Maven
       run: mvn verify -B -Pfrontend
 
-    - name: Set up Node.js
-      if: always() && github.actor != 'dependabot[bot]'
-      uses: actions/setup-node@v4
-      with:
-        node-version: 'lts/*'
-        cache: npm
-
-    - name: Generate Allure report
-      if: always() && github.actor != 'dependabot[bot]'
-      run: |
-        npm ci
-        npm run report
-
-    - name: Upload Allure report
+    # Report generation moved to the `allure-report` job so backend + vitest
+    # results (here) can be merged with Playwright results from `frontend-e2e`.
+    - name: Upload Allure results
       if: always() && github.actor != 'dependabot[bot]'
       uses: actions/upload-artifact@v7
       with:
-        name: allure-report
-        path: target/allure-report
-        retention-days: 7
+        name: allure-results-build
+        path: target/allure-results
+        retention-days: 1
 
     - name: Upload coverage to Codecov
       if: always() && github.actor != 'dependabot[bot]'
@@ -101,10 +90,77 @@ jobs:
 #    - name: Update dependency graph
 #      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
 
+  # Runs the Playwright e2e suite in parallel with `build` (no dependency: the
+  # frontend-only stack needs neither the app jar nor Postgres). Playwright's
+  # webServer config boots vite itself. Emits Allure results, uploaded as an
+  # artifact that the `allure-report` job merges into the unified report.
+  frontend-e2e:
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.13.0'
+        cache: npm
+        cache-dependency-path: frontend/package-lock.json
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+    - name: Run Playwright e2e
+      run: npm run test:e2e
+    - name: Upload e2e Allure results
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: allure-results-e2e
+        path: target/allure-results
+        retention-days: 1
+
+  # Merges Allure results from `build` (backend + vitest) and `frontend-e2e`
+  # (Playwright) into one unified report. Runs even if upstream tests failed so
+  # the report always reflects the latest run.
+  allure-report:
+    needs: [build, frontend-e2e]
+    if: always() && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/*'
+        cache: npm
+    - name: Download build Allure results
+      uses: actions/download-artifact@v7
+      with:
+        name: allure-results-build
+        path: target/allure-results
+    - name: Download e2e Allure results
+      uses: actions/download-artifact@v7
+      with:
+        name: allure-results-e2e
+        path: target/allure-results
+    - name: Generate Allure report
+      run: |
+        npm ci
+        npm run report
+    - name: Upload Allure report
+      uses: actions/upload-artifact@v7
+      with:
+        name: allure-report
+        path: target/allure-report
+        retention-days: 7
+
   # Publishes the Allure report to GitHub Pages. Runs only on main (incl. manual
   # dispatch) and even if tests failed, so the web report always reflects the latest run.
   deploy-report:
-    needs: build
+    needs: allure-report
     if: always() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     concurrency:
