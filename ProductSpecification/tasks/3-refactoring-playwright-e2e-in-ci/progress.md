@@ -19,11 +19,11 @@ Type: refactoring
 - [x] Choose dedicated `frontend-e2e` CI job vs. Maven `test:e2e` execution → separate `frontend-e2e` job in `build.yml`, parallel to `build`
 
 ### Step 2: Add the frontend-e2e job (frontend-only stack)
-- [~] Add `frontend-e2e` job: checkout, node, `npm ci`, `npx playwright install --with-deps chromium`, `npm run test:e2e`
-- [ ] Upload e2e `target/allure-results` as an artifact
+- [x] Add `frontend-e2e` job: checkout, node, `npm ci`, `npx playwright install --with-deps chromium`, `npm run test:e2e`
+- [x] Upload e2e `target/allure-results` as an artifact (`allure-results-e2e`)
 
 ### Step 3: Unify Allure report across jobs
-- [ ] Have `build` upload its `target/allure-results` as an artifact (instead of generating the report inline)
+- [~] Have `build` upload its `target/allure-results` as an artifact (instead of generating the report inline)
 - [ ] Add `allure-report` job (`needs:[build, frontend-e2e]`): download both result sets, `npm run report`, upload `allure-report`
 - [ ] Repoint `deploy-report` to `needs: allure-report`
 
