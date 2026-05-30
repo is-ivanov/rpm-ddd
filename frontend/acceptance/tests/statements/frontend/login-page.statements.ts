@@ -11,24 +11,18 @@ export class LoginPageStatements {
   }
 
   async assertLoginFieldIsVisible(): Promise<void> {
-    await expect(
-      this.page.getByTestId('login-input'),
-      'login input field is visible',
-    ).toBeVisible();
+    await expect(this.page.getByTestId('login-input'), 'login input field is visible').toBeVisible();
   }
 
   async assertPasswordFieldIsVisible(): Promise<void> {
-    await expect(
-      this.page.getByTestId('password-input'),
-      'password input field is visible',
-    ).toBeVisible();
+    await expect(this.page.getByTestId('password-input'), 'password input field is visible').toBeVisible();
   }
 
   async assertPasswordFieldMasksText(): Promise<void> {
-    await expect(
-      this.page.getByTestId('password-input'),
-      'password field masks entered text',
-    ).toHaveAttribute('type', 'password');
+    await expect(this.page.getByTestId('password-input'), 'password field masks entered text').toHaveAttribute(
+      'type',
+      'password',
+    );
   }
 
   async assertSubmitButtonIsVisible(): Promise<void> {

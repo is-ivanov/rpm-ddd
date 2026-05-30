@@ -9,6 +9,7 @@ on:
       - ".mvn/**"
       - "mvnw"
       - "code-quality-config/**"
+      - "frontend/**"
       - ".github/workflows/code-quality.yml"
   pull_request:
     branches: ["main"]
@@ -18,6 +19,7 @@ on:
       - ".mvn/**"
       - "mvnw"
       - "code-quality-config/**"
+      - "frontend/**"
       - ".github/workflows/code-quality.yml"
 
 jobs:
@@ -61,3 +63,22 @@ jobs:
           cache: maven
       - name: Run PMD (Fail on violations)
         run: mvn pmd:check -B
+
+  frontend-lint:
+    name: Frontend Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run ESLint + Prettier (Fail on violations)
+        run: npm run lint
