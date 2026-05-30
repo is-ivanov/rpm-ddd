@@ -118,83 +118,83 @@
 - [x] scaffold-frontend
 
 ### Scenario 1.1: Login page shows login and password fields and submit button
-- [~] red-selenium
-- [ ] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
-- [ ] green-selenium
+- [x] red-playwright (login-page.spec.ts — @skip; bootstrapped Playwright harness: playwright.config.ts, acceptance/tests/)
+- [S] red-frontend (pure display scenario — no input-varying logic; field visibility, password masking via type=password, fixed "Sign In" label are presentational constants handled in the component during align-design; visibility covered by red-playwright E2E)
+- [S] green-frontend (no logic produced in red-frontend)
+- [S] red-frontend-api (no API interaction in this scenario — page-display only: fields visible, password masked via type=password, fixed "Sign In" label; login API client POST /api/auth/login belongs to credential-submission scenarios 3.1/3.2)
+- [S] green-frontend-api (no API client produced in red-frontend-api)
+- [x] align-design (LoginPage.vue built + /login route; matches mockup 01-login.html; Inter font + .form-input class; password toggle deferred to Scenario 2.1)
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 2.1: Password visibility toggle shows and hides password
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 3.1: Wrong credentials show error banner
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 3.2: Inactive account shows error banner with activation message
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 4.1: Activation page shows password fields and complexity rules
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 5.1: Successful activation shows success message
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 5.2: Expired token shows error message
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 6.1: Clicking "Go to Sign In" navigates to login page
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ## Security Scenarios

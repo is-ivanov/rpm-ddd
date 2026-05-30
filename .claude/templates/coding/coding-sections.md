@@ -55,7 +55,7 @@ The scan checklist (A33-A44) references "see tech binding" for ORM-specific patt
 
 ## Browser Testing Sections
 
-Shared rules for `selenium`, `cypress`, and `playwright` coding.md files. The universal rules live in `frontend-rules.md` (Selenium Tests section). Each tech file provides ONLY:
+Shared rules for `playwright` (and other browser-testing) coding.md files. The universal rules live in `frontend-rules.md` (Playwright Tests section). Each tech file provides ONLY:
 
 | Section | What the tech file provides |
 |---------|----------------------------|

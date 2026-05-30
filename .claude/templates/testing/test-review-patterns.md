@@ -35,9 +35,9 @@ Each entry names a smell the reviewer must detect. Tech templates provide BAD/GO
 25. **Duplicating assertion logic from another Statements class** -- repeats assertions that already exist in another Statements instead of delegating.
 26. **Cross-Statements data passing in test class** -- test builds/fetches data from one Statements and passes to another instead of using compound methods.
 27. **Decomposed call when compound method exists** -- uses decomposed calls when an existing compound method already wraps them.
-28. **In-app URL navigation in Selenium tests** -- uses direct URL navigation instead of clicking through UI. `driver.get()` only for app root and external entry points.
+28. **In-app URL navigation in Playwright tests** -- uses direct URL navigation instead of clicking through UI. `page.goto()` only for app root and external entry points.
 29. **Not-implemented marker in Statements method** -- Statements stubbed like production adapter. Statements are test infrastructure; write real implementation in RED.
-30. **Selenium assertion shallower than spec** -- assertion checks parent count but not sub-elements that the spec requires.
+30. **Playwright assertion shallower than spec** -- assertion checks parent count but not sub-elements that the spec requires.
 31. **Unreferenced domain classes/fields from RED** -- domain stubs contain fields/classes not referenced by any test or Statements.
 32. **Sequential per-field assertions replaceable by recursive comparison** -- 2+ consecutive `assertThat(obj.getX())` calls on the same object when a single recursive/structural comparison would be shorter and give better diffs.
 33. **Null assertion on domain value object field** -- test asserts `isNull()` on a domain entity or value object field. Domain is null-free; the VO should use empty string, Optional, or Null Object. Fix the domain model and update the assertion.
@@ -63,9 +63,9 @@ Each entry names a smell the reviewer must detect. Tech templates provide BAD/GO
 17. **No setup steps in test DSL** -- merge setup into compound given-phase method
 18. **No cross-Statements data passing** -- extract compound methods instead
 19. **Use existing compound methods** -- search before writing decomposed calls
-20. **No in-app URL navigation in Selenium** -- `driver.get()` only for app root and external entry points
+20. **No in-app URL navigation in Playwright** -- `page.goto()` only for app root and external entry points
 21. **No not-implemented markers in Statements** -- Statements are test infrastructure, write real implementations in RED
-22. **Selenium assertions must match spec depth** -- verify sub-elements, not just parent count
+22. **Playwright assertions must match spec depth** -- verify sub-elements, not just parent count
 23. **No middleman delegators between Statements** -- test injects focused Statements directly
 24. **No private members in test class** -- zero private functions, interfaces, or inner types
 25. **No unreferenced domain classes/fields from RED** -- every class/field must be referenced by test or Statements
@@ -100,8 +100,8 @@ Each entry names a smell the reviewer must detect. Tech templates provide BAD/GO
 | Any assertion in test class | Move to Statements assert method |
 | Cross-Statements data passing | Extract compound on owning Statements |
 | Decomposed call when compound exists | Use existing compound |
-| Selenium: assertion checks only count | Find sub-elements and assert each |
-| Selenium: direct URL navigation | Navigate via UI click |
+| Playwright: assertion checks only count | Find sub-elements and assert each |
+| Playwright: direct URL navigation | Navigate via UI click |
 | Not-implemented marker in Statements | Write real implementation with locators, waits, assertions |
 | Action + assertion in one method | Split: action method (stores result) + assertion method |
 | Storage port in Statements | Replace with usecase query |

@@ -1,6 +1,6 @@
 # Playwright Browser Testing Conventions
 
-Tech binding for `frontend-rules.md` Selenium section. Shared section structure: `.claude/templates/coding/coding-sections.md`.
+Tech binding for `frontend-rules.md` Playwright section. Shared section structure: `.claude/templates/coding/coding-sections.md`.
 
 ## 2-Tier DSL Architecture
 

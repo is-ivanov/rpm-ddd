@@ -21,11 +21,11 @@ Update a frontend component's appearance to match its HTML mockup exactly.
 2. **Locate files**: find mockup in `ProductSpecification/stories/NN-story-name/mockups/desktop/` and component in `frontend/src/features/`
 3. **Extract design tokens**: work through every checklist item from the template
 4. **Compare and fix**: for each token, compare mockup value vs component value. Fix mismatches using the template's Common Mismatches table and Styling Approach.
-5. **Verify**: frontend build command, frontend test command (from `technology.md` Conventions), Selenium test if exists, visual check
+5. **Verify**: frontend build command, frontend test command (from `technology.md` Conventions), Playwright test if exists, visual check
 
 ## Key Rules
 
-- **NEVER remove `data-testid` attributes** — Selenium tests depend on them
+- **NEVER remove `data-testid` attributes** — Playwright tests depend on them
 - **NEVER change component behavior** — only styling
 - **Match mockup exactly** — use mockup's CSS values, not framework defaults (see template for specifics)
 - Divider, login link, and other elements outside `<form>` in mockup must be outside `<form>` in component

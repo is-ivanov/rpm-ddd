@@ -55,5 +55,5 @@ Spawns `refactor-agent` for code improvements.
 
 ## Constraints
 
-- **Acceptance tests:** Selenium Statements should inject and delegate to backend Statements for shared setup (board setup, task creation) — never reimplement the same API calls.
+- **Acceptance tests:** Playwright Statements should inject and delegate to backend Statements for shared setup (board setup, task creation) — never reimplement the same API calls.
 - **Frontend extraction:** preserve CSS classes, Tailwind utilities, icon imports, element hierarchy, and ordering exactly. Rendered HTML must be structurally identical after extraction.

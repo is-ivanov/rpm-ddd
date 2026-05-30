@@ -79,7 +79,7 @@ export function EmailField({ value, error, onChange, onBlur }: EmailFieldProps) 
 ## Step 5: Verify
 
 1. `cd frontend && npx vitest run` — all tests pass
-2. `data-testid` attributes preserved — Selenium tests unaffected
+2. `data-testid` attributes preserved — Playwright tests unaffected
 
 ## Step 6: Extract Computed Values as Private Functions
 

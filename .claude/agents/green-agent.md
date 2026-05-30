@@ -9,7 +9,7 @@ You implement MINIMAL code to make disabled test(s) pass.
 
 ## Input
 
-- **layer**: domain | usecase | acceptance | frontend-logic | frontend-api | selenium | any adapter name (db, rest, email, etc.)
+- **layer**: domain | usecase | acceptance | frontend-logic | frontend-api | playwright | any adapter name (db, rest, email, etc.)
 - **test**: Path to disabled test or story/scenario name
 
 ## Workflow
@@ -40,7 +40,7 @@ If test cannot pass without modification, STOP and report issue.
 - Adding test disable/skip markers to skip failing tests
 - Any test file changes except enabling the test
 - Adding features beyond what the test requires
-- **Writing ANY production code during acceptance/selenium green phase** — the ONLY allowed change is removing the test disable/skip marker. No backend code changes (domain, usecase, adapter, entity, response DTO), no frontend code changes, no Statements changes, no new files. If the test fails after removing the marker, STOP and report that the implementation is incomplete in an earlier phase.
+- **Writing ANY production code during acceptance/playwright green phase** — the ONLY allowed change is removing the test disable/skip marker. No backend code changes (domain, usecase, adapter, entity, response DTO), no frontend code changes, no Statements changes, no new files. If the test fails after removing the marker, STOP and report that the implementation is incomplete in an earlier phase.
 - **Deleting assertions from Statements methods** — see `tdd-rules.md` "NEVER delete assertions from Statements methods" rule. Extract a new Statements class by concern if file exceeds 200 lines.
 
 ## Template by Layer
@@ -55,7 +55,7 @@ Frontend layers (all share one template):
 |-------|---------------|
 | frontend-logic | `.claude/tech/{frontend}/templates/implementation.md` |
 | frontend-api | `.claude/tech/{frontend}/templates/implementation.md` |
-| selenium | `.claude/tech/{frontend}/templates/implementation.md` |
+| playwright | `.claude/tech/{frontend}/templates/implementation.md` |
 
 ## DB-Tagged Tests: Test DB Required
 

@@ -38,12 +38,12 @@ Each progress.md checkbox maps to sub-skills. Dispatch per `workflow.md` sequenc
 |----------|-----------|
 | Spec items (`interview`, `story`, `mockups`, `api-spec`, `test-spec`) | `/{item}` then commit |
 | `design` | `/design-preview` → user approves (optionally with ADR) or `/architecture` → commit (if ADR produced) |
-| `red-*` (acceptance, usecase, domain, adapter, selenium, frontend, frontend-api) | `red-agent.md` → `/test-review` → `/refactor` → commit |
+| `red-*` (acceptance, usecase, domain, adapter, playwright, frontend, frontend-api) | `red-agent.md` → `/test-review` → `/refactor` → commit |
 | `green-usecase`, `green-domain`, `green-adapter X` | `green-agent.md` → `/refactor` → `/test-coverage {module} --focus` → commit |
 | `adapters-discovery` | Load `.claude/templates/workflow/adapter-discovery-checklist.md`, run all 3 checks (ports, exceptions, response shape), mark `[x] adapters-discovery`, insert concrete `red-adapter X` / `green-adapter X` steps (or `[S]`) → commit progress.md |
 | `green-acceptance` | Run inline (no subagent): ensure the shared test DB is up (see `.claude/tech/java-spring/infrastructure.md` → "Test Database"), read `green-agent.md` workflow, load acceptance implementation template, enable the disabled test (remove disable marker — only allowed test change), run acceptance tests, verify GREEN → commit |
 | `green-frontend`, `green-frontend-api` | `green-agent.md` → `/refactor` → commit |
-| `green-selenium` | `/run-backend` → `/run-frontend` → `green-agent.md` (remove-marker-only: no production code, no Statements changes, no backend changes — if test fails, STOP and report) → commit |
+| `green-playwright` | `/run-backend` → `/run-frontend` → `green-agent.md` (remove-marker-only: no production code, no Statements changes, no backend changes — if test fails, STOP and report) → commit |
 | `align-design` | Build component → `/align-design` → `/design-review` (MANDATORY) → `/refactor` → `/align-design` verify-only → `/test-coverage frontend --focus` → commit |
 | `demo` | `/demo {scenario_test_class}` then progress-only commit |
 | `refactor usecase` / `refactor (...)` | Apply change then run affected tests then commit |
@@ -56,7 +56,7 @@ STOP after every commit. A single `/continue` invocation executes exactly ONE wo
 
 ## Pre-Commit Checklist
 
-Before committing, verify: (1) primary skill ran, (2) `/test-review` ran (red phases), (3) `/refactor` ran (all phases except `green-acceptance`/`green-selenium`/`demo`/spec items), (4) static analysis passes. If `/refactor` was skipped -- run it before committing.
+Before committing, verify: (1) primary skill ran, (2) `/test-review` ran (red phases), (3) `/refactor` ran (all phases except `green-acceptance`/`green-playwright`/`demo`/spec items), (4) static analysis passes. If `/refactor` was skipped -- run it before committing.
 
 **Static analysis** (step 4): run `./mvnw checkstyle:check -pl . -q && ./mvnw pmd:check -pl . -q`. If violations are found, fix them before committing. Do NOT skip this step — it catches issues (missing Javadoc, PMD violations) that the agents don't check.
 

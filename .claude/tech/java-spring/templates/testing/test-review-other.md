@@ -1,10 +1,10 @@
 # Test Review Patterns: Other Layers (Java/Spring)
 
-Java/AssertJ code examples for selenium, email, scheduling, and security test anti-patterns. For universal rules: `.claude/templates/testing/test-review-patterns.md`
+Java/AssertJ code examples for playwright, email, scheduling, and security test anti-patterns. For universal rules: `.claude/templates/testing/test-review-patterns.md`
 
-## Selenium Anti-Pattern Examples
+## Playwright Anti-Pattern Examples
 
-### BAD: isNotEmpty() in Selenium when test controls data
+### BAD: isNotEmpty() in Playwright when test controls data
 ```java
 // BAD:  assertThat(date.getText()).as("due date").isNotEmpty();
 // GOOD: var task = taskStatements.getTask(apiSession);
@@ -12,7 +12,7 @@ Java/AssertJ code examples for selenium, email, scheduling, and security test an
 //       assertThat(date.getText()).as("due date").isEqualTo(expectedDate);
 ```
 
-### BAD: In-app URL navigation in Selenium tests
+### BAD: In-app URL navigation in Playwright tests
 ```java
 // BAD: navigates directly via URL
 public void navigateToCreateTaskWizard(String appUrl) {
@@ -39,7 +39,7 @@ public void assertErrorBannerDisplayed() {
 }
 ```
 
-### BAD: Selenium assertion shallower than spec
+### BAD: Playwright assertion shallower than spec
 ```java
 // BAD: only checks count
 public void assertTaskCardsDisplayed() {
