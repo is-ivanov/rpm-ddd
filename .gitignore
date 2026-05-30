@@ -40,5 +40,9 @@ amplicode.xml
 /continue/
 .claude/settings.local.json
 
-# Agent progress log (malformed absolute-path variant on Windows)
+# Agent progress log — ephemeral runtime milestones, cleared at the start of
+# each /continue work unit. Useful only for live `tail -f` within a session;
+# cross-session state lives in progress.md, so it is not tracked.
+infrastructure/agent-progress.log
+# Malformed absolute-path variant accidentally created on Windows
 D*infrastructureagent-progress.log
