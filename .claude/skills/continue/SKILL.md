@@ -56,9 +56,11 @@ STOP after every commit. A single `/continue` invocation executes exactly ONE wo
 
 ## Pre-Commit Checklist
 
-Before committing, verify: (1) primary skill ran, (2) `/test-review` ran (red phases), (3) `/refactor` ran (all phases except `green-acceptance`/`green-playwright`/`demo`/spec items), (4) static analysis passes. If `/refactor` was skipped -- run it before committing.
+Before committing, verify: (1) primary skill ran, (2) `/test-review` ran (red phases), (3) `/refactor` ran (all phases except `green-acceptance`/`green-playwright`/`demo`/spec items), (4) static analysis passes, (5) IDE inspections pass on changed files. If `/refactor` was skipped -- run it before committing.
 
 **Static analysis** (step 4): run `./mvnw checkstyle:check -pl . -q && ./mvnw pmd:check -pl . -q`. If violations are found, fix them before committing. Do NOT skip this step — it catches issues (missing Javadoc, PMD violations) that the agents don't check.
+
+**IDE inspections** (step 5): for each non-spec file created or modified in this work unit, call the IntelliJ MCP tool `mcp__idea__get_file_problems` (`errorsOnly: false`, pass `projectPath`). It catches issues the static analyzers miss (e.g. `AutoCloseable` used without try-with-resources, redundant code). Fix real findings; for an intentional false positive add a narrowly-scoped `@SuppressWarnings("<id>")` with a comment explaining why. Skip only when the IDEA MCP server is unavailable (e.g. headless/cron runs) — then note it was skipped. Applies to code files only, not markdown/spec.
 
 ## Sub-Skill Dispatch
 
