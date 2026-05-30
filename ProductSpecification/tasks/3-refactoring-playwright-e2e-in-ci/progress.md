@@ -23,9 +23,9 @@ Type: refactoring
 - [x] Upload e2e `target/allure-results` as an artifact (`allure-results-e2e`)
 
 ### Step 3: Unify Allure report across jobs
-- [~] Have `build` upload its `target/allure-results` as an artifact (instead of generating the report inline)
-- [ ] Add `allure-report` job (`needs:[build, frontend-e2e]`): download both result sets, `npm run report`, upload `allure-report`
-- [ ] Repoint `deploy-report` to `needs: allure-report`
+- [x] Have `build` upload its `target/allure-results` as an artifact (`allure-results-build`) instead of generating the report inline
+- [x] Add `allure-report` job (`needs:[build, frontend-e2e]`): download both result sets into `target/allure-results`, `npm run report`, upload `allure-report`
+- [x] Repoint `deploy-report` to `needs: allure-report`
 
 ### Step 4: Stabilize
-- [ ] Tune retries/timeouts, verify green and non-flaky
+- [~] Tune retries/timeouts, verify green and non-flaky
