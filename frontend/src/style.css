@@ -1,1 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+}
+
+@layer components {
+  .form-input {
+    @apply h-10 w-full rounded-md border border-[#dee2e6] px-3 text-sm text-[#212529] outline-none placeholder:text-[#adb5bd] focus:border-[#4dabf7];
+  }
+}

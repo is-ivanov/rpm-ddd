@@ -123,8 +123,8 @@
 - [S] green-frontend (no logic produced in red-frontend)
 - [S] red-frontend-api (no API interaction in this scenario — page-display only: fields visible, password masked via type=password, fixed "Sign In" label; login API client POST /api/auth/login belongs to credential-submission scenarios 3.1/3.2)
 - [S] green-frontend-api (no API client produced in red-frontend-api)
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design (LoginPage.vue built + /login route; matches mockup 01-login.html; Inter font + .form-input class; password toggle deferred to Scenario 2.1)
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 2.1: Password visibility toggle shows and hides password
