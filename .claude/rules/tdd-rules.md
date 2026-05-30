@@ -20,6 +20,7 @@ Each test level covers only what is NOT tested by the level above it. Per `TESTI
 - When writing a test at level N, verify the same behavior is not already covered by level N-1.
 - **Adapter tests are optional**: skip (`[S]`) when the adapter is a simple delegation with no validation/error logic.
 - **One acceptance scenario per endpoint behavior category** — NOT one per business variant. If 5 domain states produce the same HTTP response (same status, different message), that's ONE acceptance scenario. Per-state message variations belong in domain unit tests (Level 4).
+- **One action, assert all consequences (Level 1 only).** An acceptance test triggers a single action (one `when`) and asserts every observable consequence of that action in multiple `then` blocks — the HTTP response AND all side effects (persisted state, delivered domain events, sent emails). Do NOT split the consequences of one action across separate acceptance classes/methods: Level 1 already runs with the full context provisioned (DB, SMTP, …), so a second full-context test for the same action is wasted wall-clock. When a story adds a new observable consequence to an action already covered by an existing acceptance test (e.g. registration now also sends an activation email), **extend the existing acceptance test** with new `then` assertions rather than writing a parallel one. This applies to Level 1 only — Levels 2-4 keep one behavior per test.
 - Acceptance tests are the "long" tests. Keep them few. Move detail to cheaper lower levels.
 
 ### RED Phase

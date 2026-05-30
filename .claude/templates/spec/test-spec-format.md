@@ -20,6 +20,7 @@ Follow `TESTING.md`. Acceptance tests (Level 1, e2e) cover **happy path only**. 
 | One representative error per endpoint (if the endpoint can fail) | POST /login → 401 (wrong password) |
 | Multiple business variants of the SAME error → merge into ONE scenario, test variants at lower levels (domain/usecase) | PENDING/LOCKED/INACTIVE all return 401 with different messages → ONE acceptance test "Login with non-ACTIVE user returns 401", individual messages tested at domain level |
 | Validation errors with different field combinations → ONE scenario per endpoint, test individual constraint violations at DTO/web level | Password too short + missing uppercase + missing digit → ONE "Password policy violation" scenario |
+| Multiple observable consequences of the SAME action → ONE scenario: one When + multiple Then (response + side effects). Extend the existing acceptance test rather than adding a parallel one | POST register → 201 AND activation email delivered → ONE scenario asserting both, extending the existing registration acceptance test |
 
 **Acceptance ≠ exhaustive.** If 5 different domain states produce the same HTTP response (same status, same error structure, different message), that is ONE acceptance scenario — not 5. The per-state message variations belong in domain unit tests (Level 4).
 

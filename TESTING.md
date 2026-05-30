@@ -30,6 +30,7 @@ Each level tests only what is NOT covered by the level above it. Happy path is v
 - **Web environment:** `RANDOM_PORT`.
 - **What to test:** happy path of every use case via HTTP API.
 - **What NOT to test:** error cases, validation, corner cases — those belong to lower levels.
+- **One action, assert all consequences:** an e2e test performs a single action and asserts every observable consequence — the HTTP response plus all side effects (persisted state, delivered events, sent emails). When a new story adds a side effect to an action already covered by an existing e2e test, **extend that test** with new assertions instead of creating a parallel one. The full context (DB, SMTP, …) is already provisioned for Level 1, so consolidating avoids redundant slow runs.
 - **Execution:** sequential (enforced by `@Execution(SAME_THREAD)` built into `@ApplicationIntegrationTest`). All e2e tests share one Testcontainers database.
 - **Example:** call `POST /api/users` with valid data → assert 200 + correct response body.
 
