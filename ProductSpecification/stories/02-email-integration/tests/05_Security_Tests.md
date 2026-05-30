@@ -8,11 +8,13 @@ Most OWASP categories do not apply to this story: it adds no new HTTP endpoint o
 
 ## 5. Email Template Injection
 
+> **Implementation note:** escaping is rendered-content verification — realize it as a **focused fast rendering test** (render the template with fixed inputs, assert the produced string), NOT as an e2e/Mailpit test. See the "rendered-content verification" rule in `tdd-rules.md`.
+
 ### 5.1 User-controlled login is escaped in the rendered email
 
-**Given** a registration request whose login contains HTML/template markup
-**When** the activation email is rendered and delivered
-**Then** the markup appears escaped (inert text) in the email body
+**Given** a login value containing HTML/template markup
+**When** the activation email template is rendered with that login
+**Then** the markup appears escaped (inert text) in the rendered body
 **And** no markup is interpreted as HTML or as a template expression
 
 ---
@@ -21,7 +23,7 @@ Most OWASP categories do not apply to this story: it adds no new HTTP endpoint o
 
 | DSL Statement | Technical Implementation |
 |---------------|--------------------------|
-| `a registration request whose login contains HTML/template markup` | Register a user whose login contains payloads such as `<script>...</script>` and a Thymeleaf/SpEL fragment like `[[${...}]]` / `${...}` |
-| `the activation email is rendered and delivered` | The async send renders the Thymeleaf template and delivers via Mailpit; poll with `awaitMessage()` for the recipient |
-| `the markup appears escaped (inert text) in the email body` | Assert the HTML body contains the HTML-entity-escaped form of the payload (e.g., `&lt;script&gt;`), not the raw tags — Thymeleaf escapes by default |
-| `no markup is interpreted as HTML or as a template expression` | Assert the raw `<script>` tag and the unevaluated template-expression delimiters do not appear as live markup in the delivered body |
+| `a login value containing HTML/template markup` | A login with payloads such as `<script>...</script>` and a Thymeleaf/SpEL fragment like `[[${...}]]` / `${...}` |
+| `the activation email template is rendered with that login` | Render the Thymeleaf template directly via the renderer/message builder with fixed inputs — no SMTP, no Mailpit |
+| `the markup appears escaped (inert text) in the rendered body` | Assert the rendered HTML contains the HTML-entity-escaped form of the payload (e.g., `&lt;script&gt;`), not the raw tags — Thymeleaf escapes by default |
+| `no markup is interpreted as HTML or as a template expression` | Assert the raw `<script>` tag and the unevaluated template-expression delimiters do not appear as live markup in the rendered body |

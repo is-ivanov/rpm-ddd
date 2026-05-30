@@ -35,6 +35,7 @@ Mockups contain placeholder values (`user@example.com`, fake dates, sample price
 - Logic tests: pure functions, no DOM, no framework rendering. Use the frontend test runner (see technology.md Conventions).
 - API client tests: frontend test runner + HTTP mock library.
 - The test skip marker (see technology.md Conventions) is the frontend equivalent of the backend test disable marker. Comment above the skip documents failure reason.
+- **Snapshots/approval: deterministic data only, native runner.** When approval/snapshot testing fits (rendered text, view-model outputs, request payloads), use the frontend test runner's built-in snapshots — never add an external approval library. Snapshot only deterministic DATA (fix all variable inputs); do NOT snapshot component markup — it is brittle and can freeze hardcoded placeholder data that design-review must catch. Visual fidelity stays with align-design + design-review. See the tech binding for the runner's snapshot API.
 - Use the native `fetch` API (not axios). Base URL from the backend URL environment variable.
 - **NEVER hardcode `http://localhost:8080`** in HTTP mock handlers or production code. Use the backend URL environment variable -- the test runner sets it dynamically from the backend port. Production API clients read the variable with a fallback to empty string. HTTP mock tests read the variable for handler URLs.
 

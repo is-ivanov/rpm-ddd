@@ -144,6 +144,19 @@ import static org.assertj.core.api.BDDAssertions.catchThrowable;
 import static org.assertj.core.api.BDDAssertions.then;
 ```
 
+## Content / Template Approval (Fixture-File)
+
+For verifying rendered text content (email HTML/plain-text bodies, generated templates) — the universal "rendered-content verification" rule. No approval library (selfie has no released JS port, ApprovalTests' GUI reporter hangs headless CI); use the project's existing fixture-file convention instead.
+
+- **Where:** a focused fast test that renders the template directly (no SMTP, no full Spring context where avoidable) — render via the template engine / message builder, then assert the produced `String`.
+- **Expected artifact:** checked-in classpath resource under `src/test/resources/` (e.g. `email/activation-email.approved.html`, and `.approved.txt` for the plain-text part). Read it and compare whole-output:
+  ```java
+  then(renderedHtml).isEqualToNormalizingNewlines(readResource("email/activation-email.approved.html"));
+  ```
+- **Determinism (mandatory):** fix every variable input so the artifact is stable — inject `MutableClock` at a fixed instant, a fake id/`Jti` generator returning a constant, a fixed signing key in the `test` profile. With fixed inputs the JWT/link is deterministic, so the token appears verbatim in the approved file and no scrubbing is needed.
+- **Updating the artifact:** on an intentional template change, regenerate the `.approved.*` file and review the diff in the PR (an approved-file diff = a deliberate content change). There is no auto-promote — it is one or two files.
+- This is the cheap counterpart to the Level 1 e2e test, which asserts only delivery + invariants (recipient, from, subject, link present) — never the full body.
+
 ## Async Wait Pattern (Awaitility)
 
 - **Negative assertion**: `Awaitility.await().during(Duration).atMost(Duration).untilAsserted(...)`
