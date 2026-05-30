@@ -16,7 +16,12 @@
 - [S] green-usecase (no usecase/application production code — UserRegisteredEventListener already calls EmailNotificationSender.sendActivationToken)
 - [S] red-domain
 - [S] green-domain
-- [~] adapters-discovery
+- [x] adapters-discovery
+  - Check 1 (ports): email — only NoOpEmailNotificationSender (logs, no real send); Mailpit acceptance needs SmtpEmailNotificationSender + ActivationEmailRenderer → red/green-adapter email
+  - Check 2 (exceptions): [S] — listener happy-path, no domain exceptions to map
+  - Check 3 (response shape): [S] — inbound adapter is an event listener, no HTTP response
+- [~] red-adapter email
+- [ ] green-adapter email
 - [ ] green-acceptance
 
 ## Integration Scenarios
