@@ -76,6 +76,11 @@ Each bounded context is a Spring Modulith module. Module boundaries are enforced
 - Prefer pattern matching / switch over if/return chains when branching on a single variable against known constant values (status codes, task priorities, column types).
 - Extract sequential independent blocks: when a method is a flat sequence of 2+ independent operations (each small and cohesive, not sharing intermediate state), extract each into a named private method. The parent becomes a readable table of contents. The trigger is structural independence, not size — even a 10-line method with 4 independent 2-line blocks is a candidate.
 
+## Configuration
+
+- Group related configuration into a typed object: when 2+ related configuration values are consumed together, bind them into a single typed configuration object with one documented field per value — never inject each value individually. Document every field so the IDE surfaces the description at the injection and usage sites.
+- Inject a single value directly only when it is standalone — it shares no concern with the other values it sits next to. Two values that describe the same concept (a sender's name + address, a host + port) are related and must be grouped; a value from a different concern (a frontend URL beside mail settings) may stay standalone.
+
 ## Usecases
 
 - Application services are orchestrators, not logic holders. All domain-specific business rules must be delegated to the domain layer. Application services should be unaware of underlying technologies and integration protocols.

@@ -26,6 +26,11 @@ Tech binding for `coding-rules.md`. Shared section structure: `.claude/templates
 
 - `@Data` for DTOs, `@Builder` for construction, `@RequiredArgsConstructor` for DI, `@Value` for immutable.
 
+## Configuration Properties
+
+- Bind 2+ related properties with a `@ConfigurationProperties` record (registered once via `@ConfigurationPropertiesScan` on the application class) — not separate `@Value` injections. Put Javadoc (`@param` per record component) on it so IntelliJ shows the description at every usage.
+- Reserve `@Value("${...}")` for a single standalone property that shares no concern with neighbouring values.
+
 ## Naming
 
 - JPA entities: `{Name}Entity`. Converters: `toDto()` / `toEntity()` / `toDomain()`.
