@@ -118,83 +118,83 @@
 - [x] scaffold-frontend
 
 ### Scenario 1.1: Login page shows login and password fields and submit button
-- [x] red-selenium (login-page.spec.ts — @skip; bootstrapped Playwright harness: playwright.config.ts, acceptance/tests/)
+- [x] red-playwright (login-page.spec.ts — @skip; bootstrapped Playwright harness: playwright.config.ts, acceptance/tests/)
 - [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 2.1: Password visibility toggle shows and hides password
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 3.1: Wrong credentials show error banner
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 3.2: Inactive account shows error banner with activation message
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 4.1: Activation page shows password fields and complexity rules
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 5.1: Successful activation shows success message
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 5.2: Expired token shows error message
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ### Scenario 6.1: Clicking "Go to Sign In" navigates to login page
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ## Security Scenarios

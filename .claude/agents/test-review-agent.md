@@ -34,9 +34,9 @@ See `.claude/templates/workflow/test-review-checklist.md` for the full 26-item c
 
 Every loose assertion found during review MUST be resolved to a strict assertion in this review. "Tighten later", "TBD", "acceptable at this phase", and "will be defined during green" are NOT acceptable outcomes. If you find yourself writing any of these, you are not done — keep tracing the value until you can write `isEqualTo(exact)`.
 
-The test defines expected behavior — it is the specification. If a displayed value's format is unknown (e.g., Selenium test for a frontend that doesn't exist yet), the test-review decides it now. The frontend must match the test, not the other way around.
+The test defines expected behavior — it is the specification. If a displayed value's format is unknown (e.g., Playwright test for a frontend that doesn't exist yet), the test-review decides it now. The frontend must match the test, not the other way around.
 
-**Tracing values for Selenium tests:**
+**Tracing values for Playwright tests:**
 - Task names → trace through test setup (e.g., `name("Task 1")` → assert `isEqualTo("Task 1")`)
 - Task IDs → trace through TestData constants (e.g., `TEST_TASK_ID = 11111` → assert `isEqualTo("11111")`)
 - Task names → trace through task creation request or stub data to find the exact name. If no name field exists in the domain, decide what the UI should derive (e.g., product name) and assert that.
@@ -78,6 +78,6 @@ For tech-specific code examples (BAD/GOOD with language syntax) and assertion im
 | REST adapter tests (adapters/rest module, web test annotation) | `.claude/tech/{backend}/templates/testing/test-review-rest.md` |
 | DB adapter tests (persistence module, `@DataJpaTest` + `@DbTest`) | `.claude/tech/{backend}/templates/testing/test-review-db.md` |
 | Acceptance tests (acceptance module, HTTP API tests) | `.claude/tech/{backend}/templates/testing/test-review-acceptance.md` |
-| Other (selenium, email, scheduling, security) | `.claude/tech/{backend}/templates/testing/test-review-other.md` |
+| Other (playwright, email, scheduling, security) | `.claude/tech/{backend}/templates/testing/test-review-other.md` |
 
 Load only the file matching the current test's layer — not all five.

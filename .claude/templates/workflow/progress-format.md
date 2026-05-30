@@ -49,13 +49,13 @@
 ## Frontend Scenarios (02_UI_Tests.md)
 
 ### Scenario 1: Scenario title
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 
 ## Security Scenarios (05_Security_Tests.md)

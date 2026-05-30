@@ -30,7 +30,7 @@ Universal rules (`.claude/rules/`) — tech-agnostic principles only:
 |---------------|--------|
 | architecture, dependency, layer, import, domain, usecase, adapter | `coding-rules.md` |
 | TDD, test, red, green, refactor, assertion, fake, Statements | `tdd-rules.md` |
-| frontend, component, logic file, API client, Selenium, humble object | `frontend-rules.md` |
+| frontend, component, logic file, API client, Playwright, humble object | `frontend-rules.md` |
 | documentation, prompt, agent, skill, template, layer placement | `prompt-rules.md` |
 | workflow, story, interview, spec, progress, scenario | `workflow.md` |
 | tech profile, tech binding, technology loading, conventions table | `technology-loading.md` |

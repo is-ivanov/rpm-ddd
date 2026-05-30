@@ -38,14 +38,14 @@ Mockups contain placeholder values (`user@example.com`, fake dates, sample price
 - Use the native `fetch` API (not axios). Base URL from the backend URL environment variable.
 - **NEVER hardcode `http://localhost:8080`** in HTTP mock handlers or production code. Use the backend URL environment variable -- the test runner sets it dynamically from the backend port. Production API clients read the variable with a fallback to empty string. HTTP mock tests read the variable for handler URLs.
 
-## Selenium Tests
+## Playwright Tests
 
 - 2-tier DSL: Test Class (thin, reads like English) + Statements Class (locators, actions, assertions).
 - Use `data-testid` attributes for locators. Components MUST include them.
 - FORBIDDEN locator strategies: class-based selectors, tag-based selectors, raw CSS class selectors. These break when styling changes. Always use `data-testid`.
 - FORBIDDEN in-app navigation via URL: never use direct URL navigation to move between pages. Tests must navigate through UI interactions (clicking buttons, links, menu items). Allowed direct URL uses: (1) app root as test entry point, (2) external entry points where users genuinely arrive via URL -- deep links, shared links.
 - Page Statements own browser interactions only (`navigate*`, `enter*`, `click*`, `assert*`). All infrastructure and backend setup (mock stubs, API calls, mock configuration) goes through backend Statements that the test injects directly -- never delegated through page Statements.
-- Full conventions in red-selenium and green-selenium skill templates.
+- Full conventions in red-playwright and green-playwright skill templates.
 - **Mass failure diagnosis:** When all E2E browser tests fail uniformly (connection errors, timeouts), the cause is infrastructure -- not browser/driver versions. Re-verify backend is alive (health endpoint) before investigating individual tests. A dead backend causes frontend pages to error out, the browser driver to time out, and connections to reset -- which looks like a browser compatibility issue but isn't.
 - **Assertion detail level:** Assertions must match spec detail level -- when the spec says "cards with title, status, assignee, and priority", verify each sub-element within each card and assert visible + non-empty. A count-only check loses the spec's intent. Read the DSL Technical Reference table in the test spec.
 

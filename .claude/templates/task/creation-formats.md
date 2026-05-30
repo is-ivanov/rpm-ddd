@@ -67,13 +67,13 @@ Type: bug
 ## Frontend
 
 ### Fix: {bug description}
-- [ ] red-selenium
+- [ ] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
-- [ ] green-selenium
+- [ ] green-playwright
 - [ ] demo
 ```
 

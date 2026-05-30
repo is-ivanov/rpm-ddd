@@ -1,21 +1,21 @@
 ---
 name: demo
-description: Run a Selenium test in visible (non-headless) mode with slowdown so the user can watch it. Use when user wants to demo or visually watch a Selenium test or mentions /demo command.
+description: Run a Playwright test in visible (non-headless) mode with slowdown so the user can watch it. Use when user wants to demo or visually watch a Playwright test or mentions /demo command.
 ---
 
-# /demo - Run Selenium Test in Visible Slow-Motion Mode
+# /demo - Run Playwright Test in Visible Slow-Motion Mode
 
 ## Usage
 ```
 /demo should_display_board_with_columns
 /demo CreateTaskPageTest.should_display_create_task_form
 /demo CreateTaskPageTest                          # Run all tests in class
-/demo                                             # Run all frontend Selenium tests
+/demo                                             # Run all frontend Playwright tests
 ```
 
 ## What It Does
 
-Temporarily modifies Selenium configuration to run browser tests visibly with delays, so the user can watch the test execute in real time. All changes are reverted after the test completes (even on failure).
+Temporarily modifies Playwright configuration (headed mode + slowMo) to run browser tests visibly with delays, so the user can watch the test execute in real time. All changes are reverted after the test completes (even on failure).
 
 ## Setup
 

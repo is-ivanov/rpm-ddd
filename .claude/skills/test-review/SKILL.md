@@ -20,7 +20,7 @@ description: Review tests to replace loose validation (contains, isNotNull, isNo
 | `.claude/tech/{backend}/templates/testing/test-review-rest.md` | REST controller test patterns (mock matching) |
 | `.claude/tech/{backend}/templates/testing/test-review-db.md` | Persistence test patterns |
 | `.claude/tech/{backend}/templates/testing/test-review-acceptance.md` | Acceptance test patterns (HTTP response assertions) |
-| `.claude/tech/{backend}/templates/testing/test-review-other.md` | Selenium, email, scheduling, security patterns |
+| `.claude/tech/{backend}/templates/testing/test-review-other.md` | Playwright, email, scheduling, security patterns |
 
 ## Workflow
 

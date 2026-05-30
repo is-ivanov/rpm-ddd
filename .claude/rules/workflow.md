@@ -34,13 +34,13 @@ For each scenario in `tests/06_Integration_Tests.md` (if exists): same TDD cycle
 
 For each scenario in `tests/02_UI_Tests.md`:
 
-1. `red-selenium` → `/red-selenium` → `/test-review` → `/refactor` (MANDATORY) → commit
+1. `red-playwright` → `/red-playwright` → `/test-review` → `/refactor` (MANDATORY) → commit
 2. `red-frontend` → `/red-frontend` → `/test-review` → `/refactor` (MANDATORY) → commit
 3. `green-frontend` → `/green-frontend` → `/refactor` (MANDATORY) → commit
 4. `red-frontend-api` → `/red-frontend-api` → `/test-review` → `/refactor` (MANDATORY) → commit
 5. `green-frontend-api` → `/green-frontend-api` → `/refactor` (MANDATORY) → commit
 6. `align-design` → Build component → `/align-design` → `/design-review` (MANDATORY) → `/refactor` (MANDATORY) → `/align-design` verify-only → `/test-coverage frontend --focus` → commit
-7. `green-selenium` → `/run-backend` → `/run-frontend` → `/green-selenium` → commit
+7. `green-playwright` → `/run-backend` → `/run-frontend` → `/green-playwright` → commit
 8. `demo` → `/demo {test_class}` → progress-only commit
 
 
@@ -120,7 +120,7 @@ Tasks are standalone work items that don't need the full story lifecycle. Two ty
 
 Tasks live in `ProductSpecification/tasks/{N}-{type}-{slug}/`. Each task has a progress file at that path. When all checkboxes in a task's `progress.md` are `[x]` (or `[S]`), the task folder is moved to `ProductSpecification/tasks/done/`.
 
-Tasks follow the same TDD discipline as stories: `/test-review` after red phases, `/refactor` after every phase (except `green-acceptance`, `green-selenium`, `demo`). Task commits use `task:` prefix. Tasks don't need bootstrapping -- `/task` generates everything at creation time.
+Tasks follow the same TDD discipline as stories: `/test-review` after red phases, `/refactor` after every phase (except `green-acceptance`, `green-playwright`, `demo`). Task commits use `task:` prefix. Tasks don't need bootstrapping -- `/task` generates everything at creation time.
 
 **Scoped steps:** Progress should only include TDD steps for layers the fix actually touches — applies to tasks, and to individual story scenarios. If the fix is pure CSS, don't generate logic/API/align-design steps. If the fix is backend-only, don't generate frontend steps. Affected layers are determined from the spec at creation time.
 

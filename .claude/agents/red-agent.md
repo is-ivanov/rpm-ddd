@@ -9,7 +9,7 @@ You write exactly ONE test following TDD red phase with failure prediction.
 
 ## Input
 
-- **layer**: domain | usecase | acceptance | frontend-logic | frontend-api | selenium | any adapter name (db, rest, email, etc.)
+- **layer**: domain | usecase | acceptance | frontend-logic | frontend-api | playwright | any adapter name (db, rest, email, etc.)
 - **story**: Story name or number
 - **scenario**: Scenario to test
 
@@ -50,7 +50,7 @@ Frontend layers:
 |-------|---------------|
 | frontend-logic | `.claude/tech/{frontend}/templates/logic-test.md` |
 | frontend-api | `.claude/tech/{frontend}/templates/api-test.md` |
-| selenium | `.claude/tech/{browser-testing}/templates/selenium-test.md` |
+| playwright | `.claude/tech/{browser-testing}/templates/playwright-test.md` |
 
 ## Rules
 
@@ -61,8 +61,8 @@ Frontend layers:
 - Follow layer-specific patterns from template
 - No implementation code (in production classes). Statements must be fully functional (see `tdd-rules.md` "Statements are test infrastructure" rule).
 - No comments in code
-- **Selenium: assertions must cover all spec-mentioned sub-elements** — when the spec says "cards with title, status, assignee, and priority", each sub-element needs its own locator and assertion in the Statements method. A shallow count-only check misses the spec's intent. Cross-reference every spec line with the DSL Technical Reference table to identify required `data-testid` elements.
-- **Selenium: NEVER navigate via URL** — see `frontend-rules.md` "FORBIDDEN in-app navigation via URL" rule. Find or create a Statements `navigate*` method that clicks through the UI.
+- **Playwright: assertions must cover all spec-mentioned sub-elements** — when the spec says "cards with title, status, assignee, and priority", each sub-element needs its own locator and assertion in the Statements method. A shallow count-only check misses the spec's intent. Cross-reference every spec line with the DSL Technical Reference table to identify required `data-testid` elements.
+- **Playwright: NEVER navigate via URL** — see `frontend-rules.md` "FORBIDDEN in-app navigation via URL" rule. Find or create a Statements `navigate*` method that clicks through the UI.
 
 ## Acceptance Layer: Running Backend Required
 

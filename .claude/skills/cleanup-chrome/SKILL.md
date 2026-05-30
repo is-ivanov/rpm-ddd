@@ -1,34 +1,31 @@
 ---
 name: cleanup-chrome
-description: Kill orphaned chromedriver and headless Chrome processes left over from failed Selenium test runs. Use when Selenium tests mass-fail with Connection reset or TimeoutException, when the system feels sluggish during test runs, or when the user mentions /cleanup-chrome. Also use proactively before running frontend acceptance tests if previous runs were interrupted or stopped.
+description: Kill orphaned Playwright browser processes (headless Chromium / node runners) left over from failed Playwright test runs. Use when Playwright tests mass-fail with Connection reset or TimeoutException, when the system feels sluggish during test runs, or when the user mentions /cleanup-chrome. Also use proactively before running frontend acceptance tests if previous runs were interrupted or stopped.
 ---
 
-# Clean Up Orphaned Chrome Processes
+# Clean Up Orphaned Playwright Browser Processes
 
-Failed or interrupted Selenium test runs leave behind chromedriver and headless Chrome processes. These accumulate and exhaust system resources, causing new Selenium tests to fail with `Connection reset` / `TimeoutException` on the Chrome DevTools WebSocket.
+Failed or interrupted Playwright test runs leave behind headless Chromium processes (and sometimes stray `node` test-runner processes). These accumulate and exhaust system resources, causing new Playwright tests to fail with `Connection reset` / `TimeoutException` / `Target page, context or browser has been closed`.
+
+Playwright does **not** use chromedriver — it drives its own bundled browser directly. Its headless Chromium runs as `headless_shell.exe` (newer Playwright) or `chrome.exe` (the bundled Chromium binary under `ms-playwright/`). Prefer killing `headless_shell.exe`: it is specifically the Playwright headless browser and will never be the user's everyday Chrome.
 
 ## Action
 
 1. **Count** orphaned processes to assess the situation:
    ```bash
-   echo "chromedriver: $(tasklist //FI "IMAGENAME eq chromedriver.exe" 2>/dev/null | grep -c chromedriver)" && echo "chrome: $(tasklist //FI "IMAGENAME eq chrome.exe" 2>/dev/null | grep -c chrome)"
+   echo "headless_shell: $(tasklist //FI "IMAGENAME eq headless_shell.exe" 2>/dev/null | grep -c headless_shell)"
    ```
 
-2. **Kill all** chromedriver processes (these are always test-spawned):
+2. **Kill all** Playwright headless browser processes (these are always test-spawned):
    ```bash
-   taskkill //IM chromedriver.exe //F 2>&1 | tail -1
+   taskkill //IM headless_shell.exe //F 2>&1 | tail -1
    ```
 
-3. **Kill all** headless Chrome processes:
-   ```bash
-   taskkill //IM chrome.exe //F 2>&1 | tail -1
-   ```
+3. **Repeat** the kill command until the count reaches 0 — processes can respawn briefly as child processes exit. Usually 2-3 rounds suffice.
 
-4. **Repeat** kill commands until counts reach 0 — processes can respawn briefly as child processes exit. Usually 2-3 rounds suffice.
-
-5. **Clean locked test output** if it exists:
+4. **Clean locked test output** if it exists:
    ```bash
-   rm -rf acceptance/build/test-results/frontendTest/binary 2>/dev/null
+   rm -rf frontend/test-results 2>/dev/null
    ```
 
 ## Output
@@ -37,4 +34,4 @@ Report how many processes were killed and confirm cleanup is complete.
 
 ## Note
 
-This kills ALL Chrome and chromedriver processes, including the user's own browser. Warn the user before proceeding if they might have a Chrome browser open with unsaved work.
+If Playwright was configured to run a non-headless (headed) browser, the bundled Chromium runs as `chrome.exe` and is indistinguishable by image name from the user's own browser. In that case **warn the user before killing `chrome.exe`** — it would also close their everyday browser with any unsaved work. Per `.claude/rules/infrastructure.md`, never kill processes by a generic executable name when other instances may belong to the user.

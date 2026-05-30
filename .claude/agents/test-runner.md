@@ -34,7 +34,7 @@ Use the Skill tool:
 | acceptance | `skill="test-acceptance", args="{tag} {TestClass}"` | `skill="test-acceptance", args="{tag}"` |
 | frontend-logic | `skill="test-frontend", args="{feature}.logic"` | `skill="test-frontend"` |
 | frontend-api | `skill="test-frontend", args="{feature}.api"` | `skill="test-frontend"` |
-| selenium | `skill="test-acceptance", args="frontend {TestClass}"` | `skill="test-acceptance", args="frontend"` |
+| playwright | `skill="test-acceptance", args="frontend {TestClass}"` | `skill="test-acceptance", args="frontend"` |
 
 **IMPORTANT: Do NOT run build tool commands directly. Use the Skill tool.**
 

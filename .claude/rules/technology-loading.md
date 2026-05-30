@@ -23,7 +23,7 @@ Agents and skills resolve the correct concern based on the layer they operate on
 | Domain, usecase, application, REST adapter, DB adapter, email adapter, scheduling | `backend` |
 | Frontend logic, API clients, feature structure | `frontend` |
 | Component styling, CSS extraction, icons | `css` |
-| Selenium/browser tests, align-design, design-review | `browser-testing` |
+| Playwright/browser tests, align-design, design-review | `browser-testing` |
 | Acceptance tests (backend API) | `backend` |
 | Acceptance tests (frontend UI) | `browser-testing` |
 

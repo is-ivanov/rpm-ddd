@@ -33,7 +33,7 @@ Two test categories with separate base classes:
 | Type | Purpose |
 |------|---------|
 | Backend API | HTTP endpoint tests against the running backend |
-| Frontend UI | Browser tests via Playwright/Selenium |
+| Frontend UI | Browser tests via Playwright |
 
 Tech profiles specify exact base class names, annotation, and directory structure.
 
