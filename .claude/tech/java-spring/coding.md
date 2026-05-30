@@ -106,6 +106,11 @@ Tech binding for `coding-rules.md`. Shared section structure: `.claude/templates
 - Domain exceptions extend `RuntimeException`. Bubble to `GlobalExceptionHandler`.
 - Library: `io.github.wimdeblauwe:error-handling-spring-boot-starter`. Configured in `application.yml` under `error.handling.*`.
 
+## Maven (pom.xml)
+
+- Keep `<properties>` sorted alphabetically by tag name **within each section**. The sections (delimited by comments — e.g. `<!--dependency versions -->`, `<!--plugin versions -->`, `<!--frontend build -->`) and their grouping stay as-is; only sort entries inside each group. Standalone entries above the first comment (e.g. `java.version`) keep their position.
+- When adding a new property, insert it at its alphabetical position in the correct section — never append to the end of the block.
+
 ## MCP Tool Preferences
 
 When performing project-specific operations, prefer MCP tools over generic file search.

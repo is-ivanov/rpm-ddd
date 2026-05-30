@@ -20,8 +20,8 @@
     <java.version>25</java.version>
 
     <!--dependency versions -->
-    <checkstyle.version>13.4.2</checkstyle.version>
     <allure.version>2.29.1</allure.version>
+    <checkstyle.version>13.4.2</checkstyle.version>
     <commons-lang3.version>3.20.0</commons-lang3.version>
     <error-handling-spring-boot-starter.version>5.1.1</error-handling-spring-boot-starter.version>
     <error-prone.version>2.49.0</error-prone.version>
@@ -40,12 +40,12 @@
     <uuid-creator.version>6.1.1</uuid-creator.version>
 
     <!--plugin versions -->
+    <frontend-maven-plugin.version>1.15.1</frontend-maven-plugin.version>
     <git-build-hook-maven-plugin.version>3.6.0</git-build-hook-maven-plugin.version>
+    <jacoco.version>0.8.14</jacoco.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
     <spotless-maven-plugin.version>3.6.0</spotless-maven-plugin.version>
-    <jacoco.version>0.8.14</jacoco.version>
-    <frontend-maven-plugin.version>1.15.1</frontend-maven-plugin.version>
 
     <!--frontend build (activated by the 'frontend' profile) -->
     <node.version>v22.12.0</node.version>
