@@ -50,14 +50,12 @@ error:
 # Specific application properties.
 # ===================================================================
 rpm:
+  frontend-base-url: https://rpm-platform.com
+  mail:
+    from-name: "RPM Platform"
+    from-address: "no-reply@rpm-platform.com"
   iam:
     activation:
       jwt:
         secret: Y2hhbmdlLXRoaXMtdG8tYS1sb25nLXNlY3JldC1rZXktaW4tcHJvZHVjdGlvbg==
         expiration: 24h
-
-app:
-  frontend-base-url: https://rpm-platform.com
-  mail:
-    from-name: "RPM Platform"
-    from-address: "no-reply@rpm-platform.com"

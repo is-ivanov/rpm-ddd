@@ -23,7 +23,7 @@ spring:
       mail.smtp.timeout: 5000
       mail.smtp.writetimeout: 5000
 
-# app.mail.* (from-name/from-address) are inherited from the base application.yml;
+# rpm.mail.* (from-name/from-address) are inherited from the base application.yml;
 # only the frontend activation-link host differs for tests.
-app:
+rpm:
   frontend-base-url: "http://localhost:5173"

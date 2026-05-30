@@ -30,7 +30,7 @@ class SmtpEmailNotificationSender implements EmailNotificationSender {
             JavaMailSender mailSender,
             ActivationEmailRenderer renderer,
             EmailProperties emailProperties,
-            @Value("${app.frontend-base-url}") String frontendBaseUrl) {
+            @Value("${rpm.frontend-base-url}") String frontendBaseUrl) {
         this.mailSender = mailSender;
         this.renderer = renderer;
         this.emailProperties = emailProperties;

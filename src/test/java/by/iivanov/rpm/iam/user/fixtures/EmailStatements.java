@@ -23,7 +23,7 @@ public class EmailStatements {
     /**
      * The exact, deterministic prefix of the activation link in the email body. The token suffix is a
      * freshly-signed JWT and is the only non-deterministic part, so the assertion bounds everything up
-     * to (and including) {@code token=}. The {@code app.frontend-base-url} configured in the {@code test}
+     * to (and including) {@code token=}. The {@code rpm.frontend-base-url} configured in the {@code test}
      * profile resolves to this value; the link must target the frontend activation page — never the
      * backend {@code /api/auth/activate} JSON endpoint.
      */
