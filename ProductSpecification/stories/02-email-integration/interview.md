@@ -53,7 +53,14 @@
 - **Thymeleaf email template(s)** under `templates/email/` — HTML activation email + plain-text alternative; activation link built from `app.frontend-base-url`.
 - **Resubmit scheduler** — `@Scheduled(fixedRate=5s)` component that resubmits incomplete Modulith publications younger than 24h (`IncompleteEventPublications`). Requires `@EnableScheduling`.
 - **`FakeEmailNotificationSender`** (test infra) — in-memory fake for usecase-level tests (captures last/all sent activation tokens).
-- **Mailpit acceptance infrastructure** — Mailpit container for acceptance/e2e tests + a small client that queries Mailpit's REST API to assert the captured message.
+- **Reusable Mailpit test infrastructure** (mirrors the existing DB setup — built at the acceptance phase):
+  - `ch.martinelli.oss:testcontainers-mailpit` dependency (`test` scope) — `MailpitContainer` + `MailpitClient` + AssertJ polling assertions.
+  - `mailpit` service added to `docker/infra-tests.yml` (image + fixed ports `54025:1025` SMTP / `54825:8025` HTTP, tmpfs). `Infra-Tests-Up` already deploys this file, so it starts Mailpit too — **no run-config change**.
+  - `MAILPIT_*` vars in `docker/.env` (image + ports) so compose and the Testcontainer stay in sync (same convention as `POSTGRES_*`).
+  - `MailpitContainersLifecycleManager` — singleton, reusable Mailpit container (mirrors `PostgresContainersLifecycleManager`); uses the library's `MailpitContainer`, **not** `@ServiceConnection`.
+  - `MailpitContainerTestExecutionListener` — counts `@Tag("mail")` tests; probes the shared Mailpit at `localhost:54025`, reuses if alive, else starts the Testcontainer; sets `spring.mail.*` system properties. Registered in `META-INF/services/org.junit.platform.launcher.TestExecutionListener`.
+  - `Constants.MAIL_TEST_TAG = "mail"` + a `MailTest` meta-annotation (`@Tag("mail")`) on email-touching tests (mirrors `DbTest`).
+  - SMTP-timeout / DNS fix in `application-test.yml` (see Testing Considerations).
 
 ## Cross-Story Dependencies
 
@@ -62,10 +69,25 @@
 
 ## Testing Considerations
 
-- **Acceptance / e2e (Level 1): Mailpit.** Run a Mailpit instance (real SMTP server + REST API), point `spring.mail.*` at it, register a user, then query Mailpit's API (e.g. `GET /api/v1/messages`) to assert the captured email — recipient, from-address, subject (`Activate your RPM account`), and the activation link (`{frontend-base-url}/activate?token=...`) present in the body.
+- **Acceptance / e2e (Level 1): Mailpit, reusing the DB infra pattern.** Register a user, then assert the captured email — recipient, from-address, subject (`Activate your RPM account`), and the activation link (`{frontend-base-url}/activate?token=...`) in the body — via the library's `MailpitClient` / AssertJ assertions.
+  - DECISION: **Mirror the DB "shared-first, container-fallback" approach.** A `MailpitContainerTestExecutionListener` (JUnit `TestExecutionListener`) detects `@Tag("mail")` tests, probes the shared Mailpit at `localhost:54025` (started by `Infra-Tests-Up` via `docker/infra-tests.yml`), and reuses it; only if unreachable does it cold-start a reusable Testcontainer. It sets `spring.mail.*` system properties — **no `@DynamicPropertySource` / `@ServiceConnection`** (consistent with `DbContainerTestExecutionListener`).
+  - DECISION: **Use `ch.martinelli.oss:testcontainers-mailpit`** for the `MailpitContainer` (fallback) and the `MailpitClient` + **AssertJ polling assertions** (`awaitMessage().withSubject(...).withTimeout(...)`). Polling is required because the send is async (Modulith listener) — assertions must await delivery, never sleep. We skip the library's `@ServiceConnection` so the shared-instance reuse logic stays in our listener.
+  - DECISION: **Apply the JavaMail SMTP-timeout / DNS fix in `application-test.yml`** (also recommended for prod). JavaMail's implicit reverse-DNS `getLocalHost()` during the `EHLO`/`MAIL FROM` handshake stalls in Docker/CI; pin it and bound the timeouts:
+    ```yaml
+    spring.mail.properties.mail.smtp.localhost: localhost
+    spring.mail.properties.mail.smtp.connectiontimeout: 5000
+    spring.mail.properties.mail.smtp.timeout: 5000
+    spring.mail.properties.mail.smtp.writetimeout: 5000
+    ```
+  - Clear captured messages between tests (Mailpit `DELETE /api/v1/messages` / client reset) so assertions stay deterministic across the shared, reused instance.
 - **Usecase (Level 3): in-memory fake.** Use `FakeEmailNotificationSender` to assert the listener/flow invoked the port with the right recipient/login/token — no SMTP, no containers.
 - **Resubmit behavior (integration):** simulate a failed first send → publication stays incomplete → scheduler resubmits within the window → email ultimately delivered (and NOT resubmitted past the 24h cutoff).
 - Keep acceptance scenarios few (one per endpoint-behavior category): the happy path is "registering a user results in a delivered activation email." Resubmit/age-cutoff detail belongs in cheaper integration/unit tests.
+
+## References
+
+1. Testing emails with Testcontainers and Mailpit — https://martinelli.ch/testing-emails-with-testcontainers-and-mailpit/ (`ch.martinelli.oss:testcontainers-mailpit`: `MailpitContainer` ports 1025/8025, `MailpitClient.getAllMessages()`, AssertJ polling `awaitMessage()`).
+2. Solving SMTP timeouts with Mailpit and JavaMail — https://martinelli.ch/how-i-solved-smtp-timeouts-with-mailpit-and-javamail/ (implicit reverse-DNS during the SMTP handshake → set `mail.smtp.localhost` + bound timeouts).
 
 ## Performance / Load
 
