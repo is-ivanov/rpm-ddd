@@ -557,16 +557,6 @@
                 </configuration>
               </execution>
               <execution>
-                <id>npm-lint</id>
-                <goals>
-                  <goal>npm</goal>
-                </goals>
-                <phase>generate-resources</phase>
-                <configuration>
-                  <arguments>run lint</arguments>
-                </configuration>
-              </execution>
-              <execution>
                 <id>npm-build</id>
                 <goals>
                   <goal>npm</goal>
