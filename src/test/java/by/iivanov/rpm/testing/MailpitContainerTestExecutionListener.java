@@ -31,7 +31,11 @@ public class MailpitContainerTestExecutionListener implements TestExecutionListe
 
     private static final Logger log = LoggerFactory.getLogger(MailpitContainerTestExecutionListener.class);
 
-    private static final String SHARED_HOST = "localhost";
+    // 127.0.0.1, not "localhost": on Windows "localhost" resolves to ::1 first, and the IPv6 path to
+    // the Docker-mapped Mailpit ports stalls (~21s) before falling back to IPv4. Pinning IPv4 avoids it
+    // for both the SMTP send and the REST API polling. The literal loopback IP is intentional here.
+    @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
+    private static final String SHARED_HOST = "127.0.0.1";
     private static final int SHARED_SMTP_PORT = 54025;
     private static final int SHARED_HTTP_PORT = 54825;
     private static final String SHARED_API_URL = "http://" + SHARED_HOST + ":" + SHARED_HTTP_PORT;

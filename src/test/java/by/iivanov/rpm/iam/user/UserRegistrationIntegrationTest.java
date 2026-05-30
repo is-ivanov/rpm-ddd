@@ -7,7 +7,6 @@ import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import by.iivanov.rpm.testing.MailTest;
 import com.github.f4b6a3.uuid.util.UuidUtil;
 import java.util.UUID;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +25,6 @@ class UserRegistrationIntegrationTest extends AbstractApplicationIntegrationTest
     }
 
     @Test
-    @Disabled("TDD Red Phase - Not yet implemented")
     @DisplayName("WHEN admin registers a new user EXPECT 201 Created AND an activation email delivered")
     void when_adminRegistersNewUser_expect_createdAndActivationEmailDelivered() {
         // GIVEN: admin is logged in, the inbox is empty AND a valid registration request is prepared

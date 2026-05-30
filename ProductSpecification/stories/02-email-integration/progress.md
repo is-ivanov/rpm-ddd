@@ -22,7 +22,7 @@
   - Check 3 (response shape): [S] — inbound adapter is an event listener, no HTTP response
 - [x] red-adapter email
 - [x] green-adapter email
-- [~] green-acceptance
+- [x] green-acceptance
 
 ## Integration Scenarios
 
