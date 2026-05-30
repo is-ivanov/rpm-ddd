@@ -3,12 +3,12 @@
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |---|-------|------|------|------|-------|-----|------|-------|-------|----|
 | 1 | User login | ✅ | ✅ | n/a | 🔧 | — | — | — | 9/30 | 30% |
+| 2 | Email integration: send email on user registration | 🔧 | — | — | — | — | — | — | 0/0 | 0% |
 
 # Backlog
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |---|-------|------|------|------|-------|-----|------|-------|-------|----|
-| 2 | Email integration: send email on user registration | · | · | · | · | · | · | · | | |
 | 3 | User management: roles, agencies, basic permissions | · | · | · | · | · | · | · | | |
 | 4 | Patient creation | · | · | · | · | · | · | · | | |
 | 5 | Monitoring order: create and view | · | · | · | · | · | · | · | | |
