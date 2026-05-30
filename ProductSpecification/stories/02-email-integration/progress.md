@@ -11,8 +11,8 @@
 
 ### Scenario 1.1: Registering a user delivers an activation email
 - [x] red-acceptance
-- [~] design
-- [ ] red-usecase
+- [x] design
+- [~] red-usecase
 - [ ] green-usecase
 - [S] red-domain
 - [S] green-domain
