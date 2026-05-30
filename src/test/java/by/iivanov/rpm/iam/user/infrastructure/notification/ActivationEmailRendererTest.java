@@ -2,10 +2,7 @@ package by.iivanov.rpm.iam.user.infrastructure.notification;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
+import by.iivanov.rpm.testing.TestResources;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -26,19 +23,9 @@ class ActivationEmailRendererTest {
 
         // THEN: subject, HTML body, and text body match the checked-in approved fixtures
         then(content.subject()).isEqualTo(EXPECTED_SUBJECT);
-        then(content.htmlBody()).isEqualToNormalizingNewlines(readResource("email/activation-email.approved.html"));
-        then(content.textBody()).isEqualToNormalizingNewlines(readResource("email/activation-email.approved.txt"));
-    }
-
-    private static String readResource(String classpathResource) {
-        try (InputStream stream =
-                ActivationEmailRendererTest.class.getClassLoader().getResourceAsStream(classpathResource)) {
-            if (stream == null) {
-                throw new IllegalStateException("Classpath resource not found: " + classpathResource);
-            }
-            return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        then(content.htmlBody())
+                .isEqualToNormalizingNewlines(TestResources.readUtf8("email/activation-email.approved.html"));
+        then(content.textBody())
+                .isEqualToNormalizingNewlines(TestResources.readUtf8("email/activation-email.approved.txt"));
     }
 }

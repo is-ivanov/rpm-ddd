@@ -2,10 +2,7 @@ package by.iivanov.rpm.testing.api;
 
 import static net.javacrumbs.jsonunit.spring.RestTestClientJsonMatcher.json;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import by.iivanov.rpm.testing.TestResources;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -186,10 +183,6 @@ public class AssertionResponse {
         if (expected.startsWith("{") || expected.startsWith("[")) {
             return expected;
         }
-        try {
-            return Files.readString(Path.of("src/test/resources/" + expected));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        return TestResources.readUtf8(expected);
     }
 }
