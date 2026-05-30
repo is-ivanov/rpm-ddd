@@ -15,3 +15,9 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-test.xml
     contexts: test
+  mail:
+    properties:
+      mail.smtp.localhost: localhost
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 5000
+      mail.smtp.writetimeout: 5000

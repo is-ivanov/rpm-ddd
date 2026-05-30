@@ -10,8 +10,8 @@
 ## Backend Scenarios
 
 ### Scenario 1.1: Registering a user delivers an activation email
-- [~] red-acceptance
-- [ ] design
+- [x] red-acceptance
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain
