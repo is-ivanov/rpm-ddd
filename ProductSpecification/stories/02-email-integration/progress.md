@@ -12,11 +12,11 @@
 ### Scenario 1.1: Registering a user delivers an activation email
 - [x] red-acceptance
 - [x] design
-- [~] red-usecase
-- [ ] green-usecase
+- [S] red-usecase (listener→port flow reused unchanged from Story 1; zero usecase/application files change — see ADR test-layering)
+- [S] green-usecase (no usecase/application production code — UserRegisteredEventListener already calls EmailNotificationSender.sendActivationToken)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
+- [~] adapters-discovery
 - [ ] green-acceptance
 
 ## Integration Scenarios
