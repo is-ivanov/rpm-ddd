@@ -13,8 +13,8 @@ Type: refactoring
 - [x] Create eslint.config.* (flat config) + prettier config aligned with .editorconfig
 
 ### Step 2: Resolve existing violations
-- [~] Run `npm run lint`, fix or baseline violations until clean
+- [x] Run `npm run lint`, fix or baseline violations until clean
 
 ### Step 3: Wire into Maven `frontend` profile / CI
-- [ ] Add `npm-lint` execution (`npm run lint`) to frontend-maven-plugin in pom.xml
+- [~] Add `npm-lint` execution (`npm run lint`) to frontend-maven-plugin in pom.xml
 - [ ] Verify `mvn verify -B -Pfrontend` runs lint and fails on violations

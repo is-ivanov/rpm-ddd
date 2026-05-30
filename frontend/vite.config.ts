@@ -30,9 +30,6 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', 'dist', 'acceptance/**'],
-    reporters: [
-      'default',
-      ['allure-vitest/reporter', { resultsDir: '../target/allure-results' }],
-    ],
+    reporters: ['default', ['allure-vitest/reporter', { resultsDir: '../target/allure-results' }]],
   },
 });
