@@ -27,8 +27,8 @@
 ## Integration Scenarios
 
 ### Scenario 6.1: A successful registration delivers exactly one activation email
-- [ ] red-acceptance
-- [ ] design
+- [x] red-acceptance
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain

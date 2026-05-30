@@ -36,6 +36,7 @@ public class MailpitContainerTestExecutionListener implements TestExecutionListe
     // for both the SMTP send and the REST API polling. The literal loopback IP is intentional here.
     @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
     private static final String SHARED_HOST = "127.0.0.1";
+
     private static final int SHARED_SMTP_PORT = 54025;
     private static final int SHARED_HTTP_PORT = 54825;
     private static final String SHARED_API_URL = "http://" + SHARED_HOST + ":" + SHARED_HTTP_PORT;

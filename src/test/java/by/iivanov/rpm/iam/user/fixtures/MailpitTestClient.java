@@ -43,8 +43,7 @@ public class MailpitTestClient {
                 .to(recipientEmail)
                 .isPresent();
         return client.getAllMessages().stream()
-                .filter(message ->
-                        message.recipients().stream().anyMatch(address -> recipientEmail.equals(address.address())))
+                .filter(message -> isAddressedTo(message, recipientEmail))
                 .findFirst()
                 .orElseThrow();
     }
@@ -57,5 +56,21 @@ public class MailpitTestClient {
      */
     public String htmlBodyOf(Message message) {
         return client.getMessageHtml(message.id());
+    }
+
+    /**
+     * Counts how many delivered messages are addressed to the given recipient.
+     *
+     * @param recipientEmail the recipient email address to count messages for
+     * @return the number of delivered messages addressed to the recipient
+     */
+    public long countMessagesDeliveredTo(String recipientEmail) {
+        return client.getAllMessages().stream()
+                .filter(message -> isAddressedTo(message, recipientEmail))
+                .count();
+    }
+
+    private static boolean isAddressedTo(Message message, String recipientEmail) {
+        return message.recipients().stream().anyMatch(address -> recipientEmail.equals(address.address()));
     }
 }

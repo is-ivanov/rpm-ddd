@@ -2,9 +2,11 @@ package by.iivanov.rpm.iam.user.fixtures;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+import by.iivanov.rpm.iam.user.infrastructure.events.ResubmitIncompletePublicationsJob;
 import by.iivanov.rpm.iam.user.infrastructure.web.RegisterUserRequest;
 import ch.martinelli.oss.testcontainers.mailpit.Message;
 import java.util.UUID;
+import org.springframework.modulith.events.core.EventPublicationRegistry;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,9 +32,16 @@ public class EmailStatements {
     private static final String EXPECTED_ACTIVATION_LINK_PREFIX = "http://localhost:5173/activate?token=";
 
     private final MailpitTestClient mailpitTestClient;
+    private final ResubmitIncompletePublicationsJob resubmitJob;
+    private final EventPublicationRegistry eventPublicationRegistry;
 
-    public EmailStatements(MailpitTestClient mailpitTestClient) {
+    public EmailStatements(
+            MailpitTestClient mailpitTestClient,
+            ResubmitIncompletePublicationsJob resubmitJob,
+            EventPublicationRegistry eventPublicationRegistry) {
         this.mailpitTestClient = mailpitTestClient;
+        this.resubmitJob = resubmitJob;
+        this.eventPublicationRegistry = eventPublicationRegistry;
     }
 
     /** Clears all previously captured messages so the scenario starts from an empty inbox. */
@@ -80,5 +89,30 @@ public class EmailStatements {
         then(mailpitTestClient.htmlBodyOf(message))
                 .as("Activation email body must contain the frontend activation link prefix with the token")
                 .contains(EXPECTED_ACTIVATION_LINK_PREFIX);
+    }
+
+    /** Runs the resubmit scheduler once by invoking its scheduled job method directly. */
+    public void whenResubmitSchedulerRuns() {
+        resubmitJob.resubmit();
+    }
+
+    /**
+     * Asserts that exactly one activation email is delivered to the given recipient — confirming the
+     * resubmit scheduler did not deliver a duplicate for an already-completed publication.
+     *
+     * @param recipientEmail the recipient address that must hold exactly one activation message
+     */
+    public void assertExactlyOneActivationEmailDeliveredTo(String recipientEmail) {
+        mailpitTestClient.awaitMessageDeliveredTo(recipientEmail);
+        then(mailpitTestClient.countMessagesDeliveredTo(recipientEmail))
+                .as("Activation emails delivered to %s", recipientEmail)
+                .isEqualTo(1L);
+    }
+
+    /** Asserts the event publication registry holds no incomplete publication for any listener. */
+    public void assertNoIncompletePublications() {
+        then(eventPublicationRegistry.findIncompletePublications())
+                .as("Incomplete event publications in the registry")
+                .isEmpty();
     }
 }
