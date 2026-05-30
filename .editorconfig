@@ -358,6 +358,10 @@ ij_java_wrap_first_method_in_call_chain = false
 ij_java_wrap_long_lines = false
 ij_java_wrap_semicolon_after_call_chain = false
 
+[frontend/**.{ts,tsx,js,mjs,cjs,vue,css,scss,html}]
+indent_size = 2
+tab_width = 2
+
 [{*.bat,*.cmd}]
 end_of_line = crlf
 
