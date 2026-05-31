@@ -40,8 +40,8 @@
 - [x] green-acceptance
 
 ### Scenario 7.1: Incomplete publications older than 24 hours are not resubmitted
-- [~] red-acceptance
-- [ ] design
+- [x] red-acceptance
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain
