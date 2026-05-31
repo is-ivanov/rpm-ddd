@@ -37,10 +37,10 @@
   - Check 1 (ports): [S] — only collaborator is the Modulith-provided IncompleteEventPublications bean (framework infra, not our adapter); resubmit() is simple delegation
   - Check 2 (exceptions): [S] — resubmit happy-path, no domain exceptions to map
   - Check 3 (response shape): [S] — resubmit job invoked directly, no HTTP response; simple delegation → body created in green-acceptance
-- [~] green-acceptance
+- [x] green-acceptance
 
 ### Scenario 7.1: Incomplete publications older than 24 hours are not resubmitted
-- [ ] red-acceptance
+- [~] red-acceptance
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase

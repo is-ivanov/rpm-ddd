@@ -5,14 +5,9 @@ import by.iivanov.rpm.iam.user.fixtures.EmailStatements;
 import by.iivanov.rpm.iam.user.fixtures.UserApi;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import by.iivanov.rpm.testing.MailTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-// RED: ResubmitIncompletePublicationsJob.resubmit() is an UnsupportedOperationException stub —
-// the resubmit scheduler is not implemented yet. Enable in green-acceptance once the job resubmits
-// incomplete publications and leaves already-completed ones untouched.
-@Disabled("RED: resubmit scheduler not implemented — ResubmitIncompletePublicationsJob.resubmit() stub")
 @MailTest
 class ExactlyOnceEmailDeliveryIntegrationTest extends AbstractApplicationIntegrationTest {
 

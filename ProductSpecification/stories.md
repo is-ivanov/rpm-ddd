@@ -3,7 +3,7 @@
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |---|-------|------|------|------|-------|-----|------|-------|-------|----|
 | 1 | User login | ✅ | ✅ | n/a | 🔧 | — | — | — | 9/30 | 30% |
-| 2 | Email integration: send email on user registration | ✅ | ✅ | 🔧 | n/a | — | n/a | — | 1/6 | 17% |
+| 2 | Email integration: send email on user registration | ✅ | ✅ | 🔧 | n/a | — | n/a | — | 2/6 | 33% |
 
 # Backlog
 
