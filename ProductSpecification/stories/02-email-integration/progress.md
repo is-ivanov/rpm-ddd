@@ -28,8 +28,8 @@
 
 ### Scenario 6.1: A successful registration delivers exactly one activation email
 - [x] red-acceptance
-- [~] design
-- [ ] red-usecase
+- [x] design
+- [~] red-usecase
 - [ ] green-usecase
 - [S] red-domain
 - [S] green-domain
