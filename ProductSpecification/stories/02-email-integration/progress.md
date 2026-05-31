@@ -29,12 +29,15 @@
 ### Scenario 6.1: A successful registration delivers exactly one activation email
 - [x] red-acceptance
 - [x] design
-- [~] red-usecase
-- [ ] green-usecase
+- [S] red-usecase (resubmit is pure Modulith infra; zero usecase/application files change — see design)
+- [S] green-usecase (no usecase/application production code — ResubmitIncompletePublicationsJob delegates to IncompleteEventPublications)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery
+  - Check 1 (ports): [S] — only collaborator is the Modulith-provided IncompleteEventPublications bean (framework infra, not our adapter); resubmit() is simple delegation
+  - Check 2 (exceptions): [S] — resubmit happy-path, no domain exceptions to map
+  - Check 3 (response shape): [S] — resubmit job invoked directly, no HTTP response; simple delegation → body created in green-acceptance
+- [~] green-acceptance
 
 ### Scenario 7.1: Incomplete publications older than 24 hours are not resubmitted
 - [ ] red-acceptance
