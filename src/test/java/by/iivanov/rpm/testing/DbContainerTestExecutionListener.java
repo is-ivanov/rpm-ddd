@@ -1,8 +1,5 @@
 package by.iivanov.rpm.testing;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,7 +8,6 @@ import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ResourceUtils;
 
 /**
  * An implementation of the {@link TestExecutionListener} interface
@@ -84,16 +80,13 @@ public class DbContainerTestExecutionListener implements TestExecutionListener {
 
     private void recreateDatabase(Connection connection) {
         try (var stmt = connection.createStatement()) {
-            String initSql = Files.readString(
-                    ResourceUtils.getFile("classpath:db/rpm-db-init.sql").toPath());
+            String initSql = TestResources.readUtf8("db/rpm-db-init.sql");
             // Terminate active sessions to the target database so that we can make a DROP
             // language=PostgreSQL
             stmt.execute("""
                     SELECT PG_TERMINATE_BACKEND(pid)
                     FROM pg_stat_activity WHERE datname = '%s'""".formatted(Constants.TARGET_DB_NAME));
             stmt.execute(initSql);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to recreate database", e);
         }

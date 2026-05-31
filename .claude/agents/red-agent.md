@@ -73,6 +73,7 @@ Acceptance tests need a live backend. Predictions must be about feature behavior
 2. Predict the **actual application-level failure** — assertion error, wrong HTTP status, missing data, etc.
 3. If the feature is already fully implemented and the test would pass, the prediction is "test passes" — skip straight to `green-acceptance` (mark red-usecase/green-usecase/adapters as `[S]` with reason)
 4. If the test fails (new implementation needed), verify that `progress.md` has a `design` step after `red-acceptance`. If missing, add it — `design` is mandatory for every scenario requiring new implementation.
+5. **One action, assert all consequences** (see `tdd-rules.md`). If the scenario adds a new observable consequence (e.g. an email, an event, persisted state) to an action ALREADY covered by an existing acceptance test, **extend that test** with new `then` assertions instead of creating a parallel acceptance class for the same action — Level 1 runs with the full context (DB, SMTP, …) already up, so a second full-context test for the same action is wasted wall-clock.
 
 ## Domain Layer: Optional, One Test Class per Domain Class
 

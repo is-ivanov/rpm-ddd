@@ -1,0 +1,9 @@
+Hello {login},
+
+Welcome to RPM Platform. Activate your account using the link below:
+
+{activationLink}
+
+This link will expire in 24 hours.
+
+— The RPM Platform team

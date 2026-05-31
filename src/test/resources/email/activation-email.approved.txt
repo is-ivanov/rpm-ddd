@@ -1,0 +1,9 @@
+Hello act_fixed_login,
+
+Welcome to RPM Platform. Activate your account using the link below:
+
+http://localhost:5173/activate?token=fixed.activation.token
+
+This link will expire in 24 hours.
+
+— The RPM Platform team
