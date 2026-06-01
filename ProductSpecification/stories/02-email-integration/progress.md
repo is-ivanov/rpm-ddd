@@ -69,8 +69,8 @@
   - Check 1 (ports): [S] — no new port; existing email adapter `ActivationEmailRenderer` (notification) gains escaping; test extends `ActivationEmailRendererTest` → red/green-adapter email
   - Check 2 (exceptions): [S] — pure rendering, no domain exceptions to map
   - Check 3 (response shape): [S] — renderer returns `ActivationEmailContent` value, no HTTP response
-- [~] red-adapter email
-- [ ] green-adapter email
+- [x] red-adapter email
+- [~] green-adapter email
 - [S] green-acceptance (rendered-content verified at adapter level; spec forbids pinning rendered content into e2e)
 
 ## Load Scenarios
