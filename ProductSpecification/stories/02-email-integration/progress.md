@@ -41,11 +41,12 @@
 
 ### Scenario 7.1: Incomplete publications older than 24 hours are not resubmitted
 - [x] red-acceptance
-- [~] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [x] design (see ADR resubmit-job-placement: relocate job to shared + predicate age cutoff)
+- [S] red-usecase (cutoff lives in the infra events adapter; zero usecase/application files change — mirrors 6.1)
+- [S] green-usecase (no usecase/application production code — age cutoff is in ResubmitIncompletePublicationsJob)
 - [S] red-domain
 - [S] green-domain
+- [~] refactor (relocate ResubmitIncompletePublicationsJob to shared.infrastructure.events — see ADR)
 - [ ] adapters-discovery
 - [ ] green-acceptance
 
