@@ -2,7 +2,6 @@ package by.iivanov.rpm.iam.user.fixtures;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doThrow;
 
 import by.iivanov.rpm.iam.user.domain.UserRegisteredEvent;
@@ -53,23 +52,27 @@ public class StalePublicationStatements {
         this.clock = clock;
     }
 
-    /** Stubs the SMTP transport so every send fails, leaving the activation publication incomplete. */
+    /**
+     * Stubs the SMTP transport so the first send (the original activation delivery) fails — leaving the
+     * publication incomplete — while every later send succeeds. This makes the failure deterministic
+     * regardless of when the async listener actually attempts the send: a redelivery (resubmit) would
+     * therefore reach the real transport and deliver, so the no-delivery assertion keeps its teeth.
+     */
     public void givenActivationSendFails() {
         doThrow(new MailSendException("Simulated SMTP failure for activation email"))
+                .doCallRealMethod()
                 .when(mailSender)
                 .send(any(MimeMessage.class));
     }
 
     /**
-     * Waits until the activation-email publication for the given recipient is incomplete, restores the
-     * SMTP transport so any later send would succeed and deliver, then advances the test clock past the
-     * 24h resubmit cutoff so the publication is stale.
+     * Waits until the activation-email publication for the given recipient is incomplete, then advances
+     * the test clock past the 24h resubmit cutoff so the publication is stale.
      *
      * @param recipientEmail the recipient whose activation publication must become incomplete
      */
     public void givenStaleIncompletePublicationFor(String recipientEmail) {
         awaitIncompletePublicationFor(recipientEmail);
-        doCallRealMethod().when(mailSender).send(any(MimeMessage.class));
         clock.add(Duration.ofHours(25));
     }
 

@@ -5,11 +5,9 @@ import by.iivanov.rpm.iam.user.fixtures.EmailStatements;
 import by.iivanov.rpm.iam.user.fixtures.StalePublicationStatements;
 import by.iivanov.rpm.iam.user.fixtures.UserApi;
 import by.iivanov.rpm.testing.AbstractMailIntegrationTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Disabled("TDD Red Phase - Not yet implemented")
 class StaleIncompletePublicationIntegrationTest extends AbstractMailIntegrationTest {
 
     private final AuthSessionFactory authSessionFactory;

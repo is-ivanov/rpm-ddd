@@ -51,7 +51,7 @@
   - Check 1 (ports): [S] — collaborators are the Modulith `IncompleteEventPublications` bean (framework infra) and the existing `Clock` (shared.time.infrastructure.ClockConfiguration); no new adapter — cutoff predicate is minimal job code created in green-acceptance
   - Check 2 (exceptions): [S] — resubmit happy-path, no domain exceptions to map
   - Check 3 (response shape): [S] — resubmit job invoked directly, no HTTP response; simple delegation → age-cutoff predicate created in green-acceptance
-- [~] green-acceptance
+- [x] green-acceptance
 
 ## Frontend Scenarios
 (none — no UI in this story)
