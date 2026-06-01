@@ -89,11 +89,11 @@
 - [S] green-acceptance (covered by 7.1; no separate acceptance test added)
 
 ### Scenario 5.1: Activation email is delivered after SMTP recovers
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (feature already implemented — resubmit pipeline proven by 6.1/7.1; zero production files change. New acceptance test `SmtpRecoveryEmailDeliveryIntegrationTest` passes on first run, so there is no red state to capture. The behavior — a *young* (< 24h) failed publication is redelivered on resubmit after SMTP recovery — is NOT asserted by any existing test, so the test is genuine non-redundant coverage and is retained, committed under green-acceptance.)
+- [S] design (no architectural change — recovery emerges from the existing resubmit scheduler within the 24h window; see resubmit-job-placement ADR)
+- [S] red-usecase (no usecase/application files — resubmit + listener redelivery is Modulith infra reused unchanged)
+- [S] green-usecase (no usecase/application production code)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (no new ports — existing `ResubmitIncompletePublicationsJob` + `SmtpEmailNotificationSender` + Modulith registry cover the behavior)
+- [x] green-acceptance (`SmtpRecoveryEmailDeliveryIntegrationTest` committed; passes 1/1)

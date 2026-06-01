@@ -77,6 +77,17 @@ public class StalePublicationStatements {
     }
 
     /**
+     * Waits until the activation-email publication for the given recipient is incomplete, without
+     * advancing the clock — so the publication stays young (within the 24h resubmit window). This
+     * confirms the original send failed before the test resubmits, race-free.
+     *
+     * @param recipientEmail the recipient whose activation publication must become incomplete
+     */
+    public void givenYoungIncompletePublicationFor(String recipientEmail) {
+        awaitIncompletePublicationFor(recipientEmail);
+    }
+
+    /**
      * Asserts exactly one incomplete activation-email publication for the recipient remains in the
      * registry — i.e. the stale publication was not resubmitted to completion.
      *
