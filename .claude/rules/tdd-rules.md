@@ -152,3 +152,12 @@ Each test level covers only what is NOT tested by the level above it. Per `TESTI
 
 ### Time-Dependent Behavior
 **NEVER mutate storage data to simulate time passing.** Use a test clock and advance it instead. For example, to expire a session: create it normally (30-day expiry), then advance the clock past expiry. Directly overwriting entities with past timestamps couples tests to internal storage structure and misrepresents how the system actually works.
+
+### Scheduled / Recurring Jobs
+A scheduled job has two separable concerns — its **logic** (what it does each run) and its **wiring** (that it is actually scheduled to run in production). Direct invocation tests only the logic; the wiring is the part that silently rots (a forgotten schedule annotation never fires, and no logic test notices).
+
+- **Bind the schedule to a required configuration value.** The recurrence (cron/interval) must come from a *required* config property referenced by the schedule annotation — never a hardcoded literal. A missing or blank schedule then fails context startup loudly instead of silently never running.
+- **Keep "scheduling is enabled" application-wide; gate each job independently.** Enabling the framework's scheduling affects every scheduled method, so it belongs in a general application configuration, not coupled to one job. Switch an individual job's automatic firing on/off via its own default-on enable flag, so test suites can disable a specific job (and exercise its logic by direct invocation) while leaving scheduling available for the rest.
+- **Verify wiring with a fast production-config context test.** A scheduled job is not "done" until a test boots the production scheduling configuration and asserts (a) the context starts — proving the schedule value resolves and the job is wired — and (b) the schedule expression is valid and fires at the intended times. This is fast and deterministic; never gate wiring coverage behind awaiting a real tick in a slow full-context test.
+- **Never verify a scheduled job's production wiring solely by invoking its method directly.** Direct invocation is fine (and preferred, for determinism) for the *logic* scenarios — but the scenario set must also include the production-schedule wiring test above.
+- **Recurring jobs run on every instance.** Guard against concurrent execution across instances with a distributed lock (see the multi-instance deployment rule in `coding-rules.md`).

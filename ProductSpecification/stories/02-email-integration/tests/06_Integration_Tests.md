@@ -31,18 +31,23 @@ These scenarios cover the Spring Modulith persisted-event + resubmit-scheduler m
 ## 8. Scheduler Wiring
 
 > Scenarios 6.1/7.1 exercise resubmit **logic** by invoking the job directly. This scenario closes the
-> gap left by that shortcut: it proves the job is actually **wired to fire on its own** in a running
-> application (`@Scheduled` + `@EnableScheduling`). Without it the scheduler silently never runs in
-> production. Multi-instance safety (`@SchedulerLock`/ShedLock, since the backend runs as multiple
-> instances) is a design concern for this scenario — resolve it in the `design` step.
+> gap that shortcut leaves: it proves the job is actually **wired and scheduled** in production. Verified
+> as a fast `ApplicationContextRunner` wiring test under the production config — NOT by awaiting a real
+> tick (slow/flaky). Design notes baked in (see `tdd-rules.md` → "Scheduled / Recurring Jobs" and the
+> scheduling tech binding): the resubmit interval is a **required property** bound to `@Scheduled`;
+> `@EnableScheduling` is **application-wide** (a general app config, since it enables every `@Scheduled`
+> method); the job is gated independently via `rpm.events.resubmit.enabled` (default true), set `false`
+> in the `test` profile so 6.1/7.1 stay deterministic; multi-instance safety via **ShedLock**
+> (`@SchedulerLock` + `LockProvider`, requires adding the dependency + a `shedlock` migration).
 
-### 8.1 The resubmit scheduler runs automatically on its configured schedule
+### 8.1 The resubmit scheduler is wired, scheduled, and lock-guarded in production
 
-**Given** an incomplete activation-email publication younger than 24 hours (the first SMTP send failed)
-**And** no code invokes the resubmit job directly
-**When** the configured scheduler interval elapses
-**Then** the activation email is delivered automatically to the registered recipient
-**And** the publication is marked complete in the registry
+**Given** the production scheduling configuration is loaded
+**When** the application context is bootstrapped
+**Then** the context starts successfully — `@EnableScheduling` is active and `@Scheduled` resolved its required resubmit-interval property
+**And** the configured resubmit interval equals the intended value
+**And** a distributed lock provider is configured so only one instance resubmits per tick
+**And** under the `test` profile the job's automatic firing is disabled (resubmit logic stays covered by 6.1/7.1 via direct invocation)
 
 ---
 
@@ -57,7 +62,8 @@ These scenarios cover the Spring Modulith persisted-event + resubmit-scheduler m
 | `an incomplete activation-email publication older than 24 hours` | An incomplete publication whose registry timestamp is more than 24h in the past, using a test clock — never mutate registry rows directly to fake the timestamp |
 | `the stale publication is not resubmitted` | The scheduler filters via `IncompleteEventPublications` younger than 24h; assert the stale publication is excluded and stays incomplete |
 | `no activation email is delivered for it` | Poll Mailpit for a bounded window and assert no message appears for that recipient |
-| `no code invokes the resubmit job directly` | The test MUST NOT call `resubmitJob.resubmit()`; delivery can only occur if `@Scheduled` + `@EnableScheduling` are wired and firing |
-| `the configured scheduler interval elapses` | Await up to a bounded window (longer than the fixed rate) for an automatic `@Scheduled` tick; the rate should come from a property (e.g. `fixedRateString = "${...}"`) so the `test` profile can shorten it for a fast, non-flaky run |
-| `the activation email is delivered automatically to the registered recipient` | Poll Mailpit `awaitMessage()` until the message appears — proving the scheduled tick (not a direct call) resubmitted the incomplete publication |
-| `the publication is marked complete in the registry` | After automatic delivery, the Spring Modulith JDBC registry holds no incomplete publication for the listener |
+| `the production scheduling configuration is loaded` | An `ApplicationContextRunner` (or focused `@SpringBootTest(classes=…)`) boots the scheduling config under `spring.profiles.active=prod` — a sliced/partial context that does not fork the shared full acceptance context |
+| `the context starts successfully — @EnableScheduling is active and @Scheduled resolved its required resubmit-interval property` | `then(context).hasNotFailed()`; a missing/blank `rpm.events.resubmit.interval` would fail placeholder resolution at startup. `@EnableScheduling` lives on an application-wide config, not on the job |
+| `the configured resubmit interval equals the intended value` | `context.getBean(EventResubmitProperties.class).interval()` equals the configured duration (e.g. `Duration.ofSeconds(5)`) |
+| `a distributed lock provider is configured so only one instance resubmits per tick` | `then(context).hasSingleBean(LockProvider.class)` — ShedLock (`@SchedulerLock` on the job, `@EnableSchedulerLock` + JDBC `LockProvider`, `shedlock` Liquibase table) |
+| `under the test profile the job's automatic firing is disabled` | `application-test.yml` sets `rpm.events.resubmit.enabled=false`; the `@ConditionalOnProperty`-gated job bean is absent, so the scheduler never races the direct-invocation logic tests (6.1/7.1) |

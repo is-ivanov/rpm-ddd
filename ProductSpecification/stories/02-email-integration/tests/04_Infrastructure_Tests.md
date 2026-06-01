@@ -34,8 +34,14 @@
 > `MailSenderAutoConfiguration` never contributes a `JavaMailSender` and the unconditional, `@Primary`
 > `SmtpEmailNotificationSender` fails to construct — the application context does not start on the
 > deployed environment. This scenario guarantees the production context boots with mail configured.
-> The `design` step must decide sender selection (real SMTP sender when mail is configured vs.
-> `NoOp`/fail-fast when it is absent) and whether a missing prod mail config should fail fast.
+> The `design` step must decide, via `/architecture` (ADR):
+> 1. **Sender selection** — real SMTP sender when mail is configured vs. a fallback when it is absent,
+>    and whether a missing *production* mail config should fail fast (preferred for a feature that needs email).
+> 2. **Local development mail** — how the app runs locally without a real SMTP provider. Options to weigh:
+>    (a) raise an SMTP server (e.g. Mailpit) in a local Docker image; (b) a `local`-profile `JavaMailSender`
+>    implementation that writes each message to disk as two files — the rendered body (`.html`/text) and a
+>    metadata `.json` (from/to/subject); (c) keep the logging `NoOpEmailNotificationSender`. This replaces
+>    the current unconditional coexistence of `NoOp` + `Smtp` senders.
 
 ### 7.1 The application context starts with the production mail configuration
 
