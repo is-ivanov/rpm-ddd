@@ -21,7 +21,7 @@
 - `ResubmitIncompletePublicationsJob.resubmit()` — gains `@Scheduled(fixedDelayString = "${rpm.events.resubmit.interval}")` + `@SchedulerLock(name = "resubmitIncompletePublications", lockAtMostFor = "PT30S", lockAtLeastFor = "PT0S")`. Body unchanged (still reads the inline cutoff and the injected `Clock`).
 - `application.yml` — `rpm.events.resubmit.interval: 5s` (required; `rpm.scheduler.enabled` defaults true via `matchIfMissing`).
 - `application-test.yml` — `rpm.scheduler.enabled: false`.
-- `pom.xml` — add `net.javacrumbs.shedlock:shedlock-spring` + `shedlock-provider-jdbc-template` (version property). **Green must verify Spring Framework 7 / Spring Boot 4 compatibility**; if incompatible → advisory-lock fallback.
+- `pom.xml` — add `net.javacrumbs.shedlock:shedlock-spring` + `shedlock-provider-jdbc-template` **7.7.0** (version property). **Verified compatible** (2026-06-01, ShedLock compat matrix): ShedLock 7.x supports Spring Boot 4.x / Spring 7.0 / JVM 17+ — advisory-lock fallback NOT needed.
 - Liquibase — new changeset (`shedlock` table) included via `v.2026.1/changelog-cumulative.xml` (prod). The full-context tests don't need it (scheduler off); the wiring test provisions its own shedlock table in a throwaway `DataSource`.
 - Wiring test (`ApplicationContextRunner`, base `application.yml`, no profile) — loads `SchedulingConfiguration` + job + mocked `IncompleteEventPublications`/`Clock` + throwaway `DataSource`; asserts `hasNotFailed()` (interval placeholder resolved), `LockProvider` present, `EventResubmitProperties.interval()` == 5s.
 
