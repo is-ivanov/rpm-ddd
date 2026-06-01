@@ -59,14 +59,19 @@
 ## Security Scenarios
 
 ### Scenario 5.1: User-controlled login is escaped in the rendered email
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (rendered-content verification → fast renderer test, NOT e2e/Mailpit — see tdd-rules "rendered-content verification" + 05_Security_Tests.md §5 note; realized as red-adapter email)
+- [S] design (no architectural change — extends existing ActivationEmailRenderer; fix is HTML-escaping user-controlled login on HTML fill, anticipated by email-render-boundary ADR)
+- [S] red-usecase (no usecase/application files — escaping lives in the notification adapter renderer)
+- [S] green-usecase (no usecase/application production code — fix is in ActivationEmailRenderer)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery
+  - Check 1 (ports): [S] — no new port; existing email adapter `ActivationEmailRenderer` (notification) gains escaping; test extends `ActivationEmailRendererTest` → red/green-adapter email
+  - Check 2 (exceptions): [S] — pure rendering, no domain exceptions to map
+  - Check 3 (response shape): [S] — renderer returns `ActivationEmailContent` value, no HTTP response
+- [~] red-adapter email
+- [ ] green-adapter email
+- [S] green-acceptance (rendered-content verified at adapter level; spec forbids pinning rendered content into e2e)
 
 ## Load Scenarios
 (none — negligible email volume, async send; see tests/03_Load_Tests.md)
