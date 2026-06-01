@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * Renders the activation email's subject, HTML body, and plain-text body from the recipient's
@@ -27,7 +28,7 @@ public class ActivationEmailRenderer {
     public ActivationEmailContent render(String login, String activationLink) {
         return new ActivationEmailContent(
                 SUBJECT,
-                loadAndFill(HTML_TEMPLATE, login, activationLink),
+                loadAndFill(HTML_TEMPLATE, HtmlUtils.htmlEscape(login), activationLink),
                 loadAndFill(TEXT_TEMPLATE, login, activationLink));
     }
 

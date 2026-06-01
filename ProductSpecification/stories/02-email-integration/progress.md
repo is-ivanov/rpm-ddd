@@ -70,7 +70,7 @@
   - Check 2 (exceptions): [S] — pure rendering, no domain exceptions to map
   - Check 3 (response shape): [S] — renderer returns `ActivationEmailContent` value, no HTTP response
 - [x] red-adapter email
-- [~] green-adapter email
+- [x] green-adapter email
 - [S] green-acceptance (rendered-content verified at adapter level; spec forbids pinning rendered content into e2e)
 
 ## Load Scenarios

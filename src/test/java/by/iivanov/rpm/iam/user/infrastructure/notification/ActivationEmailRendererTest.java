@@ -3,7 +3,6 @@ package by.iivanov.rpm.iam.user.infrastructure.notification;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import by.iivanov.rpm.testing.TestResources;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +32,6 @@ class ActivationEmailRendererTest {
         then(content.textBody()).isEqualToNormalizingNewlines(TestResources.readUtf8(APPROVED_TEXT_FIXTURE));
     }
 
-    // RED: renderer fills templates via naive String.replace with no HTML escaping, so the raw
-    // <script> tag is injected verbatim and the escaped-form assertion fails. GREEN escapes the login.
-    @Disabled("RED: ActivationEmailRenderer does not HTML-escape the login (raw <script> injected verbatim)")
     @Test
     @DisplayName("WHEN login contains HTML/template markup EXPECT it rendered as inert escaped text")
     void when_loginContainsMarkup_expect_escapedInertTextInHtmlBody() {
