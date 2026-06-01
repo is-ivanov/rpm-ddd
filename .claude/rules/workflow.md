@@ -30,7 +30,7 @@ The `[ ] adapters-discovery` checkbox is a gate — it must be resolved before a
 
 For each scenario in `tests/06_Integration_Tests.md` (if exists): same TDD cycle as backend scenarios above. Integration scenarios cover cross-cutting concerns: scheduled jobs, webhook idempotency, resilience, and email triggers.
 
-**Scheduled jobs require a wiring scenario, not just a logic scenario.** When a story introduces a scheduled/recurring job, the integration scenario set MUST include a production-schedule verification (a fast context test that boots the production scheduling configuration and asserts the context starts — proving the schedule resolves and the job is wired — and that the schedule value is correct), in addition to any direct-invocation logic scenarios. A job verified only by direct invocation leaves its scheduling wiring untested and can silently never run in production. See `tdd-rules.md` → "Scheduled / Recurring Jobs" and the `.claude/tech/{backend}/templates/scheduling/` binding.
+**Scheduled jobs require a wiring scenario, not just a logic scenario.** When a story introduces a scheduled/recurring job, the integration scenario set MUST include a production-schedule wiring scenario in addition to any direct-invocation logic scenarios. A job verified only by direct invocation leaves its scheduling wiring untested and can silently never run in production. For what the wiring scenario must assert, see `tdd-rules.md` → "Scheduled / Recurring Jobs"; for the concrete test mechanism, see the `.claude/tech/{backend}/templates/scheduling/` binding.
 
 ## Frontend Scenario Sequence
 

@@ -24,8 +24,9 @@ across the whole application's event registry.
   Liquibase migration for the `shedlock` table. ShedLock is **not yet a dependency** in `pom.xml` — adding
   it (`net.javacrumbs.shedlock:shedlock-spring` + `shedlock-provider-jdbc-template`) is part of the job's
   implementation step.
-- **Jobs delegate; no business logic in the job body.** A job resolves its schedule, acquires its lock,
-  and calls into the domain/application or framework collaborator — nothing more.
+- **Jobs delegate.** A job is a first-layer adapter (`@InfrastructureComponent`): it resolves its schedule,
+  acquires its lock, and calls into the domain/application or framework collaborator — nothing more. The
+  "no business logic in adapters; delegate immediately" rule (`coding-rules.md`) applies unchanged.
 
 ## Pattern (per this repo)
 
