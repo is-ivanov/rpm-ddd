@@ -53,6 +53,17 @@
   - Check 3 (response shape): [S] — resubmit job invoked directly, no HTTP response; simple delegation → age-cutoff predicate created in green-acceptance
 - [x] green-acceptance
 
+### Scenario 8.1: The resubmit scheduler runs automatically on its configured schedule
+> Reopened: 6.1/7.1 invoked `resubmitJob.resubmit()` directly, so the `@Scheduled`/`@EnableScheduling` wiring was never under test and is missing in production — the resubmit job never fires on the deployed app.
+- [~] red-acceptance
+- [ ] design (decide `@Scheduled` fixed-rate via property + `@EnableScheduling` placement + `@SchedulerLock`/ShedLock for multi-instance safety — may escalate to `/architecture` for an ADR)
+- [S] red-usecase (scheduler wiring is pure infra — zero usecase/application files change, mirrors 6.1/7.1)
+- [S] green-usecase
+- [S] red-domain
+- [S] green-domain
+- [ ] adapters-discovery (scheduling/config infra — route to `.claude/tech/java-spring/templates/scheduling`)
+- [ ] green-acceptance
+
 ## Frontend Scenarios
 (none — no UI in this story)
 
@@ -97,3 +108,14 @@
 - [S] green-domain
 - [S] adapters-discovery (no new ports — existing `ResubmitIncompletePublicationsJob` + `SmtpEmailNotificationSender` + Modulith registry cover the behavior)
 - [x] green-acceptance (`SmtpRecoveryEmailDeliveryIntegrationTest` committed; passes 1/1)
+
+### Scenario 7.1: The application context starts with the production mail configuration
+> Reopened: tests run under the `test` profile (Mailpit supplies `JavaMailSender`); `prod` had no `spring.mail.*`, so the unconditional `@Primary SmtpEmailNotificationSender` cannot construct and the context fails to start on Render.
+- [ ] red-acceptance
+- [ ] design (decide sender selection: real SMTP sender when `spring.mail.host` present vs `NoOp`/fail-fast when absent; whether a missing prod mail config should fail fast — may produce an ADR)
+- [S] red-usecase (context/config bootstrap — no usecase/application change)
+- [S] green-usecase
+- [S] red-domain
+- [S] green-domain
+- [ ] adapters-discovery
+- [ ] green-acceptance

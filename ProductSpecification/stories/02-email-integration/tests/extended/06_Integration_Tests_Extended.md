@@ -4,9 +4,9 @@
 
 ---
 
-## 8. Repeated Resubmit Until Success
+## 9. Repeated Resubmit Until Success
 
-### 8.1 The scheduler keeps resubmitting across ticks until delivery succeeds
+### 9.1 The scheduler keeps resubmitting across ticks until delivery succeeds
 
 **Given** an incomplete activation-email publication younger than 24 hours
 **And** the SMTP server fails the first resubmit attempt and succeeds on a later one
@@ -16,9 +16,9 @@
 
 ---
 
-## 9. Independent Processing of Multiple Publications
+## 10. Independent Processing of Multiple Publications
 
-### 9.1 Multiple incomplete publications are resubmitted independently
+### 10.1 Multiple incomplete publications are resubmitted independently
 
 **Given** two incomplete activation-email publications younger than 24 hours for two different recipients
 **When** the resubmit scheduler runs

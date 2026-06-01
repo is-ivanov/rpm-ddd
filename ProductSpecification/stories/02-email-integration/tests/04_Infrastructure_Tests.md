@@ -27,6 +27,25 @@
 
 ---
 
+## 7. Production Mail Bootstrap
+
+> The acceptance/integration suites run under the `test` profile, where Mailpit supplies a
+> `JavaMailSender` via `spring.mail.host`. Production (`prod` profile) had **no** `spring.mail.*`, so
+> `MailSenderAutoConfiguration` never contributes a `JavaMailSender` and the unconditional, `@Primary`
+> `SmtpEmailNotificationSender` fails to construct — the application context does not start on the
+> deployed environment. This scenario guarantees the production context boots with mail configured.
+> The `design` step must decide sender selection (real SMTP sender when mail is configured vs.
+> `NoOp`/fail-fast when it is absent) and whether a missing prod mail config should fail fast.
+
+### 7.1 The application context starts with the production mail configuration
+
+**Given** the production profile with SMTP mail settings supplied via environment configuration
+**When** the application context is bootstrapped
+**Then** the `JavaMailSender` bean is available
+**And** the SMTP activation sender is wired and the context starts successfully
+
+---
+
 ## DSL Technical Reference
 
 | DSL Statement | Technical Implementation |
@@ -38,3 +57,7 @@
 | `the event publication for the activation email remains incomplete` | The Spring Modulith JDBC event publication registry holds an incomplete publication for the `UserRegisteredEvent` listener |
 | `the SMTP server becomes available` | Restore `spring.mail.*` to the live Mailpit instance / restart the Mailpit container; verify the SMTP port accepts connections |
 | `the activation email is delivered ... without re-registering the user` | The resubmit scheduler reprocesses the incomplete publication; poll Mailpit (`awaitMessage()`) until the message for the registered recipient appears |
+| `the production profile with SMTP mail settings supplied via environment configuration` | `application-prod.yml` declares `spring.mail.*` (host/port/username/password/TLS) bound to environment variables; the test supplies prod-like mail properties |
+| `the application context is bootstrapped` | A focused Spring Boot context test loads with the production mail configuration as a sliced/partial context — it must NOT fork the shared full acceptance context (single-context rule) |
+| `the JavaMailSender bean is available` | Spring Boot's `MailSenderAutoConfiguration` contributes a `JavaMailSender` because `spring.mail.host` is set |
+| `the SMTP activation sender is wired and the context starts successfully` | `SmtpEmailNotificationSender` resolves its `JavaMailSender` dependency and the context refresh completes without a bean-creation failure |
