@@ -46,8 +46,8 @@
 - [S] green-usecase (no usecase/application production code — age cutoff is in ResubmitIncompletePublicationsJob)
 - [S] red-domain
 - [S] green-domain
-- [~] refactor (relocate ResubmitIncompletePublicationsJob to shared.infrastructure.events — see ADR)
-- [ ] adapters-discovery
+- [x] refactor (relocate ResubmitIncompletePublicationsJob to shared.infrastructure.events — see ADR)
+- [~] adapters-discovery
 - [ ] green-acceptance
 
 ## Frontend Scenarios
