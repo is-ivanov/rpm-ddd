@@ -54,15 +54,15 @@
 - [x] green-acceptance
 
 ### Scenario 8.1: The resubmit scheduler is wired, scheduled, and lock-guarded in production
-> Reopened: 6.1/7.1 invoked `resubmitJob.resubmit()` directly, so the `@Scheduled` wiring was never under test and is missing in production — the job never fires on the deployed app. Verified by a fast `ApplicationContextRunner` wiring test (NOT an awaited tick). Design baked in (see `tdd-rules.md` "Scheduled / Recurring Jobs" + scheduling tech binding): required interval property bound to `@Scheduled`; **app-wide** `@EnableScheduling`; per-job `@ConditionalOnProperty(rpm.events.resubmit.enabled, matchIfMissing=true)`, set `false` in the `test` profile; ShedLock for multi-instance safety.
-- [~] red-acceptance (`ApplicationContextRunner` wiring test under `prod` profile — RED: no `@Scheduled`/`@EnableScheduling`/interval property/`LockProvider` yet)
-- [ ] design (`/architecture` ADR: typed `EventResubmitProperties`, app-wide `SchedulingConfiguration`, ShedLock `@EnableSchedulerLock`/`LockProvider` + `shedlock` migration, add shedlock deps to `pom.xml`)
+> Reopened: 6.1/7.1 invoked `resubmitJob.resubmit()` directly, so the `@Scheduled` wiring was never under test and is missing in production — the job never fires on the deployed app. Verified by a fast `ApplicationContextRunner` wiring test (NOT an awaited tick). Decisions in ADR `resubmit-scheduling-wiring`: `@Scheduled(fixedDelayString="${rpm.events.resubmit.interval}")`; app-wide `SchedulingConfiguration` gated by `rpm.scheduler.enabled` (false in `test`); ShedLock for multi-instance. **Design ran before red here** — the wiring test references production types whose shape is an architectural decision.
+- [x] design (ADR `resubmit-scheduling-wiring`: fixedDelay + required interval property, app-wide gated `SchedulingConfiguration`, ShedLock `@SchedulerLock`/`LockProvider` + `shedlock` migration, add shedlock deps to `pom.xml`)
+- [S] red-acceptance (no black-box/HTTP acceptance for scheduler wiring; realized as `red-adapter scheduling` — the `ApplicationContextRunner` wiring test, mirroring how Security 5.1 realized its check at adapter level)
 - [S] red-usecase (scheduler wiring is pure infra — zero usecase/application files change, mirrors 6.1/7.1)
 - [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery (scheduling/config infra — route to `.claude/tech/java-spring/templates/scheduling`; ShedLock `LockProvider` + migration)
-- [ ] green-acceptance
+- [~] adapters-discovery (one infra adapter: the scheduling config — `ApplicationContextRunner` wiring test; maps to `.claude/tech/java-spring/templates/scheduling`. Will insert `red-adapter scheduling` / `green-adapter scheduling`)
+- [S] green-acceptance (wiring covered at adapter level; no separate acceptance test)
 
 ## Frontend Scenarios
 (none — no UI in this story)

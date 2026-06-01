@@ -33,12 +33,12 @@ These scenarios cover the Spring Modulith persisted-event + resubmit-scheduler m
 > Scenarios 6.1/7.1 exercise resubmit **logic** by invoking the job directly. This scenario closes the
 > gap that shortcut leaves: it proves the job is actually **wired and scheduled** in production. Verified
 > as a fast `ApplicationContextRunner` wiring test under the production config — NOT by awaiting a real
-> tick (slow/flaky). Design notes baked in (see `tdd-rules.md` → "Scheduled / Recurring Jobs" and the
-> scheduling tech binding): the resubmit interval is a **required property** bound to `@Scheduled`;
-> `@EnableScheduling` is **application-wide** (a general app config, since it enables every `@Scheduled`
-> method); the job is gated independently via `rpm.events.resubmit.enabled` (default true), set `false`
-> in the `test` profile so 6.1/7.1 stay deterministic; multi-instance safety via **ShedLock**
-> (`@SchedulerLock` + `LockProvider`, requires adding the dependency + a `shedlock` migration).
+> tick (slow/flaky). Decisions in ADR `resubmit-scheduling-wiring`: the interval is a **required property**
+> bound to `@Scheduled(fixedDelayString = "${rpm.events.resubmit.interval}")`; `@EnableScheduling` lives on
+> an **app-wide** `SchedulingConfiguration` gated by `rpm.scheduler.enabled` (default true), set `false` in
+> the `test` profile so the scheduler never auto-fires — while the job bean (a plain `@InfrastructureComponent`)
+> stays injectable, so 6.1/7.1 keep calling `resubmit()` directly; multi-instance safety via **ShedLock**
+> (`@SchedulerLock` + `LockProvider`, adds the dependency + a `shedlock` migration; green verifies SB4 compat).
 
 ### 8.1 The resubmit scheduler is wired, scheduled, and lock-guarded in production
 
@@ -66,4 +66,4 @@ These scenarios cover the Spring Modulith persisted-event + resubmit-scheduler m
 | `the context starts successfully — @EnableScheduling is active and @Scheduled resolved its required resubmit-interval property` | `then(context).hasNotFailed()`; a missing/blank `rpm.events.resubmit.interval` would fail placeholder resolution at startup. `@EnableScheduling` lives on an application-wide config, not on the job |
 | `the configured resubmit interval equals the intended value` | `context.getBean(EventResubmitProperties.class).interval()` equals the configured duration (e.g. `Duration.ofSeconds(5)`) |
 | `a distributed lock provider is configured so only one instance resubmits per tick` | `then(context).hasSingleBean(LockProvider.class)` — ShedLock (`@SchedulerLock` on the job, `@EnableSchedulerLock` + JDBC `LockProvider`, `shedlock` Liquibase table) |
-| `under the test profile the job's automatic firing is disabled` | `application-test.yml` sets `rpm.events.resubmit.enabled=false`; the `@ConditionalOnProperty`-gated job bean is absent, so the scheduler never races the direct-invocation logic tests (6.1/7.1) |
+| `under the test profile the job's automatic firing is disabled` | `application-test.yml` sets `rpm.scheduler.enabled=false`; the gated `SchedulingConfiguration` is absent (no `@EnableScheduling`, no `LockProvider`), so no `@Scheduled` fires and the `@SchedulerLock` aspect is inactive — but the job bean stays present so the direct-invocation logic tests (6.1/7.1/5.1) keep working |
