@@ -79,14 +79,14 @@
 ## Infrastructure Scenarios
 
 ### Scenario 4.1: SMTP unavailable does not fail registration
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (behavior already covered by `StaleIncompletePublicationIntegrationTest` (7.1): with the SMTP spy armed to fail, that test already asserts registration returns 201 + no email delivered + the publication stays incomplete. The async `@ApplicationModuleListener` never propagates the send failure to the HTTP response — zero production code needed. Avoid a second slow full-context test for behavior already asserted.)
+- [S] design (no architectural change — resilience emerges from the existing async listener; see resubmit-job-placement ADR)
+- [S] red-usecase (no usecase/application files — async send failure is swallowed by the Modulith listener)
+- [S] green-usecase (no usecase/application production code)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (no new ports — existing `SmtpEmailNotificationSender` + Modulith publication registry already cover the behavior)
+- [S] green-acceptance (covered by 7.1; no separate acceptance test added)
 
 ### Scenario 5.1: Activation email is delivered after SMTP recovers
 - [ ] red-acceptance
