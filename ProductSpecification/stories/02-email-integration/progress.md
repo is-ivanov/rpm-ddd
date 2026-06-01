@@ -61,7 +61,12 @@
 - [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [~] adapters-discovery (one infra adapter: the scheduling config — `ApplicationContextRunner` wiring test; maps to `.claude/tech/java-spring/templates/scheduling`. Will insert `red-adapter scheduling` / `green-adapter scheduling`)
+- [x] adapters-discovery
+  - Check 1 (ports): scheduling — the job's scheduling wiring (`SchedulingConfiguration` with `@EnableScheduling`/`@EnableSchedulerLock`/`LockProvider`, `@Scheduled(fixedDelayString)`/`@SchedulerLock` on the job, `EventResubmitProperties`) does not exist → red/green-adapter scheduling. Existing collaborators `IncompleteEventPublications` (Modulith) + `Clock` (shared.time) are provided.
+  - Check 2 (exceptions): [S] — resubmit happy-path, no domain exceptions to map
+  - Check 3 (response shape): [S] — scheduled trigger, no HTTP response
+- [~] red-adapter scheduling (`ApplicationContextRunner` wiring test — RED: no `SchedulingConfiguration`/`@Scheduled`/ShedLock yet; asserts context boots, `LockProvider` present, `EventResubmitProperties.interval()` == 5s)
+- [ ] green-adapter scheduling (implement per ADR `resubmit-scheduling-wiring`: `SchedulingConfiguration` + `EventResubmitProperties` + `@Scheduled(fixedDelayString)`/`@SchedulerLock` on the job + ShedLock deps + `JdbcTemplateLockProvider` + `shedlock` Liquibase changeset + `application.yml`/`application-test.yml`. **VERIFY ShedLock × Spring Boot 4 / Spring 7 compat FIRST** — advisory-lock fallback if incompatible)
 - [S] green-acceptance (wiring covered at adapter level; no separate acceptance test)
 
 ## Frontend Scenarios
