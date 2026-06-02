@@ -51,6 +51,9 @@ error:
 # ===================================================================
 rpm:
   frontend-base-url: https://rpm-platform.com
+  events:
+    resubmit:
+      interval: 5s
   mail:
     from-name: "RPM Platform"
     from-address: "no-reply@rpm-platform.com"

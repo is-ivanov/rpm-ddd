@@ -8,7 +8,6 @@ import java.time.Clock;
 import java.time.Duration;
 import javax.sql.DataSource;
 import net.javacrumbs.shedlock.core.LockProvider;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
@@ -23,7 +22,6 @@ import org.springframework.modulith.events.IncompleteEventPublications;
  * asserts the scheduling is wired: the context starts, a {@link LockProvider} is present, the job bean
  * exists, and the resubmit interval resolves to the configured value.
  */
-@Disabled("RED: SchedulingConfiguration is an empty stub — no LockProvider bean, EventResubmitProperties unbound")
 class EventResubmitSchedulingTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
@@ -51,7 +49,7 @@ class EventResubmitSchedulingTest {
         }
 
         @Bean
-        Clock clock() {
+        Clock systemClock() {
             return Clock.systemUTC();
         }
 

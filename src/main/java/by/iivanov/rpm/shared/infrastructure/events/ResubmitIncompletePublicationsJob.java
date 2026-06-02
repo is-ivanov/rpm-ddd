@@ -4,7 +4,9 @@ import by.iivanov.rpm.shared.infrastructure.InfrastructureComponent;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.modulith.events.IncompleteEventPublications;
+import org.springframework.scheduling.annotation.Scheduled;
 
 /**
  * Periodically resubmits incomplete event publications so a transient listener failure is retried
@@ -25,6 +27,8 @@ public class ResubmitIncompletePublicationsJob {
     }
 
     /** Resubmits incomplete event publications that are still within the resubmit age window. */
+    @Scheduled(fixedDelayString = "${rpm.events.resubmit.interval}")
+    @SchedulerLock(name = "resubmitIncompletePublications", lockAtMostFor = "PT30S", lockAtLeastFor = "PT0S")
     public void resubmit() {
         Instant cutoff = clock.instant().minus(RESUBMIT_AGE_CUTOFF);
         incompletePublications.resubmitIncompletePublications(

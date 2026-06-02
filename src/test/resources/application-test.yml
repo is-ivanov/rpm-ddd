@@ -40,3 +40,5 @@ spring:
 # only the frontend activation-link host differs for tests.
 rpm:
   frontend-base-url: "http://localhost:5173"
+  scheduler:
+    enabled: false

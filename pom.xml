@@ -114,6 +114,21 @@
     <dependency>
       <groupId>org.springframework.modulith</groupId>
       <artifactId>spring-modulith-starter-core</artifactId>
+      <!--
+        Exclude Spring Modulith Moments (Passage-of-Time events: DayHasPassed/WeekHasPassed/...).
+        We don't use it, yet its MomentsAutoConfiguration is meta-annotated @EnableScheduling, which
+        registers the ScheduledAnnotationBeanPostProcessor application-wide. That would process EVERY
+        @Scheduled method (incl. ours) under all profiles — making scheduled jobs fire even in tests
+        and defeating the rpm.scheduler.enabled gating. Excluding it leaves our gated
+        SchedulingConfiguration as the only source of @EnableScheduling. See
+        decisions/resubmit-scheduling-wiring-decision.md; guarded by SchedulingDisabledInTestsIntegrationTest.
+      -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.modulith</groupId>
+          <artifactId>spring-modulith-moments</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.modulith</groupId>
