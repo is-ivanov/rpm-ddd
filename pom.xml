@@ -36,7 +36,7 @@
     <nullaway.version>0.13.4</nullaway.version>
     <palantir-java-format.version>2.90.0</palantir-java-format.version>
     <passay.version>2.0.0</passay.version>
-    <pmd.version>7.24.0</pmd.version>
+    <pmd.version>7.25.0</pmd.version>
     <spring-modulith.version>2.0.6</spring-modulith.version>
     <threeten-extra.version>1.9.0</threeten-extra.version>
     <uuid-creator.version>6.1.1</uuid-creator.version>
