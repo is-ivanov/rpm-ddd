@@ -127,6 +127,6 @@
   - Check 2 (exceptions): [S] — config bootstrap, no domain exceptions to map
   - Check 3 (response shape): [S] — sliced `ApplicationContextRunner` wiring test, no HTTP response
 - [x] green-adapter email (per ADR `production-mail-bootstrap`: gated `SmtpEmailNotificationSender` with `@ConditionalOnProperty(spring.mail.host)` + dropped `@Primary` as sole `EmailNotificationSender`; deleted `NoOpEmailNotificationSender`; `application-prod.yml` `spring.mail.{host,port,username,password}`←required `${SPRING_MAIL_*}` + STARTTLS props; `application-local.yml` Mailpit `localhost:1025`; `docker/services.yml` `mailpit` service (`axllent/mailpit:v1.21.8`, 1025/8025); removed `@Disabled` from `ProductionMailBootstrapTest`. REFACTOR extracted `populateMessage(...)` from `buildMessage(...)`. Wiring test 1/1 green; notification 3/3; email integration tests pass individually.)
-- [~] red-adapter email (coverage: buildMessage wraps MessagingException as IllegalStateException)
-- [ ] green-adapter email (coverage: buildMessage wraps MessagingException as IllegalStateException)
+- [x] red-adapter email (coverage: buildMessage wraps MessagingException as IllegalStateException — `SmtpEmailNotificationSenderTest`: real `JavaMailSenderImpl` + malformed recipient → strict address parsing throws `AddressException`, rewrapped as `IllegalStateException`. Already-implemented branch, so test passes on first run; no `@Disabled` — green is a no-op pass. test-review tightened message assertion to exact `hasMessage`. 1/1 green.)
+- [~] green-adapter email (coverage: buildMessage wraps MessagingException as IllegalStateException)
 - [S] green-acceptance (wiring covered at adapter level; no separate acceptance test — mirrors 8.1)
