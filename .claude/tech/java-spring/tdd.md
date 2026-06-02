@@ -57,6 +57,16 @@ JUnit 5 parallel execution is enabled by default. Project meta-annotations enfor
 
 Never manually add `@Execution(SAME_THREAD)` to individual tests — use the project's meta-annotations.
 
+## Single Application Context
+
+Every `@ApplicationIntegrationTest` must reuse the **one** cached full `ApplicationContext`. Spring's `TestContext` cache keys on the merged configuration, so any of these on a *single* test class forks a second full context: `@Import(SomeTestConfiguration.class)`, a nested `@TestConfiguration`, `@MockitoBean` / `@MockitoSpyBean` fields, `@TestPropertySource`, `@DynamicPropertySource`, `@ActiveProfiles`.
+
+- **Declare shared mocks/spies on the single universal base** `AbstractApplicationIntegrationTest`, never per test class. Bundle them in a meta-annotation to keep the base uncluttered: `@SharedSpies` = `@MockitoSpyBean(types = {JavaMailSender.class, …})`. Spring resolves `@MockitoSpyBean` through meta-annotations via the type hierarchy, so the annotation on the base applies to every subclass and they all share one context.
+- `@MockitoSpyBean` (spy) requires the target bean to already exist in the context (unlike `@MockitoBean`, which creates one). Ensure the bean is always present — e.g. `JavaMailSender` exists in every context because `spring.mail.host` is set in `application-test.yml`; a `TestExecutionListener` only retargets host/port at runtime.
+- A JUnit `@Tag` does **not** affect the cache key. A thin tag-only subclass (`AbstractMailIntegrationTest extends AbstractApplicationIntegrationTest`, carrying only `@MailTest`) stays on the same cached context as non-tagged full-context tests.
+- The shared spy delegates to the real bean by default, so unrelated tests are unaffected. To emulate a failure in one test, stub the injected spy at runtime — `doThrow(...).when(spy).method(...)` then `doCallRealMethod().when(spy).method(...)` to restore — never `Mockito.reset()` (flagged by inspections; Spring resets bean-override mocks after each test anyway).
+- **Count contexts to verify:** run a mix of full-context classes (some tagged, some not) and `grep -c "Tomcat started on port" <run.log>` — it must print `1`. Sliced `@WebMvcTest` / `@DataJpaTest` contexts are separate by design and excluded from this count.
+
 ## Domain Stub Examples
 
 - If a test asserts `Column.empty("To Do")`, Column needs only a `name` field — not a `List<Task> tasks` field and a separate `Task.java` with 4 fields

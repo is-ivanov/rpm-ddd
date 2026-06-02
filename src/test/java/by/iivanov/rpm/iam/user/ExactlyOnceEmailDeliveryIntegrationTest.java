@@ -3,13 +3,11 @@ package by.iivanov.rpm.iam.user;
 import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.iam.user.fixtures.EmailStatements;
 import by.iivanov.rpm.iam.user.fixtures.UserApi;
-import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
-import by.iivanov.rpm.testing.MailTest;
+import by.iivanov.rpm.testing.AbstractMailIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@MailTest
-class ExactlyOnceEmailDeliveryIntegrationTest extends AbstractApplicationIntegrationTest {
+class ExactlyOnceEmailDeliveryIntegrationTest extends AbstractMailIntegrationTest {
 
     private final AuthSessionFactory authSessionFactory;
     private final UserApi userApi;

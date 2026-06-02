@@ -37,6 +37,7 @@
     <palantir-java-format.version>2.90.0</palantir-java-format.version>
     <passay.version>2.0.0</passay.version>
     <pmd.version>7.25.0</pmd.version>
+    <shedlock.version>7.7.0</shedlock.version>
     <spring-modulith.version>2.0.6</spring-modulith.version>
     <threeten-extra.version>1.9.0</threeten-extra.version>
     <uuid-creator.version>6.1.1</uuid-creator.version>
@@ -113,6 +114,21 @@
     <dependency>
       <groupId>org.springframework.modulith</groupId>
       <artifactId>spring-modulith-starter-core</artifactId>
+      <!--
+        Exclude Spring Modulith Moments (Passage-of-Time events: DayHasPassed/WeekHasPassed/...).
+        We don't use it, yet its MomentsAutoConfiguration is meta-annotated @EnableScheduling, which
+        registers the ScheduledAnnotationBeanPostProcessor application-wide. That would process EVERY
+        @Scheduled method (incl. ours) under all profiles — making scheduled jobs fire even in tests
+        and defeating the rpm.scheduler.enabled gating. Excluding it leaves our gated
+        SchedulingConfiguration as the only source of @EnableScheduling. See
+        decisions/resubmit-scheduling-wiring-decision.md; guarded by SchedulingDisabledInTestsIntegrationTest.
+      -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.modulith</groupId>
+          <artifactId>spring-modulith-moments</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.modulith</groupId>
@@ -138,6 +154,18 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+
+    <!-- ShedLock (distributed lock for scheduled jobs across instances) -->
+    <dependency>
+      <groupId>net.javacrumbs.shedlock</groupId>
+      <artifactId>shedlock-spring</artifactId>
+      <version>${shedlock.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.javacrumbs.shedlock</groupId>
+      <artifactId>shedlock-provider-jdbc-template</artifactId>
+      <version>${shedlock.version}</version>
     </dependency>
 
     <!-- jMolecules -->

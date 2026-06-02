@@ -117,6 +117,12 @@ Each test level covers only what is NOT tested by the level above it. Per `TESTI
 - Each test independent: no shared mutable state, reset mocks/fakes before each test.
 - **Fast stubs for external components in unit tests**: when a unit test (Level 3-4) depends on an external library component (password encoder, HTTP client, etc.) and the test does not verify that component's behavior, use the fastest available no-op or stub implementation (e.g., `NoOpPasswordEncoder` instead of `BCryptPasswordEncoder`). The test must still pass the correct interface type — just avoid expensive real implementations.
 
+### Single Full Application Context
+- **All full-context tests share ONE wired-up context.** The full-context tier (end-to-end / acceptance tests that boot the whole application) is the slowest, and the test framework caches and reuses a context across tests that request the same configuration. Every full-context test must resolve to the **same** cached context — a second full context doubles cold-start cost on the most expensive tier.
+- **Never introduce per-test configuration that forks a second full context.** Anything that changes the wiring a test requests — importing a test-only configuration, replacing or overriding a dependency, overriding a setting — applied to a single test class instead of the shared base every full-context test extends, creates a distinct cached context. Put such overrides on the shared base so they apply uniformly (defaulting to real behavior), and let individual tests adjust them at runtime.
+- **Additional contexts are allowed only for sliced/partial-context tests.** Slice tests intentionally boot a narrower context per slice — that is expected and exempt. This rule governs the *full* context only.
+- **When adding configuration that affects wiring, verify the full-context count stays at one** (see the tech binding for the concrete fork triggers and how to count contexts in this stack). If the count rises, move the configuration to the shared base.
+
 ### Statements Dependency Limit
 - A Statements class with more than 8 injected dependencies is a sign it needs splitting. Extract a focused Statements class per concern (e.g., `TaskStatements` + `BoardStatements` instead of one monolith).
 
@@ -146,3 +152,12 @@ Each test level covers only what is NOT tested by the level above it. Per `TESTI
 
 ### Time-Dependent Behavior
 **NEVER mutate storage data to simulate time passing.** Use a test clock and advance it instead. For example, to expire a session: create it normally (30-day expiry), then advance the clock past expiry. Directly overwriting entities with past timestamps couples tests to internal storage structure and misrepresents how the system actually works.
+
+### Scheduled / Recurring Jobs
+A scheduled job has two separable concerns — its **logic** (what it does each run) and its **wiring** (that it is actually scheduled to run in production). Direct invocation tests only the logic; the wiring is the part that silently rots (a forgotten schedule annotation never fires, and no logic test notices).
+
+- **Bind the schedule to a required configuration value.** The recurrence (cron/interval) must come from a *required* config property referenced by the schedule annotation — never a hardcoded literal. A missing or blank schedule then fails context startup loudly instead of silently never running.
+- **Keep "scheduling is enabled" application-wide; gate each job independently.** Enabling the framework's scheduling affects every scheduled method, so it belongs in a general application configuration, not coupled to one job. Switch an individual job's automatic firing on/off via its own default-on enable flag, so test suites can disable a specific job (and exercise its logic by direct invocation) while leaving scheduling available for the rest.
+- **Verify wiring with a fast production-config context test.** A scheduled job is not "done" until a test boots the production scheduling configuration and asserts (a) the context starts — proving the schedule value resolves and the job is wired — and (b) the schedule expression is valid and fires at the intended times. This is fast and deterministic; never gate wiring coverage behind awaiting a real tick in a slow full-context test.
+- **Never verify a scheduled job's production wiring solely by invoking its method directly.** Direct invocation is fine (and preferred, for determinism) for the *logic* scenarios — but the scenario set must also include the production-schedule wiring test above.
+- **Recurring jobs run on every instance.** Guard against concurrent execution across instances with a distributed lock (see the multi-instance deployment rule in `coding-rules.md`).

@@ -5,7 +5,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -13,7 +13,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
  * Sends activation emails over SMTP, rendering the multipart (HTML + plain-text) body via
  * {@link ActivationEmailRenderer} before delivering through the configured {@link JavaMailSender}.
  */
-@Primary
+@ConditionalOnProperty(prefix = "spring.mail", name = "host")
 @InfrastructureComponent
 // JavaMailSender is contributed by Spring Boot's MailSenderAutoConfiguration when spring.mail.host
 // is set; IntelliJ cannot see that conditional bean statically (verified resolvable at runtime by
@@ -50,14 +50,19 @@ class SmtpEmailNotificationSender implements EmailNotificationSender {
     private MimeMessage buildMessage(String toEmail, ActivationEmailContent content) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
-            helper.setFrom(emailProperties.fromAddress(), emailProperties.fromName());
-            helper.setTo(toEmail);
-            helper.setSubject(content.subject());
-            helper.setText(content.textBody(), content.htmlBody());
+            populateMessage(message, toEmail, content);
             return message;
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new IllegalStateException("Failed to build activation email for " + toEmail, e);
         }
+    }
+
+    private void populateMessage(MimeMessage message, String toEmail, ActivationEmailContent content)
+            throws MessagingException, UnsupportedEncodingException {
+        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
+        helper.setFrom(emailProperties.fromAddress(), emailProperties.fromName());
+        helper.setTo(toEmail);
+        helper.setSubject(content.subject());
+        helper.setText(content.textBody(), content.htmlBody());
     }
 }

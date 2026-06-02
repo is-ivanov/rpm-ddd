@@ -2,8 +2,8 @@ package by.iivanov.rpm.iam.user.fixtures;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-import by.iivanov.rpm.iam.user.infrastructure.events.ResubmitIncompletePublicationsJob;
 import by.iivanov.rpm.iam.user.infrastructure.web.RegisterUserRequest;
+import by.iivanov.rpm.shared.infrastructure.events.ResubmitIncompletePublicationsJob;
 import ch.martinelli.oss.testcontainers.mailpit.Message;
 import java.util.UUID;
 import org.springframework.modulith.events.core.EventPublicationRegistry;

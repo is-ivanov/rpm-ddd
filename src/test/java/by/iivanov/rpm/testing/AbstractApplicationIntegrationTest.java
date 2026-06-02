@@ -1,12 +1,13 @@
 package by.iivanov.rpm.testing;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneOffset;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.convention.TestBean;
-import org.threeten.extra.MutableClock;
 
 @ApplicationIntegrationTest
+@SharedSpies
+@Import(SharedTestClockConfiguration.class)
 public abstract class AbstractApplicationIntegrationTest {
 
     @SuppressWarnings("NullAway.Init")
@@ -14,10 +15,11 @@ public abstract class AbstractApplicationIntegrationTest {
     protected Clock clock;
 
     static Clock clock() {
-        return MutableClock.of(Instant.parse("2026-01-05T10:23:56.632Z"), ZoneOffset.UTC);
+        return SharedTestClockConfiguration.CLOCK;
     }
 
-    protected MutableClock mutableClock() {
-        return (MutableClock) clock;
+    @BeforeEach
+    void resetTestClock() {
+        SharedTestClockConfiguration.resetToFixed();
     }
 }

@@ -1,37 +1,85 @@
-# Scheduling Adapter Implementation Template
+# Scheduling Implementation Template (Spring Boot · modular monolith)
+
+Binds the universal "Scheduled / Recurring Jobs" rule (`tdd-rules.md`) to this stack. Jobs live in the
+infrastructure ring of the owning subdomain, or in `shared.infrastructure.events` when they operate
+across the whole application's event registry.
 
 ## Rules
 
-- Jobs are `@Component` classes with `@Scheduled` + `@SchedulerLock` methods
-- Jobs delegate immediately to a usecase — no business logic in the job
-- `SchedulingConfiguration` owns `@EnableScheduling`, `@EnableSchedulerLock`, and the `LockProvider` bean
-- Cron expressions and lock durations come from `application.yml` properties
+- **Schedule comes from a required property.** Annotate with `@Scheduled(cron = "${prop.cron}")` or
+  `@Scheduled(fixedRateString = "${prop.interval}")` — never a hardcoded literal. A missing property
+  then fails context startup (placeholder cannot resolve) instead of silently never firing.
+- **`@EnableScheduling` is application-wide.** It enables every `@Scheduled` method in the context, so
+  it belongs on one general application configuration that is always loaded — not on a per-job config.
+- **Gate each job independently** with `@ConditionalOnProperty(name = "<job>.enabled", matchIfMissing =
+  true)` on the job component. Integration tests set the flag to `false` (in `application-test.yml`) so
+  the job never auto-fires during tests; its logic is exercised by invoking the method directly. Other
+  jobs keep firing because scheduling itself stays enabled.
+- **Type the configuration.** Bind related schedule values into one `@ConfigurationProperties` record
+  (`@Validated`, `@NotNull`/`@DefaultValue` per field) — never inject each value with a bare `@Value`.
+  See the config-grouping rule in `coding-rules.md`.
+- **Multi-instance safety: ShedLock.** The backend runs as multiple instances, so an unguarded
+  `@Scheduled` job fires on every instance concurrently. Add `@SchedulerLock` on the job method, with
+  `@EnableSchedulerLock` + a JDBC `LockProvider` bean on the shared scheduling configuration, and a
+  Liquibase migration for the `shedlock` table. ShedLock is **not yet a dependency** in `pom.xml` — adding
+  it (`net.javacrumbs.shedlock:shedlock-spring` + `shedlock-provider-jdbc-template`) is part of the job's
+  implementation step.
+- **Jobs delegate.** A job is a first-layer adapter (`@InfrastructureComponent`): it resolves its schedule,
+  acquires its lock, and calls into the domain/application or framework collaborator — nothing more. The
+  "no business logic in adapters; delegate immediately" rule (`coding-rules.md`) applies unchanged.
 
-## Reference (read before generating)
+## Pattern (per this repo)
 
-- Configuration: `backend/adapters/scheduling/src/main/java/com/example/scheduling/SchedulingConfiguration.java`
-- Existing job: `backend/adapters/scheduling/src/main/java/com/example/scheduling/CleanupJob.java`
-- Usecase port: `backend/usecase/src/main/java/com/example/usecase/cleanup/ProcessCleanup.java`
+```java
+// 1. Typed schedule config — one record per job concern
+@ConfigurationProperties("rpm.events.resubmit")
+@Validated
+public record EventResubmitProperties(@DefaultValue("true") boolean enabled, @NotNull Duration interval) {}
 
-## Pattern
+// 2. Application-wide scheduling switch — always loaded, enables ALL @Scheduled methods
+@Configuration
+@EnableScheduling
+@EnableSchedulerLock(defaultLockAtMostFor = "PT30S")
+class SchedulingConfiguration {
+    @Bean
+    LockProvider lockProvider(DataSource dataSource) {
+        return new JdbcTemplateLockProvider(/* … shedlock table … */);
+    }
+}
 
-1. Create `@Component` class with `@RequiredArgsConstructor`
-2. Inject the usecase service
-3. Add `@Scheduled(cron = "${property.cron}")` on the execute method
-4. Add `@SchedulerLock(name = "lock-name", lockAtLeastFor = "${property.lock-at-least-for}")` for distributed lock
-5. Delegate to usecase: `usecase.execute()`
+// 3. The job — gated independently, schedule + lock from properties
+@InfrastructureComponent
+@ConditionalOnProperty(name = "rpm.events.resubmit.enabled", matchIfMissing = true)
+class ResubmitIncompletePublicationsJob {
 
-## Application Properties
-
-Add to `application.yml`:
-```yaml
-job-name:
-  cron: "0 0 3 * * *"           # e.g., daily at 3 AM
-  lock-at-least-for: PT5M       # prevent re-execution within 5 minutes
+    @Scheduled(fixedRateString = "${rpm.events.resubmit.interval}")
+    @SchedulerLock(name = "resubmitIncompletePublications")
+    public void resubmit() { /* delegate */ }
+}
 ```
 
-## Key Paths
+## Configuration
 
-- Jobs: `backend/adapters/scheduling/src/main/java/com/example/scheduling/`
-- Config: `backend/adapters/scheduling/src/main/java/com/example/scheduling/SchedulingConfiguration.java`
-- Usecase ports: `backend/usecase/src/main/java/com/example/usecase/`
+`application.yml` (production default):
+```yaml
+rpm:
+  events:
+    resubmit:
+      interval: 5s        # required — bound by @Scheduled(fixedRateString)
+      # enabled defaults to true
+```
+
+`application-test.yml` (integration tests disable auto-firing; logic tested by direct invocation):
+```yaml
+rpm:
+  events:
+    resubmit:
+      enabled: false
+```
+
+## Key Paths (this project)
+
+- Cross-cutting job + scheduling config: `src/main/java/by/iivanov/rpm/shared/infrastructure/events/`
+- Subdomain-specific job: `…/{context}/{subdomain}/infrastructure/events/`
+- ShedLock migration: `src/main/resources/db/changelog/…`
+- Properties: co-located with the job; registered via `@ConfigurationPropertiesScan` or `@EnableConfigurationProperties`
