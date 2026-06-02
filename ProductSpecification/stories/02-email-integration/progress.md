@@ -115,9 +115,9 @@
 - [x] green-acceptance (`SmtpRecoveryEmailDeliveryIntegrationTest` committed; passes 1/1)
 
 ### Scenario 7.1: The application context starts with the production mail configuration
-> Reopened: tests run under the `test` profile (Mailpit supplies `JavaMailSender`); `prod` had no `spring.mail.*`, so the unconditional `@Primary SmtpEmailNotificationSender` cannot construct and the context fails to start on Render.
-- [ ] red-acceptance
-- [ ] design (`/architecture` ADR: (1) sender selection — real SMTP when configured vs fail-fast when *prod* mail absent; (2) local-dev mail — docker SMTP vs `local`-profile file-writing `JavaMailSender` (body `.html`/text + metadata `.json`) vs `NoOp`; replaces the unconditional NoOp+Smtp coexistence)
+> Reopened: tests run under the `test` profile (Mailpit supplies `JavaMailSender`); `prod` had no `spring.mail.*`, so the unconditional `@Primary SmtpEmailNotificationSender` cannot construct and the context fails to start on Render. **Design ran before red here** — the bootstrap test references production types (conditional sender, prod mail bindings) whose shape is an architectural decision (mirrors 8.1).
+- [x] design (ADR `production-mail-bootstrap`: prod fail-fast with required `${SPRING_MAIL_*}` env bindings; `SmtpEmailNotificationSender` `@ConditionalOnProperty(spring.mail.host)` as the sole sender; remove `NoOpEmailNotificationSender`; local Mailpit via `docker/services.yml` + `application-local.yml`. Local-dev choice weighed against GreenMail-for-tests #98 + transport-extraction #97.)
+- [~] red-acceptance (sliced `ApplicationContextRunner` `ProductionMailBootstrapTest`, mirrors `EventResubmitSchedulingTest`, must not fork the shared full context; RED via `hasSingleBean(EmailNotificationSender)` failing on the NoOp+Smtp coexistence — see ADR "RED expectation")
 - [S] red-usecase (context/config bootstrap — no usecase/application change)
 - [S] green-usecase
 - [S] red-domain
