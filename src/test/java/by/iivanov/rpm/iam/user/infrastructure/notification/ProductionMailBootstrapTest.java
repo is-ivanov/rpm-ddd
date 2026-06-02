@@ -2,7 +2,6 @@ package by.iivanov.rpm.iam.user.infrastructure.notification;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -19,18 +18,12 @@ import org.springframework.mail.javamail.JavaMailSender;
  * exactly one {@link EmailNotificationSender} wired. This is a sliced {@link ApplicationContextRunner}
  * that does not fork the shared full acceptance context.
  */
-// RED: fails on hasSingleBean(EmailNotificationSender.class) — NoOp and the unconditional @Primary Smtp
-// sender both register (2 beans). GREEN removes NoOp and gates Smtp with @ConditionalOnProperty.
-@Disabled("RED phase: two EmailNotificationSender beans until NoOp removed and Smtp gated (Scenario 7.1)")
 class ProductionMailBootstrapTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(MailSenderAutoConfiguration.class))
             .withUserConfiguration(
-                    NotificationBeans.class,
-                    SmtpEmailNotificationSender.class,
-                    NoOpEmailNotificationSender.class,
-                    ActivationEmailRenderer.class)
+                    NotificationBeans.class, SmtpEmailNotificationSender.class, ActivationEmailRenderer.class)
             .withPropertyValues(
                     "spring.mail.host=smtp.example.com",
                     "spring.mail.port=587",
