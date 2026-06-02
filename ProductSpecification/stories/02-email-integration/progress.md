@@ -122,5 +122,9 @@
 - [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [~] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery
+  - Check 1 (ports): email — config/wiring scenario, no usecase/ports. GREEN implementation (drop `@Primary` + add `@ConditionalOnProperty(prefix="spring.mail", name="host")` on `SmtpEmailNotificationSender`; remove `NoOpEmailNotificationSender` — no production injector references it, only the wiring test; add `spring.mail.*` to `application-prod.yml`+`application-local.yml`, add Mailpit to `docker/services.yml`) does not exist. RED already covered by the committed `ProductionMailBootstrapTest` (red-acceptance). Not simple delegation/endpoint plumbing → exceeds green-acceptance remove-marker scope → `green-adapter email`.
+  - Check 2 (exceptions): [S] — config bootstrap, no domain exceptions to map
+  - Check 3 (response shape): [S] — sliced `ApplicationContextRunner` wiring test, no HTTP response
+- [~] green-adapter email (per ADR `production-mail-bootstrap`: gate `SmtpEmailNotificationSender` with `@ConditionalOnProperty(spring.mail.host)` + drop `@Primary` as sole `EmailNotificationSender`; delete `NoOpEmailNotificationSender`; `application-prod.yml` `spring.mail.{host,port,username,password}`←required `${SPRING_MAIL_*}` + STARTTLS props; `application-local.yml` Mailpit; `docker/services.yml` mailpit service; remove `@Disabled` from `ProductionMailBootstrapTest` → green)
+- [S] green-acceptance (wiring covered at adapter level; no separate acceptance test — mirrors 8.1)
