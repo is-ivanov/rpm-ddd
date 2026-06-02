@@ -1,4 +1,4 @@
-# Decision: Production mail bootstrap — fail-fast prod config, conditional SMTP sender, local Mailpit
+# Decision: Production mail bootstrap — fail-fast prod config, conditional SMTP sender, local Mailpit, SMTP2GO provider
 
 **Date**: 2026-06-02 **Scenarios**: 7.1
 
@@ -17,7 +17,7 @@ The unconditional `@Primary SmtpEmailNotificationSender` hard-requires a `JavaMa
 
 ## Model
 
-- `application-prod.yml` — add `spring.mail.host/port/username/password` bound to required `${SPRING_MAIL_HOST}`/`…PORT`/`…USERNAME`/`…PASSWORD` (no defaults); add `spring.mail.properties.mail.smtp.*` (TLS/timeouts) as the deploy provider requires.
+- `application-prod.yml` — add `spring.mail.host/port/username/password` bound to required `${SPRING_MAIL_HOST}`/`…PORT`/`…USERNAME`/`…PASSWORD` (no defaults); add `spring.mail.properties.mail.smtp.{auth=true, starttls.enable=true, starttls.required=true, connectiontimeout/timeout/writetimeout=20000}`. The block stays **provider-agnostic** (all values from env vars) — the provider choice below is realized purely as the env-var values on Render.
 - `application-local.yml` — add `spring.mail.host: localhost` + `spring.mail.port` (local Mailpit SMTP).
 - `docker/services.yml` — add a `mailpit` service (SMTP + `8025` web UI) for local dev, separate from `docker/infra-tests.yml`.
 - `SmtpEmailNotificationSender` — drop `@Primary`; add `@ConditionalOnProperty(prefix = "spring.mail", name = "host")`; sole `EmailNotificationSender`.
@@ -27,6 +27,30 @@ The unconditional `@Primary SmtpEmailNotificationSender` hard-requires a `JavaMa
 ## RED expectation
 
 `hasSingleBean(EmailNotificationSender.class)` fails **today** — `NoOp` and the unconditional `Smtp` sender both register (two beans). After removing `NoOp` and gating `Smtp`, exactly one sender remains → GREEN. This is the legitimate red state for the scenario; the positive happy-path alone (context starts when mail is configured) already passes via autoconfiguration and is not red on its own.
+
+## Provider selection (free SMTP relay)
+
+Render provides no email; an external SMTP relay is required. Constraints: transactional activation emails over `JavaMailSender`/SMTP (provider-agnostic — no code change), **very low volume** (registrations are rare), free tier, resilient to PaaS port blocks.
+
+| Rejected | Why |
+|----------|-----|
+| SendGrid | Free tier removed in 2026 (60-day trial only). |
+| MailerSend | Free tier repeatedly cut (12k → 500/mo) — longevity risk. |
+| Resend | 3,000/mo free, but SMTP is secondary to its HTTP API and its React-Email strengths go unused (we render Thymeleaf + send via SMTP). |
+| Brevo | 300/day (~9k/mo) free and viable, but an all-in-one marketing suite (more than needed) and the SMTP password must be an *SMTP key* (not the API key) — a common auth pitfall. Kept as the documented fallback. |
+
+**Chosen**: **SMTP2GO** — SMTP-first (matches our transport), best free-tier deliverability, 1,000 emails/month forever (far above activation volume), and the most port-flexible (`2525`/`8025`/`587`/`80` for TLS, `465`/`8465`/`443` for SSL) so it survives a Render block of `587`/`25`. Credentials are a plain SMTP user + password created under *Sending → SMTP Users*.
+
+**Production env vars on Render** (set the values for the agnostic `spring.mail.*` block):
+
+| Env var | Value |
+|---------|-------|
+| `SPRING_MAIL_HOST` | `mail.smtp2go.com` |
+| `SPRING_MAIL_PORT` | `2525` (STARTTLS; `587` also valid) |
+| `SPRING_MAIL_USERNAME` | the SMTP2GO SMTP user |
+| `SPRING_MAIL_PASSWORD` | the SMTP2GO SMTP password |
+
+Provider swap (e.g. to Brevo `smtp-relay.brevo.com:587`, username = login email, password = SMTP key) is a pure env-var change — no redeploy of code. The sender identity (`rpm.mail.from-address`) must be a domain/sender verified in the chosen provider for deliverability.
 
 ## Edge Cases
 
