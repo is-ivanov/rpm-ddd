@@ -137,12 +137,12 @@ jobs:
         node-version: 'lts/*'
         cache: npm
     - name: Download build Allure results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: allure-results-build
         path: target/allure-results
     - name: Download e2e Allure results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: allure-results-e2e
         path: target/allure-results
@@ -171,7 +171,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - name: Download Allure report
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: allure-report
         path: allure-report
