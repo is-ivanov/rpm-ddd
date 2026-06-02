@@ -1,4 +1,4 @@
-# Decision: Production mail bootstrap — fail-fast prod config, conditional SMTP sender, local Mailpit, SMTP2GO provider
+# Decision: Production mail bootstrap — fail-fast prod config, conditional SMTP sender, local Mailpit; Gmail SMTP for the no-domain MVP (SMTP2GO upgrade)
 
 **Date**: 2026-06-02 **Scenarios**: 7.1
 
@@ -30,27 +30,30 @@ The unconditional `@Primary SmtpEmailNotificationSender` hard-requires a `JavaMa
 
 ## Provider selection (free SMTP relay)
 
-Render provides no email; an external SMTP relay is required. Constraints: transactional activation emails over `JavaMailSender`/SMTP (provider-agnostic — no code change), **very low volume** (registrations are rare), free tier, resilient to PaaS port blocks.
+Render provides no email; an external SMTP relay is required. Constraints: transactional activation emails over `JavaMailSender`/SMTP (provider-agnostic — no code change), **very low volume** (registrations are rare), free tier, **no custom domain** (this is a free-tier MVP on Render + Supabase). In 2026, sending to arbitrary inboxes (Gmail/Yahoo/Microsoft sender rules) effectively requires a domain-authenticated sender (SPF/DKIM) — so domain-requiring providers are deferred until a domain exists.
 
-| Rejected | Why |
+| Rejected (for the no-domain MVP) | Why |
 |----------|-----|
-| SendGrid | Free tier removed in 2026 (60-day trial only). |
-| MailerSend | Free tier repeatedly cut (12k → 500/mo) — longevity risk. |
-| Resend | 3,000/mo free, but SMTP is secondary to its HTTP API and its React-Email strengths go unused (we render Thymeleaf + send via SMTP). |
-| Brevo | 300/day (~9k/mo) free and viable, but an all-in-one marketing suite (more than needed) and the SMTP password must be an *SMTP key* (not the API key) — a common auth pitfall. Kept as the documented fallback. |
+| SMTP2GO | Best free-tier deliverability and most port-flexible, **but blocks signup with free webmail** — requires an email on your own domain to even create the account. Kept as the **upgrade** once a domain exists. |
+| Brevo | Gmail signup allowed, but free webmail sender addresses **cannot be authenticated** — domain DNS auth is required to send. Domain-gated. |
+| Mailjet | 6,000/mo free; signup with Gmail allowed **and a single sender address can be verified by clicking a link (no domain/DNS)** — the closest no-domain alternative. Runner-up; rejected only because Gmail SMTP needs zero new signup for the MVP. |
+| SendGrid / MailerSend / Resend | SendGrid free tier removed; MailerSend free tier shrinking (500/mo); Resend is HTTP-API-first and still needs domain verification to send to others. |
 
-**Chosen**: **SMTP2GO** — SMTP-first (matches our transport), best free-tier deliverability, 1,000 emails/month forever (far above activation volume), and the most port-flexible (`2525`/`8025`/`587`/`80` for TLS, `465`/`8465`/`443` for SSL) so it survives a Render block of `587`/`25`. Credentials are a plain SMTP user + password created under *Sending → SMTP Users*.
+**Chosen (current MVP, no domain): Gmail SMTP.** The account already exists; sending works without a domain. Limits: ~500 recipients/day; Gmail rewrites the `From` to the authenticated account, so the sender identity must be the Gmail address (override `rpm.mail.from-address`). It is a grey area under Google's terms for app sending but is fine for a low-volume MVP smoke test.
 
-**Production env vars on Render** (set the values for the agnostic `spring.mail.*` block):
+**Production env vars on Render** (Gmail; the agnostic `spring.mail.*` block needs no code change):
 
 | Env var | Value |
 |---------|-------|
-| `SPRING_MAIL_HOST` | `mail.smtp2go.com` |
-| `SPRING_MAIL_PORT` | `2525` (STARTTLS; `587` also valid) |
-| `SPRING_MAIL_USERNAME` | the SMTP2GO SMTP user |
-| `SPRING_MAIL_PASSWORD` | the SMTP2GO SMTP password |
+| `SPRING_MAIL_HOST` | `smtp.gmail.com` |
+| `SPRING_MAIL_PORT` | `587` (STARTTLS) |
+| `SPRING_MAIL_USERNAME` | the Gmail address |
+| `SPRING_MAIL_PASSWORD` | a Google **App Password** (16 chars; requires 2-Step Verification — the normal password will not work) |
+| `RPM_MAIL_FROMADDRESS` | the same Gmail address (Gmail overrides any other `From`) |
 
-Provider swap (e.g. to Brevo `smtp-relay.brevo.com:587`, username = login email, password = SMTP key) is a pure env-var change — no redeploy of code. The sender identity (`rpm.mail.from-address`) must be a domain/sender verified in the chosen provider for deliverability.
+**Immediate Render unblock:** setting these env vars fixes the deploy crash *before* the 7.1 TDD cycle lands — Spring relaxed binding maps `SPRING_MAIL_*` to `spring.mail.*` even with no `application-prod.yml` entry, so `MailSenderAutoConfiguration` contributes a `JavaMailSender` and the sender constructs. (Actual *sending* over 587 also needs STARTTLS — added to `application-prod.yml` by 7.1, or temporarily via `SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=true`.)
+
+**Upgrade path (when a domain is acquired):** switch to **SMTP2GO** (`mail.smtp2go.com:2525`, plain SMTP user/password) for the best free-tier deliverability and port flexibility, or Brevo/Mailjet. A provider swap is a pure env-var change — no code redeploy. With a domain, set `rpm.mail.from-address` to a domain sender (e.g. `no-reply@<domain>`) and add SPF/DKIM for inbox placement.
 
 ## Edge Cases
 
