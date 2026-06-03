@@ -4,7 +4,6 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import by.iivanov.rpm.iam.user.infrastructure.web.RegisterUserRequest;
 import by.iivanov.rpm.shared.infrastructure.events.ResubmitIncompletePublicationsJob;
-import ch.martinelli.oss.testcontainers.mailpit.Message;
 import java.util.UUID;
 import org.springframework.modulith.events.core.EventPublicationRegistry;
 import org.springframework.stereotype.Component;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  * Statements for asserting activation-email delivery in acceptance tests.
  *
- * <p>Orchestrates setup (inbox reset) and delivery assertions via {@link MailpitTestClient}; it owns
+ * <p>Orchestrates setup (inbox reset) and delivery assertions via {@link GreenMailTestClient}; it owns
  * no HTTP calls itself.
  */
 @Component
@@ -31,22 +30,22 @@ public class EmailStatements {
      */
     private static final String EXPECTED_ACTIVATION_LINK_PREFIX = "http://localhost:5173/activate?token=";
 
-    private final MailpitTestClient mailpitTestClient;
+    private final GreenMailTestClient greenMailTestClient;
     private final ResubmitIncompletePublicationsJob resubmitJob;
     private final EventPublicationRegistry eventPublicationRegistry;
 
     public EmailStatements(
-            MailpitTestClient mailpitTestClient,
+            GreenMailTestClient greenMailTestClient,
             ResubmitIncompletePublicationsJob resubmitJob,
             EventPublicationRegistry eventPublicationRegistry) {
-        this.mailpitTestClient = mailpitTestClient;
+        this.greenMailTestClient = greenMailTestClient;
         this.resubmitJob = resubmitJob;
         this.eventPublicationRegistry = eventPublicationRegistry;
     }
 
     /** Clears all previously captured messages so the scenario starts from an empty inbox. */
     public void givenEmptyInbox() {
-        mailpitTestClient.clearInbox();
+        greenMailTestClient.clearInbox();
     }
 
     /**
@@ -77,16 +76,13 @@ public class EmailStatements {
      * @param recipientEmail the email address the activation message must be delivered to
      */
     public void assertActivationEmailDeliveredTo(String recipientEmail) {
-        Message message = mailpitTestClient.awaitMessageDeliveredTo(recipientEmail);
+        DeliveredEmail email = greenMailTestClient.awaitMessageDeliveredTo(recipientEmail);
 
-        then(message.from().name()).as("Activation email from-name").isEqualTo(EXPECTED_FROM_NAME);
-        then(message.from().address()).as("Activation email from-address").isEqualTo(EXPECTED_FROM_ADDRESS);
-        then(message.recipients())
-                .as("Activation email recipient")
-                .extracting("address")
-                .containsExactly(recipientEmail);
-        then(message.subject()).as("Activation email subject").isEqualTo(EXPECTED_SUBJECT);
-        then(mailpitTestClient.htmlBodyOf(message))
+        then(email.fromName()).as("Activation email from-name").isEqualTo(EXPECTED_FROM_NAME);
+        then(email.fromAddress()).as("Activation email from-address").isEqualTo(EXPECTED_FROM_ADDRESS);
+        then(email.recipients()).as("Activation email recipient").containsExactly(recipientEmail);
+        then(email.subject()).as("Activation email subject").isEqualTo(EXPECTED_SUBJECT);
+        then(email.htmlBody())
                 .as("Activation email body must contain the frontend activation link prefix with the token")
                 .contains(EXPECTED_ACTIVATION_LINK_PREFIX);
     }
@@ -103,8 +99,8 @@ public class EmailStatements {
      * @param recipientEmail the recipient address that must hold exactly one activation message
      */
     public void assertExactlyOneActivationEmailDeliveredTo(String recipientEmail) {
-        mailpitTestClient.awaitMessageDeliveredTo(recipientEmail);
-        then(mailpitTestClient.countMessagesDeliveredTo(recipientEmail))
+        greenMailTestClient.awaitMessageDeliveredTo(recipientEmail);
+        then(greenMailTestClient.countMessagesDeliveredTo(recipientEmail))
                 .as("Activation emails delivered to %s", recipientEmail)
                 .isEqualTo(1L);
     }

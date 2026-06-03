@@ -25,13 +25,16 @@ GreenMail server + a proof test without touching the live Mailpit path.
 - [x] refactor (added `greenmail-junit5` dep; built in-JVM `GreenMailServer` bootstrap + `GreenMailServerTest` proof
   — JavaMail→loopback delivery works near-instantly, `getReceivedMessages()` exposes subject/recipient/HTML body. The
   Mailpit path is untouched, so the full suite stays green.)
-- [~] refactor (atomic harness switch: add a GreenMail `TestExecutionListener` that starts `GreenMailServer` and sets
-  `spring.mail.host/port` in `testPlanExecutionStarted` when `mail`-tagged tests exist; swap `MailpitTestClient`/
-  `EmailStatements` to the GreenMail Java API — `getReceivedMessages()` filtered by recipient, `MimeMessage` HTML-body
-  extraction; deregister the Mailpit listener from `META-INF/services`) — run mail integration suite green
-- [ ] refactor (cleanup: remove the `mailpit` service from `docker/infra-tests.yml`; drop the `mail.smtp.*` timeout +
+- [x] refactor (atomic harness switch: added `GreenMailServerTestExecutionListener` (starts `GreenMailServer`, sets
+  `spring.mail.host/port` pre-boot, registered in `META-INF/services` in place of the Mailpit listener); replaced
+  `MailpitTestClient` with `GreenMailTestClient` — `getReceivedMessages()` filtered by recipient, recursive decoded
+  `text/html` extraction, returning a `DeliveredEmail` snapshot; updated `EmailStatements`/`StalePublicationStatements`
+  to the snapshot API. Mail suite green: 4/4 — `UserRegistrationIntegrationTest` 0.37s & `SmtpRecovery…` 0.73s confirm
+  the ~9s greeting tax is gone.)
+- [~] refactor (cleanup: remove the `mailpit` service from `docker/infra-tests.yml`; drop the `mail.smtp.*` timeout +
   `127.0.0.1`-pin workaround and the `MailpitAutoConfiguration` exclude from `application-test.yml`; remove the
-  `testcontainers-mailpit` dependency and the dead Mailpit files)
+  `testcontainers-mailpit` dependency and the dead Mailpit files — `MailpitContainerTestExecutionListener`,
+  `MailpitContainersLifecycleManager`)
 - [ ] green-acceptance (mail integration suite green deterministically — `UserRegistrationIntegrationTest` 1.1,
   `SmtpRecoveryEmailDeliveryIntegrationTest` 5.1, `ExactlyOnceEmailDeliveryIntegrationTest` 6.1 — and the ~9s tax gone)
 

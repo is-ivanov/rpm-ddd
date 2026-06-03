@@ -1,2 +1,2 @@
 by.iivanov.rpm.testing.DbContainerTestExecutionListener
-by.iivanov.rpm.testing.MailpitContainerTestExecutionListener
+by.iivanov.rpm.testing.GreenMailServerTestExecutionListener

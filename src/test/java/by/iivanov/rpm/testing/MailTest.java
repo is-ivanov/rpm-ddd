@@ -8,10 +8,10 @@ import java.lang.annotation.Target;
 import org.junit.jupiter.api.Tag;
 
 /**
- * Meta-annotation to mark tests that require a Mailpit SMTP server.
- * - Adds JUnit tag {@code mail} for the {@link MailpitContainerTestExecutionListener} plan detection;
- * - The listener probes the shared Mailpit (started by {@code Infra-Tests-Up}) and reuses it,
- *   or starts a reusable Testcontainer when the shared instance is unreachable.
+ * Meta-annotation to mark tests that require an SMTP server for activation-email delivery.
+ * - Adds JUnit tag {@code mail} for the {@link GreenMailServerTestExecutionListener} plan detection;
+ * - The listener starts the in-JVM {@link GreenMailServer} and exports its loopback SMTP coordinates
+ *   as {@code spring.mail.*} system properties before the Spring context boots.
  */
 @Tag(Constants.MAIL_TEST_TAG)
 @Target({ElementType.TYPE, ElementType.METHOD})
