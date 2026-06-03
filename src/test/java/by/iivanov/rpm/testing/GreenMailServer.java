@@ -8,11 +8,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Manages a single in-JVM GreenMail SMTP server, kept alive for the whole test run.
  *
- * <p>Unlike the Docker-backed Mailpit path, GreenMail runs inside the test JVM and binds the loopback
- * interface directly, so there is no Docker Desktop port-proxy in the SMTP path and the
- * server-speaks-first {@code 220} greeting is delivered instantly. The server is started idempotently
- * and reused across all mail-tagged tests, mirroring the shared-instance lifecycle of
- * {@link MailpitContainersLifecycleManager} — only in-process.
+ * <p>GreenMail runs inside the test JVM and binds the loopback interface directly, so there is no Docker
+ * Desktop port-proxy in the SMTP path and the server-speaks-first {@code 220} greeting is delivered
+ * instantly. The server is started idempotently and reused across all mail-tagged tests, mirroring the
+ * shared-instance lifecycle of the database test infrastructure — only in-process.
  */
 public final class GreenMailServer {
 

@@ -31,11 +31,15 @@ GreenMail server + a proof test without touching the live Mailpit path.
   `text/html` extraction, returning a `DeliveredEmail` snapshot; updated `EmailStatements`/`StalePublicationStatements`
   to the snapshot API. Mail suite green: 4/4 — `UserRegistrationIntegrationTest` 0.37s & `SmtpRecovery…` 0.73s confirm
   the ~9s greeting tax is gone.)
-- [~] refactor (cleanup: remove the `mailpit` service from `docker/infra-tests.yml`; drop the `mail.smtp.*` timeout +
-  `127.0.0.1`-pin workaround and the `MailpitAutoConfiguration` exclude from `application-test.yml`; remove the
-  `testcontainers-mailpit` dependency and the dead Mailpit files — `MailpitContainerTestExecutionListener`,
-  `MailpitContainersLifecycleManager`)
-- [ ] green-acceptance (mail integration suite green deterministically — `UserRegistrationIntegrationTest` 1.1,
+- [x] refactor (cleanup: removed the `mailpit` service from `docker/infra-tests.yml` + its `docker/.env` vars; dropped
+  the `mail.smtp.*` timeout/HELO-pin workaround and the `MailpitAutoConfiguration` exclude from `application-test.yml`
+  (kept `spring.mail.host: localhost` — required for the `@ConditionalOnProperty` `SmtpEmailNotificationSender` bean in
+  non-mail full-context runs); removed the `testcontainers-mailpit` dependency + version property and the dead Mailpit
+  files (`MailpitContainerTestExecutionListener`, `MailpitContainersLifecycleManager`); fixed the now-dangling Mailpit
+  Javadoc links in `GreenMailServer`/`SharedSpies`. Captured `GreenMailServer.instance()` in a `final GreenMail` field
+  in `GreenMailTestClient`, making `receivedMessages()`/`clearInbox()` instance methods. Mail suite green: 4/4, still
+  fast — dropping the HELO pin reintroduced no reverse-lookup slowdown.)
+- [~] green-acceptance (mail integration suite green deterministically — `UserRegistrationIntegrationTest` 1.1,
   `SmtpRecoveryEmailDeliveryIntegrationTest` 5.1, `ExactlyOnceEmailDeliveryIntegrationTest` 6.1 — and the ~9s tax gone)
 
 ## Notes

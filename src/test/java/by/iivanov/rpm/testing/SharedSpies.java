@@ -18,7 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
  * uncluttered and gives one place to grow the shared-spy set.
  *
  * <p>{@link JavaMailSender} is always present because {@code spring.mail.host} is set in
- * {@code application-test.yml}; {@code MailpitContainerTestExecutionListener} only retargets its host
+ * {@code application-test.yml}; {@link GreenMailServerTestExecutionListener} only retargets its host
  * and port at runtime for {@link MailTest}-tagged tests.
  */
 @Target(ElementType.TYPE)

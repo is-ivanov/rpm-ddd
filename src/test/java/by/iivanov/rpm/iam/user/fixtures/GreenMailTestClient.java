@@ -2,6 +2,7 @@ package by.iivanov.rpm.iam.user.fixtures;
 
 import by.iivanov.rpm.testing.GreenMailServer;
 import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.util.GreenMail;
 import jakarta.mail.Address;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
@@ -31,10 +32,12 @@ public class GreenMailTestClient {
     private static final Duration AWAIT_TIMEOUT = Duration.ofSeconds(15);
     private static final Duration POLL_INTERVAL = Duration.ofMillis(250);
 
+    private final GreenMail greenMail = GreenMailServer.instance();
+
     /** Removes all captured messages so assertions stay deterministic across the shared in-JVM server. */
     public void clearInbox() {
         try {
-            GreenMailServer.instance().purgeEmailFromAllMailboxes();
+            greenMail.purgeEmailFromAllMailboxes();
         } catch (FolderException e) {
             throw new IllegalStateException("Failed to clear the GreenMail inbox", e);
         }
@@ -67,8 +70,8 @@ public class GreenMailTestClient {
                 .count();
     }
 
-    private static Stream<MimeMessage> receivedMessages() {
-        return Arrays.stream(GreenMailServer.instance().getReceivedMessages());
+    private Stream<MimeMessage> receivedMessages() {
+        return Arrays.stream(greenMail.getReceivedMessages());
     }
 
     private MimeMessage firstMessageTo(String recipientEmail) {
@@ -78,11 +81,11 @@ public class GreenMailTestClient {
                 .orElseThrow(() -> new IllegalStateException("No message delivered to " + recipientEmail));
     }
 
-    private static boolean isAddressedTo(MimeMessage message, String recipientEmail) {
+    private boolean isAddressedTo(MimeMessage message, String recipientEmail) {
         return recipientsOf(message).contains(recipientEmail);
     }
 
-    private static DeliveredEmail snapshotOf(MimeMessage message) {
+    private DeliveredEmail snapshotOf(MimeMessage message) {
         try {
             InternetAddress from = (InternetAddress) message.getFrom()[0];
             String fromName = from.getPersonal() == null ? "" : from.getPersonal();
@@ -93,7 +96,7 @@ public class GreenMailTestClient {
         }
     }
 
-    private static List<String> recipientsOf(MimeMessage message) {
+    private List<String> recipientsOf(MimeMessage message) {
         try {
             Address[] recipients = message.getAllRecipients();
             return recipients == null
