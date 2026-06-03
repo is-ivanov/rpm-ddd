@@ -17,14 +17,21 @@ Tracks GitHub issue #98.
   (comment 4611891912).
 
 ### Step 2: Migrate to GreenMail in-JVM (decision from Step 1)
-- [~] refactor (add `greenmail-junit5` test dep; create an in-JVM GreenMail `TestExecutionListener` — fixed loopback
-  SMTP port, whole-run lifetime, sets `spring.mail.host/port` in `testPlanExecutionStarted` when `mail`-tagged tests
-  exist — replacing `MailpitContainerTestExecutionListener`)
-- [ ] refactor (replace `MailpitTestClient`/`EmailStatements` assertions with the GreenMail Java API —
-  `getReceivedMessages()` filtered by recipient, `MimeMessage` HTML-body extraction)
-- [ ] refactor (remove the `mailpit` service from `docker/infra-tests.yml`; drop the `mail.smtp.*` timeout +
+
+Sequenced so each commit leaves the build green: the listener (sets `spring.mail.port`) and the test client
+(reads delivered mail) are coupled, so the harness switch must be one atomic commit. The first slice introduces the
+GreenMail server + a proof test without touching the live Mailpit path.
+
+- [x] refactor (added `greenmail-junit5` dep; built in-JVM `GreenMailServer` bootstrap + `GreenMailServerTest` proof
+  — JavaMail→loopback delivery works near-instantly, `getReceivedMessages()` exposes subject/recipient/HTML body. The
+  Mailpit path is untouched, so the full suite stays green.)
+- [~] refactor (atomic harness switch: add a GreenMail `TestExecutionListener` that starts `GreenMailServer` and sets
+  `spring.mail.host/port` in `testPlanExecutionStarted` when `mail`-tagged tests exist; swap `MailpitTestClient`/
+  `EmailStatements` to the GreenMail Java API — `getReceivedMessages()` filtered by recipient, `MimeMessage` HTML-body
+  extraction; deregister the Mailpit listener from `META-INF/services`) — run mail integration suite green
+- [ ] refactor (cleanup: remove the `mailpit` service from `docker/infra-tests.yml`; drop the `mail.smtp.*` timeout +
   `127.0.0.1`-pin workaround and the `MailpitAutoConfiguration` exclude from `application-test.yml`; remove the
-  `testcontainers-mailpit` dependency and the old listener)
+  `testcontainers-mailpit` dependency and the dead Mailpit files)
 - [ ] green-acceptance (mail integration suite green deterministically — `UserRegistrationIntegrationTest` 1.1,
   `SmtpRecoveryEmailDeliveryIntegrationTest` 5.1, `ExactlyOnceEmailDeliveryIntegrationTest` 6.1 — and the ~9s tax gone)
 
