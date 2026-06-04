@@ -31,9 +31,16 @@ Insight: tests (45%) + dep resolution (20%) dominate; frontend is only 11%. Sure
 
 ### Step 2: Speed up backend tests (53s — biggest lever)
 - [x] Add a Postgres **service container** in `build.yml` on port 54034 with creds matching `docker/.env`, so `DbContainerTestExecutionListener` reuses it instead of cold-starting Testcontainers
-- [~] Verify in a PR run that the "Starting Testcontainer" path no longer fires; measure surefire delta
-- [ ] (Conditional) if still CPU-bound: shard `*IntegrationTest` across a matrix by JUnit tag
-- [ ] `/refactor` → commit
+- [x] Verify in a PR run (#117, run 26971042826) that the "Starting Testcontainer" path no longer fires; measure surefire delta
+
+  **Result — confirmed, but net gain is small (honest finding).** Listener logged `Local db server found` → recreated `rpm_ddd` on the shared service; **zero** Testcontainers/ryuk activity; all **119** tests green.
+  - surefire: **53.3s → 43s (−10.3s)** — the Testcontainers cold-start (ryuk + postgres pull/boot) left the test phase.
+  - BUT the postgres pull+boot **moved** into the new "Initialize containers" phase (**+~9.6s**: pull ~3.5s + ~6s wait-for-healthy). On **ephemeral** CI runners the image isn't cached between runs, so the cold-start was **relocated, not eliminated** → net wall-clock ≈ **−1…2s**.
+  - Maven wall 118.5s → 93s and build job 132s → 117s, but most of that is run-to-run **dep-resolution variance** (14s vs 23.8s), not this change.
+  - Tried tightening the healthcheck (`interval 2s` / `start-period 1s`) — **no effect** (run 26971774419): the ~6s wait is the GitHub runner's own service-health polling backoff (2s→3s→…), not controlled by `--health-*`. Reverted to `interval 5s / retries 10`.
+  - **Real remaining levers:** 43s **CPU-bound** surefire (→ matrix shard) + Steps 3–5. The change still pays off as a deterministic test path (no flaky Testcontainers) and sets up sharding (one shared DB per shard).
+- [ ] (Decision) shard `*IntegrationTest` across a matrix by JUnit tag — tests are now confirmed CPU-bound (43s). Pending user go/no-go: weigh ~−20s wall-clock vs. +runner cost + Allure-merge-across-shards complexity.
+- [S] `/refactor` → commit — N/A: change is CI YAML only, no code to refactor.
 
 ### Step 3: Fix Maven dependency cache (24s)
 - [ ] Diagnose why ~19s of dependency resolution runs despite `cache: maven` (cache key / restore-keys)
