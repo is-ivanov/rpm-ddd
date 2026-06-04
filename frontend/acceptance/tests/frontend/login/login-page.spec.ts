@@ -9,8 +9,6 @@ test.describe('Login Page', () => {
   });
 
   test('UI Test Scenario 1.1: Login page shows login and password fields and submit button - Given the user navigates to the login page, Then the page displays a login input field, And the page displays a password input field, And the password field masks entered text, And the page displays a submit button with text "Sign In"', async () => {
-    test.skip(); // TDD Red Phase - login page not built: getByTestId('login-input') not found (toBeVisible timeout)
-
     await loginPage.navigateToLoginPage();
 
     await loginPage.assertLoginFieldIsVisible();
