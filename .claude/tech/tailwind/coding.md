@@ -11,7 +11,7 @@ Tech binding for `frontend-rules.md` CSS concerns. Shared section structure: `.c
 
 ## Icons
 
-- Icon library: `lucide-react` (v0.487.0, already in `package.json`).
-- Import syntax: `import { HelpCircle } from 'lucide-react'`.
+- Icon library: `@lucide/vue` (already in `frontend/package.json`).
+- Import syntax: `import { Eye, EyeOff } from '@lucide/vue'`; render as components (`<Eye :size="18" />`).
 - NEVER write inline SVG `<path d="...">` or `<svg>` elements.
-- Standard sizes: `size={16}` inline text, `size={20}` nav items, `size={24}` prominent.
+- Standard sizes: `:size="16"` inline text, `:size="20"` nav items, `:size="24"` prominent.

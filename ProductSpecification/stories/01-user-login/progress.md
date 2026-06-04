@@ -133,8 +133,8 @@
 - [S] green-frontend (no logic to implement — see red-frontend [S]; toggle built in align-design)
 - [S] red-frontend-api (no API/HTTP interaction in §2.1 — pure client-side password type toggle, presentational; handled in align-design)
 - [S] green-frontend-api (no API/HTTP interaction in §2.1 — see red-frontend-api [S]; toggle built in align-design)
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design (toggle built in LoginPage.vue: showPassword ref + :type binding + password-toggle button with @lucide/vue Eye/EyeOff; matches mockup .toggle-password; @lucide/vue added as icon lib + technology.md/tailwind binding updated)
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 3.1: Wrong credentials show error banner
