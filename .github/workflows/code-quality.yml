@@ -73,12 +73,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      # Job-owned Maven cache. Spotless resolves the Palantir formatter
+      # (palantir-java-format + google-java-format + transitive) at goal-execution
+      # time; those artifacts are NOT in the shared setup-java `cache: maven` (no
+      # other job uses the formatter, so they never get saved there), which made
+      # this job re-download them from Maven Central every run (~24s, silent under
+      # -B). A dedicated key this job can save persists the formatter across runs.
+      - name: Cache Maven repository (incl. Spotless formatter)
+        uses: actions/cache@v5
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-spotless-${{ hashFiles('pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-spotless-
       - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
           java-version: '25'
           distribution: 'temurin'
-          cache: maven
       - name: Run Spotless (Fail on violations)
         run: mvn spotless:check -B
 

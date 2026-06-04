@@ -92,6 +92,14 @@ Insight: tests (45%) + dep resolution (20%) dominate; frontend is only 11%. Sure
 
   **⚠️ Open verification (post-merge):** the `main`-only path (`-Pfrontend -Dnpm.test.skip=true` baking the SPA into the deploy `app-jar`) cannot run on a PR. Confirm on the first `build` after merge to `main` that `app-jar` still contains `static/index.html` and `deploy.yml` ships a complete frontend.
 
+### Step 7 (follow-up): cache the Spotless formatter — DONE
+- [x] Give the `spotless` job a dedicated Maven cache so it stops re-downloading the formatter every run
+
+  **Diagnosis (local `-X` + cold-cache repro):** the Spotless job log showed `Index file does not exist…` (harmless incremental-cache miss, ~3s full check) plus **~24s of silent time** before it. Root cause: spotless resolves `com.palantir.javaformat:palantir-java-format:2.90.0` + `com.google.googlejavaformat:google-java-format:1.28.0` (+ transitive) **at goal-execution time**; these aren't in the project dependency graph, so the shared setup-java `cache: maven` (populated by build/checkstyle/pmd, none of which use the formatter) never contains them → re-downloaded from Maven Central every run (invisible under `-B`). Reproduced locally: removing the artifacts from `~/.m2` re-triggers the download; cold `-X` log shows `Resolving artifact … from [central]` + `Writing tracking file …`.
+  - **Fix:** `code-quality.yml` `spotless` job now uses a job-owned `actions/cache` on `~/.m2/repository` keyed `${{ runner.os }}-maven-spotless-${{ hashFiles('pom.xml') }}` (dropped `cache: maven` from its setup-java). First run populates it incl. the formatter; subsequent runs restore → the ~24s download disappears.
+  - **Honest scope:** Spotless runs **in parallel**, off the critical path (43s job vs 95s `build`), so this saves **CI runner-minutes only — zero effect on PR-feedback wall-clock**. Pure cost optimization.
+  - **Confirmation needs 2 runs:** run N populates the new cache key, run N+1 restores it (cache hit) — verify the silent 24s gap is gone on the second post-fix Spotless run.
+
 ## Verification
 - CI run timings via `gh run view <id> --json jobs` compared against the baseline table in `spec.md`.
 - build.yml triggers only on PR/push to `main` — confirmation requires a PR run, not a task-branch push.
