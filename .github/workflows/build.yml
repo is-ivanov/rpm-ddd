@@ -77,8 +77,12 @@ jobs:
         java-version: '25'
         distribution: 'temurin'
         cache: maven
+    # spotless:check is bound to `compile` in pom.xml so it runs on a local
+    # `./mvnw verify` (binding kept intact for developers). In CI it is a format
+    # gate, not test correctness, so skip it here and run it off the critical
+    # path in the parallel Code Quality workflow (code-quality.yml `spotless` job).
     - name: Build with Maven
-      run: mvn verify -B -Pfrontend
+      run: mvn verify -B -Pfrontend -Dspotless.check.skip=true
 
     # Report generation moved to the `allure-report` job so backend + vitest
     # results (here) can be merged with Playwright results from `frontend-e2e`.

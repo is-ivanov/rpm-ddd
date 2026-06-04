@@ -50,9 +50,11 @@ Insight: tests (45%) + dep resolution (20%) dominate; frontend is only 11%. Sure
 - [S] Correct the cache config; confirm warm-cache resolution is near-instant — **nothing to fix**: cache already hits with zero downloads. Maven-core model-build (~12s) is not cache-addressable and risky to touch (`-o` offline / thread flags give marginal, fragile gains).
 - [x] commit
 
-### Step 4: Move spotless off the critical path (9s)
-- [ ] Move `spotless:check` out of the CI `build` into the parallel Code Quality workflow (keep local `verify` binding intact)
-- [ ] commit
+### Step 4: Move spotless off the critical path (9s) — DONE
+- [x] Move `spotless:check` out of the CI `build` into the parallel Code Quality workflow (keep local `verify` binding intact)
+
+  CI `build` now runs `mvn verify -B -Pfrontend -Dspotless.check.skip=true` → spotless leaves the critical path (~−9s). Added a parallel `spotless` job to `code-quality.yml` (mirrors `checkstyle`/`pmd`: checkout → setup-java → `mvn spotless:check -B`). **pom.xml untouched** — the `compile`-phase binding stays, so local `./mvnw verify` still runs spotless. Verified locally: with the flag → `Spotless check skipped` / BUILD SUCCESS; standalone `mvn spotless:check -B` → checks 162 files / BUILD SUCCESS.
+- [x] commit
 
 ### Step 5: Move frontend off the backend critical path (13s)
 - [ ] Run backend `build` without `-P frontend` in CI
