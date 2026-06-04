@@ -1,5 +1,6 @@
 package by.iivanov.rpm.testing.assertj;
 
+import by.iivanov.rpm.iam.user.fixtures.DeliveredEmail;
 import jakarta.validation.ConstraintViolationException;
 import org.assertj.core.api.BDDAssertions;
 import org.assertj.core.api.BDDSoftAssertionsProvider;
@@ -40,5 +41,9 @@ public class RpmSoftAssertions extends SoftAssertions implements BDDSoftAssertio
 
     public ConstraintViolationExceptionAssert then(ConstraintViolationException exception) {
         return proxy(ConstraintViolationExceptionAssert.class, ConstraintViolationException.class, exception);
+    }
+
+    public DeliveredEmailAssert then(DeliveredEmail email) {
+        return proxy(DeliveredEmailAssert.class, DeliveredEmail.class, email);
     }
 }

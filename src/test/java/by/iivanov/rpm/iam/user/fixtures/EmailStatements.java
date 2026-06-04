@@ -1,5 +1,6 @@
 package by.iivanov.rpm.iam.user.fixtures;
 
+import static by.iivanov.rpm.testing.assertj.DeliveredEmailAssert.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import by.iivanov.rpm.iam.user.infrastructure.web.RegisterUserRequest;
@@ -78,13 +79,12 @@ public class EmailStatements {
     public void assertActivationEmailDeliveredTo(String recipientEmail) {
         DeliveredEmail email = greenMailTestClient.awaitMessageDeliveredTo(recipientEmail);
 
-        then(email.fromName()).as("Activation email from-name").isEqualTo(EXPECTED_FROM_NAME);
-        then(email.fromAddress()).as("Activation email from-address").isEqualTo(EXPECTED_FROM_ADDRESS);
-        then(email.recipients()).as("Activation email recipient").containsExactly(recipientEmail);
-        then(email.subject()).as("Activation email subject").isEqualTo(EXPECTED_SUBJECT);
-        then(email.htmlBody())
-                .as("Activation email body must contain the frontend activation link prefix with the token")
-                .contains(EXPECTED_ACTIVATION_LINK_PREFIX);
+        assertThat(email)
+                .hasFromName(EXPECTED_FROM_NAME)
+                .hasFromAddress(EXPECTED_FROM_ADDRESS)
+                .hasOnlyRecipient(recipientEmail)
+                .hasSubject(EXPECTED_SUBJECT)
+                .hasHtmlBodyContaining(EXPECTED_ACTIVATION_LINK_PREFIX);
     }
 
     /** Runs the resubmit scheduler once by invoking its scheduled job method directly. */

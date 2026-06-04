@@ -20,8 +20,12 @@ public final class GreenMailServer {
     @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
     public static final String HOST = "127.0.0.1";
 
-    /** Fixed loopback SMTP port the in-JVM GreenMail binds; high to avoid privileged-range clashes. */
-    public static final int SMTP_PORT = 53025;
+    // Fixed loopback SMTP port the in-JVM GreenMail binds. Deliberately in the registered-port range
+    // (1024-49151), BELOW the ephemeral range (49152+) that Windows lets Hyper-V/WSL/Docker carve into
+    // dynamic reserved ranges. A port in those reserved ranges fails to bind with "Address already in
+    // use" even when nothing listens (netsh int ipv4 show excludedportrange), which silently breaks the
+    // whole mail suite — exactly the Windows networking trap this in-JVM setup exists to avoid.
+    public static final int SMTP_PORT = 33025;
 
     private static final Logger log = LoggerFactory.getLogger(GreenMailServer.class);
 
