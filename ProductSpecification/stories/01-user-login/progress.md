@@ -128,8 +128,8 @@
 - [x] demo (ran login-page.spec.ts headed + slowMo 1200ms; passed; config reverted)
 
 ### Scenario 2.1: Password visibility toggle shows and hides password
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (login-page.spec.ts §2.1 — @skip; toggle type-switch + value-preservation asserted via password-toggle testid)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
