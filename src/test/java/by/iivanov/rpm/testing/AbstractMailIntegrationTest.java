@@ -2,7 +2,7 @@ package by.iivanov.rpm.testing;
 
 /**
  * Base for full-context integration tests that exercise activation-email delivery. Adds only the
- * shared Mailpit SMTP server via the {@link MailTest} tag.
+ * in-JVM GreenMail SMTP server via the {@link MailTest} tag.
  *
  * <p>The shared {@link org.springframework.mail.javamail.JavaMailSender} spy used to emulate SMTP
  * failures is declared on {@link AbstractApplicationIntegrationTest} through {@link SharedSpies}, not

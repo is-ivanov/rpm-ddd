@@ -19,9 +19,9 @@ import org.threeten.extra.MutableClock;
 /**
  * Statements for the resubmit age-cutoff scenario: arming a deterministic first-send failure so an
  * activation-email publication stays incomplete, and asserting the stale publication is neither
- * resubmitted (stays incomplete) nor redelivered (no email reaches Mailpit).
+ * resubmitted (stays incomplete) nor redelivered (no email reaches GreenMail).
  *
- * <p>Reads the Spring Modulith event publication registry and the Mailpit inbox; it owns no HTTP
+ * <p>Reads the Spring Modulith event publication registry and the GreenMail inbox; it owns no HTTP
  * calls. The SMTP failure is injected by stubbing the shared {@link JavaMailSender} spy (declared on
  * the mail integration base) — no production wiring is replaced. The publication's age is controlled
  * exclusively through the test {@code clock} the registry reads — registry rows are never mutated to
@@ -37,18 +37,18 @@ public class StalePublicationStatements {
 
     private final JavaMailSender mailSender;
     private final EventPublicationRegistry eventPublicationRegistry;
-    private final MailpitTestClient mailpitTestClient;
+    private final GreenMailTestClient greenMailTestClient;
     private final MutableClock clock;
 
     /** Constructor. */
     public StalePublicationStatements(
             JavaMailSender mailSender,
             EventPublicationRegistry eventPublicationRegistry,
-            MailpitTestClient mailpitTestClient,
+            GreenMailTestClient greenMailTestClient,
             MutableClock clock) {
         this.mailSender = mailSender;
         this.eventPublicationRegistry = eventPublicationRegistry;
-        this.mailpitTestClient = mailpitTestClient;
+        this.greenMailTestClient = greenMailTestClient;
         this.clock = clock;
     }
 
@@ -111,7 +111,7 @@ public class StalePublicationStatements {
                 .during(NO_DELIVERY_WINDOW)
                 .atMost(NO_DELIVERY_WINDOW.plusSeconds(1))
                 .pollInterval(NO_DELIVERY_POLL_INTERVAL)
-                .untilAsserted(() -> then(mailpitTestClient.countMessagesDeliveredTo(recipientEmail))
+                .untilAsserted(() -> then(greenMailTestClient.countMessagesDeliveredTo(recipientEmail))
                         .as("Activation emails delivered to %s during the no-delivery window", recipientEmail)
                         .isZero());
     }

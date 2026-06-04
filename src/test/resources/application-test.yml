@@ -10,13 +10,6 @@
 # https://docs.spring.io/spring-boot/appendix/application-properties/index.html
 # ===================================================================
 spring:
-  # The testcontainers-mailpit MailpitAutoConfiguration contributes its own JavaMailSender from
-  # MailpitProperties (mailpit.*), whose record defaults SMTP port to 1025 and cannot be overridden
-  # via properties. Exclude it so Spring Boot's MailSenderAutoConfiguration builds the sender from
-  # spring.mail.* — which MailpitContainerTestExecutionListener points at the resolved Mailpit port.
-  autoconfigure:
-    exclude:
-      - ch.martinelli.oss.testcontainers.mailpit.MailpitAutoConfiguration
   main:
     lazy-initialization: on
   liquibase:
@@ -24,17 +17,6 @@ spring:
     contexts: test
   mail:
     host: localhost
-    properties:
-      # Pin the HELO host and MAIL FROM envelope sender so JavaMail never does a local-hostname reverse
-      # lookup (slow on Windows). See https://martinelli.ch/how-i-solved-smtp-timeouts-with-mailpit-and-javamail/
-      mail.smtp.localhost: localhost
-      mail.from: no-reply@rpm-platform.com
-      # Mailpit is server-speaks-first; through the Docker Desktop proxy on Windows the 220 greeting
-      # arrives only after several seconds. Keep generous (but bounded) timeouts so the handshake
-      # tolerates that latency yet still fails fast if Mailpit is genuinely unreachable.
-      mail.smtp.connectiontimeout: 20000
-      mail.smtp.timeout: 20000
-      mail.smtp.writetimeout: 20000
 
 # rpm.mail.* (from-name/from-address) are inherited from the base application.yml;
 # only the frontend activation-link host differs for tests.

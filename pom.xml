@@ -25,13 +25,13 @@
     <commons-lang3.version>3.20.0</commons-lang3.version>
     <error-handling-spring-boot-starter.version>5.1.1</error-handling-spring-boot-starter.version>
     <error-prone.version>2.49.0</error-prone.version>
+    <greenmail.version>2.1.8</greenmail.version>
     <guava.version>33.6.0-jre</guava.version>
     <instancio.version>5.6.0</instancio.version>
     <jetbrains-annotations.version>26.1.0</jetbrains-annotations.version>
     <jjwt.version>0.13.0</jjwt.version>
     <jmolecules.version>2025.0.2</jmolecules.version>
     <json-unit.version>5.1.2</json-unit.version>
-    <testcontainers-mailpit.version>1.2.0</testcontainers-mailpit.version>
     <jackson2.version>2.21.2</jackson2.version>
     <nullaway.version>0.13.4</nullaway.version>
     <palantir-java-format.version>2.90.0</palantir-java-format.version>
@@ -312,20 +312,10 @@
       <artifactId>testcontainers-postgresql</artifactId>
     </dependency>
     <dependency>
-      <groupId>ch.martinelli.oss</groupId>
-      <artifactId>testcontainers-mailpit</artifactId>
-      <version>${testcontainers-mailpit.version}</version>
+      <groupId>com.icegreen</groupId>
+      <artifactId>greenmail-junit5</artifactId>
+      <version>${greenmail.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.datatype</groupId>
-          <artifactId>jackson-datatype-jsr310</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
