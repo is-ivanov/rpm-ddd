@@ -52,6 +52,10 @@
     <!--frontend build (activated by the 'frontend' profile) -->
     <node.version>v22.13.0</node.version>
     <npm.version>10.9.0</npm.version>
+    <!-- When true, the 'frontend' profile builds/copies the SPA but skips vitest.
+         CI sets it on the deploy build (main) where vitest runs in a parallel job;
+         default false keeps a local `./mvnw verify -P frontend` running vitest. -->
+    <npm.test.skip>false</npm.test.skip>
   </properties>
 
   <dependencyManagement>
@@ -613,6 +617,7 @@
                 <phase>test</phase>
                 <configuration>
                   <arguments>run test</arguments>
+                  <skip>${npm.test.skip}</skip>
                 </configuration>
               </execution>
             </executions>

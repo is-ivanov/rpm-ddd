@@ -77,12 +77,20 @@ jobs:
         java-version: '25'
         distribution: 'temurin'
         cache: maven
-    # spotless:check is bound to `compile` in pom.xml so it runs on a local
-    # `./mvnw verify` (binding kept intact for developers). In CI it is a format
-    # gate, not test correctness, so skip it here and run it off the critical
-    # path in the parallel Code Quality workflow (code-quality.yml `spotless` job).
-    - name: Build with Maven
-      run: mvn verify -B -Pfrontend -Dspotless.check.skip=true
+    # The frontend is built/tested in the parallel `frontend-build` job, so the
+    # backend build drops `-Pfrontend` to stay off the critical path. spotless:check
+    # (bound to `compile` in pom.xml for local `./mvnw verify`) is skipped here too
+    # and enforced in the parallel Code Quality workflow.
+    #
+    # On main only, the deploy artifact (`app-jar`, consumed by deploy.yml) must
+    # carry the bundled SPA, so re-enable `-Pfrontend` to run copy-frontend-dist —
+    # but skip vitest (`-Dnpm.test.skip=true`), which already runs in frontend-build.
+    - name: Build with Maven (PR — backend only)
+      if: github.ref != 'refs/heads/main'
+      run: mvn verify -B -Dspotless.check.skip=true
+    - name: Build with Maven (main — bundle SPA into deploy jar, vitest runs in frontend-build)
+      if: github.ref == 'refs/heads/main'
+      run: mvn verify -B -Pfrontend -Dspotless.check.skip=true -Dnpm.test.skip=true
 
     # Report generation moved to the `allure-report` job so backend + vitest
     # results (here) can be merged with Playwright results from `frontend-e2e`.
@@ -114,6 +122,40 @@ jobs:
 #    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
 #    - name: Update dependency graph
 #      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+
+  # Builds and unit-tests the frontend (vitest) in parallel with `build`, off the
+  # backend critical path — this replaces the frontend work the backend Maven run
+  # used to do under `-Pfrontend`. Emits Allure results (allure-vitest reporter ->
+  # target/allure-results, see vite.config.ts) for the `allure-report` merge. The
+  # backend `build` job no longer runs vitest (the main deploy build bundles the
+  # SPA but skips vitest via -Dnpm.test.skip=true).
+  frontend-build:
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set up Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: '22.13.0'
+        cache: npm
+        cache-dependency-path: frontend/package-lock.json
+    - name: Install dependencies
+      run: npm ci
+    - name: Build frontend
+      run: npm run build
+    - name: Run vitest
+      run: npm run test
+    - name: Upload frontend Allure results
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: allure-results-frontend
+        path: target/allure-results
+        retention-days: 1
 
   # Runs the Playwright e2e suite in parallel with `build` (no dependency: the
   # frontend-only stack needs neither the app jar nor Postgres). Playwright's
@@ -151,7 +193,7 @@ jobs:
   # (Playwright) into one unified report. Runs even if upstream tests failed so
   # the report always reflects the latest run.
   allure-report:
-    needs: [build, frontend-e2e]
+    needs: [build, frontend-build, frontend-e2e]
     if: always() && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
@@ -165,6 +207,11 @@ jobs:
       uses: actions/download-artifact@v8
       with:
         name: allure-results-build
+        path: target/allure-results
+    - name: Download frontend Allure results
+      uses: actions/download-artifact@v8
+      with:
+        name: allure-results-frontend
         path: target/allure-results
     - name: Download e2e Allure results
       uses: actions/download-artifact@v8

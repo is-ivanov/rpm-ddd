@@ -56,11 +56,18 @@ Insight: tests (45%) + dep resolution (20%) dominate; frontend is only 11%. Sure
   CI `build` now runs `mvn verify -B -Pfrontend -Dspotless.check.skip=true` → spotless leaves the critical path (~−9s). Added a parallel `spotless` job to `code-quality.yml` (mirrors `checkstyle`/`pmd`: checkout → setup-java → `mvn spotless:check -B`). **pom.xml untouched** — the `compile`-phase binding stays, so local `./mvnw verify` still runs spotless. Verified locally: with the flag → `Spotless check skipped` / BUILD SUCCESS; standalone `mvn spotless:check -B` → checks 162 files / BUILD SUCCESS.
 - [x] commit
 
-### Step 5: Move frontend off the backend critical path (13s)
-- [ ] Run backend `build` without `-P frontend` in CI
-- [ ] Add a `frontend-build` job (npm ci + `npm build` + vitest), parallel to `build`, emitting Allure results; wire into `allure-report` `needs`
-- [ ] Verify `./mvnw verify -P frontend` still builds everything locally (unchanged)
-- [ ] `/refactor` → commit
+### Step 5: Move frontend off the backend critical path (13s) — DONE
+- [x] Run backend `build` without `-P frontend` in CI
+
+  **Constraint discovered (spec didn't cover it):** the `main` `app-jar` is the deploy artifact — `deploy.yml` downloads it, wraps it via `Dockerfile.deploy`, pushes to ghcr, triggers Render. The SPA reaches the jar only via `copy-frontend-dist` under `-Pfrontend`. Dropping it wholesale on main → frontend-less production jar. **Backend tests are safe without the frontend**: `SpaServingIntegrationTest` forwards `/`→`/index.html` served from a committed **test fixture** `src/test/resources/static/index.html`, not the real build.
+  - Resolution (Option D, user-approved): PR build runs `mvn verify -B -Dspotless.check.skip=true` (backend only — also drops the ~3s Node re-download from Step 3). **main** build runs `-Pfrontend -Dnpm.test.skip=true` → bakes SPA into the deploy jar but skips vitest (runs in `frontend-build`). Two `if:`-gated steps on `github.ref`.
+- [x] Add a `frontend-build` job (npm ci + `npm build` + vitest), parallel to `build`, emitting Allure results; wire into `allure-report` `needs`
+
+  New `frontend-build` job (mirrors `frontend-e2e`): setup-node(cache npm) → npm ci → npm run build → npm run test (vitest) → uploads `allure-results-frontend`. Added to `allure-report` `needs: [build, frontend-build, frontend-e2e]` + a download step. vitest now lives in **one** place; result files use unique UUIDs so the 3-artifact merge into `target/allure-results` doesn't collide.
+- [x] Verify `./mvnw verify -P frontend` still builds everything locally (unchanged)
+
+  pom: `npm-test` execution gained `<skip>${npm.test.skip}</skip>` (new property, default **false**). Verified locally via `frontend:npm@npm-test`: default → `Running 'npm run test'` (vitest, 1 passed); with `-Dnpm.test.skip=true` → `Skipping execution`. Both BUILD SUCCESS. Local `./mvnw verify -P frontend` keeps running vitest (default false).
+- [S] `/refactor` → commit — N/A: changes are pom/YAML config, no code to refactor. IDE inspection on pom.xml attempted but the IDEA MCP errored (`getDescription must not be null`); pom validity proven by the two successful Maven runs.
 
 ### Step 6: Re-measure & confirm
 - [ ] Trigger a PR → main run, rebuild the breakdown table, record new critical-path time
