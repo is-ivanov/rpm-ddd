@@ -131,9 +131,9 @@
 - [x] red-playwright (login-page.spec.ts §2.1 — @skip; toggle type-switch + value-preservation asserted via password-toggle testid)
 - [S] red-frontend (trivial-logic gate: password visibility toggle is presentational reactive state — showPassword ref + `:type="showPassword ? 'text' : 'password'"` ternary, built in align-design. No input-varying logic for a .logic.ts unit; observable behavior covered by red-playwright E2E §2.1)
 - [S] green-frontend (no logic to implement — see red-frontend [S]; toggle built in align-design)
-- [~] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend-api (no API/HTTP interaction in §2.1 — pure client-side password type toggle, presentational; handled in align-design)
+- [S] green-frontend-api (no API/HTTP interaction in §2.1 — see red-frontend-api [S]; toggle built in align-design)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
