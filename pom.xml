@@ -297,10 +297,12 @@
       <artifactId>junit-platform-launcher</artifactId>
     </dependency>
 
-    <!-- Allure (test reporting) -->
+    <!-- Allure (test reporting). allure-junit5 was renamed to allure-jupiter (same
+         artifact, version managed by allure-bom); using the new id avoids the
+         Maven relocation warning. -->
     <dependency>
       <groupId>io.qameta.allure</groupId>
-      <artifactId>allure-junit5</artifactId>
+      <artifactId>allure-jupiter</artifactId>
       <scope>test</scope>
     </dependency>
 

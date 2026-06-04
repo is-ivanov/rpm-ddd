@@ -100,6 +100,11 @@ Insight: tests (45%) + dep resolution (20%) dominate; frontend is only 11%. Sure
   - **Honest scope:** Spotless runs **in parallel**, off the critical path (43s job vs 95s `build`), so this saves **CI runner-minutes only — zero effect on PR-feedback wall-clock**. Pure cost optimization.
   - **Confirmation needs 2 runs:** run N populates the new cache key, run N+1 restores it (cache hit) — verify the silent 24s gap is gone on the second post-fix Spotless run.
 
+### Step 8 (follow-up): silence the Allure relocation warning — DONE
+- [x] Rename the `allure-junit5` dependency to `allure-jupiter`
+
+  Build logged `[WARNING] io.qameta.allure:allure-junit5:2.35.2 has been relocated to io.qameta.allure:allure-jupiter:2.35.2 (renamed)`. This is a pure artifact **rename at the same version** (BOM-managed 2.35.2) — not a version bump. Changed the `pom.xml` dependency `artifactId` `allure-junit5` → `allure-jupiter`; no code references it (the extension auto-registers via the JUnit Platform ServiceLoader). Verified: `dependency:tree` resolves `allure-jupiter:2.35.2` with the same integration subtree (`allure-junit-platform` → `allure-java-commons` → …) and **no relocation warning**; a sample test run still emits result files to `target/allure-results`.
+
 ## Verification
 - CI run timings via `gh run view <id> --json jobs` compared against the baseline table in `spec.md`.
 - build.yml triggers only on PR/push to `main` — confirmation requires a PR run, not a task-branch push.
