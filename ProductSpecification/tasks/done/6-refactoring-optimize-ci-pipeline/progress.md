@@ -105,6 +105,13 @@ Insight: tests (45%) + dep resolution (20%) dominate; frontend is only 11%. Sure
 
   Build logged `[WARNING] io.qameta.allure:allure-junit5:2.35.2 has been relocated to io.qameta.allure:allure-jupiter:2.35.2 (renamed)`. This is a pure artifact **rename at the same version** (BOM-managed 2.35.2) — not a version bump. Changed the `pom.xml` dependency `artifactId` `allure-junit5` → `allure-jupiter`; no code references it (the extension auto-registers via the JUnit Platform ServiceLoader). Verified: `dependency:tree` resolves `allure-jupiter:2.35.2` with the same integration subtree (`allure-junit-platform` → `allure-java-commons` → …) and **no relocation warning**; a sample test run still emits result files to `target/allure-results`.
 
+### Step 9 (follow-up): silence the scheduled-task shutdown error in the wiring test — DONE
+- [x] Stop `EventResubmitSchedulingTest` from logging `ERROR … Unexpected error occurred in scheduled task`
+
+  **Diagnosis (reproduced locally):** the test passed but logged a Spring `BeanCreationException: … No bean named '…ConfigurationClassPostProcessor.importRegistry' available` on a scheduler thread. `EventResubmitSchedulingTest` boots the real `SchedulingConfiguration` (`@EnableScheduling` + `@EnableSchedulerLock`) with the production `application.yml` (`rpm.events.resubmit.interval: 5s`). The `@Scheduled(fixedDelay)` job fires ~immediately; the `ApplicationContextRunner` closes the context right after the assertions, so the job's first `@SchedulerLock` call lazily builds ShedLock's `ImportAware` config **during shutdown**, after Spring's internal `importRegistry` bean is gone → benign error caught/logged by the scheduler's error handler (same race can log once at prod shutdown).
+  - **Fix (test-only):** added a **mock `TaskScheduler`** bean to the test's `JobCollaborators`, so `@EnableScheduling` registers the job against it but never executes it — keeping this a pure *wiring* test (asserts beans + interval, not execution). No production change.
+  - Verified: error gone, test still passes; spotless/checkstyle/pmd clean, IDE inspection clean.
+
 ## Verification
 - CI run timings via `gh run view <id> --json jobs` compared against the baseline table in `spec.md`.
 - build.yml triggers only on PR/push to `main` — confirmation requires a PR run, not a task-branch push.

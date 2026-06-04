@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.modulith.events.IncompleteEventPublications;
+import org.springframework.scheduling.TaskScheduler;
 
 /**
  * Wiring test for the production resubmit scheduler. Boots {@link SchedulingConfiguration} and
@@ -56,6 +57,19 @@ class EventResubmitSchedulingTest {
         @Bean
         DataSource dataSource() {
             return mock(DataSource.class);
+        }
+
+        /**
+         * Mock scheduler so {@code @EnableScheduling} registers the job against it without ever
+         * executing it. The real job fires almost immediately on a fixed delay, and its
+         * {@code @SchedulerLock} advice would then race the {@link ApplicationContextRunner}'s
+         * immediate context shutdown — lazily building ShedLock's {@code ImportAware} config after
+         * Spring's internal {@code importRegistry} bean is gone, logging a spurious scheduled-task
+         * error. A no-op scheduler keeps this a pure wiring test.
+         */
+        @Bean
+        TaskScheduler taskScheduler() {
+            return mock(TaskScheduler.class);
         }
     }
 }
