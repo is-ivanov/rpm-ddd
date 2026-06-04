@@ -69,9 +69,28 @@ Insight: tests (45%) + dep resolution (20%) dominate; frontend is only 11%. Sure
   pom: `npm-test` execution gained `<skip>${npm.test.skip}</skip>` (new property, default **false**). Verified locally via `frontend:npm@npm-test`: default → `Running 'npm run test'` (vitest, 1 passed); with `-Dnpm.test.skip=true` → `Skipping execution`. Both BUILD SUCCESS. Local `./mvnw verify -P frontend` keeps running vitest (default false).
 - [S] `/refactor` → commit — N/A: changes are pom/YAML config, no code to refactor. IDE inspection on pom.xml attempted but the IDEA MCP errored (`getDescription must not be null`); pom validity proven by the two successful Maven runs.
 
-### Step 6: Re-measure & confirm
-- [ ] Trigger a PR → main run, rebuild the breakdown table, record new critical-path time
-- [ ] Confirm all 119 backend tests still run and gate the PR; report before/after
+### Step 6: Re-measure & confirm — DONE
+- [x] Trigger a PR → main run, rebuild the breakdown table, record new critical-path time
+- [x] Confirm all 119 backend tests still run and gate the PR; report before/after
+
+  **Measured on PR run 26974213883 (commit `37f2fc8`, PR #117).** All jobs green; `build` is the sole critical path (every parallel job finishes inside its window).
+
+  **Before / After (critical path = PR feedback time):**
+
+  | Metric | Baseline (PR #116) | After (run 26974213883) | Δ |
+  |--------|---:|---:|---:|
+  | **PR feedback** (run start → `allure-report` end) | **2m37s (157s)** | **1m57s (117s)** | **−40s (−25%)** |
+  | `build` job | 132s | 95s | −37s |
+  | Maven wall (`Scanning`→`BUILD SUCCESS`) | 118.5s | 68s | −50s |
+  | surefire:test | 53.3s | ~44s | −9s |
+
+  **Parallel jobs (all within the 95s `build` window, off the critical path):** `frontend-build` 18s · `frontend-e2e` 47s · `allure-report` 14s · Code-Quality `Spotless` 43s / `PMD` 42s / `Checkstyle` 22s / `Frontend Lint` 18s.
+
+  **Correctness confirmed in the build log:** `Spotless check skipped`; **0** frontend goals in `build`; PR step `mvn verify -B -Dspotless.check.skip=true` (no `-Pfrontend`); `Local db server found` (service container, no Testcontainers); **Tests run: 119, Failures: 0**.
+
+  **Where the time went (vs. spec projection):** the prizes were Step 4 (spotless −9s off path) + Step 5 (frontend −13s + ~3s node download off path), which together cut the `build` critical path; Step 2 (service container) is net ~neutral on wall-clock but removes Testcontainers flakiness; Step 3 (dep cache) was a no-op (already optimal). Sharding was deferred (poor ROI).
+
+  **⚠️ Open verification (post-merge):** the `main`-only path (`-Pfrontend -Dnpm.test.skip=true` baking the SPA into the deploy `app-jar`) cannot run on a PR. Confirm on the first `build` after merge to `main` that `app-jar` still contains `static/index.html` and `deploy.yml` ships a complete frontend.
 
 ## Verification
 - CI run timings via `gh run view <id> --json jobs` compared against the baseline table in `spec.md`.
