@@ -125,10 +125,10 @@
 - [S] green-frontend-api (no API client produced in red-frontend-api)
 - [x] align-design (LoginPage.vue built + /login route; matches mockup 01-login.html; Inter font + .form-input class; password toggle deferred to Scenario 2.1)
 - [x] green-playwright (login-page.spec.ts passes — skip marker removed; frontend auto-started via Playwright webServer; display-only, no backend needed)
-- [~] demo
+- [x] demo (ran login-page.spec.ts headed + slowMo 1200ms; passed; config reverted)
 
 ### Scenario 2.1: Password visibility toggle shows and hides password
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
