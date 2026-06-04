@@ -39,13 +39,16 @@ Insight: tests (45%) + dep resolution (20%) dominate; frontend is only 11%. Sure
   - Maven wall 118.5s → 93s and build job 132s → 117s, but most of that is run-to-run **dep-resolution variance** (14s vs 23.8s), not this change.
   - Tried tightening the healthcheck (`interval 2s` / `start-period 1s`) — **no effect** (run 26971774419): the ~6s wait is the GitHub runner's own service-health polling backoff (2s→3s→…), not controlled by `--health-*`. Reverted to `interval 5s / retries 10`.
   - **Real remaining levers:** 43s **CPU-bound** surefire (→ matrix shard) + Steps 3–5. The change still pays off as a deterministic test path (no flaky Testcontainers) and sets up sharding (one shared DB per shard).
-- [ ] (Decision) shard `*IntegrationTest` across a matrix by JUnit tag — tests are now confirmed CPU-bound (43s). Pending user go/no-go: weigh ~−20s wall-clock vs. +runner cost + Allure-merge-across-shards complexity.
+- [S] (Decision) shard `*IntegrationTest` across a matrix by JUnit tag — **deferred (last resort).** Per the detailed analysis: the 43s surefire is ~half **one-time Spring context boot (~18s)** + ~21s parallel exec bounded by the slowest test (`StaleIncompletePublication` 15.77s, an async wait). Each matrix shard is a separate runner → **duplicates** the ~18s context boot + ~9.6s service-container init + compile/deps, so 2 shards yield only ~43s→~30s (**≈−13s**, not −20) at **~2× runner-minutes** + a brittle tag/class partition + Allure-merge-across-shards + Jacoco/Codecov merge. Poor ROI vs. Steps 4-5. If revisited, attack the **one-time context boot** (the real half), not raw sharding.
 - [S] `/refactor` → commit — N/A: change is CI YAML only, no code to refactor.
 
-### Step 3: Fix Maven dependency cache (24s)
-- [ ] Diagnose why ~19s of dependency resolution runs despite `cache: maven` (cache key / restore-keys)
-- [ ] Correct the cache config; confirm warm-cache resolution is near-instant in a PR run
-- [ ] commit
+### Step 3: Fix Maven dependency cache (24s) — NO-OP (premise disproved)
+- [x] Diagnose why ~19s of dependency resolution runs despite `cache: maven` (cache key / restore-keys)
+
+  **Finding (run #117 log): there is no dependency-cache problem.** `cache: maven` **hits** (`Cache hit for: setup-java-Linux-x64-maven-…`, ~25 MB, restored in ~0.4s at 18:20:49). The Maven build does **zero** dependency downloads — **0** `Downloading from`/`Downloaded from` lines in the entire log. The ~12-14s `Scanning → first goal` gap is **Maven plugin/reactor model resolution from the local repo** (CPU/IO between "Building rpm-ddd" 18:20:53 and the allure-relocation warning 18:21:05), **not** network resolution — a bigger cache cannot shrink it. The baseline's "~19s of dependency resolution despite cache" was a **misattribution** (Maven core model-build time, not downloads).
+  - Adjacent real waste, but it belongs to **Step 5** (frontend), not here: `frontend:install-node-and-npm` **re-downloads Node 22.13.0 + npm 10.9.0 every run** (~3s) — uncached because it runs inside the Maven build; the parallel frontend jobs already cache npm via `setup-node`.
+- [S] Correct the cache config; confirm warm-cache resolution is near-instant — **nothing to fix**: cache already hits with zero downloads. Maven-core model-build (~12s) is not cache-addressable and risky to touch (`-o` offline / thread flags give marginal, fragile gains).
+- [x] commit
 
 ### Step 4: Move spotless off the critical path (9s)
 - [ ] Move `spotless:check` out of the CI `build` into the parallel Code Quality workflow (keep local `verify` binding intact)
