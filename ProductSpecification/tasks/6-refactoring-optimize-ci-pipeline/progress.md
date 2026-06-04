@@ -22,7 +22,7 @@ Insight: tests (45%) + dep resolution (20%) dominate; frontend is only 11%. Sure
 
 ## Decision (Step 1)
 - [x] Measure first (done — table above). Re-prioritized by impact: tests > dep cache > spotless > frontend.
-- [ ] Confirm test approach before editing: Postgres **service container** (shared-first reuse) vs. matrix shard of `*IntegrationTest` vs. both. Record choice + rationale here.
+- [x] Confirm test approach before editing: **Postgres service container only** (shared-first reuse). Rationale: CI runners are ephemeral and per-run isolated (each PR run gets its own VM + its own service Postgres on `localhost:54034` — no cross-PR sharing or conflict), so the win is purely removing the per-run Testcontainers cold-start (image pull + ryuk + boot), not cross-run reuse. Matrix sharding deferred: it adds runner cost + Allure-merge complexity and is only justified if tests stay CPU-bound after the cold-start is gone — decide from a measured PR run (Step 2 verify). **Perf-tuning flags omitted**: GH Actions `services:` cannot override the container command, so the `fsync=off`/`synchronous_commit=off` tuning from `docker/infra-tests.yml` is not applied; revisit via a manual `docker run` step only if surefire remains CPU-bound.
 
 ## Fix
 
@@ -30,8 +30,8 @@ Insight: tests (45%) + dep resolution (20%) dominate; frontend is only 11%. Sure
 - [x] Pulled `build` job log via `gh api .../jobs/<id>/logs`, parsed `[INFO] --- goal (exec) ---` deltas → breakdown table above
 
 ### Step 2: Speed up backend tests (53s — biggest lever)
-- [~] Add a Postgres **service container** in `build.yml` on port 54034 with creds matching `docker/.env`, so `DbContainerTestExecutionListener` reuses it instead of cold-starting Testcontainers
-- [ ] Verify in a PR run that the "Starting Testcontainer" path no longer fires; measure surefire delta
+- [x] Add a Postgres **service container** in `build.yml` on port 54034 with creds matching `docker/.env`, so `DbContainerTestExecutionListener` reuses it instead of cold-starting Testcontainers
+- [~] Verify in a PR run that the "Starting Testcontainer" path no longer fires; measure surefire delta
 - [ ] (Conditional) if still CPU-bound: shard `*IntegrationTest` across a matrix by JUnit tag
 - [ ] `/refactor` → commit
 

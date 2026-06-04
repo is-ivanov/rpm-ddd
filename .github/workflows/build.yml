@@ -48,6 +48,27 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Shared-first Postgres for DB-tagged tests: DbContainerTestExecutionListener
+    # probes localhost:54034 and reuses this service instead of cold-starting a
+    # Testcontainer (image pull + ryuk + boot) on every run. Creds/port/db match
+    # docker/infra-tests.yml so the listener's "Local db server found" path fires.
+    # Each CI run is an isolated ephemeral VM, so this service is per-run private —
+    # no cross-PR sharing. Postgres perf flags (fsync=off, …) are not set: GitHub
+    # service containers cannot override the container command.
+    services:
+      postgres:
+        image: postgres:18.3-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rpm_ddd
+        ports:
+          - 54034:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
     - uses: actions/checkout@v6
     - name: Set up JDK 25
