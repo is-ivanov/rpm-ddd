@@ -18,8 +18,6 @@ test.describe('Login Page', () => {
   });
 
   test('UI Test Scenario 2.1: Password visibility toggle shows and hides password - Given the user is on the login page, When the user enters text into the password field, Then the password field masks the entered text, When the user clicks the password visibility toggle, Then the password field reveals the entered text in plain form, When the user clicks the password visibility toggle again, Then the password field masks the entered text again', async () => {
-    test.skip(); // TDD Red Phase - password-toggle does not exist yet (built in align-design)
-
     await loginPage.navigateToLoginPage();
 
     await loginPage.enterPasswordText('s3cr3t-pass');
