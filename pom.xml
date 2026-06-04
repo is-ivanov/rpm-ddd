@@ -32,7 +32,6 @@
     <jjwt.version>0.13.0</jjwt.version>
     <jmolecules.version>2025.0.2</jmolecules.version>
     <json-unit.version>5.1.2</json-unit.version>
-    <jackson2.version>2.21.2</jackson2.version>
     <nullaway.version>0.13.4</nullaway.version>
     <palantir-java-format.version>2.90.0</palantir-java-format.version>
     <passay.version>2.0.0</passay.version>
@@ -315,18 +314,6 @@
       <groupId>com.icegreen</groupId>
       <artifactId>greenmail-junit5</artifactId>
       <version>${greenmail.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson2.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>${jackson2.version}</version>
       <scope>test</scope>
     </dependency>
 
