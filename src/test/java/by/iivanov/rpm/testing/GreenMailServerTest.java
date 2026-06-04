@@ -13,10 +13,19 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 /**
- * Proves the in-JVM {@link GreenMailServer} accepts a JavaMail SMTP send over loopback and exposes the
- * delivered message through the GreenMail Java API — the capability the Mailpit→GreenMail migration relies
- * on. Standalone (no Spring context, no {@code mail} tag) so it stays fast and does not pull in the shared
- * Mailpit infrastructure.
+ * Fast smoke canary for the mail test harness itself — NOT a coverage test for production code.
+ *
+ * <p>It verifies the one thing every {@code mail}-tagged integration test silently depends on but none
+ * asserts in isolation: that the in-JVM {@link GreenMailServer} actually binds its loopback SMTP port,
+ * accepts a JavaMail send, and exposes the delivered message through the GreenMail Java API. The full
+ * activation-email flow (production {@code SmtpEmailNotificationSender} → this server) is exercised by
+ * the integration suite and is a strict superset of what this asserts.
+ *
+ * <p>Its value is diagnostic isolation and speed: when the harness breaks (e.g. the fixed SMTP port
+ * lands in a Windows reserved range and cannot bind), this fails in ~0.4s with a clear {@code BindException},
+ * pinpointing "the mail infrastructure is broken" — whereas the full-context mail tests would fail ~15s
+ * later with an opaque {@code ConditionTimeout} that looks like an application bug. Standalone (no Spring
+ * context, no {@code mail} tag) so it stays fast and independent of the shared mail infrastructure.
  */
 class GreenMailServerTest {
 
