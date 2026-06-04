@@ -129,9 +129,9 @@
 
 ### Scenario 2.1: Password visibility toggle shows and hides password
 - [x] red-playwright (login-page.spec.ts §2.1 — @skip; toggle type-switch + value-preservation asserted via password-toggle testid)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
+- [S] red-frontend (trivial-logic gate: password visibility toggle is presentational reactive state — showPassword ref + `:type="showPassword ? 'text' : 'password'"` ternary, built in align-design. No input-varying logic for a .logic.ts unit; observable behavior covered by red-playwright E2E §2.1)
+- [S] green-frontend (no logic to implement — see red-frontend [S]; toggle built in align-design)
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
