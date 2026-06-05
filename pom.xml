@@ -32,7 +32,7 @@
     <jjwt.version>0.13.0</jjwt.version>
     <jmolecules.version>2025.0.2</jmolecules.version>
     <json-unit.version>5.1.2</json-unit.version>
-    <nullaway.version>0.13.4</nullaway.version>
+    <nullaway.version>0.13.5</nullaway.version>
     <palantir-java-format.version>2.90.0</palantir-java-format.version>
     <passay.version>2.0.0</passay.version>
     <pmd.version>7.25.0</pmd.version>
