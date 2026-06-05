@@ -145,7 +145,7 @@
 - [x] green-frontend-api (login.api.ts login(): POST /api/auth/login {login,password} + credentials:'include'; non-2xx → throw LoginError(problem.detail); 2xx → resolve; skip marker removed; 1/1 auth + 2/2 suite pass)
 - [x] align-design (LoginPage.vue wired to login() API client: v-model on inputs, @submit.prevent submitLogin, error-banner testid with XCircle + {{errorMessage}} from server detail, clears fields on LoginError via showLoginError(); banner matches mockup 02-login-error-credentials.html; design-review PASS — no hardcoded placeholders; coverage clean)
 - [x] green-playwright (login-page.spec.ts §3.1 passes — skip marker removed; backend mocked in-browser via page.route 401; 3/3 login spec green, no regressions)
-- [~] demo
+- [x] demo (ran login-page.spec.ts §3.1 headed + slowMo 1200ms; passed; config reverted)
 
 ### Scenario 3.2: Inactive account shows error banner with activation message
 - [ ] red-playwright
