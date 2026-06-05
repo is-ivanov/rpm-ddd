@@ -159,9 +159,9 @@
 
 ### Scenario 4.1: Activation page shows password fields and complexity rules
 - [x] red-playwright (activation-page.spec.ts §4.1 — @skip; navigate /activate?token=...; asserts password+confirm fields visible & masked, exactly 6 complexity rules with exact texts, "Activate Account" button text)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
+- [S] red-frontend (trivial-logic gate: pure page-display scenario — Gherkin has no When, no input varies output. Field visibility, password masking via type=password, the fixed 6-item complexity-rules list, and the fixed "Activate Account" label are presentational constants rendered in the activation component during align-design. No .logic.ts logic exists or is needed: password validation against the rules is Scenario 5.1, token validation is a separate API concern. Existence check: no activation logic file exists; zero logic-layer production files change. Display visibility covered by red-playwright E2E §4.1. Mirrors scenarios 1.1/2.1/3.1/3.2 red-frontend [S])
+- [S] green-frontend (no logic produced in red-frontend — see [S] above; static complexity rules + fields + button built in the activation component during align-design)
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
