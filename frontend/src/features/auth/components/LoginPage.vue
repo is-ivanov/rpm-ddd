@@ -42,12 +42,12 @@ function showLoginError(error: LoginError): void {
           <label for="login" class="mb-1.5 block text-sm font-medium text-[#212529]">Username</label>
           <input
             id="login"
+            v-model="loginName"
             name="login"
             type="text"
             data-testid="login-input"
             placeholder="Enter username"
             class="form-input"
-            v-model="loginName"
           />
         </div>
 
@@ -56,12 +56,12 @@ function showLoginError(error: LoginError): void {
           <div class="relative">
             <input
               id="password"
+              v-model="password"
               name="password"
               :type="showPassword ? 'text' : 'password'"
               data-testid="password-input"
               placeholder="Enter password"
               class="form-input pr-9.5"
-              v-model="password"
             />
             <button
               type="button"

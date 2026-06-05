@@ -81,8 +81,6 @@ export class AuthBackendStatements {
   }
 
   private matches(credentials: Credential[], body: Credential): boolean {
-    return credentials.some(
-      (credential) => credential.login === body.login && credential.password === body.password,
-    );
+    return credentials.some((credential) => credential.login === body.login && credential.password === body.password);
   }
 }

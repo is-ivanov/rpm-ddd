@@ -86,10 +86,7 @@ export class LoginPageStatements {
 
   async assertErrorBannerContainsActivationLink(): Promise<void> {
     await expect(this.activationLink(), 'activation link is visible inside the error banner').toBeVisible();
-    await expect(this.activationLink(), 'activation link is a real anchor element').toHaveJSProperty(
-      'tagName',
-      'A',
-    );
+    await expect(this.activationLink(), 'activation link is a real anchor element').toHaveJSProperty('tagName', 'A');
     await expect(this.activationLink(), 'activation link has non-empty accessible text').not.toHaveText('');
   }
 
