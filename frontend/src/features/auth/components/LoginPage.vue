@@ -1,8 +1,29 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Eye, EyeOff } from '@lucide/vue';
+import { Eye, EyeOff, XCircle } from '@lucide/vue';
+import { login } from '../logic/login.api';
+import { LoginError } from '../logic/types';
 
+const loginName = ref('');
+const password = ref('');
 const showPassword = ref(false);
+const errorMessage = ref('');
+
+async function submitLogin(): Promise<void> {
+  try {
+    await login({ login: loginName.value, password: password.value });
+  } catch (error) {
+    if (error instanceof LoginError) {
+      showLoginError(error.message);
+    }
+  }
+}
+
+function showLoginError(message: string): void {
+  errorMessage.value = message;
+  loginName.value = '';
+  password.value = '';
+}
 </script>
 
 <template>
@@ -11,7 +32,16 @@ const showPassword = ref(false);
       <div class="mb-6 text-center text-2xl font-bold text-[#228be6]">RPM</div>
       <div class="mb-6 text-center text-lg font-semibold text-[#212529]">Sign In</div>
 
-      <form>
+      <div
+        v-if="errorMessage"
+        data-testid="error-banner"
+        class="mb-4 flex items-center gap-2 rounded-md bg-[#fff5f5] px-3 py-2.5 text-[13px] text-[#fa5252]"
+      >
+        <XCircle :size="16" class="shrink-0" />
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <form @submit.prevent="submitLogin">
         <div class="mb-4">
           <label for="login" class="mb-1.5 block text-sm font-medium text-[#212529]">Username</label>
           <input
@@ -21,6 +51,7 @@ const showPassword = ref(false);
             data-testid="login-input"
             placeholder="Enter username"
             class="form-input"
+            v-model="loginName"
           />
         </div>
 
@@ -34,6 +65,7 @@ const showPassword = ref(false);
               data-testid="password-input"
               placeholder="Enter password"
               class="form-input pr-[38px]"
+              v-model="password"
             />
             <button
               type="button"
