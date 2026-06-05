@@ -47,9 +47,7 @@ describe('Login API Client', () => {
     expect((error as LoginError).requiresActivation).toBe(false);
   });
 
-  // RED: requiresActivation is hard-stubbed to false in login.api.ts; the real
-  // type-based mapping (authentication-failed => true) is implemented in GREEN.
-  it.skip('flags requiresActivation on 401 account not activated', async () => {
+  it('flags requiresActivation on 401 account not activated', async () => {
     stubLoginProblem({
       type: 'https://www.rpm-ddd.my/problem/authentication-failed',
       detail: 'Account not activated',
