@@ -165,10 +165,10 @@
 - [x] green-frontend-api (activation.api.ts validateActivationToken(): GET /api/auth/activate?token= + credentials:'include', returns {login,email}; skip marker removed; 1/1 target + 3/3 auth suite pass)
 - [x] align-design (ActivationPage.vue + /activate route built, matches mockup 04-activation-form.html; validate-on-load: onMounted calls validateActivationToken(token from query) to populate dynamic "For account {login} ({email})" subtitle, form always renders regardless of result so 4.1 display passes without backend stub — expired-token error view deferred to Scenario 5.2; PasswordField.vue extracted (input+visibility toggle, reused for both password fields); 6 static complexity rules; design-review PASS — no hardcoded placeholders; coverage clean — components E2E-covered, activation.api.ts happy path 100%)
 - [x] green-playwright (activation-page.spec.ts §4.1 passes — skip marker removed; frontend-only via Playwright webServer, no backend needed (validate-on-load fetch rejects → account null → form renders); 1/1 activation + 5/5 full login spec dir green, no regressions)
-- [~] demo
+- [x] demo (ran activation-page.spec.ts §4.1 headed + slowMo 1200ms maximized; 1 passed; config reverted)
 
 ### Scenario 5.1: Successful activation shows success message
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
