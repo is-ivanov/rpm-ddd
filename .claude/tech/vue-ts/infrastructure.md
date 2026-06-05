@@ -7,6 +7,12 @@ Tech binding for `infrastructure.md`. Load alongside the universal rules.
 - Dev server: `npm run dev`
 - Run tests: `npx vitest run`
 
+## Static Analysis (Pre-Commit)
+
+- Run before every commit that touches frontend files: `npm run lint` (from the `frontend/` directory). It runs `eslint .` then `prettier --check .` — the same gate the CI "Frontend Lint" job enforces.
+- If violations are found, auto-fix with `npm run lint:fix` (`eslint . --fix && prettier --write .`), then re-run `npm run lint` to confirm it passes before committing.
+- ESLint warnings do not fail `eslint` by itself, but still fix them (`lint:fix` handles most) — a clean `npm run lint` is the bar.
+
 ## Environment Variables
 
 - `VITE_API_URL` — backend base URL, injected via `vite.config.ts` from `BACKEND_PORT`.
