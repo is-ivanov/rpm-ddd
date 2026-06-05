@@ -139,10 +139,10 @@
 
 ### Scenario 3.1: Wrong credentials show error banner
 - [x] red-playwright (login-page.spec.ts §3.1 — @skip; backend mock Statements return 401 problem+json; asserts error-banner exact text + fields cleared)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
+- [S] red-frontend (trivial-logic gate: no input-varying logic for a .logic.ts unit. Request build {login,password}→{login,password} is pass-through; banner message = server `detail` from 401 problem+json (backend owns the invalid-creds vs activation branching — frontend forwards `detail` unchanged, identity mapping); clearing fields on error = setting refs to '' (presentational reactive state in submit .catch, built in align-design). Any test would assert output≈input → fails post-impl trivial-test gate. Observable behavior covered by red-playwright E2E §3.1)
+- [S] green-frontend (no logic produced in red-frontend — see [S] above; submit handler + error state built in align-design)
+- [x] red-frontend-api (login.api.test.ts — @skip; MSW stubs POST /api/auth/login → 401 problem+json; asserts LoginError with exact `detail` "Invalid username or password". Added msw dep + src/test MSW lifecycle; login.api.ts stub + types.ts LoginRequest/LoginError)
+- [~] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
 - [ ] demo
