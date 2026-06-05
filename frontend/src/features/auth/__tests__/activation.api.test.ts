@@ -16,8 +16,7 @@ function stubActivateSuccess(captured: { url?: string }): void {
 }
 
 describe('Activation API Client', () => {
-  // RED: validateActivationToken is a not-implemented stub; implemented in green-frontend-api.
-  it.skip('returns the login and email for a valid activation token', async () => {
+  it('returns the login and email for a valid activation token', async () => {
     const captured: { url?: string } = {};
     stubActivateSuccess(captured);
 

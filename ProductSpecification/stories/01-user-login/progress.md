@@ -162,8 +162,8 @@
 - [S] red-frontend (trivial-logic gate: pure page-display scenario — Gherkin has no When, no input varies output. Field visibility, password masking via type=password, the fixed 6-item complexity-rules list, and the fixed "Activate Account" label are presentational constants rendered in the activation component during align-design. No .logic.ts logic exists or is needed: password validation against the rules is Scenario 5.1, token validation is a separate API concern. Existence check: no activation logic file exists; zero logic-layer production files change. Display visibility covered by red-playwright E2E §4.1. Mirrors scenarios 1.1/2.1/3.1/3.2 red-frontend [S])
 - [S] green-frontend (no logic produced in red-frontend — see [S] above; static complexity rules + fields + button built in the activation component during align-design)
 - [x] red-frontend-api (activation.api.test.ts — it.skip; MSW stubs GET /api/auth/activate?token=valid → 200 {login,email}; asserts validateActivationToken resolves toEqual {login:'iivanov',email:'ivan@example.com'} + request path + token query param. activation.api.ts stub (not-impl marker); types.ts ActivationTokenResponse {login,email})
-- [~] green-frontend-api
-- [ ] align-design
+- [x] green-frontend-api (activation.api.ts validateActivationToken(): GET /api/auth/activate?token= + credentials:'include', returns {login,email}; skip marker removed; 1/1 target + 3/3 auth suite pass)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
