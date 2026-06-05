@@ -168,6 +168,7 @@
 - [x] demo (ran activation-page.spec.ts §4.1 headed + slowMo 1200ms maximized; 1 passed; config reverted)
 
 ### Scenario 5.1: Successful activation shows success message
+> ⚠️ ПЕРЕД началом: прочитать activation-flow.md → "Open question для 5.1" и разрешить dev/prod origin (CORS/CSRF/credentials для POST /api/auth/activate) до написания submit-логики.
 - [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
