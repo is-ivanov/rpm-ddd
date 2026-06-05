@@ -34,8 +34,6 @@ test.describe('Login Page', () => {
   });
 
   test('UI Test Scenario 3.1: Wrong credentials show error banner with "Invalid username or password" - Given the user is on the login page, And a registered user with login "ivan" and password "correct-pass" exists, When the user enters login "ivan", And the user enters password "wrong-pass", And the user clicks the "Sign In" button, Then an error banner appears with text "Invalid username or password", And the login and password fields are cleared', async () => {
-    test.skip(); // TDD Red Phase - error-banner not found; LoginPage has no submit handler or error handling yet
-
     await authBackend.givenRegisteredUser('ivan', 'correct-pass');
     await loginPage.navigateToLoginPage();
 
