@@ -7,9 +7,7 @@ import { LoginError } from '../logic/types';
 const BASE = import.meta.env.VITE_API_URL;
 
 describe('Login API Client', () => {
-  // TDD Red Phase: login.api stub throws Error('Not implemented') instead of a LoginError
-  // carrying the 401 problem+json detail. Enable in green-frontend-api.
-  it.skip('surfaces the problem+json detail as a LoginError on 401 invalid credentials', async () => {
+  it('surfaces the problem+json detail as a LoginError on 401 invalid credentials', async () => {
     server.use(
       http.post(`${BASE}/api/auth/login`, () =>
         HttpResponse.json(
