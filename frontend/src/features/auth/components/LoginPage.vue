@@ -28,7 +28,7 @@ function showLoginError(message: string): void {
 
 <template>
   <main class="flex min-h-screen items-center justify-center bg-[#f8f9fa] font-sans">
-    <div class="w-full max-w-[400px] rounded-lg bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+    <div class="w-full max-w-100 rounded-lg bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
       <div class="mb-6 text-center text-2xl font-bold text-[#228be6]">RPM</div>
       <div class="mb-6 text-center text-lg font-semibold text-[#212529]">Sign In</div>
 
@@ -64,7 +64,7 @@ function showLoginError(message: string): void {
               :type="showPassword ? 'text' : 'password'"
               data-testid="password-input"
               placeholder="Enter password"
-              class="form-input pr-[38px]"
+              class="form-input pr-9.5"
               v-model="password"
             />
             <button
