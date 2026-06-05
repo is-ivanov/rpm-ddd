@@ -3,4 +3,11 @@ export interface LoginRequest {
   readonly password: string;
 }
 
-export class LoginError extends Error {}
+export class LoginError extends Error {
+  readonly requiresActivation: boolean;
+
+  constructor(message: string | undefined, requiresActivation: boolean) {
+    super(message);
+    this.requiresActivation = requiresActivation;
+  }
+}

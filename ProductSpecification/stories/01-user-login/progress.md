@@ -149,10 +149,10 @@
 
 ### Scenario 3.2: Inactive account shows error banner with activation message
 - [x] red-playwright (login-page.spec.ts §3.2 — @skip; backend mock givenInactiveUser returns 401 "Account not activated" problem+json; asserts error-banner contains activation message + activation-link anchor present)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
+- [S] red-frontend (trivial-logic gate: no .logic.ts logic. The activation-required signal is response-mapping of the problem+json `type` (.../authentication-failed vs .../bad-credentials) into LoginError — the API client's job per Humble Object, tested in red-frontend-api; no login.logic.ts exists and creating one would duplicate the API mapping. Conditional activation-link render is presentational `v-if`, built in align-design. Zero logic-layer production files change. Mirrors §3.1)
+- [S] green-frontend (no logic produced in red-frontend — see [S] above; conditional link built in align-design)
+- [x] red-frontend-api (login.api.test.ts §3.2 — it.skip; MSW stubs not-activated 401 type=authentication-failed → asserts LoginError.requiresActivation===true & message "Account not activated"; invalid-creds test updated to real bad-credentials type + asserts requiresActivation===false. LoginError gained requiresActivation field; login.api.ts stub passes false)
+- [~] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
 - [ ] demo

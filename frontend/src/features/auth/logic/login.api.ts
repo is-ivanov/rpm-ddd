@@ -4,6 +4,7 @@ import { LoginError } from './types';
 const BASE_URL = import.meta.env.VITE_API_URL ?? '';
 
 interface ProblemDetail {
+  readonly type?: string;
   readonly detail?: string;
 }
 
@@ -17,6 +18,6 @@ export async function login(request: LoginRequest): Promise<void> {
 
   if (!response.ok) {
     const problem = (await response.json()) as ProblemDetail;
-    throw new LoginError(problem.detail);
+    throw new LoginError(problem.detail, false);
   }
 }
