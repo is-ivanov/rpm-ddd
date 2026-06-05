@@ -6,6 +6,7 @@ const TEST_ID = {
   passwordInput: 'password-input',
   passwordToggle: 'password-toggle',
   submitButton: 'submit-button',
+  errorBanner: 'error-banner',
 } as const;
 
 export class LoginPageStatements {
@@ -30,8 +31,16 @@ export class LoginPageStatements {
     await expect(this.passwordInput(), 'password field masks entered text').toHaveAttribute('type', 'password');
   }
 
+  async enterLoginText(login: string): Promise<void> {
+    await this.loginInput().fill(login);
+  }
+
   async enterPasswordText(password: string): Promise<void> {
     await this.passwordInput().fill(password);
+  }
+
+  async clickSubmitButton(): Promise<void> {
+    await this.submitButton().click();
   }
 
   async clickPasswordVisibilityToggle(): Promise<void> {
@@ -60,8 +69,24 @@ export class LoginPageStatements {
     await expect(this.submitButton(), 'submit button has text "Sign In"').toHaveText('Sign In');
   }
 
+  async assertErrorBannerShowsInvalidCredentials(): Promise<void> {
+    await expect(this.errorBanner(), 'error banner is visible').toBeVisible();
+    await expect(this.errorBanner(), 'error banner shows invalid credentials message').toHaveText(
+      'Invalid username or password',
+    );
+  }
+
+  async assertLoginAndPasswordFieldsAreCleared(): Promise<void> {
+    await expect(this.loginInput(), 'login field is cleared').toHaveValue('');
+    await expect(this.passwordInput(), 'password field is cleared').toHaveValue('');
+  }
+
   private loginInput(): Locator {
     return this.page.getByTestId(TEST_ID.loginInput);
+  }
+
+  private errorBanner(): Locator {
+    return this.page.getByTestId(TEST_ID.errorBanner);
   }
 
   private passwordInput(): Locator {

@@ -138,8 +138,8 @@
 - [x] demo (ran login-page.spec.ts §2.1 headed + slowMo; passed; config reverted)
 
 ### Scenario 3.1: Wrong credentials show error banner
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (login-page.spec.ts §3.1 — @skip; backend mock Statements return 401 problem+json; asserts error-banner exact text + fields cleared)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
