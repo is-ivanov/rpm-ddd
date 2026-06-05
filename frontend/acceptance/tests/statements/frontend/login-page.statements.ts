@@ -1,4 +1,14 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
+
+// noinspection HardcodedPasswordInspection -- these are data-testid selectors, not credentials
+const TEST_ID = {
+  loginInput: 'login-input',
+  passwordInput: 'password-input',
+  passwordToggle: 'password-toggle',
+  submitButton: 'submit-button',
+  errorBanner: 'error-banner',
+  activationLink: 'activation-link',
+} as const;
 
 export class LoginPageStatements {
   constructor(
@@ -11,23 +21,101 @@ export class LoginPageStatements {
   }
 
   async assertLoginFieldIsVisible(): Promise<void> {
-    await expect(this.page.getByTestId('login-input'), 'login input field is visible').toBeVisible();
+    await expect(this.loginInput(), 'login input field is visible').toBeVisible();
   }
 
   async assertPasswordFieldIsVisible(): Promise<void> {
-    await expect(this.page.getByTestId('password-input'), 'password input field is visible').toBeVisible();
+    await expect(this.passwordInput(), 'password input field is visible').toBeVisible();
   }
 
   async assertPasswordFieldMasksText(): Promise<void> {
-    await expect(this.page.getByTestId('password-input'), 'password field masks entered text').toHaveAttribute(
+    await expect(this.passwordInput(), 'password field masks entered text').toHaveAttribute('type', 'password');
+  }
+
+  async enterLoginText(login: string): Promise<void> {
+    await this.loginInput().fill(login);
+  }
+
+  async enterPasswordText(password: string): Promise<void> {
+    await this.passwordInput().fill(password);
+  }
+
+  async clickSubmitButton(): Promise<void> {
+    await this.submitButton().click();
+  }
+
+  async clickPasswordVisibilityToggle(): Promise<void> {
+    await this.passwordToggle().click();
+  }
+
+  async assertPasswordFieldMasksValue(expectedPassword: string): Promise<void> {
+    await expect(this.passwordInput(), 'password field masks entered text').toHaveAttribute('type', 'password');
+    await expect(this.passwordInput(), 'password field retains entered text while masked').toHaveValue(
+      expectedPassword,
+    );
+  }
+
+  async assertPasswordFieldRevealsValue(expectedPassword: string): Promise<void> {
+    await expect(this.passwordInput(), 'password field reveals entered text in plain form').toHaveAttribute(
       'type',
-      'password',
+      'text',
+    );
+    await expect(this.passwordInput(), 'password field shows the exact entered text when revealed').toHaveValue(
+      expectedPassword,
     );
   }
 
   async assertSubmitButtonIsVisible(): Promise<void> {
-    const submitButton = this.page.getByTestId('submit-button');
-    await expect(submitButton, 'submit button is visible').toBeVisible();
-    await expect(submitButton, 'submit button has text "Sign In"').toHaveText('Sign In');
+    await expect(this.submitButton(), 'submit button is visible').toBeVisible();
+    await expect(this.submitButton(), 'submit button has text "Sign In"').toHaveText('Sign In');
+  }
+
+  async assertErrorBannerShowsInvalidCredentials(): Promise<void> {
+    await expect(this.errorBanner(), 'error banner is visible').toBeVisible();
+    await expect(this.errorBanner(), 'error banner shows invalid credentials message').toHaveText(
+      'Invalid username or password',
+    );
+  }
+
+  async assertErrorBannerShowsActivationRequired(): Promise<void> {
+    await expect(this.errorBanner(), 'error banner is visible').toBeVisible();
+    await expect(this.errorBanner(), 'error banner indicates the account requires activation').toContainText(
+      'Account not activated',
+    );
+  }
+
+  async assertErrorBannerContainsActivationLink(): Promise<void> {
+    await expect(this.activationLink(), 'activation link is visible inside the error banner').toBeVisible();
+    await expect(this.activationLink(), 'activation link is a real anchor element').toHaveJSProperty('tagName', 'A');
+    await expect(this.activationLink(), 'activation link has non-empty accessible text').not.toHaveText('');
+  }
+
+  async assertLoginAndPasswordFieldsAreCleared(): Promise<void> {
+    await expect(this.loginInput(), 'login field is cleared').toHaveValue('');
+    await expect(this.passwordInput(), 'password field is cleared').toHaveValue('');
+  }
+
+  private loginInput(): Locator {
+    return this.page.getByTestId(TEST_ID.loginInput);
+  }
+
+  private errorBanner(): Locator {
+    return this.page.getByTestId(TEST_ID.errorBanner);
+  }
+
+  private activationLink(): Locator {
+    return this.page.getByTestId(TEST_ID.activationLink);
+  }
+
+  private passwordInput(): Locator {
+    return this.page.getByTestId(TEST_ID.passwordInput);
+  }
+
+  private passwordToggle(): Locator {
+    return this.page.getByTestId(TEST_ID.passwordToggle);
+  }
+
+  private submitButton(): Locator {
+    return this.page.getByTestId(TEST_ID.submitButton);
   }
 }

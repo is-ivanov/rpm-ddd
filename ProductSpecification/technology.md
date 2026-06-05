@@ -42,7 +42,7 @@ tech-profile:
 | Concern | Technology |
 |---------|-----------|
 | Framework | Tailwind CSS |
-| Icons | lucide-vue-next |
+| Icons | @lucide/vue |
 
 ## Browser Testing
 

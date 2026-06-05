@@ -124,41 +124,41 @@
 - [S] red-frontend-api (no API interaction in this scenario — page-display only: fields visible, password masked via type=password, fixed "Sign In" label; login API client POST /api/auth/login belongs to credential-submission scenarios 3.1/3.2)
 - [S] green-frontend-api (no API client produced in red-frontend-api)
 - [x] align-design (LoginPage.vue built + /login route; matches mockup 01-login.html; Inter font + .form-input class; password toggle deferred to Scenario 2.1)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (login-page.spec.ts passes — skip marker removed; frontend auto-started via Playwright webServer; display-only, no backend needed)
+- [x] demo (ran login-page.spec.ts headed + slowMo 1200ms; passed; config reverted)
 
 ### Scenario 2.1: Password visibility toggle shows and hides password
-- [ ] red-playwright
-- [ ] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
-- [ ] green-playwright
-- [ ] demo
+- [x] red-playwright (login-page.spec.ts §2.1 — @skip; toggle type-switch + value-preservation asserted via password-toggle testid)
+- [S] red-frontend (trivial-logic gate: password visibility toggle is presentational reactive state — showPassword ref + `:type="showPassword ? 'text' : 'password'"` ternary, built in align-design. No input-varying logic for a .logic.ts unit; observable behavior covered by red-playwright E2E §2.1)
+- [S] green-frontend (no logic to implement — see red-frontend [S]; toggle built in align-design)
+- [S] red-frontend-api (no API/HTTP interaction in §2.1 — pure client-side password type toggle, presentational; handled in align-design)
+- [S] green-frontend-api (no API/HTTP interaction in §2.1 — see red-frontend-api [S]; toggle built in align-design)
+- [x] align-design (toggle built in LoginPage.vue: showPassword ref + :type binding + password-toggle button with @lucide/vue Eye/EyeOff; matches mockup .toggle-password; @lucide/vue added as icon lib + technology.md/tailwind binding updated)
+- [x] green-playwright (login-page.spec.ts §2.1 passes — skip marker removed; toggle switches type + preserves value; 2 passed)
+- [x] demo (ran login-page.spec.ts §2.1 headed + slowMo; passed; config reverted)
 
 ### Scenario 3.1: Wrong credentials show error banner
-- [ ] red-playwright
-- [ ] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
-- [ ] green-playwright
-- [ ] demo
+- [x] red-playwright (login-page.spec.ts §3.1 — @skip; backend mock Statements return 401 problem+json; asserts error-banner exact text + fields cleared)
+- [S] red-frontend (trivial-logic gate: no input-varying logic for a .logic.ts unit. Request build {login,password}→{login,password} is pass-through; banner message = server `detail` from 401 problem+json (backend owns the invalid-creds vs activation branching — frontend forwards `detail` unchanged, identity mapping); clearing fields on error = setting refs to '' (presentational reactive state in submit .catch, built in align-design). Any test would assert output≈input → fails post-impl trivial-test gate. Observable behavior covered by red-playwright E2E §3.1)
+- [S] green-frontend (no logic produced in red-frontend — see [S] above; submit handler + error state built in align-design)
+- [x] red-frontend-api (login.api.test.ts — @skip; MSW stubs POST /api/auth/login → 401 problem+json; asserts LoginError with exact `detail` "Invalid username or password". Added msw dep + src/test MSW lifecycle; login.api.ts stub + types.ts LoginRequest/LoginError)
+- [x] green-frontend-api (login.api.ts login(): POST /api/auth/login {login,password} + credentials:'include'; non-2xx → throw LoginError(problem.detail); 2xx → resolve; skip marker removed; 1/1 auth + 2/2 suite pass)
+- [x] align-design (LoginPage.vue wired to login() API client: v-model on inputs, @submit.prevent submitLogin, error-banner testid with XCircle + {{errorMessage}} from server detail, clears fields on LoginError via showLoginError(); banner matches mockup 02-login-error-credentials.html; design-review PASS — no hardcoded placeholders; coverage clean)
+- [x] green-playwright (login-page.spec.ts §3.1 passes — skip marker removed; backend mocked in-browser via page.route 401; 3/3 login spec green, no regressions)
+- [x] demo (ran login-page.spec.ts §3.1 headed + slowMo 1200ms; passed; config reverted)
 
 ### Scenario 3.2: Inactive account shows error banner with activation message
-- [ ] red-playwright
-- [ ] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
-- [ ] green-playwright
-- [ ] demo
+- [x] red-playwright (login-page.spec.ts §3.2 — @skip; backend mock givenInactiveUser returns 401 "Account not activated" problem+json; asserts error-banner contains activation message + activation-link anchor present)
+- [S] red-frontend (trivial-logic gate: no .logic.ts logic. The activation-required signal is response-mapping of the problem+json `type` (.../authentication-failed vs .../bad-credentials) into LoginError — the API client's job per Humble Object, tested in red-frontend-api; no login.logic.ts exists and creating one would duplicate the API mapping. Conditional activation-link render is presentational `v-if`, built in align-design. Zero logic-layer production files change. Mirrors §3.1)
+- [S] green-frontend (no logic produced in red-frontend — see [S] above; conditional link built in align-design)
+- [x] red-frontend-api (login.api.test.ts §3.2 — it.skip; MSW stubs not-activated 401 type=authentication-failed → asserts LoginError.requiresActivation===true & message "Account not activated"; invalid-creds test updated to real bad-credentials type + asserts requiresActivation===false. LoginError gained requiresActivation field; login.api.ts stub passes false)
+- [x] green-frontend-api (login.api.ts maps problem.type===.../authentication-failed → requiresActivation:true via AUTHENTICATION_FAILED_TYPE const; not-activated test un-skipped; 2/2 pass)
+- [x] align-design (LoginPage.vue wired requiresActivation from LoginError; error banner extracted to LoginErrorBanner.vue — conditional AlertTriangle (activation) vs XCircle icon + activation-link anchor "Request a new activation email"; banner matches mockup 03-login-error-inactive.html (items-start, leading-[1.4], alert-triangle); design-review PASS — no placeholders; coverage clean — components E2E-covered)
+- [x] green-playwright (login-page.spec.ts §3.2 passes — skip marker removed; backend mocked in-browser via page.route 401 "Account not activated"; activation-link anchor + alert-triangle banner rendered; 4/4 login spec green, no regressions)
+- [x] demo (ran login-page.spec.ts §3.2 headed + slowMo 1200ms; passed; config reverted)
 
 ### Scenario 4.1: Activation page shows password fields and complexity rules
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
