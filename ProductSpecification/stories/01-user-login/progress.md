@@ -153,8 +153,8 @@
 - [S] green-frontend (no logic produced in red-frontend — see [S] above; conditional link built in align-design)
 - [x] red-frontend-api (login.api.test.ts §3.2 — it.skip; MSW stubs not-activated 401 type=authentication-failed → asserts LoginError.requiresActivation===true & message "Account not activated"; invalid-creds test updated to real bad-credentials type + asserts requiresActivation===false. LoginError gained requiresActivation field; login.api.ts stub passes false)
 - [x] green-frontend-api (login.api.ts maps problem.type===.../authentication-failed → requiresActivation:true via AUTHENTICATION_FAILED_TYPE const; not-activated test un-skipped; 2/2 pass)
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design (LoginPage.vue wired requiresActivation from LoginError; error banner extracted to LoginErrorBanner.vue — conditional AlertTriangle (activation) vs XCircle icon + activation-link anchor "Request a new activation email"; banner matches mockup 03-login-error-inactive.html (items-start, leading-[1.4], alert-triangle); design-review PASS — no placeholders; coverage clean — components E2E-covered)
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 4.1: Activation page shows password fields and complexity rules

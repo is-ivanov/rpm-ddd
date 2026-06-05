@@ -1,26 +1,29 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Eye, EyeOff, XCircle } from '@lucide/vue';
+import { Eye, EyeOff } from '@lucide/vue';
 import { login } from '../logic/login.api';
 import { LoginError } from '../logic/types';
+import LoginErrorBanner from './LoginErrorBanner.vue';
 
 const loginName = ref('');
 const password = ref('');
 const showPassword = ref(false);
 const errorMessage = ref('');
+const requiresActivation = ref(false);
 
 async function submitLogin(): Promise<void> {
   try {
     await login({ login: loginName.value, password: password.value });
   } catch (error) {
     if (error instanceof LoginError) {
-      showLoginError(error.message);
+      showLoginError(error);
     }
   }
 }
 
-function showLoginError(message: string): void {
-  errorMessage.value = message;
+function showLoginError(error: LoginError): void {
+  errorMessage.value = error.message;
+  requiresActivation.value = error.requiresActivation;
   loginName.value = '';
   password.value = '';
 }
@@ -32,14 +35,7 @@ function showLoginError(message: string): void {
       <div class="mb-6 text-center text-2xl font-bold text-[#228be6]">RPM</div>
       <div class="mb-6 text-center text-lg font-semibold text-[#212529]">Sign In</div>
 
-      <div
-        v-if="errorMessage"
-        data-testid="error-banner"
-        class="mb-4 flex items-center gap-2 rounded-md bg-[#fff5f5] px-3 py-2.5 text-[13px] text-[#fa5252]"
-      >
-        <XCircle :size="16" class="shrink-0" />
-        <span>{{ errorMessage }}</span>
-      </div>
+      <LoginErrorBanner v-if="errorMessage" :message="errorMessage" :requires-activation="requiresActivation" />
 
       <form @submit.prevent="submitLogin">
         <div class="mb-4">
