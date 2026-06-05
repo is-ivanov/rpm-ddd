@@ -158,8 +158,8 @@
 - [x] demo (ran login-page.spec.ts §3.2 headed + slowMo 1200ms; passed; config reverted)
 
 ### Scenario 4.1: Activation page shows password fields and complexity rules
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (activation-page.spec.ts §4.1 — @skip; navigate /activate?token=...; asserts password+confirm fields visible & masked, exactly 6 complexity rules with exact texts, "Activate Account" button text)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
