@@ -15,6 +15,14 @@ Older experimental folders such as `agency-management/`, `patient-management/`, 
 
 The MCP server works against the remote API and does not see the local working tree: **`git push` the branch first, then open the PR** (via MCP or `gh`).
 
+## Commit Messages
+**Match the commit-message syntax to the shell tool you invoke.** A common failure is using the PowerShell single-quoted here-string `@'...'@` inside a POSIX/Bash shell, where `@` is a literal — it leaks a stray `@` into the commit subject/footer and forces an amend.
+
+- **Bash / POSIX shell** — never `@'...'@`. Use repeated `-m` flags (`git commit -m "subject" -m "body" -m "Co-Authored-By: ..."`), a temp file with `git commit -F "$file"`, or a real heredoc (`git commit -F - <<'EOF' … EOF`).
+- **PowerShell** — the `@'...'@` here-string is correct (closing `'@` at column 0).
+
+When unsure, repeated `-m` flags work safely in either shell.
+
 ## Build, Test, and Development Commands
 Use the Maven wrapper:
 
