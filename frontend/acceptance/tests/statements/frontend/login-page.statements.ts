@@ -7,6 +7,7 @@ const TEST_ID = {
   passwordToggle: 'password-toggle',
   submitButton: 'submit-button',
   errorBanner: 'error-banner',
+  activationLink: 'activation-link',
 } as const;
 
 export class LoginPageStatements {
@@ -76,6 +77,22 @@ export class LoginPageStatements {
     );
   }
 
+  async assertErrorBannerShowsActivationRequired(): Promise<void> {
+    await expect(this.errorBanner(), 'error banner is visible').toBeVisible();
+    await expect(this.errorBanner(), 'error banner indicates the account requires activation').toContainText(
+      'Account not activated',
+    );
+  }
+
+  async assertErrorBannerContainsActivationLink(): Promise<void> {
+    await expect(this.activationLink(), 'activation link is visible inside the error banner').toBeVisible();
+    await expect(this.activationLink(), 'activation link is a real anchor element').toHaveJSProperty(
+      'tagName',
+      'A',
+    );
+    await expect(this.activationLink(), 'activation link has non-empty accessible text').not.toHaveText('');
+  }
+
   async assertLoginAndPasswordFieldsAreCleared(): Promise<void> {
     await expect(this.loginInput(), 'login field is cleared').toHaveValue('');
     await expect(this.passwordInput(), 'password field is cleared').toHaveValue('');
@@ -87,6 +104,10 @@ export class LoginPageStatements {
 
   private errorBanner(): Locator {
     return this.page.getByTestId(TEST_ID.errorBanner);
+  }
+
+  private activationLink(): Locator {
+    return this.page.getByTestId(TEST_ID.activationLink);
   }
 
   private passwordInput(): Locator {

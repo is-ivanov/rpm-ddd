@@ -148,8 +148,8 @@
 - [x] demo (ran login-page.spec.ts §3.1 headed + slowMo 1200ms; passed; config reverted)
 
 ### Scenario 3.2: Inactive account shows error banner with activation message
-- [ ] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (login-page.spec.ts §3.2 — @skip; backend mock givenInactiveUser returns 401 "Account not activated" problem+json; asserts error-banner contains activation message + activation-link anchor present)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

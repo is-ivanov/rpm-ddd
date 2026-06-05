@@ -44,4 +44,16 @@ test.describe('Login Page', () => {
     await loginPage.assertErrorBannerShowsInvalidCredentials();
     await loginPage.assertLoginAndPasswordFieldsAreCleared();
   });
+
+  test.skip('UI Test Scenario 3.2: Inactive account shows error banner with activation message - Given the user is on the login page, And an inactive user with login "pending" and password "some-pass" exists, When the user enters login "pending", And the user enters password "some-pass", And the user clicks the "Sign In" button, Then an error banner appears with text indicating the account requires activation, And the error banner contains a link to request a new activation email', async () => {
+    await authBackend.givenInactiveUser('pending', 'some-pass');
+    await loginPage.navigateToLoginPage();
+
+    await loginPage.enterLoginText('pending');
+    await loginPage.enterPasswordText('some-pass');
+    await loginPage.clickSubmitButton();
+
+    await loginPage.assertErrorBannerShowsActivationRequired();
+    await loginPage.assertErrorBannerContainsActivationLink();
+  });
 });
