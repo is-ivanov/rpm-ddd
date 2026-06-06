@@ -18,6 +18,24 @@ export class ActivationBackendStatements {
     await this.page.route(ACTIVATE_URL_PATTERN, (route) => this.handleActivate(route, account));
   }
 
+  async givenExpiredToken(): Promise<void> {
+    await this.installCsrfRoute();
+    await this.page.route(ACTIVATE_URL_PATTERN, (route) => this.handleExpiredToken(route));
+  }
+
+  private async handleExpiredToken(route: Route): Promise<void> {
+    await route.fulfill({
+      status: 422,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({
+        type: 'about:blank',
+        title: 'Unprocessable Entity',
+        status: 422,
+        detail: 'The activation link is invalid or has expired.',
+      }),
+    });
+  }
+
   private async installCsrfRoute(): Promise<void> {
     await this.page.route(CSRF_URL_PATTERN, (route) => this.handleCsrf(route));
   }

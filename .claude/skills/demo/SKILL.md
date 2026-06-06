@@ -35,14 +35,13 @@ use: {
   baseURL: appUrl,
   trace: 'on-first-retry',
   viewport: null,                                            // use the maximized window size
-  launchOptions: { slowMo: 1200, args: ['--start-maximized'] },
+  launchOptions: { slowMo: 2500, args: ['--start-maximized'] },
 },
 ```
 
 - `--start-maximized` + `viewport: null` make the Chrome window open maximized and **come to the foreground** (in front of the IDE). Playwright cannot steal OS focus on Windows on its own, so without `--start-maximized` the window opens hidden behind the active terminal/IDE and the user can't watch the demo.
-- Keep `slowMo` at **1200ms** — do NOT slow further (2000ms felt too slow).
 
-**Selenium/Java base-class stack:** set the UI test base class close-browser-after-tests flag to false and comment out headless mode; add a 1200ms demo delay constant + method in the Browser statements class and call it at the start of navigation / find-element / find-elements methods.
+**Selenium/Java base-class stack:** set the UI test base class close-browser-after-tests flag to false and comment out headless mode; add a 2500ms demo delay constant + method in the Browser statements class and call it at the start of navigation / find-element / find-elements methods.
 
 ### 2. Ensure Clean Environment
 

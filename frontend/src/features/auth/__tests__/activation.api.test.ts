@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/test/msw-server';
 import { validateActivationToken } from '../logic/activation.api';
+import { ActivationError } from '../logic/types';
 import type { ActivationTokenResponse } from '../logic/types';
 
 const BASE = import.meta.env.VITE_API_URL;
@@ -12,6 +13,31 @@ function stubActivateSuccess(captured: { url?: string }): void {
       captured.url = request.url;
       return HttpResponse.json({ login: 'iivanov', email: 'ivan@example.com' }, { status: 200 });
     }),
+  );
+}
+
+function stubActivateExpired(): void {
+  server.use(
+    http.get(`${BASE}/api/auth/activate`, () =>
+      HttpResponse.json(
+        {
+          status: 422,
+          title: 'Unprocessable Content',
+          detail: 'Token expired',
+          instance: '/api/auth/activate',
+        },
+        { status: 422, headers: { 'Content-Type': 'application/problem+json' } },
+      ),
+    ),
+  );
+}
+
+function captureActivationRejection(token: string): Promise<unknown> {
+  return validateActivationToken(token).then(
+    () => {
+      throw new Error('validateActivationToken resolved but should have rejected on 422');
+    },
+    (rejected: unknown) => rejected,
   );
 }
 
@@ -28,5 +54,14 @@ describe('Activation API Client', () => {
     const requestUrl = new URL(captured.url ?? '');
     expect(requestUrl.pathname).toBe('/api/auth/activate');
     expect(requestUrl.searchParams.get('token')).toBe('valid-jwt-token');
+  });
+
+  it('rejects with an ActivationError when the token is expired (422)', async () => {
+    stubActivateExpired();
+
+    const error = await captureActivationRejection('expired-token');
+
+    expect(error).toBeInstanceOf(ActivationError);
+    expect((error as ActivationError).message).toBe('Token expired');
   });
 });

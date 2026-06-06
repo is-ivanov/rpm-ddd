@@ -10,6 +10,10 @@ const TEST_ID = {
   successIcon: 'activation-success-icon',
   successTitle: 'activation-success-title',
   goToSignInButton: 'go-to-sign-in-button',
+  errorScreen: 'activation-error',
+  errorIcon: 'activation-error-icon',
+  errorTitle: 'activation-error-title',
+  requestNewLinkButton: 'request-new-link-button',
 } as const;
 
 const COMPLEXITY_RULES = [
@@ -20,6 +24,13 @@ const COMPLEXITY_RULES = [
   'At least one special character',
   'No spaces',
 ] as const;
+
+interface IconAssertionMessages {
+  readonly screen: string;
+  readonly iconVisible: string;
+  readonly iconRendersSvg: string;
+  readonly iconNotEmpty: string;
+}
 
 export class ActivationPageStatements {
   constructor(
@@ -70,13 +81,12 @@ export class ActivationPageStatements {
   }
 
   async assertSuccessIconIsVisible(): Promise<void> {
-    await expect(this.successScreen(), 'activation success screen is visible').toBeVisible();
-    await expect(this.successIcon(), 'green check icon is visible on the success screen').toBeVisible();
-    await expect(this.successIcon().locator('svg'), 'green check icon renders its SVG content').toBeVisible();
-    await expect(
-      this.successIcon().locator('svg > *').first(),
-      'green check icon is not empty (renders real SVG shape content)',
-    ).toBeAttached();
+    await this.assertScreenIconIsVisible(this.successScreen(), this.successIcon(), {
+      screen: 'activation success screen is visible',
+      iconVisible: 'green check icon is visible on the success screen',
+      iconRendersSvg: 'green check icon renders its SVG content',
+      iconNotEmpty: 'green check icon is not empty (renders real SVG shape content)',
+    });
   }
 
   async assertSuccessMessageIsDisplayed(): Promise<void> {
@@ -87,6 +97,36 @@ export class ActivationPageStatements {
   async assertGoToSignInButtonIsVisible(): Promise<void> {
     await expect(this.goToSignInButton(), '"Go to Sign In" button is visible').toBeVisible();
     await expect(this.goToSignInButton(), 'button has text "Go to Sign In"').toHaveText('Go to Sign In');
+  }
+
+  async assertErrorIconIsVisible(): Promise<void> {
+    await this.assertScreenIconIsVisible(this.errorScreen(), this.errorIcon(), {
+      screen: 'activation error screen is visible',
+      iconVisible: 'red X icon is visible on the error screen',
+      iconRendersSvg: 'red X icon renders its SVG content',
+      iconNotEmpty: 'red X icon is not empty (renders real SVG shape content)',
+    });
+  }
+
+  async assertErrorMessageIsDisplayed(): Promise<void> {
+    await expect(this.errorTitle(), 'error message is visible').toBeVisible();
+    await expect(this.errorTitle(), 'error message reads "Link Expired"').toHaveText('Link Expired');
+  }
+
+  async assertRequestNewLinkButtonIsVisible(): Promise<void> {
+    await expect(this.requestNewLinkButton(), '"Request New Link" button is visible').toBeVisible();
+    await expect(this.requestNewLinkButton(), 'button has text "Request New Link"').toHaveText('Request New Link');
+  }
+
+  private async assertScreenIconIsVisible(
+    screen: Locator,
+    icon: Locator,
+    messages: IconAssertionMessages,
+  ): Promise<void> {
+    await expect(screen, messages.screen).toBeVisible();
+    await expect(icon, messages.iconVisible).toBeVisible();
+    await expect(icon.locator('svg'), messages.iconRendersSvg).toBeVisible();
+    await expect(icon.locator('svg > *').first(), messages.iconNotEmpty).toBeAttached();
   }
 
   private passwordInput(): Locator {
@@ -123,5 +163,21 @@ export class ActivationPageStatements {
 
   private goToSignInButton(): Locator {
     return this.page.getByTestId(TEST_ID.goToSignInButton);
+  }
+
+  private errorScreen(): Locator {
+    return this.page.getByTestId(TEST_ID.errorScreen);
+  }
+
+  private errorIcon(): Locator {
+    return this.page.getByTestId(TEST_ID.errorIcon);
+  }
+
+  private errorTitle(): Locator {
+    return this.page.getByTestId(TEST_ID.errorTitle);
+  }
+
+  private requestNewLinkButton(): Locator {
+    return this.page.getByTestId(TEST_ID.requestNewLinkButton);
   }
 }

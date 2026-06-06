@@ -3,9 +3,10 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { Check } from '@lucide/vue';
 import { activateAccount, validateActivationToken } from '../logic/activation.api';
-import type { ActivationTokenResponse } from '../logic/types';
+import { ActivationError, type ActivationTokenResponse } from '../logic/types';
 import PasswordField from './PasswordField.vue';
 import ActivationSuccess from './ActivationSuccess.vue';
+import ActivationExpired from './ActivationExpired.vue';
 
 const PASSWORD_RULES = [
   'At least 12 characters',
@@ -21,14 +22,17 @@ const account = ref<ActivationTokenResponse | null>(null);
 const password = ref('');
 const confirmPassword = ref('');
 const activated = ref(false);
+const tokenInvalid = ref(false);
 
 onMounted(loadAccount);
 
 async function loadAccount(): Promise<void> {
   try {
     account.value = await validateActivationToken(tokenFromRoute());
-  } catch {
-    account.value = null;
+  } catch (error) {
+    if (error instanceof ActivationError) {
+      tokenInvalid.value = true;
+    }
   }
 }
 
@@ -46,6 +50,7 @@ function tokenFromRoute(): string {
 <template>
   <main class="flex min-h-screen items-center justify-center bg-[#f8f9fa] font-sans">
     <ActivationSuccess v-if="activated" />
+    <ActivationExpired v-else-if="tokenInvalid" />
     <div v-else class="auth-card">
       <div class="mb-6 text-center text-2xl font-bold text-[#228be6]">RPM</div>
       <div class="mb-1 text-lg font-semibold text-[#212529]">Set Password</div>
@@ -60,8 +65,8 @@ function tokenFromRoute(): string {
             v-model="password"
             input-id="activation-password"
             name="password"
-            input-testid="activation-password-input"
-            toggle-testid="activation-password-toggle"
+            input-test-id="activation-password-input"
+            toggle-test-id="activation-password-toggle"
           />
         </div>
 
@@ -85,8 +90,8 @@ function tokenFromRoute(): string {
             v-model="confirmPassword"
             input-id="activation-confirm"
             name="confirmPassword"
-            input-testid="activation-confirm-password-input"
-            toggle-testid="activation-confirm-password-toggle"
+            input-test-id="activation-confirm-password-input"
+            toggle-test-id="activation-confirm-password-toggle"
             placeholder="Re-enter password"
           />
         </div>

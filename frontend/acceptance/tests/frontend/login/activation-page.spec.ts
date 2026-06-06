@@ -50,4 +50,20 @@ test.describe('Activation Page', () => {
       await activationPage.assertGoToSignInButtonIsVisible();
     },
   );
+
+  test(
+    'UI Test Scenario 5.2: Expired token shows error message and "Request New Link" button - ' +
+      'Given the user navigates to the activation page with an expired token, ' +
+      'Then the page displays a red X icon, ' +
+      'And the page displays the text "Link Expired", ' +
+      'And the page displays a button with text "Request New Link"',
+    async () => {
+      await activationBackend.givenExpiredToken();
+      await activationPage.navigateToActivationPageWithToken('expired-activation-token');
+
+      await activationPage.assertErrorIconIsVisible();
+      await activationPage.assertErrorMessageIsDisplayed();
+      await activationPage.assertRequestNewLinkButtonIsVisible();
+    },
+  );
 });

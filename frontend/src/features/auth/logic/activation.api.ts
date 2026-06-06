@@ -1,4 +1,5 @@
-import type { ActivationTokenResponse } from './types';
+import type { ActivationTokenResponse, ProblemDetail } from './types';
+import { ActivationError } from './types';
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? '';
 
@@ -8,11 +9,16 @@ export async function validateActivationToken(token: string): Promise<Activation
     credentials: 'include',
   });
 
+  if (!response.ok) {
+    const problem = (await response.json()) as ProblemDetail;
+    throw new ActivationError(problem.detail);
+  }
+
   return (await response.json()) as ActivationTokenResponse;
 }
 
 function readCookie(name: string): string {
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  const match = new RegExp(`(?:^|; )${name}=([^;]*)`).exec(document.cookie);
   return match ? decodeURIComponent(match[1]) : '';
 }
 
