@@ -18,7 +18,7 @@ export async function validateActivationToken(token: string): Promise<Activation
 }
 
 function readCookie(name: string): string {
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  const match = new RegExp(`(?:^|; )${name}=([^;]*)`).exec(document.cookie);
   return match ? decodeURIComponent(match[1]) : '';
 }
 
