@@ -10,3 +10,9 @@ export async function validateActivationToken(token: string): Promise<Activation
 
   return (await response.json()) as ActivationTokenResponse;
 }
+
+export async function activateAccount(token: string, password: string): Promise<void> {
+  void token;
+  void password;
+  throw new Error('Not implemented');
+}
