@@ -37,11 +37,11 @@ Type: refactoring
 - [x] /prompt-refactor `.claude/skills/design-preview/SKILL.md`
 
 ### Step 5: /handoff skill + journey summaries
-- [~] Create `.claude/templates/workflow/summary-format.md` (adapt file layout to our paths)
-- [ ] Create `.claude/skills/handoff/SKILL.md`
-- [ ] Update `workflow.md` "Resuming Across Conversations" (journey summaries + carryover)
-- [ ] Update `continue/SKILL.md` to READ carryover.md + scenario summary on resume
-- [ ] /prompt-refactor workflow.md + handoff + continue
+- [x] Create `.claude/templates/workflow/summary-format.md` (adapt file layout to our paths; h2→db examples)
+- [x] Create `.claude/skills/handoff/SKILL.md`
+- [x] Update `workflow.md` "Resuming Across Conversations" (journey summaries + carryover)
+- [x] Update `continue/SKILL.md` to READ carryover.md + scenario summary on resume (step 5, renumbered)
+- [x] /prompt-refactor summary-format + handoff + workflow + continue (1 fix: stale step-number ref)
 
 ### Step 6: Final validation
 - [ ] /prompt-refactor sweep across all changed files (layer violations, cross-refs)
