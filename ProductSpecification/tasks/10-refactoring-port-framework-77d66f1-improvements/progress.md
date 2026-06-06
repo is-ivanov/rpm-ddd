@@ -27,13 +27,13 @@ Type: refactoring
 - [x] /prompt-refactor `.claude/rules/coding-rules.md` + new template
 
 ### Step 3: Agent tightening
-- [~] `red-agent.md`: mandatory full Output Summary + no storage Fakes in Statements
-- [ ] `refactor-agent.md`: `wc -l` on every changed file regardless of type
-- [ ] `test-review-agent.md`: scan all assertion calls + Fakes' verify/assert methods
-- [ ] /prompt-refactor the three agent files
+- [x] `red-agent.md`: mandatory full Output Summary + no storage Fakes in Statements
+- [x] `refactor-agent.md`: `wc -l` on every changed file regardless of type
+- [x] `test-review-agent.md`: scan all assertion calls + Fakes' verify/assert methods
+- [x] /prompt-refactor the three agent files
 
 ### Step 4: design-preview options
-- [ ] Rewrite `design-preview/SKILL.md`: 2-3 options + AskUserQuestion choice + separate ADR decision (adapt to our adr-format/`decisions/`)
+- [~] Rewrite `design-preview/SKILL.md`: 2-3 options + AskUserQuestion choice + separate ADR decision (adapt to our adr-format/`decisions/`)
 - [ ] /prompt-refactor `.claude/skills/design-preview/SKILL.md`
 
 ### Step 5: /handoff skill + journey summaries
