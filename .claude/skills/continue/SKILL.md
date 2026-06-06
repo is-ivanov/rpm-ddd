@@ -11,12 +11,13 @@ description: Continue working on a story or task by reading progress.md, executi
 2. **Backlog promotion** -- if the story row is in the **Backlog** table in `ProductSpecification/stories.md`, move it to **In Progress** before proceeding
 3. **Read progress** file, bootstrap if missing (stories only)
 4. **Find next step** -- first `[~]` or `[ ]` entry
-5. **Load ADR context** -- check for `decisions/*-decision.md` files in the story directory. If any exist AND the current step references the ADR (via "see ADR" annotation or matching scenario), read it. ADRs contain architectural decisions, schema changes, edge cases, and implementation guidance that the work unit needs.
-6. **Execute one work unit** -- dispatch sub-skills per tables below
-7. **Adapter discovery** -- when the next step is `[ ] adapters-discovery`, read usecase constructor to identify ports and map to adapters (see `workflow.md`). Mark `[x] adapters-discovery`, insert concrete steps below it, commit progress.md.
-8. **Update progress** -- mark completed, advance next, commit
-9. **Update stories.md** -- for stories only, update the phase columns in `ProductSpecification/stories.md` (see below)
-10. **Task completion** -- after updating progress, if ALL checkboxes are `[x]` or `[S]` (no `[ ]` or `[~]` remaining), move the task folder to `ProductSpecification/tasks/done/` and include the move in the commit
+5. **Read journey context** -- read `carryover.md` (story root, if it exists) and the current scenario's summary file (`summaries/{scenario-slug}.md`, if it exists). Treat both as additional context for the work unit -- they preserve predictions, decisions, surprises, and quirks from prior conversations. `/continue` only READS these files; it never writes them (the `/handoff` skill is the sole writer).
+6. **Load ADR context** -- check for `decisions/*-decision.md` files in the story directory. If any exist AND the current step references the ADR (via "see ADR" annotation or matching scenario), read it. ADRs contain architectural decisions, schema changes, edge cases, and implementation guidance that the work unit needs.
+7. **Execute one work unit** -- dispatch sub-skills per tables below
+8. **Adapter discovery** -- when the next step is `[ ] adapters-discovery`, read usecase constructor to identify ports and map to adapters (see `workflow.md`). Mark `[x] adapters-discovery`, insert concrete steps below it, commit progress.md.
+9. **Update progress** -- mark completed, advance next, commit
+10. **Update stories.md** -- for stories only, update the phase columns in `ProductSpecification/stories.md` (see below)
+11. **Task completion** -- after updating progress, if ALL checkboxes are `[x]` or `[S]` (no `[ ]` or `[~]` remaining), move the task folder to `ProductSpecification/tasks/done/` and include the move in the commit
 
 All workflow sequences, progress tracking rules, adapter discovery procedure, and task types are defined in `.claude/rules/workflow.md`. Progress file format examples are in `.claude/templates/workflow/progress-format.md`.
 
@@ -79,7 +80,7 @@ ALL sub-skills dispatch via Agent tool for context isolation:
 | `/test-review` | `Agent tool` (subagent_type: `test-review-agent`) |
 | `/test-coverage` | `Agent tool` (subagent_type: `coverage-agent`) |
 
-Derive the layer from the checkbox (e.g., `red-adapter db` → layer `db`, `green-usecase` → layer `usecase`). Both red-agent and green-agent receive: layer, story folder path, scenario name, and ADR content (if loaded in step 5). The agent resolves test files and templates from its own workflow.
+Derive the layer from the checkbox (e.g., `red-adapter db` → layer `db`, `green-usecase` → layer `usecase`). Both red-agent and green-agent receive: layer, story folder path, scenario name, and ADR content (if loaded in step 6). The agent resolves test files and templates from its own workflow.
 
 **CHAINING: After each sub-step completes (Agent tool return), echo a 1-2 line status summary (agent name, outcome, pass/fail counts) to the user, then immediately dispatch the next sub-step. Do NOT wait for user input between sub-steps — the echo is informational only.**
 
