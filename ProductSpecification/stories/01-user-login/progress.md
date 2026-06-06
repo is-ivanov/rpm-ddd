@@ -186,7 +186,7 @@
 - [x] green-frontend-api (activation.api.ts validateActivationToken: added `if (!response.ok)` guard parsing problem+json and throwing new ActivationError(problem.detail); 2xx path unchanged. skip marker removed. Refactor pulled up shared ProblemDetail type into types.ts (deduped login.api.ts/activation.api.ts). activation.api.test.ts 2/2; full auth suite 5/5; vue-tsc clean)
 - [x] align-design (ActivationExpired.vue built + rendered by ActivationPage when tokenInvalid=true; loadAccount catch sets tokenInvalid only on `instanceof ActivationError` (preserves 4.1: network/parse errors keep the form). Matches mockup 06-activation-error.html — XCircle red icon (#fa5252) + "Link Expired" title + static description + "Request New Link" button (router.push('/login')); testids activation-error/-icon/-title + request-new-link-button. Refactor extracted shared ActivationResultCard.vue (deduped success/error result views — both now thin config; testids preserved). design-review PASS — no placeholders; coverage CLEAN — §5.2 logic 100% (new throw branch covered), components E2E-covered. vue-tsc + lint clean; auth suite 5/5)
 - [x] green-playwright (activation-page.spec.ts §5.2 passes — skip marker removed; error view E2E-verified, backend mocked in-browser via page.route 422; 3/3 activation spec green, no regressions)
-- [ ] demo
+- [x] demo (ran activation-page.spec.ts §5.2 headed + slowMo 1200ms maximized; 1 passed; config reverted)
 
 ### Scenario 6.1: Clicking "Go to Sign In" navigates to login page
 - [ ] red-playwright
