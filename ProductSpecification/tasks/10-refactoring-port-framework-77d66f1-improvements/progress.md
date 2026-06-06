@@ -19,15 +19,15 @@ Type: refactoring
 - [x] /prompt-refactor `.claude/rules/tdd-rules.md`
 
 ### Step 2: coding-rules — JsonNode→DTO + 200-line + app-service no-call
-- [~] Add "Typed deserialization at the boundary" to Code Style
-- [ ] Update 200-line rule to "every source file regardless of type"
-- [ ] Add "application service must not call another application service" (FORBIDDEN list + Usecases section)
-- [ ] Create `.claude/templates/refactoring/replace-jsonnode-with-dto.md` (adapt to Jackson/Spring)
-- [ ] Reference new template from `.claude/templates/refactoring/scan-checklist.md`
-- [ ] /prompt-refactor `.claude/rules/coding-rules.md` + new template
+- [x] Add "Typed deserialization at the boundary" to Code Style
+- [x] Update 200-line rule to "every source file regardless of type"
+- [x] Add "application service must not call another application service" (FORBIDDEN list + Usecases section)
+- [x] Create `.claude/templates/refactoring/replace-jsonnode-with-dto.md` (adapt to Jackson/Spring)
+- [x] Reference new template from `.claude/templates/refactoring/scan-checklist.md` (A0 note, A56 row, 3 routing rows)
+- [x] /prompt-refactor `.claude/rules/coding-rules.md` + new template
 
 ### Step 3: Agent tightening
-- [ ] `red-agent.md`: mandatory full Output Summary + no storage Fakes in Statements
+- [~] `red-agent.md`: mandatory full Output Summary + no storage Fakes in Statements
 - [ ] `refactor-agent.md`: `wc -l` on every changed file regardless of type
 - [ ] `test-review-agent.md`: scan all assertion calls + Fakes' verify/assert methods
 - [ ] /prompt-refactor the three agent files

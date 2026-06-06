@@ -1,6 +1,6 @@
 # Coding Rules
 
-`## Deployment
+## Deployment
 
 - The backend runs as multiple instances. Never store application state in-memory (hash maps, static/global fields, local caches). Use the database for any state that must be consistent across instances.
 
@@ -10,8 +10,9 @@
 - `application`: depends only on domain. Application services orchestrate domain logic. No framework code except dependency injection and transaction management.
 - `infrastructure`: implements interfaces defined in domain/application. Framework-specific code lives here (web resources, message listeners/publishers, repository implementations, external API clients).
 - `acceptance`: Black-box tests via HTTP — no compile dependency on backend internals.
-- FORBIDDEN: importing infrastructure from application/domain, importing application from domain, importing framework code from domain/application.
+- FORBIDDEN: importing infrastructure from application/domain, importing application from domain, importing framework code from domain/application, **injecting or calling one application service from another application service**.
 - Infrastructure interaction rules: first-layer adapters (web resources, listeners) must not call other first-layer adapters — they delegate to application services. Third-layer adapters (repositories, clients) must not call other third-layer adapters or application services — they are called by application services only.
+- Application service interaction rule: application services must not call other application services. Each application service is a top-level entry point that orchestrates one user-visible operation; application services do not compose. If two application services share logic, extract it into the domain layer (a domain method, value-object behavior, or a stateless domain service) or into a shared helper that is itself not an application service. Chaining application services hides the call graph from the web layer, leaks transactional/authorization boundaries across operations, and entangles top-level scenarios that should evolve independently.
 
 ## Package Structure
 
@@ -55,7 +56,7 @@ Each bounded context is a Spring Modulith module. Module boundaries are enforced
 
 ## File Size
 
-- **Hard limit: 200 lines per file.** After any creation or refactoring, verify with `wc -l`. If a file exceeds 200 lines, split it further. This applies to production code, test classes, Statements classes, and API clients. Third-party generated files (shadcn/ui) are exempt.
+- **Hard limit: 200 lines per file.** After any creation or refactoring, verify with `wc -l`. If a file exceeds 200 lines, split it further. This applies to **every source file regardless of type** — production code, test classes, Statements classes, API clients, stylesheets, and config files. The limit is not class-specific: a file with no classes (a stylesheet, a config file) is still capped at 200 lines. Third-party generated files (shadcn/ui) are exempt.
 
 ## Code Style
 
@@ -65,6 +66,7 @@ Each bounded context is a Spring Modulith module. Module boundaries are enforced
 - Methods: application services = verb+noun (`registerUser`), factory = `create`/`of`/`from`, converters = `toDto`/`toEntity`/`toDomain`.
 - Prefer immutable objects, read-only fields, defensive copies of collections.
 - Move behavior to data: serialization (`json()`), hashing (`computeSignature()`), formatting, builder construction, and derived values belong on the object that holds the fields. Callers should not extract fields to compute derived data externally. When callers repeat builder-then-build patterns, add a semantic factory method on the type.
+- Typed deserialization at the boundary: when parsing a JSON payload (HTTP response, captured request body in tests, message envelope), define a DTO that mirrors the payload and deserialize directly into it — never navigate an untyped JSON tree (chained node-by-key accessors on a generic tree node) and never re-parse a structured body as text (splitting on `:`, regex over an emitted format). Use field-name mapping on the DTO when the wire format differs from the in-code style (e.g., snake_case ↔ camelCase). Callers consume named accessors, not string keys. Reading code you just emitted as plain text is a round-trip code smell — work on the structured payload instead.
 - Eliminate accessor chains: if a caller traverses multiple levels of accessors (e.g., `a.b().c().format()`), add a convenience method on `a` (e.g., `a.cValue()`).
 - Don't extract local variables for single-accessor calls — use `object.field()` directly. Extract a variable when it names a non-obvious computation, is reused across unrelated statements, or isolates a side-effecting call from a pure return mapping. Any call to an injected dependency (application service, port, repository, API client) is side-effecting regardless of verb.
 - Optional values: use monadic operations (map, flatMap, filter, orElse) — never check-then-unwrap. Let the optional type drive branching.
@@ -84,6 +86,7 @@ Each bounded context is a Spring Modulith module. Module boundaries are enforced
 ## Usecases
 
 - Application services are orchestrators, not logic holders. All domain-specific business rules must be delegated to the domain layer. Application services should be unaware of underlying technologies and integration protocols.
+- Application services never depend on other application services. An application service MUST NOT inject another application service, call another application service, or reuse another application service's body. When two application services share logic, the shared part belongs in the domain (entity method, value-object behavior, stateless domain service) or in a non-service helper at the application layer — never in another application service. This applies even when the "shared" service is read-only or already exists.
 - Data entering the application layer must arrive as Value Objects. Controllers or incoming request classes (Command/DTO) should convert raw input into validated Value Objects before passing to application services.
 - If no existing Value Object matches the incoming data, propose options to the user: create a new Value Object in the domain layer, or use an existing one if semantics align. Value Objects provide validation, type safety, and self-documentation.
 - Exception: Command classes may contain a combination of Value Objects and raw primitive data when creating a Value Object is not justified (e.g., ephemeral request tokens, dynamic field collections, or when the data has no invariant to enforce).
