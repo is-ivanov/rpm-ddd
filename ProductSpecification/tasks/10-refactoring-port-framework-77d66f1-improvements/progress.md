@@ -33,11 +33,11 @@ Type: refactoring
 - [x] /prompt-refactor the three agent files
 
 ### Step 4: design-preview options
-- [~] Rewrite `design-preview/SKILL.md`: 2-3 options + AskUserQuestion choice + separate ADR decision (adapt to our adr-format/`decisions/`)
-- [ ] /prompt-refactor `.claude/skills/design-preview/SKILL.md`
+- [x] Rewrite `design-preview/SKILL.md`: 2-3 options + AskUserQuestion choice + separate ADR decision (adapt to our adr-format/`decisions/`); fixed ExpectedLoad.txt→.md ref
+- [x] /prompt-refactor `.claude/skills/design-preview/SKILL.md`
 
 ### Step 5: /handoff skill + journey summaries
-- [ ] Create `.claude/templates/workflow/summary-format.md` (adapt file layout to our paths)
+- [~] Create `.claude/templates/workflow/summary-format.md` (adapt file layout to our paths)
 - [ ] Create `.claude/skills/handoff/SKILL.md`
 - [ ] Update `workflow.md` "Resuming Across Conversations" (journey summaries + carryover)
 - [ ] Update `continue/SKILL.md` to READ carryover.md + scenario summary on resume
