@@ -6,6 +6,10 @@ const TEST_ID = {
   complexityRules: 'password-complexity-rules',
   complexityRuleItem: 'password-complexity-rule',
   submitButton: 'activate-button',
+  successScreen: 'activation-success',
+  successIcon: 'activation-success-icon',
+  successTitle: 'activation-success-title',
+  goToSignInButton: 'go-to-sign-in-button',
 } as const;
 
 const COMPLEXITY_RULES = [
@@ -53,6 +57,35 @@ export class ActivationPageStatements {
     await expect(this.submitButton(), 'submit button has text "Activate Account"').toHaveText('Activate Account');
   }
 
+  async enterPassword(password: string): Promise<void> {
+    await this.passwordInput().fill(password);
+  }
+
+  async enterConfirmPassword(password: string): Promise<void> {
+    await this.confirmPasswordInput().fill(password);
+  }
+
+  async clickActivateButton(): Promise<void> {
+    await this.submitButton().click();
+  }
+
+  async assertSuccessIconIsVisible(): Promise<void> {
+    await expect(this.successScreen(), 'activation success screen is visible').toBeVisible();
+    await expect(this.successIcon(), 'green check icon is visible on the success screen').toBeVisible();
+    await expect(this.successIcon().locator('svg'), 'green check icon renders its SVG content').toBeVisible();
+    await expect(this.successIcon(), 'green check icon is not empty').not.toBeEmpty();
+  }
+
+  async assertSuccessMessageIsDisplayed(): Promise<void> {
+    await expect(this.successTitle(), 'success message is visible').toBeVisible();
+    await expect(this.successTitle(), 'success message reads "Account Activated!"').toHaveText('Account Activated!');
+  }
+
+  async assertGoToSignInButtonIsVisible(): Promise<void> {
+    await expect(this.goToSignInButton(), '"Go to Sign In" button is visible').toBeVisible();
+    await expect(this.goToSignInButton(), 'button has text "Go to Sign In"').toHaveText('Go to Sign In');
+  }
+
   private passwordInput(): Locator {
     return this.page.getByTestId(TEST_ID.passwordInput);
   }
@@ -71,5 +104,21 @@ export class ActivationPageStatements {
 
   private submitButton(): Locator {
     return this.page.getByTestId(TEST_ID.submitButton);
+  }
+
+  private successScreen(): Locator {
+    return this.page.getByTestId(TEST_ID.successScreen);
+  }
+
+  private successIcon(): Locator {
+    return this.page.getByTestId(TEST_ID.successIcon);
+  }
+
+  private successTitle(): Locator {
+    return this.page.getByTestId(TEST_ID.successTitle);
+  }
+
+  private goToSignInButton(): Locator {
+    return this.page.getByTestId(TEST_ID.goToSignInButton);
   }
 }

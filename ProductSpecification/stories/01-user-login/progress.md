@@ -168,9 +168,9 @@
 - [x] demo (ran activation-page.spec.ts §4.1 headed + slowMo 1200ms maximized; 1 passed; config reverted)
 
 ### Scenario 5.1: Successful activation shows success message
-> ⚠️ ПЕРЕД началом: прочитать activation-flow.md → "Open question для 5.1" и разрешить dev/prod origin (CORS/CSRF/credentials для POST /api/auth/activate) до написания submit-логики.
-- [~] red-playwright
-- [ ] red-frontend
+> ✅ Origin-gate РЕШЁН (2026-06-06): dev = Vite-proxy (same-origin), relative `/api` URLs, без CORS. См. activation-flow.md → "РЕШЕНО (Сценарий 5.1)". При реализации POST: BASE_URL → '' + GET /api/auth/csrf → POST с X-XSRF-TOKEN + credentials:'include'.
+- [x] red-playwright (activation-page.spec.ts §5.1 — test.skip; backend mock Statements via page.route: GET /api/auth/csrf sets XSRF-TOKEN, GET /api/auth/activate→200 {login,email}, POST /api/auth/activate→200; asserts success screen — green check icon visible+non-empty SVG, exact "Account Activated!" text, "Go to Sign In" button; new testids activation-success/-icon/-title + go-to-sign-in-button for align-design)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

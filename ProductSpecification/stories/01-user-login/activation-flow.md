@@ -83,7 +83,23 @@ Email: https://rpm-platform.com/activate?token=JWT
    Account Activated! → "Go to Sign In" → /login  (6.1)
 ```
 
-## ⚠️ Open question для Сценария 5.1: dev vs prod origin
+## ✅ РЕШЕНО (Сценарий 5.1): dev origin = Vite-proxy (same-origin)
+
+**Решение (2026-06-06, inline-design):** в деве ходим через **Vite-proxy** — API-клиенты
+используют **относительные** URL (`/api/...`), а не абсолютный `http://localhost:8080`.
+Тогда в деве запрос идёт `браузер → :5173/api → proxy (changeOrigin) → :8080` и остаётся
+**same-origin**, как в проде. CORS на бэке **не нужен**; `credentials:'include'` + CSRF работают
+тривиально. Бэкенд не меняется.
+
+Конкретно при реализации POST-логики 5.1:
+- `BASE_URL` в `login.api.ts` / `activation.api.ts` → пустая строка по умолчанию (относительный путь);
+  убрать дефолт `http://localhost:8080` из `VITE_API_URL` (proxy уже настроен в `vite.config.ts`).
+- POST: `GET /api/auth/csrf` (взять `XSRF-TOKEN` cookie) → `POST /api/auth/activate` с заголовком
+  `X-XSRF-TOKEN` + `credentials:'include'`.
+
+> Историческая справка по open question — ниже.
+
+### ⚠️ Open question (исходная формулировка, до решения): dev vs prod origin
 
 Прод и дев используют **разные origin-модели** — это критично для POST-активации (CSRF + credentials).
 
