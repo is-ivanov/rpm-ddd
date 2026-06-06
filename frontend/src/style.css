@@ -6,6 +6,14 @@
 }
 
 @layer components {
+  .auth-card {
+    @apply w-full max-w-100 rounded-lg bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)];
+  }
+
+  .btn-primary {
+    @apply h-10 w-full rounded-md bg-[#228be6] text-sm font-medium text-white transition-colors hover:bg-[#1c7ed6];
+  }
+
   .form-input {
     @apply h-10 w-full rounded-md border border-[#dee2e6] px-3 text-sm text-[#212529] outline-none placeholder:text-[#adb5bd] focus:border-[#4dabf7];
   }

@@ -158,24 +158,25 @@
 - [x] demo (ran login-page.spec.ts §3.2 headed + slowMo 1200ms; passed; config reverted)
 
 ### Scenario 4.1: Activation page shows password fields and complexity rules
-- [~] red-playwright
-- [ ] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
-- [ ] green-playwright
-- [ ] demo
+- [x] red-playwright (activation-page.spec.ts §4.1 — @skip; navigate /activate?token=...; asserts password+confirm fields visible & masked, exactly 6 complexity rules with exact texts, "Activate Account" button text)
+- [S] red-frontend (trivial-logic gate: pure page-display scenario — Gherkin has no When, no input varies output. Field visibility, password masking via type=password, the fixed 6-item complexity-rules list, and the fixed "Activate Account" label are presentational constants rendered in the activation component during align-design. No .logic.ts logic exists or is needed: password validation against the rules is Scenario 5.1, token validation is a separate API concern. Existence check: no activation logic file exists; zero logic-layer production files change. Display visibility covered by red-playwright E2E §4.1. Mirrors scenarios 1.1/2.1/3.1/3.2 red-frontend [S])
+- [S] green-frontend (no logic produced in red-frontend — see [S] above; static complexity rules + fields + button built in the activation component during align-design)
+- [x] red-frontend-api (activation.api.test.ts — it.skip; MSW stubs GET /api/auth/activate?token=valid → 200 {login,email}; asserts validateActivationToken resolves toEqual {login:'iivanov',email:'ivan@example.com'} + request path + token query param. activation.api.ts stub (not-impl marker); types.ts ActivationTokenResponse {login,email})
+- [x] green-frontend-api (activation.api.ts validateActivationToken(): GET /api/auth/activate?token= + credentials:'include', returns {login,email}; skip marker removed; 1/1 target + 3/3 auth suite pass)
+- [x] align-design (ActivationPage.vue + /activate route built, matches mockup 04-activation-form.html; validate-on-load: onMounted calls validateActivationToken(token from query) to populate dynamic "For account {login} ({email})" subtitle, form always renders regardless of result so 4.1 display passes without backend stub — expired-token error view deferred to Scenario 5.2; PasswordField.vue extracted (input+visibility toggle, reused for both password fields); 6 static complexity rules; design-review PASS — no hardcoded placeholders; coverage clean — components E2E-covered, activation.api.ts happy path 100%)
+- [x] green-playwright (activation-page.spec.ts §4.1 passes — skip marker removed; frontend-only via Playwright webServer, no backend needed (validate-on-load fetch rejects → account null → form renders); 1/1 activation + 5/5 full login spec dir green, no regressions)
+- [x] demo (ran activation-page.spec.ts §4.1 headed + slowMo 1200ms maximized; 1 passed; config reverted)
 
 ### Scenario 5.1: Successful activation shows success message
-- [ ] red-playwright
-- [ ] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
-- [ ] green-playwright
-- [ ] demo
+> ✅ Origin-gate РЕШЁН (2026-06-06): dev = Vite-proxy (same-origin), relative `/api` URLs, без CORS. См. activation-flow.md → "РЕШЕНО (Сценарий 5.1)". При реализации POST: BASE_URL → '' + GET /api/auth/csrf → POST с X-XSRF-TOKEN + credentials:'include'.
+- [x] red-playwright (activation-page.spec.ts §5.1 — test.skip; backend mock Statements via page.route: GET /api/auth/csrf sets XSRF-TOKEN, GET /api/auth/activate→200 {login,email}, POST /api/auth/activate→200; asserts success screen — green check icon visible+non-empty SVG, exact "Account Activated!" text, "Go to Sign In" button; new testids activation-success/-icon/-title + go-to-sign-in-button for align-design)
+- [S] red-frontend (trivial-logic gate: no input-varying .logic.ts logic in §5.1's happy path. Building the activate request {token, password} from the route token + password ref is an identity pass-through (no rename/filter/default/computation → trivial); the GET /api/auth/csrf → POST /api/auth/activate orchestration with X-XSRF-TOKEN + credentials:'include' is API-client concern, tested in red-frontend-api; the success screen swap — green check icon + "Account Activated!" + "Go to Sign In" — is presentational reactive state set in the submit .then(), built in align-design; password-match/complexity validation is not exercised by §5.1 (a valid password entered identically → no branching). Any test would assert output≈input → fails the post-impl trivial-test gate. Observable behavior covered by red-playwright E2E §5.1. Mirrors scenarios 1.1/2.1/3.1/3.2/4.1 red-frontend [S])
+- [S] green-frontend (no logic produced in red-frontend — see [S] above; submit handler + CSRF/POST call + success-screen state built in align-design wiring the red-frontend-api client)
+- [x] red-frontend-api (activate-account.api.test.ts — it.skip; stubs GET /api/auth/csrf (sets XSRF-TOKEN cookie via document.cookie) + POST /api/auth/activate capturing request; asserts POST path /api/auth/activate, X-XSRF-TOKEN header == cookie value, body toEqual {token,password}. activation.api.ts activateAccount(token,password) not-impl stub. PREDICT Error "Not implemented" matched actual — type+message+status all YES)
+- [x] green-frontend-api (activation.api.ts activateAccount(): GET /api/auth/csrf credentials:'include' → readCookie('XSRF-TOKEN') helper → POST /api/auth/activate with Content-Type:application/json + X-XSRF-TOKEN header + credentials:'include' + body JSON {token,password}; void placeholders removed; skip marker removed; 1/1 target + 4/4 auth suite pass; tsc clean)
+- [x] align-design (ActivationSuccess.vue built + rendered by ActivationPage when activated=true; @submit.prevent submitActivation calls activateAccount(token,password) then sets activated; success screen matches mockup 05-activation-success.html — CheckCircle2 green icon (#40c057) + "Account Activated!" title + description + "Go to Sign In" button (router.push('/login')); testids activation-success/-icon/-title + go-to-sign-in-button. Refactor extracted .auth-card + .btn-primary to style.css (deduped across LoginPage/ActivationPage/ActivationSuccess). design-review PASS — no placeholders; coverage clean — components E2E-covered, activateAccount happy path covered by unit test)
+- [x] green-playwright (skip marker removed; success screen E2E-verified — backend mocked in-browser via page.route (csrf cookie + GET/POST activate). Prereq fix (committed separately): §5.1 Statements `assertSuccessIconIsVisible` line 76 misused Playwright `not.toBeEmpty()` on the SVG-only icon wrapper (treats no-text element as empty → can never pass); corrected to `expect(successIcon().locator('svg > *').first()).toBeAttached()`, test-review CLEAN. activation-page.spec.ts 2/2 pass; full login dir 6/6 pass, no regressions)
+- [x] demo (ran activation-page.spec.ts §5.1 headed + slowMo 1200ms maximized; 1 passed; config reverted)
 
 ### Scenario 5.2: Expired token shows error message
 - [ ] red-playwright

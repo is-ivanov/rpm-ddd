@@ -3,6 +3,11 @@ export interface LoginRequest {
   readonly password: string;
 }
 
+export interface ActivationTokenResponse {
+  readonly login: string;
+  readonly email: string;
+}
+
 export class LoginError extends Error {
   readonly requiresActivation: boolean;
 
