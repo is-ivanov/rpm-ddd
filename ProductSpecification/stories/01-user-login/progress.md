@@ -180,8 +180,8 @@
 
 ### Scenario 5.2: Expired token shows error message
 - [x] red-playwright (activation-page.spec.ts §5.2 — test.skip; backend mock givenExpiredToken returns GET /api/auth/activate 422 problem+json; asserts error view — red X icon visible+non-empty SVG, exact "Link Expired" text, "Request New Link" button; new testids activation-error/-icon/-title + request-new-link-button for align-design. RED confirmed: error view absent in ActivationPage.vue. Refactor extracted shared assertScreenIconIsVisible helper deduping success/error icon checks; test-review CLEAN)
-- [ ] red-frontend
-- [ ] green-frontend
+- [S] red-frontend (trivial-logic gate: no input-varying .logic.ts logic. The expired/invalid-token determination is an HTTP-status concern — validateActivationToken must reject on non-2xx, an API-client job tested in red-frontend-api; no activation.logic.ts exists and creating one would duplicate the API mapping. The form→error-view swap is presentational reactive state set in the component's loadAccount catch (built in align-design). Zero logic-layer production files change. Mirrors scenarios 1.1/2.1/3.1/3.2/4.1/5.1 red-frontend [S])
+- [S] green-frontend (no logic produced in red-frontend — see [S] above; error-view state + conditional render built in align-design wiring the red-frontend-api client)
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
