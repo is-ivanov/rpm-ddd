@@ -173,8 +173,8 @@
 - [S] red-frontend (trivial-logic gate: no input-varying .logic.ts logic in §5.1's happy path. Building the activate request {token, password} from the route token + password ref is an identity pass-through (no rename/filter/default/computation → trivial); the GET /api/auth/csrf → POST /api/auth/activate orchestration with X-XSRF-TOKEN + credentials:'include' is API-client concern, tested in red-frontend-api; the success screen swap — green check icon + "Account Activated!" + "Go to Sign In" — is presentational reactive state set in the submit .then(), built in align-design; password-match/complexity validation is not exercised by §5.1 (a valid password entered identically → no branching). Any test would assert output≈input → fails the post-impl trivial-test gate. Observable behavior covered by red-playwright E2E §5.1. Mirrors scenarios 1.1/2.1/3.1/3.2/4.1 red-frontend [S])
 - [S] green-frontend (no logic produced in red-frontend — see [S] above; submit handler + CSRF/POST call + success-screen state built in align-design wiring the red-frontend-api client)
 - [x] red-frontend-api (activate-account.api.test.ts — it.skip; stubs GET /api/auth/csrf (sets XSRF-TOKEN cookie via document.cookie) + POST /api/auth/activate capturing request; asserts POST path /api/auth/activate, X-XSRF-TOKEN header == cookie value, body toEqual {token,password}. activation.api.ts activateAccount(token,password) not-impl stub. PREDICT Error "Not implemented" matched actual — type+message+status all YES)
-- [~] green-frontend-api
-- [ ] align-design
+- [x] green-frontend-api (activation.api.ts activateAccount(): GET /api/auth/csrf credentials:'include' → readCookie('XSRF-TOKEN') helper → POST /api/auth/activate with Content-Type:application/json + X-XSRF-TOKEN header + credentials:'include' + body JSON {token,password}; void placeholders removed; skip marker removed; 1/1 target + 4/4 auth suite pass; tsc clean)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 

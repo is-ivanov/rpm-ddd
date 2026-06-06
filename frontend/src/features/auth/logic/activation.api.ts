@@ -11,8 +11,24 @@ export async function validateActivationToken(token: string): Promise<Activation
   return (await response.json()) as ActivationTokenResponse;
 }
 
+function readCookie(name: string): string {
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
 export async function activateAccount(token: string, password: string): Promise<void> {
-  void token;
-  void password;
-  throw new Error('Not implemented');
+  await fetch(`${BASE_URL}/api/auth/csrf`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  await fetch(`${BASE_URL}/api/auth/activate`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-XSRF-TOKEN': readCookie('XSRF-TOKEN'),
+    },
+    body: JSON.stringify({ token, password }),
+  });
 }

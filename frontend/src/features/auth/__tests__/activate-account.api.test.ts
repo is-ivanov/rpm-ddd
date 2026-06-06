@@ -40,9 +40,7 @@ describe('Activate Account API Client', () => {
     document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
   });
 
-  // .skip: activateAccount is a not-implemented stub (throws). green-frontend-api wires
-  // GET /api/auth/csrf -> read XSRF-TOKEN cookie -> POST /api/auth/activate with header.
-  it.skip('reads the XSRF token cookie and posts token+password to activate the account', async () => {
+  it('reads the XSRF token cookie and posts token+password to activate the account', async () => {
     const captured: CapturedRequest = {};
     stubCsrfSetsCookie();
     stubActivateCapturing(captured);
