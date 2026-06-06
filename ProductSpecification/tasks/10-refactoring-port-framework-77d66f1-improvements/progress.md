@@ -13,13 +13,13 @@ Type: refactoring
 > the files it touched. After all steps, verify every changed file ≤200 lines.
 
 ### Step 1: tdd-rules hardening
-- [ ] Port "Flaky Test Fix Protocol" into `tdd-rules.md`
-- [ ] Rename "Zero Tolerance…" + add skip count / Hidden Non-Execution / stop-on-first-failure disclosure
-- [ ] Tighten Assertion Rules: storage **ports** + "No reclassification" clause
-- [ ] /prompt-refactor `.claude/rules/tdd-rules.md`
+- [x] Port "Flaky Test Fix Protocol" into `tdd-rules.md`
+- [x] Rename "Zero Tolerance…" + add skip count / Hidden Non-Execution / stop-on-first-failure disclosure
+- [x] Tighten Assertion Rules: storage **ports** + "No reclassification" clause
+- [x] /prompt-refactor `.claude/rules/tdd-rules.md`
 
 ### Step 2: coding-rules — JsonNode→DTO + 200-line + app-service no-call
-- [ ] Add "Typed deserialization at the boundary" to Code Style
+- [~] Add "Typed deserialization at the boundary" to Code Style
 - [ ] Update 200-line rule to "every source file regardless of type"
 - [ ] Add "application service must not call another application service" (FORBIDDEN list + Usecases section)
 - [ ] Create `.claude/templates/refactoring/replace-jsonnode-with-dto.md` (adapt to Jackson/Spring)
