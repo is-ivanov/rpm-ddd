@@ -5,8 +5,8 @@ import { Eye, EyeOff } from '@lucide/vue';
 defineProps<{
   inputId: string;
   name: string;
-  inputTestid: string;
-  toggleTestid: string;
+  inputTestId: string;
+  toggleTestId: string;
   placeholder?: string;
 }>();
 
@@ -21,13 +21,13 @@ const showPassword = ref(false);
       v-model="model"
       :name="name"
       :type="showPassword ? 'text' : 'password'"
-      :data-testid="inputTestid"
+      :data-testid="inputTestId"
       :placeholder="placeholder"
       class="form-input pr-10"
     />
     <button
       type="button"
-      :data-testid="toggleTestid"
+      :data-testid="toggleTestId"
       :aria-label="showPassword ? 'Hide password' : 'Show password'"
       class="absolute right-2 top-1/2 flex -translate-y-1/2 cursor-pointer items-center border-none bg-transparent p-1 text-[#6c757d] hover:text-[#212529]"
       @click="showPassword = !showPassword"

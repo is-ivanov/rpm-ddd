@@ -65,8 +65,8 @@ function tokenFromRoute(): string {
             v-model="password"
             input-id="activation-password"
             name="password"
-            input-testid="activation-password-input"
-            toggle-testid="activation-password-toggle"
+            input-test-id="activation-password-input"
+            toggle-test-id="activation-password-toggle"
           />
         </div>
 
@@ -90,8 +90,8 @@ function tokenFromRoute(): string {
             v-model="confirmPassword"
             input-id="activation-confirm"
             name="confirmPassword"
-            input-testid="activation-confirm-password-input"
-            toggle-testid="activation-confirm-password-toggle"
+            input-test-id="activation-confirm-password-input"
+            toggle-test-id="activation-confirm-password-toggle"
             placeholder="Re-enter password"
           />
         </div>

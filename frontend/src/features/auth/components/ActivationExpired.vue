@@ -12,12 +12,12 @@ function requestNewLink(): void {
 
 <template>
   <ActivationResultCard
-    testid="activation-error"
+    test-id="activation-error"
     :icon="XCircle"
     icon-color-class="text-[#fa5252]"
     title="Link Expired"
     description="The activation link is invalid or has expired. Please request a new one."
-    button-testid="request-new-link-button"
+    button-test-id="request-new-link-button"
     button-label="Request New Link"
     @action="requestNewLink"
   />

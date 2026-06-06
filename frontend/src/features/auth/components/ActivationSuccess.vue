@@ -12,12 +12,12 @@ function goToSignIn(): void {
 
 <template>
   <ActivationResultCard
-    testid="activation-success"
+    test-id="activation-success"
     :icon="CheckCircle2"
     icon-color-class="text-[#40c057]"
     title="Account Activated!"
     description="Your password has been set. You can now sign in."
-    button-testid="go-to-sign-in-button"
+    button-test-id="go-to-sign-in-button"
     button-label="Go to Sign In"
     @action="goToSignIn"
   />
