@@ -58,8 +58,6 @@ test.describe('Activation Page', () => {
       'And the page displays the text "Link Expired", ' +
       'And the page displays a button with text "Request New Link"',
     async () => {
-      test.skip(); // TDD Red Phase - activation-error view not found in ActivationPage.vue
-
       await activationBackend.givenExpiredToken();
       await activationPage.navigateToActivationPageWithToken('expired-activation-token');
 
