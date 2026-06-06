@@ -8,6 +8,8 @@ export interface ActivationTokenResponse {
   readonly email: string;
 }
 
+export class ActivationError extends Error {}
+
 export class LoginError extends Error {
   readonly requiresActivation: boolean;
 
