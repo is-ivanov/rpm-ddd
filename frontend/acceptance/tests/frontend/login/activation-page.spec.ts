@@ -11,27 +11,45 @@ test.describe('Activation Page', () => {
     activationBackend = new ActivationBackendStatements(page);
   });
 
-  test('UI Test Scenario 4.1: Activation page shows password fields and complexity rules - Given the user navigates to the activation page with a valid token, Then the page displays a password input field, And the page displays a confirm password input field, And the page displays password complexity rules, And the page displays a submit button with text "Activate Account"', async () => {
-    await activationPage.navigateToActivationPageWithToken('valid-activation-token');
+  test(
+    'UI Test Scenario 4.1: Activation page shows password fields and complexity rules - ' +
+      'Given the user navigates to the activation page with a valid token, ' +
+      'Then the page displays a password input field, ' +
+      'And the page displays a confirm password input field, ' +
+      'And the page displays password complexity rules, ' +
+      'And the page displays a submit button with text "Activate Account"',
+    async () => {
+      await activationPage.navigateToActivationPageWithToken('valid-activation-token');
 
-    await activationPage.assertPasswordFieldIsVisible();
-    await activationPage.assertConfirmPasswordFieldIsVisible();
-    await activationPage.assertComplexityRulesAreDisplayed();
-    await activationPage.assertSubmitButtonIsVisible();
-  });
+      await activationPage.assertPasswordFieldIsVisible();
+      await activationPage.assertConfirmPasswordFieldIsVisible();
+      await activationPage.assertComplexityRulesAreDisplayed();
+      await activationPage.assertSubmitButtonIsVisible();
+    },
+  );
 
-  test('UI Test Scenario 5.1: Successful activation shows success message and "Go to Sign In" button - Given the user is on the activation page with a valid token, When the user enters a valid password meeting all complexity rules, And the user enters the same password in the confirm field, And the user clicks the "Activate Account" button, Then the page displays a green check icon, And the page displays the text "Account Activated!", And the page displays a button with text "Go to Sign In"', async () => {
-    test.skip(); // TDD Red Phase - activation-success screen not built (no success-icon/title/go-to-sign-in testids, no submit handler)
+  test(
+    'UI Test Scenario 5.1: Successful activation shows success message and "Go to Sign In" button - ' +
+      'Given the user is on the activation page with a valid token, ' +
+      'When the user enters a valid password meeting all complexity rules, ' +
+      'And the user enters the same password in the confirm field, ' +
+      'And the user clicks the "Activate Account" button, ' +
+      'Then the page displays a green check icon, ' +
+      'And the page displays the text "Account Activated!", ' +
+      'And the page displays a button with text "Go to Sign In"',
+    async () => {
+      test.skip(); // TDD Red Phase - activation-success screen not built (no success-icon/title/go-to-sign-in testids, no submit handler)
 
-    await activationBackend.givenPendingAccountForToken({ login: 'ivan', email: 'ivan@example.com' });
-    await activationPage.navigateToActivationPageWithToken('valid-activation-token');
+      await activationBackend.givenPendingAccountForToken({ login: 'ivan', email: 'ivan@example.com' });
+      await activationPage.navigateToActivationPageWithToken('valid-activation-token');
 
-    await activationPage.enterPassword('Str0ng-P@ssw0rd!');
-    await activationPage.enterConfirmPassword('Str0ng-P@ssw0rd!');
-    await activationPage.clickActivateButton();
+      await activationPage.enterPassword('Str0ng-P@ssw0rd!');
+      await activationPage.enterConfirmPassword('Str0ng-P@ssw0rd!');
+      await activationPage.clickActivateButton();
 
-    await activationPage.assertSuccessIconIsVisible();
-    await activationPage.assertSuccessMessageIsDisplayed();
-    await activationPage.assertGoToSignInButtonIsVisible();
-  });
+      await activationPage.assertSuccessIconIsVisible();
+      await activationPage.assertSuccessMessageIsDisplayed();
+      await activationPage.assertGoToSignInButtonIsVisible();
+    },
+  );
 });
