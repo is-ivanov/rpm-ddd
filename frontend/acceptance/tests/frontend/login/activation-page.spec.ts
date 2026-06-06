@@ -38,8 +38,6 @@ test.describe('Activation Page', () => {
       'And the page displays the text "Account Activated!", ' +
       'And the page displays a button with text "Go to Sign In"',
     async () => {
-      test.skip(); // TDD Red Phase - activation-success screen not built (no success-icon/title/go-to-sign-in testids, no submit handler)
-
       await activationBackend.givenPendingAccountForToken({ login: 'ivan', email: 'ivan@example.com' });
       await activationPage.navigateToActivationPageWithToken('valid-activation-token');
 
