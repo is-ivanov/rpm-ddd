@@ -1,14 +1,9 @@
-import type { LoginRequest } from './types';
+import type { LoginRequest, ProblemDetail } from './types';
 import { LoginError } from './types';
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? '';
 
 const AUTHENTICATION_FAILED_TYPE = 'https://www.rpm-ddd.my/problem/authentication-failed';
-
-interface ProblemDetail {
-  readonly type?: string;
-  readonly detail?: string;
-}
 
 export async function login(request: LoginRequest): Promise<void> {
   const response = await fetch(`${BASE_URL}/api/auth/login`, {

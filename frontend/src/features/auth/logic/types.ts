@@ -1,3 +1,8 @@
+export interface ProblemDetail {
+  readonly type?: string;
+  readonly detail?: string;
+}
+
 export interface LoginRequest {
   readonly login: string;
   readonly password: string;

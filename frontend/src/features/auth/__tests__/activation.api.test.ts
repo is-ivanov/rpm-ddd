@@ -56,9 +56,7 @@ describe('Activation API Client', () => {
     expect(requestUrl.searchParams.get('token')).toBe('valid-jwt-token');
   });
 
-  // RED: validateActivationToken does not check response.ok yet, so a 422 response
-  // resolves with the parsed problem object instead of rejecting.
-  it.skip('rejects with an ActivationError when the token is expired (422)', async () => {
+  it('rejects with an ActivationError when the token is expired (422)', async () => {
     stubActivateExpired();
 
     const error = await captureActivationRejection('expired-token');
