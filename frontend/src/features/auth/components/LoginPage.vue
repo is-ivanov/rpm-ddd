@@ -31,7 +31,7 @@ function showLoginError(error: LoginError): void {
 
 <template>
   <main class="flex min-h-screen items-center justify-center bg-[#f8f9fa] font-sans">
-    <div class="w-full max-w-100 rounded-lg bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+    <div class="auth-card">
       <div class="mb-6 text-center text-2xl font-bold text-[#228be6]">RPM</div>
       <div class="mb-6 text-center text-lg font-semibold text-[#212529]">Sign In</div>
 
@@ -76,13 +76,7 @@ function showLoginError(error: LoginError): void {
           </div>
         </div>
 
-        <button
-          type="submit"
-          data-testid="submit-button"
-          class="mt-2 h-10 w-full rounded-md bg-[#228be6] text-sm font-medium text-white transition-colors hover:bg-[#1c7ed6]"
-        >
-          Sign In
-        </button>
+        <button type="submit" data-testid="submit-button" class="btn-primary mt-2">Sign In</button>
       </form>
 
       <a class="mt-4 block cursor-default text-center text-[13px] text-[#adb5bd] no-underline" aria-disabled="true">
