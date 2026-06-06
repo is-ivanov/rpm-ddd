@@ -73,7 +73,10 @@ export class ActivationPageStatements {
     await expect(this.successScreen(), 'activation success screen is visible').toBeVisible();
     await expect(this.successIcon(), 'green check icon is visible on the success screen').toBeVisible();
     await expect(this.successIcon().locator('svg'), 'green check icon renders its SVG content').toBeVisible();
-    await expect(this.successIcon(), 'green check icon is not empty').not.toBeEmpty();
+    await expect(
+      this.successIcon().locator('svg > *').first(),
+      'green check icon is not empty (renders real SVG shape content)',
+    ).toBeAttached();
   }
 
   async assertSuccessMessageIsDisplayed(): Promise<void> {
