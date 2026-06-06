@@ -23,7 +23,7 @@ defineEmits<{
       <component :is="icon" :size="48" />
     </div>
     <div :data-testid="`${testid}-title`" class="mb-2 text-lg font-semibold text-[#212529]">{{ title }}</div>
-    <p class="mb-6 text-sm leading-[1.5] text-[#6c757d]">{{ description }}</p>
+    <p class="mb-6 text-sm leading-normal text-[#6c757d]">{{ description }}</p>
     <button type="button" :data-testid="buttonTestid" class="btn-primary block cursor-pointer" @click="$emit('action')">
       {{ buttonLabel }}
     </button>
