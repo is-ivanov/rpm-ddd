@@ -99,6 +99,22 @@ export class ActivationPageStatements {
     await expect(this.goToSignInButton(), 'button has text "Go to Sign In"').toHaveText('Go to Sign In');
   }
 
+  async completeActivationAndReachSuccessScreen(password: string): Promise<void> {
+    await this.navigateToActivationPageWithToken('valid-activation-token');
+    await this.enterPassword(password);
+    await this.enterConfirmPassword(password);
+    await this.clickActivateButton();
+    await this.assertGoToSignInButtonIsVisible();
+  }
+
+  async clickGoToSignInButton(): Promise<void> {
+    await this.goToSignInButton().click();
+  }
+
+  async assertNavigatedToLoginPage(): Promise<void> {
+    await expect(this.page, 'browser is navigated to the exact login page URL').toHaveURL(`${this.appUrl}/login`);
+  }
+
   async assertErrorIconIsVisible(): Promise<void> {
     await this.assertScreenIconIsVisible(this.errorScreen(), this.errorIcon(), {
       screen: 'activation error screen is visible',
