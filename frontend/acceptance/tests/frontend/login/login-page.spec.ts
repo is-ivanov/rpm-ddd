@@ -106,10 +106,6 @@ test.describe('Login Page', () => {
       'Then an error banner appears with text "Something went wrong. Please try again."',
     async () => {
       await issue('127');
-      // RED: LoginPage.submitLogin only catches LoginError; an aborted fetch rejects with a
-      // TypeError that is swallowed, so the error-banner never renders. Generic-error handling
-      // is implemented in GREEN (green-frontend + green-playwright).
-      test.skip();
       await authBackend.givenLoginRequestFails();
       await loginPage.navigateToLoginPage();
 

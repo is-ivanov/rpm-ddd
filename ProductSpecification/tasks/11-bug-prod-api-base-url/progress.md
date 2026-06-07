@@ -20,5 +20,5 @@ Build-config change — no meaningful red test (the defect is a Vite build-time
 - [S] red-frontend-api (login.api.ts unchanged; no API client logic change)
 - [S] green-frontend-api
 - [S] align-design (reuses existing LoginErrorBanner; no new styling)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright
+- [~] demo
