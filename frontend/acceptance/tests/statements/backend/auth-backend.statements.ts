@@ -23,6 +23,10 @@ export class AuthBackendStatements {
     await this.installLoginRoute();
   }
 
+  async givenLoginRequestFails(): Promise<void> {
+    await this.page.route(LOGIN_URL_PATTERN, (route) => route.abort('failed'));
+  }
+
   private async installLoginRoute(): Promise<void> {
     await this.page.route(LOGIN_URL_PATTERN, (route) => this.handleLogin(route));
   }

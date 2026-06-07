@@ -10,6 +10,23 @@ Tech binding for `tdd-rules.md`. Load alongside the universal rules.
 - In GREEN: remove `@Disabled` (the only test modification allowed)
 - In commit discipline: RED commits include `@Disabled` tests
 
+## Bug Test Tagging (GitHub Issue)
+
+When a test is written in a **bug task's** TDD cycle, tag it with the bug's GitHub issue number (see `.claude/rules/workflow.md` → "Bug Tasks → GitHub Issues"). Use the Allure `@Issue` annotation (allure-jupiter, already on the classpath):
+
+```java
+import io.qameta.allure.Issue;
+
+@Issue("127")
+@DisplayName("WHEN login fetch fails unexpectedly EXPECT generic error")
+void should_returnGenericError_when_loginFails() { ... }
+```
+
+- **Import the annotation — never the fully-qualified `@io.qameta.allure.Issue("...")`** (repo rule: imports only).
+- Pass the bare issue number (`"127"`); the report turns it into a link via the configured issue link template.
+- Place `@Issue` on the test method, or on the `@Nested`/class when every test in it belongs to the same bug.
+- This applies to every bug-task red phase (red-acceptance, red-usecase, red-domain, red-adapter). Story-scenario tests are NOT tagged this way.
+
 ## Test Structure Conventions
 
 ### @Nested Grouping

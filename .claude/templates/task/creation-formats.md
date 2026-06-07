@@ -14,6 +14,7 @@
 # Task {N}: {Title}
 
 Type: {bug|refactoring}
+Issue: #{N}  <- bug only (GitHub issue, created by /task; tests are tagged with this number)
 
 ## Problem
 

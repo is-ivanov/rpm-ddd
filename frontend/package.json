@@ -27,6 +27,7 @@
     "@types/node": "^22.10.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/test-utils": "^2.4.6",
+    "allure-js-commons": "^3.9.0",
     "allure-playwright": "^3.9.0",
     "allure-vitest": "^3.9.0",
     "eslint": "^10.4.1",
