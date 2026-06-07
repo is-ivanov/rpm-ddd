@@ -1,14 +1,17 @@
 import { test } from '@playwright/test';
 import { ActivationPageStatements } from '../../statements/frontend/activation-page.statements';
 import { ActivationBackendStatements } from '../../statements/backend/activation-backend.statements';
+import { LoginPageStatements } from '../../statements/frontend/login-page.statements';
 
 test.describe('Activation Page', () => {
   let activationPage: ActivationPageStatements;
   let activationBackend: ActivationBackendStatements;
+  let loginPage: LoginPageStatements;
 
   test.beforeEach(({ page, baseURL }) => {
     activationPage = new ActivationPageStatements(page, baseURL!);
     activationBackend = new ActivationBackendStatements(page);
+    loginPage = new LoginPageStatements(page, baseURL!);
   });
 
   test(
@@ -64,6 +67,27 @@ test.describe('Activation Page', () => {
       await activationPage.assertErrorIconIsVisible();
       await activationPage.assertErrorMessageIsDisplayed();
       await activationPage.assertRequestNewLinkButtonIsVisible();
+    },
+  );
+
+  test(
+    'UI Test Scenario 6.1: Clicking "Go to Sign In" navigates to login page - ' +
+      'Given the user has completed account activation, ' +
+      'And the success screen is displayed with button "Go to Sign In", ' +
+      'When the user clicks the "Go to Sign In" button, ' +
+      'Then the user is navigated to the login page',
+    async () => {
+      test.skip(); // TDD Red Phase - prediction confirmed: test already PASSES (button wired in 5.1, /login route + login page elements exist). green-playwright removes this marker.
+      await activationBackend.givenPendingAccountForToken({ login: 'ivan', email: 'ivan@example.com' });
+      await activationPage.completeActivationAndReachSuccessScreen('Str0ng-P@ssw0rd!');
+
+      await activationPage.clickGoToSignInButton();
+
+      await activationPage.assertNavigatedToLoginPage();
+      await loginPage.assertLoginFieldIsVisible();
+      await loginPage.assertPasswordFieldIsVisible();
+      await loginPage.assertPasswordFieldMasksText();
+      await loginPage.assertSubmitButtonIsVisible();
     },
   );
 });

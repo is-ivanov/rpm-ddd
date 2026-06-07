@@ -189,8 +189,8 @@
 - [x] demo (ran activation-page.spec.ts §5.2 headed + slowMo 1200ms maximized; 1 passed; config reverted)
 
 ### Scenario 6.1: Clicking "Go to Sign In" navigates to login page
-- [ ] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (activation-page.spec.ts §6.1 — test.skip; reaches success screen via §5.1 backend-mock flow then clicks go-to-sign-in-button, asserts exact /login URL + login page elements visible/masked. PREDICT: test passes — router.push('/login') already wired in §5.1; matched. Refactor extracted completeActivationAndReachSuccessScreen() precondition; test-review tightened URL to exact + added password-masking assertion)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
