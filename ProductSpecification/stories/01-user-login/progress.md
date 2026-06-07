@@ -190,9 +190,9 @@
 
 ### Scenario 6.1: Clicking "Go to Sign In" navigates to login page
 - [x] red-playwright (activation-page.spec.ts §6.1 — test.skip; reaches success screen via §5.1 backend-mock flow then clicks go-to-sign-in-button, asserts exact /login URL + login page elements visible/masked. PREDICT: test passes — router.push('/login') already wired in §5.1; matched. Refactor extracted completeActivationAndReachSuccessScreen() precondition; test-review tightened URL to exact + added password-masking assertion)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
+- [S] red-frontend (trivial-logic gate + existence check: clicking "Go to Sign In" is an unconditional router navigation `router.push('/login')` — no branching, computation, validation, or data transformation for a .logic.ts unit. Handler already exists in ActivationSuccess.vue (goToSignIn() → router.push('/login'), wired §5.1 align-design); zero .logic.ts files exist and a logic function here would be a constant pass-through. A test would assert router.push called with hardcoded '/login' → identity/constant assertion forbidden by the post-impl trivial-test gate. Observable behavior covered by red-playwright §6.1. Zero logic-layer production files change. Mirrors scenarios 1.1/2.1/3.1/3.2/4.1/5.1/5.2 red-frontend [S])
+- [S] green-frontend (no logic produced in red-frontend — see [S] above; navigation handler already built in ActivationSuccess.vue during §5.1 align-design)
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
