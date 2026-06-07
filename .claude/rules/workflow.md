@@ -130,6 +130,12 @@ Tasks live in `ProductSpecification/tasks/{N}-{type}-{slug}/`. Each task has a p
 
 Tasks follow the same TDD discipline as stories: `/test-review` after red phases, `/refactor` after every phase (except `green-acceptance`, `green-playwright`, `demo`). Task commits use `task:` prefix. Tasks don't need bootstrapping -- `/task` generates everything at creation time.
 
+## Bug Tasks → GitHub Issues
+
+**Every `bug` task MUST be backed by a GitHub issue.** The issue is opened when the task is created (`/task` creates it for `bug` type) and its number is recorded in the task `spec.md` (`Issue: #N`). This gives each bug a stable, linkable identifier shared across the codebase, the commit history, and the test report. Refactoring tasks do NOT require an issue.
+
+**Every test written in a bug task's TDD cycle — backend AND frontend — MUST be tagged with the bug's issue number.** This is mandatory and applies to every red phase of the task (red-acceptance, red-usecase, red-domain, red-adapter, red-playwright, red-frontend, red-frontend-api). The tag links each test back to the tracked bug in the report, so a regression is traceable to its origin. Do NOT reuse a story's UI/API scenario numbering for a bug test — a bug test is identified by its issue number, not a story-scenario slot. The concrete tagging mechanism is technology-specific — see the tech binding's `tdd.md` (backend: `.claude/tech/{backend}/tdd.md`; frontend/E2E: `.claude/tech/{frontend}/tdd.md` and `.claude/tech/{browser-testing}/tdd.md`).
+
 **Scoped steps:** Progress should only include TDD steps for layers the fix actually touches — applies to tasks, and to individual story scenarios. If the fix is pure CSS, don't generate logic/API/align-design steps. If the fix is backend-only, don't generate frontend steps. Affected layers are determined from the spec at creation time.
 
 Operational details: `/task` skill (creation, sections, progress format), `/continue` skill (execution, dispatch, adapter discovery).

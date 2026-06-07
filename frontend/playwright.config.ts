@@ -9,7 +9,21 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  reporter: [['list'], ['allure-playwright', { resultsDir: '../target/allure-results' }]],
+  reporter: [
+    ['list'],
+    [
+      'allure-playwright',
+      {
+        resultsDir: '../target/allure-results',
+        links: {
+          issue: {
+            urlTemplate: 'https://github.com/is-ivanov/rpm-ddd/issues/%s',
+            nameTemplate: 'Issue #%s',
+          },
+        },
+      },
+    ],
+  ],
   use: {
     baseURL: appUrl,
     trace: 'on-first-retry',

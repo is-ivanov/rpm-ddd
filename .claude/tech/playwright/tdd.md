@@ -13,6 +13,24 @@ Tech binding for `tdd-rules.md`. Load alongside the universal rules.
 - Use `test.describe('...')` to group scenarios by feature/page
 - Test name must include "UI Test Scenario N:" prefix referencing `02_UI_Tests.md`
 - Test name must include full BDD gherkin from the test spec
+- **Bug-task tests are the exception**: a test written for a `bug` task is NOT a story scenario — do NOT give it a `UI Test Scenario N:` prefix (that namespace belongs to `02_UI_Tests.md`). Prefix it with the bug instead: `UI Bug #N:` where `N` is the GitHub issue number, followed by the BDD gherkin. See "Bug Test Tagging" below.
+
+## Bug Test Tagging (GitHub Issue)
+
+When a Playwright test is written in a **bug task's** TDD cycle, tag it with the bug's GitHub issue number (see `.claude/rules/workflow.md` → "Bug Tasks → GitHub Issues"). Use the `allure-js-commons` runtime API — the same import as Vitest:
+
+```ts
+import { issue } from 'allure-js-commons';
+
+test('UI Bug #127: unexpected login failure shows a generic error banner - Given ...', async () => {
+  await issue('127');
+  // ...given / when / then via Statements
+});
+```
+
+- Call `await issue('127')` as the **first line** of the body — before `test.skip()` in RED, so the link still attaches while the test is skipped.
+- Pass the bare number; the report links it via `links.issue.urlTemplate` configured in `playwright.config.ts`'s `allure-playwright` reporter.
+- `allure-js-commons` is a direct devDependency. Only tag bug-task tests; story-scenario tests are NOT tagged.
 
 ## Statements Assertions (Playwright Built-in)
 

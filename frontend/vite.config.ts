@@ -32,6 +32,20 @@ export default defineConfig({
     setupFiles: ['src/test/setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', 'dist', 'acceptance/**'],
-    reporters: ['default', ['allure-vitest/reporter', { resultsDir: '../target/allure-results' }]],
+    reporters: [
+      'default',
+      [
+        'allure-vitest/reporter',
+        {
+          resultsDir: '../target/allure-results',
+          links: {
+            issue: {
+              urlTemplate: 'https://github.com/is-ivanov/rpm-ddd/issues/%s',
+              nameTemplate: 'Issue #%s',
+            },
+          },
+        },
+      ],
+    ],
   },
 });

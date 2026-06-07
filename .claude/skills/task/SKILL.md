@@ -37,11 +37,19 @@ Gather from user:
 
 **Refactoring only:** Numbered steps with clear scope.
 
-### 5. Generate spec.md
+### 5. Create GitHub Issue (bug only)
 
-Write `ProductSpecification/tasks/{N}-{type}-{slug}/spec.md` using the format in `.claude/templates/task/creation-formats.md`.
+**For `bug` tasks only** (skip entirely for refactoring): open a GitHub issue so the bug has a stable, linkable identifier (see `.claude/rules/workflow.md` → "Bug Tasks → GitHub Issues").
 
-### 6. Generate progress.md
+1. Resolve the repository from `git remote get-url origin` (e.g. `is-ivanov/rpm-ddd`).
+2. Create the issue with the **GitHub MCP server** (`issue_write`, `method: create`) — title from the task title, body from the gathered Problem + Solution + Reproduction, `labels: ["bug"]`. Fall back to `gh issue create` only if the MCP server is unavailable.
+3. Capture the returned issue **number** and record it in `spec.md` as an `Issue: #N` line (see the bug `spec.md` format). Every test written during the task's TDD cycle will carry this number (per tech binding `tdd.md`).
+
+### 6. Generate spec.md
+
+Write `ProductSpecification/tasks/{N}-{type}-{slug}/spec.md` using the format in `.claude/templates/task/creation-formats.md`. For bug tasks, include the `Issue: #N` line from step 5.
+
+### 7. Generate progress.md
 
 Select fix profile based on type and affected layers:
 
@@ -54,7 +62,7 @@ Select fix profile based on type and affected layers:
 
 Write `ProductSpecification/tasks/{N}-{type}-{slug}/progress.md` using the matching format from the template. Bug tasks use `[ ] adapters-discovery` -- adapter discovery runs when this step is reached. Refactoring steps are user-defined from step 4.
 
-### 7. Review and Commit
+### 8. Review and Commit
 
 Show spec.md and progress.md to user for review. Commit both files.
 

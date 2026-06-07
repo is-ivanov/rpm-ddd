@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { issue } from 'allure-js-commons';
 import { LoginPageStatements } from '../../statements/frontend/login-page.statements';
 import { AuthBackendStatements } from '../../statements/backend/auth-backend.statements';
 
@@ -96,7 +97,7 @@ test.describe('Login Page', () => {
   );
 
   test(
-    'UI Test Scenario 3.3: Unexpected login failure shows a generic error banner - ' +
+    'UI Bug #127: Unexpected login failure shows a generic error banner - ' +
       'Given the user is on the login page, ' +
       'And the login endpoint will fail unexpectedly, ' +
       'When the user enters login "ivan", ' +
@@ -104,6 +105,7 @@ test.describe('Login Page', () => {
       'And the user clicks the "Sign In" button, ' +
       'Then an error banner appears with text "Something went wrong. Please try again."',
     async () => {
+      await issue('127');
       // RED: LoginPage.submitLogin only catches LoginError; an aborted fetch rejects with a
       // TypeError that is swallowed, so the error-banner never renders. Generic-error handling
       // is implemented in GREEN (green-frontend + green-playwright).
