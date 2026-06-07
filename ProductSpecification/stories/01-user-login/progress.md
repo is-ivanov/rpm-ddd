@@ -195,8 +195,8 @@
 - [S] red-frontend-api (no API/HTTP interaction in §6.1 — the action is a pure client-side router navigation router.push('/login') with zero network requests; nothing for an MSW .api.ts test to stub/assert. Existence check: all auth HTTP already built/tested in prior scenarios — login.api.ts login() (§3.1/3.2), activation.api.ts validateActivationToken() (§4.1), activateAccount() (§5.1) — §6.1 triggers none. goToSignIn()→router.push('/login') handler already in ActivationSuccess.vue (§5.1 align-design). Zero .api.ts production files change. Observable behavior covered by red-playwright §6.1. Mirrors scenarios 1.1/2.1/5.2 red-frontend-api [S] and §6.1 red-frontend [S])
 - [S] green-frontend-api (no API client produced in red-frontend-api — see [S] above; navigation already built in ActivationSuccess.vue during §5.1 align-design)
 - [x] align-design (verification-only — §6.1 is navigation between two already-aligned screens: success screen button lives in ActivationSuccess.vue→ActivationResultCard.vue (btn-primary matches mockup 05-activation-success.html .btn, aligned §5.1), navigation target LoginPage.vue (aligned §1.1/§3.x). Zero component changes; working tree clean. vue-tsc clean; vitest 6/6 green. design-review PASS — no placeholders, no regressions. refactor CLEAN — no smells, all files ≤87L. test-coverage --focus: no changed production files to analyze; navigation E2E-covered by red-playwright §6.1)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (skip marker removed — navigation E2E-verified; backend mocked in-browser via page.route, frontend auto-started via Playwright webServer. activation-page.spec.ts 4/4 pass (§4.1/§5.1/§5.2/§6.1), no regressions. Remove-marker-only: no production/Statements changes)
+- [~] demo
 
 ## Security Scenarios
 

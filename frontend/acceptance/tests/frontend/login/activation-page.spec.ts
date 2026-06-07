@@ -77,7 +77,6 @@ test.describe('Activation Page', () => {
       'When the user clicks the "Go to Sign In" button, ' +
       'Then the user is navigated to the login page',
     async () => {
-      test.skip(); // TDD Red Phase - prediction confirmed: test already PASSES (button wired in 5.1, /login route + login page elements exist). green-playwright removes this marker.
       await activationBackend.givenPendingAccountForToken({ login: 'ivan', email: 'ivan@example.com' });
       await activationPage.completeActivationAndReachSuccessScreen('Str0ng-P@ssw0rd!');
 
