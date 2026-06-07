@@ -77,6 +77,13 @@ export class LoginPageStatements {
     );
   }
 
+  async assertErrorBannerShowsGenericError(): Promise<void> {
+    await expect(this.errorBanner(), 'error banner is visible').toBeVisible();
+    await expect(this.errorBanner(), 'error banner shows generic error message').toHaveText(
+      'Something went wrong. Please try again.',
+    );
+  }
+
   async assertErrorBannerShowsActivationRequired(): Promise<void> {
     await expect(this.errorBanner(), 'error banner is visible').toBeVisible();
     await expect(this.errorBanner(), 'error banner indicates the account requires activation').toContainText(

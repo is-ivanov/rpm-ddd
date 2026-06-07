@@ -14,8 +14,8 @@ Build-config change — no meaningful red test (the defect is a Vite build-time
 - [x] verify frontend unit tests green (npm run test)
 
 ### Fix 2: LoginPage surfaces a generic error on unexpected failures
-- [~] red-playwright (login endpoint failure -> error banner visible)
-- [ ] red-frontend (logic: map unknown error -> generic login error view)
+- [x] red-playwright (login endpoint failure -> error banner visible)
+- [~] red-frontend (logic: map unknown error -> generic login error view)
 - [ ] green-frontend
 - [S] red-frontend-api (login.api.ts unchanged; no API client logic change)
 - [S] green-frontend-api

@@ -94,4 +94,28 @@ test.describe('Login Page', () => {
       await loginPage.assertErrorBannerContainsActivationLink();
     },
   );
+
+  test(
+    'UI Test Scenario 3.3: Unexpected login failure shows a generic error banner - ' +
+      'Given the user is on the login page, ' +
+      'And the login endpoint will fail unexpectedly, ' +
+      'When the user enters login "ivan", ' +
+      'And the user enters password "correct-pass", ' +
+      'And the user clicks the "Sign In" button, ' +
+      'Then an error banner appears with text "Something went wrong. Please try again."',
+    async () => {
+      // RED: LoginPage.submitLogin only catches LoginError; an aborted fetch rejects with a
+      // TypeError that is swallowed, so the error-banner never renders. Generic-error handling
+      // is implemented in GREEN (green-frontend + green-playwright).
+      test.skip();
+      await authBackend.givenLoginRequestFails();
+      await loginPage.navigateToLoginPage();
+
+      await loginPage.enterLoginText('ivan');
+      await loginPage.enterPasswordText('correct-pass');
+      await loginPage.clickSubmitButton();
+
+      await loginPage.assertErrorBannerShowsGenericError();
+    },
+  );
 });
