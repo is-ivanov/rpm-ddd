@@ -3,7 +3,8 @@ import { defineConfig } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
 
-const apiUrl = process.env.VITE_API_URL || 'http://localhost:8080';
+const clientApiBaseUrl = process.env.VITE_API_URL || '';
+const devProxyTarget = process.env.VITE_API_URL || 'http://localhost:8080';
 const frontendPort = Number(process.env.FRONTEND_PORT) || 5173;
 
 export default defineConfig({
@@ -14,13 +15,13 @@ export default defineConfig({
     },
   },
   define: {
-    'import.meta.env.VITE_API_URL': JSON.stringify(apiUrl),
+    'import.meta.env.VITE_API_URL': JSON.stringify(clientApiBaseUrl),
   },
   server: {
     port: frontendPort,
     proxy: {
       '/api': {
-        target: apiUrl,
+        target: devProxyTarget,
         changeOrigin: true,
       },
     },
