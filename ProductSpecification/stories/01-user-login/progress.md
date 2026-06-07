@@ -196,7 +196,7 @@
 - [S] green-frontend-api (no API client produced in red-frontend-api — see [S] above; navigation already built in ActivationSuccess.vue during §5.1 align-design)
 - [x] align-design (verification-only — §6.1 is navigation between two already-aligned screens: success screen button lives in ActivationSuccess.vue→ActivationResultCard.vue (btn-primary matches mockup 05-activation-success.html .btn, aligned §5.1), navigation target LoginPage.vue (aligned §1.1/§3.x). Zero component changes; working tree clean. vue-tsc clean; vitest 6/6 green. design-review PASS — no placeholders, no regressions. refactor CLEAN — no smells, all files ≤87L. test-coverage --focus: no changed production files to analyze; navigation E2E-covered by red-playwright §6.1)
 - [x] green-playwright (skip marker removed — navigation E2E-verified; backend mocked in-browser via page.route, frontend auto-started via Playwright webServer. activation-page.spec.ts 4/4 pass (§4.1/§5.1/§5.2/§6.1), no regressions. Remove-marker-only: no production/Statements changes)
-- [~] demo
+- [x] demo (ran activation-page.spec.ts §6.1 headed + slowMo 1200ms maximized; 1 passed; config reverted. Note: demo config needs deviceScaleFactor:undefined alongside viewport:null in the chromium project — Desktop Chrome device sets deviceScaleFactor which conflicts with null viewport)
 
 ## Security Scenarios
 
