@@ -6,10 +6,8 @@ export interface LoginErrorView {
 }
 
 export function mapLoginErrorToView(error: unknown): LoginErrorView {
-  // TDD Red Phase - not implemented (issue #127); green-frontend will branch on
-  // LoginError vs unexpected errors. void-reference both symbols to keep them
-  // wired for green without satisfying no-unused-vars by deleting them.
-  void error;
-  void LoginError;
-  throw new Error('Not implemented');
+  if (error instanceof LoginError) {
+    return { errorMessage: error.message, requiresActivation: error.requiresActivation };
+  }
+  return { errorMessage: 'Something went wrong. Please try again.', requiresActivation: false };
 }

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { Eye, EyeOff } from '@lucide/vue';
 import { login } from '../logic/login.api';
-import { LoginError } from '../logic/types';
+import { mapLoginErrorToView } from '../logic/login-error-view.logic';
 import LoginErrorBanner from './LoginErrorBanner.vue';
 
 const loginName = ref('');
@@ -15,15 +15,14 @@ async function submitLogin(): Promise<void> {
   try {
     await login({ login: loginName.value, password: password.value });
   } catch (error) {
-    if (error instanceof LoginError) {
-      showLoginError(error);
-    }
+    showLoginError(error);
   }
 }
 
-function showLoginError(error: LoginError): void {
-  errorMessage.value = error.message;
-  requiresActivation.value = error.requiresActivation;
+function showLoginError(error: unknown): void {
+  const view = mapLoginErrorToView(error);
+  errorMessage.value = view.errorMessage;
+  requiresActivation.value = view.requiresActivation;
   loginName.value = '';
   password.value = '';
 }
