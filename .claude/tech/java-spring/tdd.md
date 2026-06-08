@@ -2,13 +2,35 @@
 
 Tech binding for `tdd-rules.md`. Load alongside the universal rules.
 
-## Test Disable Marker
+## RED-Phase Marker (`@ExpectedToFail`)
 
-- JUnit 5: `@Disabled` annotation on test methods/classes
-- Referenced as "test disable marker" in universal rules
-- In RED: add `@Disabled` after validating prediction
-- In GREEN: remove `@Disabled` (the only test modification allowed)
-- In commit discipline: RED commits include `@Disabled` tests
+- **Marker:** junit-pioneer's `@ExpectedToFail` (`org.junitpioneer.jupiter.ExpectedToFail`) — replaces JUnit's `@Disabled`. Referenced as "test disable marker" in universal rules.
+- **`withExceptions` is mandatory.** Pin the predicted exception type(s): `@ExpectedToFail(withExceptions = AssertionError.class)`. Without it, junit-pioneer aborts on *any* failure — including infrastructure errors (connection refused, etc.) — which silently swallows the kind of failure our rule "predictions must be about feature behavior, not infrastructure" forbids. Pinning the type makes an infra failure a real failure.
+- **`value`** (optional `String`) — the reason text, like `@Disabled("...")`: `@ExpectedToFail(value = "...", withExceptions = ...)`.
+- **Import the annotation** — never the fully-qualified name (repo rule: imports only): `import org.junitpioneer.jupiter.ExpectedToFail;`
+
+### Behavior
+
+| Event | `@ExpectedToFail` behavior |
+|-------|----------------------------|
+| Test fails with a listed exception | **aborted** (reported as skipped) — build stays green |
+| Test fails with any other type | **real failure** — build fails (infra error ≠ silent abort) |
+| Test passes | **build FAILS**: `Test marked as 'expected to fail' succeeded; remove @ExpectedToFail from it` |
+
+Unlike `@Disabled`, the test **runs on every build** — RED state is continuously machine-verified, and GREEN is enforced (a passing test fails the build until the marker is removed).
+
+### RED / GREEN mechanics
+
+- **RED:** after running the test and validating the prediction (type + message + status all match), add `@ExpectedToFail(withExceptions = <PredictedException>.class)` pinning the predicted exception type. RED commits include the `@ExpectedToFail` test.
+- **GREEN:** remove `@ExpectedToFail` — the only test modification allowed. The implementation makes the test pass; with the marker still present the build fails (`succeeded; remove the annotation`), forcing removal.
+- **Predicted-type guidance:** stub throws the not-implemented marker → `withExceptions = UnsupportedOperationException.class`; an assertion on a missing/wrong value fails → `withExceptions = AssertionError.class`; a predicted domain exception (e.g. `ValidationException`) → pin that type. Applies to all backend levels — usecase, domain, web-slice, acceptance.
+- **Acceptance caveat:** an `@ExpectedToFail` acceptance test **actually executes** in the RED commit (boots the full context, hits HTTP) — slower than `@Disabled`, which never ran. Mandatory `withExceptions` is what keeps this safe (an infra error is a real failure, not a silent abort).
+
+### Limitations
+
+- Not for **intentionally-thrown** exceptions — those use `catchThrowable`/`catchException` + `then(...).isInstanceOf(...)`. `@ExpectedToFail` is for "code not implemented yet → fails", which is exactly RED.
+- Aborted tests still show as **skipped** in the report (same posture as `@Disabled`) — no change to skip-reporting discipline.
+- **Compatibility:** junit-pioneer 2.3.0 is verified against this project's JUnit Jupiter 6.0.3 (#141).
 
 ## Bug Test Tagging (GitHub Issue)
 

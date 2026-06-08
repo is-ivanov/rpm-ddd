@@ -32,6 +32,7 @@
     <jjwt.version>0.13.0</jjwt.version>
     <jmolecules.version>2025.0.2</jmolecules.version>
     <json-unit.version>5.1.2</json-unit.version>
+    <junit-pioneer.version>2.3.0</junit-pioneer.version>
     <nullaway.version>0.13.6</nullaway.version>
     <palantir-java-format.version>2.90.0</palantir-java-format.version>
     <passay.version>2.0.0</passay.version>
@@ -297,9 +298,12 @@
       <artifactId>junit-platform-launcher</artifactId>
     </dependency>
 
-    <!-- Allure (test reporting). allure-junit5 was renamed to allure-jupiter (same
-         artifact, version managed by allure-bom); using the new id avoids the
-         Maven relocation warning. -->
+    <dependency>
+      <groupId>org.junit-pioneer</groupId>
+      <artifactId>junit-pioneer</artifactId>
+      <version>${junit-pioneer.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>io.qameta.allure</groupId>
       <artifactId>allure-jupiter</artifactId>

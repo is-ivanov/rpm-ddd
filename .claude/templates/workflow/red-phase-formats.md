@@ -89,4 +89,4 @@ For frontend layers, use `it.skip(...)` instead of the backend test disable mark
 
 After verified failure, the disable marker message MUST include the actual failure reason (not a generic "TDD Red Phase" label alone).
 
-For adapter test classes with multiple test methods, use **class-level** disable marker (one marker disables all methods). Individual per-method markers are unnecessary when the entire class covers one port method.
+For adapter test classes with multiple test methods, place the disable marker per the tech binding — some markers are **method-only** (one marker on each `@Test`, not on the class). See the tech binding's `red-phase-formats.md` for placement.

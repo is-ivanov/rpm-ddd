@@ -23,7 +23,7 @@ Project uses `@WebTest` meta-annotation that auto-mocks ALL controller dependenc
 - Use `@Nested` inner classes to group by endpoint
 - Use `@DisplayName` with `WHEN ... EXPECT ...` pattern
 - `@Test` method: call API → `AssertionResponse.assert*()`
-- ONE `@Test` method per test class in RED; add `@Disabled`
+- ONE `@Test` method per test class in RED; mark it `@ExpectedToFail(withExceptions = ...)` (method-only marker — see `testing/red-phase-formats.md`)
 
 **What to test at this level** (Level 2 — Web Slice, per `TESTING.md`):
 - Validation errors: `assertBindingError("__files/.../out.json")`
@@ -49,7 +49,7 @@ For success responses: `assertOk("__files/.../out.json")` or inline JSON string.
 ## DTO Validation — Complex vs Flat
 
 **Flat DTO** (all fields validatable in one request):
-- ONE web test method with `@Disabled` covers all validation rules.
+- ONE web test method with `@ExpectedToFail(withExceptions = ...)` covers all validation rules.
 - Use a JSON request body that violates all constraints at once.
 
 **Nested/Complex DTO** (nested objects, custom validators, 3+ distinct constraints):

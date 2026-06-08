@@ -5,7 +5,7 @@
 ## Framework Rules
 
 - Extends `AbstractApplicationIntegrationTest`
-- `@Disabled("TDD Red Phase - Not yet implemented")` for new tests
+- `@ExpectedToFail(value = "TDD Red Phase - Not yet implemented", withExceptions = AssertionError.class)` on each new RED test method (method-only marker — see `testing/red-phase-formats.md`)
 - Test class named `*IntegrationTest.java`
 - `@DisplayName` with scenario title from spec
 - `// GIVEN:`, `// WHEN:`, `// THEN:` section comments

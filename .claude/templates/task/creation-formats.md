@@ -14,7 +14,7 @@
 # Task {N}: {Title}
 
 Type: {bug|refactoring}
-Issue: #{N}  <- bug only (GitHub issue, created by /task; tests are tagged with this number)
+Issue: #{N}  <- every task (the task number IS the issue number); bug tests are tagged with it, refactoring records it for traceability
 
 ## Problem
 

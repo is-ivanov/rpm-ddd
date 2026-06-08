@@ -82,7 +82,7 @@ Domain tests are OPTIONAL — only create when the domain object has testable lo
 
 ONE test means **one test class per domain class** (value object, entity, policy, enum). The class may contain multiple test methods (valid cases, invalid cases via parameterized tests).
 
-- Use **class-level** `@Disabled` marker
+- Mark **each** test method with the test disable marker (placed per-method, not on the class — see the tech binding's `red-phase-formats.md`)
 - Predict failure for each test method
 - Parameterized tests count as one test method for prediction purposes
 
@@ -104,9 +104,9 @@ For adapter layers, follow the test pyramid from `TESTING.md`. Each level tests 
 **email / security / other adapters**:
 - Only corner cases not covered by acceptance tests.
 
-- Use **class-level** test disable marker (not per-method) — one marker disables all methods
+- Mark **each** test method with the test disable marker (placed per-method, not on the class — see the tech binding's `red-phase-formats.md`)
 - Predict failure for **each** test method separately
-- All methods must fail before adding the class-level disable marker
+- Every method must fail as predicted before its marker is added
 
 ## Disable Marker / Output Formats
 
