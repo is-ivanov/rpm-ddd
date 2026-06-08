@@ -50,3 +50,6 @@ D*infrastructureagent-progress.log
 # Playwright MCP browser-session artifacts (snapshots, console/network logs,
 # screenshots) created during ad-hoc QA. Throwaway — never tracked.
 .playwright-mcp/
+
+# Claude Code git worktrees (agent isolation)
+.claude/worktrees/

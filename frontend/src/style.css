@@ -11,15 +11,23 @@
   }
 
   .btn-primary {
-    @apply h-10 w-full rounded-md bg-[#228be6] text-sm font-medium text-white transition-colors hover:bg-[#1c7ed6];
+    @apply h-10 w-full rounded-md text-sm font-medium transition-colors;
+    @apply bg-[#228be6] text-white hover:bg-[#1c7ed6];
+    @apply disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#228be6];
   }
 
   .form-input {
-    @apply h-10 w-full rounded-md border border-[#dee2e6] px-3 text-sm text-[#212529] outline-none placeholder:text-[#adb5bd] focus:border-[#4dabf7];
+    @apply h-10 w-full rounded-md border border-[#dee2e6] px-3;
+    @apply text-sm text-[#212529] outline-none;
+    @apply placeholder:text-[#adb5bd] focus:border-[#4dabf7];
   }
 
   .form-input::-ms-reveal,
   .form-input::-ms-clear {
     display: none;
+  }
+
+  .field-error {
+    @apply mt-1.5 text-[13px] text-[#fa5252];
   }
 }
