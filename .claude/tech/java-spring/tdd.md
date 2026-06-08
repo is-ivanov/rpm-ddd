@@ -30,7 +30,7 @@ Unlike `@Disabled`, the test **runs on every build** — RED state is continuous
 
 - Not for **intentionally-thrown** exceptions — those use `catchThrowable`/`catchException` + `then(...).isInstanceOf(...)`. `@ExpectedToFail` is for "code not implemented yet → fails", which is exactly RED.
 - Aborted tests still show as **skipped** in the report (same posture as `@Disabled`) — no change to skip-reporting discipline.
-- **Compatibility:** junit-pioneer 2.3.0 is verified against this project's JUnit Jupiter 6.0.3 (Task 14 / #141).
+- **Compatibility:** junit-pioneer 2.3.0 is verified against this project's JUnit Jupiter 6.0.3 (#141).
 
 ## Bug Test Tagging (GitHub Issue)
 
