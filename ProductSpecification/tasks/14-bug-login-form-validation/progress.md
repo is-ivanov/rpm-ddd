@@ -11,10 +11,10 @@ Type: bug
 Logic-driven (Humble Object): `isLoginFormValid(login, password)` in `.logic.ts`; the component
 reflects it on the Sign In button. No API-client change. Step list may be refined at start.
 - [x] red-frontend (logic: isLoginFormValid(login, password) — false unless both non-empty; tag #131)
-- [~] green-frontend (disable Sign In until valid)
+- [x] green-frontend (disable Sign In until valid)
 - [S] red-frontend-api (no API client change)
 - [S] green-frontend-api
-- [ ] red-playwright (Sign In disabled with empty/partial fields; tag #131)
+- [~] red-playwright (Sign In disabled with empty/partial fields; tag #131)
 - [ ] green-playwright
 - [ ] align-design (disabled-button state matches mockup)
 - [ ] demo

@@ -2,8 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { issue } from 'allure-js-commons';
 import { isLoginFormValid } from '../logic/login-form.logic';
 
-// RED: isLoginFormValid is a not-implemented stub; throws 'not implemented'.
-describe.skip('Login Form Validation', () => {
+describe('Login Form Validation', () => {
   it('returns false when both login and password are empty', async () => {
     await issue('131');
 
