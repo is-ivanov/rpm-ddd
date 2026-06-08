@@ -138,8 +138,7 @@ describe('Login API Client', () => {
     expect((error as LoginError).requiresActivation).toBe(true);
   });
 
-  // RED: throwLoginError does not yet parse problem.fieldErrors, so LoginError.fieldErrors defaults to [].
-  it.skip('parses 422 ProblemDetail fieldErrors into a LoginError carrying structured field errors', async () => {
+  it('parses 422 ProblemDetail fieldErrors into a LoginError carrying structured field errors', async () => {
     await issue('131');
     stubCsrfSetsCookie({ order: [] });
     stubLoginValidationProblem([
