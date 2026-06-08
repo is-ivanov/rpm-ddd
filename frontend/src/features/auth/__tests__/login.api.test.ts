@@ -73,8 +73,7 @@ describe('Login API Client', () => {
     document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
   });
 
-  // RED #129: login() does not yet prime GET /api/auth/csrf nor send X-XSRF-TOKEN.
-  it.skip('performs the CSRF handshake before posting login with the X-XSRF-TOKEN header', async () => {
+  it('performs the CSRF handshake before posting login with the X-XSRF-TOKEN header', async () => {
     await issue('129');
     const captured: CapturedRequest = { order: [] };
     stubCsrfSetsCookie(captured);
@@ -88,6 +87,7 @@ describe('Login API Client', () => {
   });
 
   it('surfaces the problem+json detail as a LoginError on 401 invalid credentials', async () => {
+    stubCsrfSetsCookie({ order: [] });
     stubLoginProblem({
       type: 'https://www.rpm-ddd.my/problem/bad-credentials',
       detail: 'Bad credentials',
@@ -101,6 +101,7 @@ describe('Login API Client', () => {
   });
 
   it('flags requiresActivation on 401 account not activated', async () => {
+    stubCsrfSetsCookie({ order: [] });
     stubLoginProblem({
       type: 'https://www.rpm-ddd.my/problem/authentication-failed',
       detail: 'Account not activated',
