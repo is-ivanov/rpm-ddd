@@ -23,8 +23,8 @@ reflects it on the Sign In button. No API-client change. Step list may be refine
 Presentational removal from `LoginPage.vue` (out of scope per Story 1).
 - [x] red-playwright ("Forgot password" element absent on the login page; tag #131)
 - [x] align-design (remove the element from LoginPage.vue)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright
+- [~] demo
 
 ### Fix 3: Map backend fieldErrors to per-control messages (issue #131, folded in 2026-06-08)
 Frontend-only, defense-in-depth. Backend already returns RFC-9457 with `fieldErrors[]`; surface

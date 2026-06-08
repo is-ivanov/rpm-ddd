@@ -145,8 +145,6 @@ test.describe('Login Page', () => {
       'Then no "Forgot password" element is present',
     async () => {
       await issue('131');
-      // RED: element is still present (LoginPage.vue) — removed in the later align-design phase
-      test.skip();
       await loginPage.navigateToLoginPage();
 
       await loginPage.assertForgotPasswordIsAbsent();
