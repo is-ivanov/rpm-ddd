@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import { Eye, EyeOff } from '@lucide/vue';
 import { login } from '../logic/login.api';
-import { mapLoginErrorToView } from '../logic/login-error-view.logic';
+import { mapLoginErrorToView, type LoginFieldErrors } from '../logic/login-error-view.logic';
 import { isLoginFormValid } from '../logic/login-form.logic';
 import LoginErrorBanner from './LoginErrorBanner.vue';
 
@@ -11,6 +11,7 @@ const password = ref('');
 const showPassword = ref(false);
 const errorMessage = ref('');
 const requiresActivation = ref(false);
+const fieldErrors = ref<LoginFieldErrors>({});
 
 const isFormValid = computed(() => isLoginFormValid(loginName.value, password.value));
 
@@ -26,6 +27,7 @@ function showLoginError(error: unknown): void {
   const view = mapLoginErrorToView(error);
   errorMessage.value = view.errorMessage;
   requiresActivation.value = view.requiresActivation;
+  fieldErrors.value = view.fieldErrors;
   loginName.value = '';
   password.value = '';
 }
@@ -51,6 +53,7 @@ function showLoginError(error: unknown): void {
             placeholder="Enter username"
             class="form-input"
           />
+          <p v-if="fieldErrors.login" data-testid="login-error" class="field-error">{{ fieldErrors.login }}</p>
         </div>
 
         <div class="mb-4">
@@ -76,6 +79,7 @@ function showLoginError(error: unknown): void {
               <Eye v-else :size="18" />
             </button>
           </div>
+          <p v-if="fieldErrors.password" data-testid="password-error" class="field-error">{{ fieldErrors.password }}</p>
         </div>
 
         <button type="submit" data-testid="submit-button" class="btn-primary mt-2" :disabled="!isFormValid">
