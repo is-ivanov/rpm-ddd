@@ -21,8 +21,8 @@ reflects it on the Sign In button. No API-client change. Step list may be refine
 
 ### Fix 2: Remove out-of-scope "Forgot password" placeholder (issue #131)
 Presentational removal from `LoginPage.vue` (out of scope per Story 1).
-- [~] red-playwright ("Forgot password" element absent on the login page; tag #131)
-- [ ] align-design (remove the element from LoginPage.vue)
+- [x] red-playwright ("Forgot password" element absent on the login page; tag #131)
+- [~] align-design (remove the element from LoginPage.vue)
 - [ ] green-playwright
 - [ ] demo
 

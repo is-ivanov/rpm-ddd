@@ -110,6 +110,10 @@ export class LoginPageStatements {
     await expect(this.passwordInput(), 'password field is cleared').toHaveValue('');
   }
 
+  async assertForgotPasswordIsAbsent(): Promise<void> {
+    await expect(this.page.getByText('Forgot password?'), 'no "Forgot password" element is present').toHaveCount(0);
+  }
+
   private loginInput(): Locator {
     return this.page.getByTestId(TEST_ID.loginInput);
   }

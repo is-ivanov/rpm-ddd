@@ -138,4 +138,18 @@ test.describe('Login Page', () => {
       await loginPage.assertSubmitButtonIsEnabled();
     },
   );
+
+  test(
+    'UI Bug #131: Forgot-password placeholder is absent from the login page - ' +
+      'Given the user navigates to the login page, ' +
+      'Then no "Forgot password" element is present',
+    async () => {
+      await issue('131');
+      // RED: element is still present (LoginPage.vue) — removed in the later align-design phase
+      test.skip();
+      await loginPage.navigateToLoginPage();
+
+      await loginPage.assertForgotPasswordIsAbsent();
+    },
+  );
 });
