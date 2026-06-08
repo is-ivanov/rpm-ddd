@@ -150,4 +150,30 @@ test.describe('Login Page', () => {
       await loginPage.assertForgotPasswordIsAbsent();
     },
   );
+
+  // RED: implementation already complete (Fix 3 align-design); test passes on first run.
+  // green-playwright removes this .skip marker and confirms.
+  test.skip(
+    'UI Bug #131: Field-validation errors render under their inputs, not in the global banner - ' +
+      'Given the user is on the login page, ' +
+      'And the login endpoint returns a 422 with per-field validation errors for login and password, ' +
+      'When the user fills both the username and password fields, ' +
+      'And the user clicks the "Sign In" button, ' +
+      'Then the login field error message appears under the username input, ' +
+      'And the password field error message appears under the password input, ' +
+      'And the global error banner is not present',
+    async () => {
+      await issue('131');
+      await authBackend.givenLoginReturnsFieldValidationErrors();
+      await loginPage.navigateToLoginPage();
+
+      await loginPage.enterLoginText('ivan');
+      await loginPage.enterPasswordText('short');
+      await loginPage.clickSubmitButton();
+
+      await loginPage.assertLoginFieldErrorShown();
+      await loginPage.assertPasswordFieldErrorShown();
+      await loginPage.assertErrorBannerIsAbsent();
+    },
+  );
 });

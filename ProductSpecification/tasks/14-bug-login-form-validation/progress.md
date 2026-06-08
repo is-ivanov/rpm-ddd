@@ -34,6 +34,6 @@ per-field messages under login/password, banner for global errors only (never ra
 - [x] red-frontend-api (login.api.ts parses 422 ProblemDetail fieldErrors[] into structured LoginError; extend types.ts; tag #131)
 - [x] green-frontend-api
 - [x] align-design (render per-field messages under inputs; LoginErrorBanner shows global-only)
-- [~] red-playwright (stub 422 with fieldErrors -> per-field messages under login/password; tag #131)
-- [ ] green-playwright
+- [x] red-playwright (stub 422 with fieldErrors -> per-field messages under login/password; tag #131)
+- [~] green-playwright
 - [ ] demo

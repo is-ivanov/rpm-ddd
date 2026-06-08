@@ -1,4 +1,5 @@
 import { expect, type Locator, type Page } from '@playwright/test';
+import { LOGIN_FIELD_ERROR_MESSAGE, PASSWORD_FIELD_ERROR_MESSAGE } from '../support/login-validation-messages';
 
 // noinspection HardcodedPasswordInspection -- these are data-testid selectors, not credentials
 const TEST_ID = {
@@ -8,6 +9,8 @@ const TEST_ID = {
   submitButton: 'submit-button',
   errorBanner: 'error-banner',
   activationLink: 'activation-link',
+  loginError: 'login-error',
+  passwordError: 'password-error',
 } as const;
 
 export class LoginPageStatements {
@@ -114,6 +117,24 @@ export class LoginPageStatements {
     await expect(this.page.getByText('Forgot password?'), 'no "Forgot password" element is present').toHaveCount(0);
   }
 
+  async assertLoginFieldErrorShown(): Promise<void> {
+    await expect(this.loginError(), 'per-field error under the login input is visible').toBeVisible();
+    await expect(this.loginError(), 'login field error shows the exact login validation message').toHaveText(
+      LOGIN_FIELD_ERROR_MESSAGE,
+    );
+  }
+
+  async assertPasswordFieldErrorShown(): Promise<void> {
+    await expect(this.passwordError(), 'per-field error under the password input is visible').toBeVisible();
+    await expect(this.passwordError(), 'password field error shows the exact password validation message').toHaveText(
+      PASSWORD_FIELD_ERROR_MESSAGE,
+    );
+  }
+
+  async assertErrorBannerIsAbsent(): Promise<void> {
+    await expect(this.errorBanner(), 'global error banner is absent on a field-validation failure').toHaveCount(0);
+  }
+
   private loginInput(): Locator {
     return this.page.getByTestId(TEST_ID.loginInput);
   }
@@ -136,5 +157,13 @@ export class LoginPageStatements {
 
   private submitButton(): Locator {
     return this.page.getByTestId(TEST_ID.submitButton);
+  }
+
+  private loginError(): Locator {
+    return this.page.getByTestId(TEST_ID.loginError);
+  }
+
+  private passwordError(): Locator {
+    return this.page.getByTestId(TEST_ID.passwordError);
   }
 }

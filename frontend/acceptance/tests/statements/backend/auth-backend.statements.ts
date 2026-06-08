@@ -1,4 +1,5 @@
 import { type Page, type Route } from '@playwright/test';
+import { LOGIN_FIELD_ERROR_MESSAGE, PASSWORD_FIELD_ERROR_MESSAGE } from '../support/login-validation-messages';
 
 const LOGIN_URL_PATTERN = '**/api/auth/login';
 const CSRF_URL_PATTERN = '**/api/auth/csrf';
@@ -31,6 +32,35 @@ export class AuthBackendStatements {
   async givenLoginRequestFails(): Promise<void> {
     await this.installCsrfRoute();
     await this.page.route(LOGIN_URL_PATTERN, (route) => route.abort('failed'));
+  }
+
+  async givenLoginReturnsFieldValidationErrors(): Promise<void> {
+    await this.installCsrfRoute();
+    await this.page.route(LOGIN_URL_PATTERN, (route) => this.fulfillFieldValidationErrors(route));
+  }
+
+  private async fulfillFieldValidationErrors(route: Route): Promise<void> {
+    await route.fulfill({
+      status: 422,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({
+        type: 'https://www.rpm-ddd.my/problem/validation-failed',
+        title: 'Unprocessable Content',
+        status: 422,
+        detail: "Validation failed for object='loginRequest'. Error count: 2.",
+        instance: '/api/auth/login',
+        fieldErrors: [
+          { code: 'NotBlank', property: 'login', message: LOGIN_FIELD_ERROR_MESSAGE, rejectedValue: '', path: 'login' },
+          {
+            code: 'Size',
+            property: 'password',
+            message: PASSWORD_FIELD_ERROR_MESSAGE,
+            rejectedValue: '',
+            path: 'password',
+          },
+        ],
+      }),
+    });
   }
 
   private async installCsrfRoute(): Promise<void> {
