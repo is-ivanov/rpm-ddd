@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { http, HttpResponse } from 'msw';
+import { issue } from 'allure-js-commons';
 import { server } from '@/test/msw-server';
 import { login } from '../logic/login.api';
 import { LoginError } from '../logic/types';
@@ -7,16 +8,50 @@ import type { LoginRequest } from '../logic/types';
 
 const BASE = import.meta.env.VITE_API_URL;
 
+const XSRF_TOKEN = 'test-xsrf-token';
+
+const CSRF_PATH = '/api/auth/csrf';
+const LOGIN_PATH = '/api/auth/login';
+
+const VALID_CREDENTIALS: LoginRequest = { login: 'ivan', password: 'right-pass' };
+
+interface CapturedRequest {
+  order: string[];
+  csrfHeader?: string | null;
+  body?: unknown;
+}
+
+function stubCsrfSetsCookie(captured: CapturedRequest): void {
+  server.use(
+    http.get(`${BASE}${CSRF_PATH}`, () => {
+      captured.order.push(`GET ${CSRF_PATH}`);
+      document.cookie = `XSRF-TOKEN=${XSRF_TOKEN}; Path=/`;
+      return HttpResponse.json({}, { status: 200 });
+    }),
+  );
+}
+
+function stubLoginCapturing(captured: CapturedRequest): void {
+  server.use(
+    http.post(`${BASE}${LOGIN_PATH}`, async ({ request }) => {
+      captured.order.push(`POST ${LOGIN_PATH}`);
+      captured.csrfHeader = request.headers.get('X-XSRF-TOKEN');
+      captured.body = await request.json();
+      return HttpResponse.json({}, { status: 200 });
+    }),
+  );
+}
+
 function stubLoginProblem(problem: { type: string; detail: string }): void {
   server.use(
-    http.post(`${BASE}/api/auth/login`, () =>
+    http.post(`${BASE}${LOGIN_PATH}`, () =>
       HttpResponse.json(
         {
           type: problem.type,
           title: 'Unauthorized',
           status: 401,
           detail: problem.detail,
-          instance: '/api/auth/login',
+          instance: LOGIN_PATH,
         },
         { status: 401, headers: { 'Content-Type': 'application/problem+json' } },
       ),
@@ -34,7 +69,25 @@ function captureLoginRejection(request: LoginRequest): Promise<unknown> {
 }
 
 describe('Login API Client', () => {
+  afterEach(() => {
+    document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  });
+
+  it('performs the CSRF handshake before posting login with the X-XSRF-TOKEN header', async () => {
+    await issue('129');
+    const captured: CapturedRequest = { order: [] };
+    stubCsrfSetsCookie(captured);
+    stubLoginCapturing(captured);
+
+    await login(VALID_CREDENTIALS);
+
+    expect(captured.order).toEqual([`GET ${CSRF_PATH}`, `POST ${LOGIN_PATH}`]);
+    expect(captured.csrfHeader).toBe(XSRF_TOKEN);
+    expect(captured.body).toEqual(VALID_CREDENTIALS);
+  });
+
   it('surfaces the problem+json detail as a LoginError on 401 invalid credentials', async () => {
+    stubCsrfSetsCookie({ order: [] });
     stubLoginProblem({
       type: 'https://www.rpm-ddd.my/problem/bad-credentials',
       detail: 'Bad credentials',
@@ -48,12 +101,13 @@ describe('Login API Client', () => {
   });
 
   it('flags requiresActivation on 401 account not activated', async () => {
+    stubCsrfSetsCookie({ order: [] });
     stubLoginProblem({
       type: 'https://www.rpm-ddd.my/problem/authentication-failed',
       detail: 'Account not activated',
     });
 
-    const error = await captureLoginRejection({ login: 'ivan', password: 'right-pass' });
+    const error = await captureLoginRejection(VALID_CREDENTIALS);
 
     expect(error).toBeInstanceOf(LoginError);
     expect((error as LoginError).message).toBe('Account not activated');

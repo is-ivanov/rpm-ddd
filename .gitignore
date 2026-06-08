@@ -46,3 +46,7 @@ amplicode.xml
 infrastructure/agent-progress.log
 # Malformed absolute-path variant accidentally created on Windows
 D*infrastructureagent-progress.log
+
+# Playwright MCP browser-session artifacts (snapshots, console/network logs,
+# screenshots) created during ad-hoc QA. Throwaway — never tracked.
+.playwright-mcp/

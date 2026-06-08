@@ -1,6 +1,9 @@
 import { type Page, type Route } from '@playwright/test';
 
 const LOGIN_URL_PATTERN = '**/api/auth/login';
+const CSRF_URL_PATTERN = '**/api/auth/csrf';
+
+const XSRF_TOKEN = 'test-xsrf-token';
 
 interface Credential {
   readonly login: string;
@@ -15,16 +18,32 @@ export class AuthBackendStatements {
 
   async givenRegisteredUser(login: string, password: string): Promise<void> {
     this.validCredentials.push({ login, password });
+    await this.installCsrfRoute();
     await this.installLoginRoute();
   }
 
   async givenInactiveUser(login: string, password: string): Promise<void> {
     this.inactiveCredentials.push({ login, password });
+    await this.installCsrfRoute();
     await this.installLoginRoute();
   }
 
   async givenLoginRequestFails(): Promise<void> {
+    await this.installCsrfRoute();
     await this.page.route(LOGIN_URL_PATTERN, (route) => route.abort('failed'));
+  }
+
+  private async installCsrfRoute(): Promise<void> {
+    await this.page.route(CSRF_URL_PATTERN, (route) => this.handleCsrf(route));
+  }
+
+  private async handleCsrf(route: Route): Promise<void> {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'Set-Cookie': `XSRF-TOKEN=${XSRF_TOKEN}; Path=/` },
+      body: '{}',
+    });
   }
 
   private async installLoginRoute(): Promise<void> {
