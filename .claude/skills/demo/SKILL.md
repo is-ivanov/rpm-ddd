@@ -69,7 +69,7 @@ Delete `frontend/test-results/` before the run so the recording is fresh. Use a 
 
 ### 4. Surface the Recording
 
-After the run, locate the produced `video.webm` under `frontend/test-results/<test-dir>/` and copy it to a friendly, predictable name in the same gitignored directory, e.g. `frontend/test-results/demo-<arg-slug>.webm`. Report the **absolute path** so the user can open it directly and delete it when satisfied.
+After the run, locate the produced `video.webm` under `frontend/test-results/<test-dir>/` and **move** it (`mv`, not `cp`) to a friendly, predictable name in the same gitignored directory, e.g. `frontend/test-results/demo-<arg-slug>.webm`, then remove the now-empty `<test-dir>` so only one file remains (copying leaves a duplicate — the original deep-named `video.webm` plus the friendly copy). Report the **absolute path** so the user can open it directly and delete it when satisfied.
 
 ### 5. Revert All Changes (ALWAYS)
 
