@@ -70,6 +70,14 @@ export class LoginPageStatements {
     await expect(this.submitButton(), 'submit button has text "Sign In"').toHaveText('Sign In');
   }
 
+  async assertSubmitButtonIsDisabled(): Promise<void> {
+    await expect(this.submitButton(), 'submit button is disabled until both fields are filled').toBeDisabled();
+  }
+
+  async assertSubmitButtonIsEnabled(): Promise<void> {
+    await expect(this.submitButton(), 'submit button is enabled once both fields are filled').toBeEnabled();
+  }
+
   async assertErrorBannerShowsInvalidCredentials(): Promise<void> {
     await expect(this.errorBanner(), 'error banner is visible').toBeVisible();
     await expect(this.errorBanner(), 'error banner shows invalid credentials message').toHaveText(

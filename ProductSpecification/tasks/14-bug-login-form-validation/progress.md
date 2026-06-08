@@ -14,9 +14,9 @@ reflects it on the Sign In button. No API-client change. Step list may be refine
 - [x] green-frontend (disable Sign In until valid)
 - [S] red-frontend-api (no API client change)
 - [S] green-frontend-api
-- [~] red-playwright (Sign In disabled with empty/partial fields; tag #131)
+- [x] red-playwright (Sign In disabled with empty/partial fields; tag #131)
+- [~] align-design (wire :disabled to isLoginFormValid; disabled-button state matches mockup)
 - [ ] green-playwright
-- [ ] align-design (disabled-button state matches mockup)
 - [ ] demo
 
 ### Fix 2: Remove out-of-scope "Forgot password" placeholder (issue #131)

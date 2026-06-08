@@ -116,4 +116,28 @@ test.describe('Login Page', () => {
       await loginPage.assertErrorBannerShowsGenericError();
     },
   );
+
+  test(
+    'UI Bug #131: Sign In is disabled until both username and password are filled - ' +
+      'Given the user is on the login page, ' +
+      'Then the Sign In button is disabled, ' +
+      'When the user enters only a username, ' +
+      'Then the Sign In button remains disabled, ' +
+      'When the user also enters a password, ' +
+      'Then the Sign In button becomes enabled',
+    async () => {
+      await issue('131');
+      // RED: button has no :disabled binding yet (always enabled); enabled in green-playwright.
+      test.skip();
+      await loginPage.navigateToLoginPage();
+
+      await loginPage.assertSubmitButtonIsDisabled();
+
+      await loginPage.enterLoginText('ivan');
+      await loginPage.assertSubmitButtonIsDisabled();
+
+      await loginPage.enterPasswordText('correct-pass');
+      await loginPage.assertSubmitButtonIsEnabled();
+    },
+  );
 });
