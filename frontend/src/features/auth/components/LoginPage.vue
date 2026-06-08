@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Eye, EyeOff } from '@lucide/vue';
 import { login } from '../logic/login.api';
 import { mapLoginErrorToView } from '../logic/login-error-view.logic';
+import { isLoginFormValid } from '../logic/login-form.logic';
 import LoginErrorBanner from './LoginErrorBanner.vue';
 
 const loginName = ref('');
@@ -10,6 +11,8 @@ const password = ref('');
 const showPassword = ref(false);
 const errorMessage = ref('');
 const requiresActivation = ref(false);
+
+const isFormValid = computed(() => isLoginFormValid(loginName.value, password.value));
 
 async function submitLogin(): Promise<void> {
   try {
@@ -75,7 +78,9 @@ function showLoginError(error: unknown): void {
           </div>
         </div>
 
-        <button type="submit" data-testid="submit-button" class="btn-primary mt-2">Sign In</button>
+        <button type="submit" data-testid="submit-button" class="btn-primary mt-2" :disabled="!isFormValid">
+          Sign In
+        </button>
       </form>
 
       <a class="mt-4 block cursor-default text-center text-[13px] text-[#adb5bd] no-underline" aria-disabled="true">

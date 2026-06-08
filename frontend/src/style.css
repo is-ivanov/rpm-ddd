@@ -11,7 +11,7 @@
   }
 
   .btn-primary {
-    @apply h-10 w-full rounded-md bg-[#228be6] text-sm font-medium text-white transition-colors hover:bg-[#1c7ed6];
+    @apply h-10 w-full rounded-md bg-[#228be6] text-sm font-medium text-white transition-colors hover:bg-[#1c7ed6] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#228be6];
   }
 
   .form-input {
