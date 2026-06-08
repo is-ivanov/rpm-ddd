@@ -151,9 +151,7 @@ test.describe('Login Page', () => {
     },
   );
 
-  // RED: implementation already complete (Fix 3 align-design); test passes on first run.
-  // green-playwright removes this .skip marker and confirms.
-  test.skip(
+  test(
     'UI Bug #131: Field-validation errors render under their inputs, not in the global banner - ' +
       'Given the user is on the login page, ' +
       'And the login endpoint returns a 422 with per-field validation errors for login and password, ' +

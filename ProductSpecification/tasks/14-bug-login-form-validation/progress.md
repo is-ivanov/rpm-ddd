@@ -35,5 +35,5 @@ per-field messages under login/password, banner for global errors only (never ra
 - [x] green-frontend-api
 - [x] align-design (render per-field messages under inputs; LoginErrorBanner shows global-only)
 - [x] red-playwright (stub 422 with fieldErrors -> per-field messages under login/password; tag #131)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright
+- [~] demo
