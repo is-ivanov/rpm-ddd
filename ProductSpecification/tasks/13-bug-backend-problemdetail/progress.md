@@ -11,8 +11,8 @@ Type: bug
 Pure security-infrastructure fix (the error handlers in `SecurityConfig`). No domain/usecase logic,
 so `red-usecase` / `green-usecase` are `[S]`. Step list may be refined by `/design-preview` at start
 (e.g. web-slice vs acceptance level for asserting the 403 body shape).
-- [~] red-acceptance (security: POST /api/auth/login without CSRF -> 403 body is RFC-9457 ProblemDetail; tag #130)
-- [ ] design (how to make AccessDeniedHandler / AuthenticationEntryPoint emit ProblemDetail)
+- [x] red-acceptance (security: POST /api/auth/login without CSRF -> 403 body is RFC-9457 ProblemDetail; tag #130)
+- [~] design (how to make AccessDeniedHandler / AuthenticationEntryPoint emit ProblemDetail)
 - [S] red-usecase (no usecase/domain change — infrastructure-only)
 - [S] green-usecase
 - [ ] adapters-discovery (security error-handler adapters in SecurityConfig)

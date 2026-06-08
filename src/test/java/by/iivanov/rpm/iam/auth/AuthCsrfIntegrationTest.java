@@ -2,8 +2,12 @@ package by.iivanov.rpm.iam.auth;
 
 import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
+import io.qameta.allure.Issue;
+import org.intellij.lang.annotations.Language;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 
 class AuthCsrfIntegrationTest extends AbstractApplicationIntegrationTest {
 
@@ -17,5 +21,42 @@ class AuthCsrfIntegrationTest extends AbstractApplicationIntegrationTest {
     @DisplayName("WHEN request EXPECT 200 OK with csrf token in cookie")
     void shouldReturnCsrfToken() {
         authApi.csrf().unwrap().expectStatus().isOk().expectCookie().exists("XSRF-TOKEN");
+    }
+
+    // Bug #130: the CSRF/access-denied filter-chain handler serializes the legacy
+    // {code,message} shape instead of RFC-9457 ProblemDetail. Remove @Disabled in green-acceptance.
+    @Disabled("RED: filter-chain access-denied handler emits legacy {code,message}, not ProblemDetail (#130)")
+    @Issue("130")
+    @Test
+    @DisplayName("WHEN POST /api/auth/login without CSRF token EXPECT 403 RFC-9457 ProblemDetail body")
+    void should_return403ProblemDetail_when_loginWithoutCsrfToken() {
+        // GIVEN: a login request sent without any CSRF token
+        @Language("JSON")
+        String loginRequest = """
+                {
+                  "login": "admin",
+                  "password": "admin"
+                }
+                """;
+
+        // WHEN: client posts to /api/auth/login without a CSRF token
+        var response = authApi.login(loginRequest);
+
+        // THEN: 403 with an RFC-9457 ProblemDetail body, not the legacy {code,message} shape
+        response.unwrap()
+                .expectHeader()
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .expectStatus()
+                .isForbidden()
+                .expectBody()
+                .json("""
+                    {
+                      "detail": "Access denied: a valid CSRF token is required for this request.",
+                      "instance": "/api/auth/login",
+                      "status": 403,
+                      "title": "Forbidden",
+                      "type": "https://www.rpm-ddd.my/problem/access-denied"
+                    }
+                    """);
     }
 }
