@@ -29,8 +29,8 @@ Presentational removal from `LoginPage.vue` (out of scope per Story 1).
 ### Fix 3: Map backend fieldErrors to per-control messages (issue #131, folded in 2026-06-08)
 Frontend-only, defense-in-depth. Backend already returns RFC-9457 with `fieldErrors[]`; surface
 per-field messages under login/password, banner for global errors only (never raw `detail` on 422).
-- [~] red-frontend (logic: map ProblemDetail fieldErrors -> {login?, password?} + global message; property -> control; tag #131)
-- [ ] green-frontend
+- [x] red-frontend (logic: map ProblemDetail fieldErrors -> {login?, password?} + global message; property -> control; tag #131)
+- [~] green-frontend
 - [ ] red-frontend-api (login.api.ts parses 422 ProblemDetail fieldErrors[] into structured LoginError; extend types.ts; tag #131)
 - [ ] green-frontend-api
 - [ ] align-design (render per-field messages under inputs; LoginErrorBanner shows global-only)

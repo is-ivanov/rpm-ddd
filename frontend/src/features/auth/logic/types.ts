@@ -15,11 +15,22 @@ export interface ActivationTokenResponse {
 
 export class ActivationError extends Error {}
 
+export interface LoginFieldError {
+  readonly property: string;
+  readonly message: string;
+}
+
 export class LoginError extends Error {
   readonly requiresActivation: boolean;
+  readonly fieldErrors: ReadonlyArray<LoginFieldError>;
 
-  constructor(message: string | undefined, requiresActivation: boolean) {
+  constructor(
+    message: string | undefined,
+    requiresActivation: boolean,
+    fieldErrors: ReadonlyArray<LoginFieldError> = [],
+  ) {
     super(message);
     this.requiresActivation = requiresActivation;
+    this.fieldErrors = fieldErrors;
   }
 }
