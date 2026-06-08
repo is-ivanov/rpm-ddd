@@ -11,8 +11,8 @@ Type: bug
 Frontend-only API-client fix. `login.api.ts` must `GET /api/auth/csrf` then `POST /api/auth/login`
 with `X-XSRF-TOKEN`, mirroring `activation.api.ts`. No component/view-model change (`LoginPage.vue`
 and `*.logic.ts` unchanged), so red-frontend / green-frontend / align-design are `[S]`.
-- [~] red-frontend-api (login.api.ts: GET /api/auth/csrf then POST with X-XSRF-TOKEN; mirror activate-account.api.test.ts; tag #129)
-- [ ] green-frontend-api
+- [x] red-frontend-api (login.api.ts: GET /api/auth/csrf then POST with X-XSRF-TOKEN; mirror activate-account.api.test.ts; tag #129)
+- [~] green-frontend-api
 - [S] red-frontend (no component/view-model logic change)
 - [S] green-frontend
 - [S] align-design (no styling change)
