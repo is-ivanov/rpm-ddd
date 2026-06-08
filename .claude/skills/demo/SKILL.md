@@ -35,15 +35,15 @@ use: {
   baseURL: appUrl,
   trace: 'on-first-retry',
   video: { mode: 'on', size: { width: 1280, height: 720 } },
-  launchOptions: { slowMo: 1200 },
+  launchOptions: { slowMo: 2000 },
 },
 ```
 
 - `video: { mode: 'on', ... }` records every test in the run to `frontend/test-results/<test-dir>/video.webm`. `test-results/` is gitignored, so recordings never pollute the working tree.
-- `slowMo: 1200` adds a 1200ms pause before each action so the steps are clearly visible in the recording. **Keep slowMo at 1200 — do not slow it further** (user preference).
+- `slowMo: 2000` adds a 2000ms pause before each action so the steps are clearly visible in the recording (user preference for the recorded flow — the slower pace is fine since it's a file, not a live window).
 - The `.webm` opens in any browser (drag it into a Chrome/Edge tab) or media player. `ffmpeg` is not assumed to be installed, so do not attempt gif conversion unless `ffmpeg -version` succeeds.
 
-**Selenium/Java base-class stack:** enable the framework's video/screen-recording option for the run (do not switch to a visible window); add a 1200ms demo delay constant + method in the Browser statements class and call it at the start of navigation / find-element / find-elements methods.
+**Selenium/Java base-class stack:** enable the framework's video/screen-recording option for the run (do not switch to a visible window); add a 2000ms demo delay constant + method in the Browser statements class and call it at the start of navigation / find-element / find-elements methods.
 
 ### 2. Ensure Clean Environment
 
@@ -84,5 +84,5 @@ Report whether the test passed or failed and the absolute path to the recording.
 - ALWAYS revert config changes, even if the test fails or times out
 - Do NOT commit any demo changes — the working tree must be clean after `/demo` completes (the gitignored recording does not affect this)
 - Do NOT open a live/headed browser window — record a video file instead
-- Keep `slowMo` at 1200; do not slow it further
+- Use `slowMo: 2000` for the recording
 - Do NOT leave the backend process running after — it was only restarted for a clean DB
