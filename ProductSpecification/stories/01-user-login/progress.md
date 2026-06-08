@@ -201,8 +201,8 @@
 ## Security Scenarios
 
 ### Scenario 5.1: SQL injection in login field does not bypass authentication
-- [ ] red-acceptance
-- [ ] design
+- [x] red-acceptance (LoginSqlInjectionIntegrationTest — single @ParameterizedTest over login-field & password-field payloads; asserts 401 + no JSESSIONID. Feature already implemented (JPA parameterizes queries → payloads literal); PREDICT "test passes" matched, no @ExpectedToFail marker. The two payloads hit different paths (authentication-failed "Account not activated" vs bad-credentials) so the shared invariant is 401+no-session, not an exact body message. Note: parameterized-only class doesn't self-provision the db datasource (db-tag-on-leaf quirk) — run with a plain-@Test db class or full verify. test-review CLEAN, refactor CLEAN (added // language=JSON marker))
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain
