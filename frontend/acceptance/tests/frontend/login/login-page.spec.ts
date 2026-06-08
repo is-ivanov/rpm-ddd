@@ -127,8 +127,6 @@ test.describe('Login Page', () => {
       'Then the Sign In button becomes enabled',
     async () => {
       await issue('131');
-      // RED: button has no :disabled binding yet (always enabled); enabled in green-playwright.
-      test.skip();
       await loginPage.navigateToLoginPage();
 
       await loginPage.assertSubmitButtonIsDisabled();

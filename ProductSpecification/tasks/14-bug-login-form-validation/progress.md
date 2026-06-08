@@ -16,8 +16,8 @@ reflects it on the Sign In button. No API-client change. Step list may be refine
 - [S] green-frontend-api
 - [x] red-playwright (Sign In disabled with empty/partial fields; tag #131)
 - [x] align-design (wire :disabled to isLoginFormValid; disabled-button state matches mockup)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright
+- [~] demo
 
 ### Fix 2: Remove out-of-scope "Forgot password" placeholder (issue #131)
 Presentational removal from `LoginPage.vue` (out of scope per Story 1).
