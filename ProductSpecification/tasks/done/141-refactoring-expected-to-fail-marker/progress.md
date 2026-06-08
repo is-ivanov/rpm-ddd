@@ -21,4 +21,4 @@ Issue: #141
 - [x] refactor (red-agent.md ×2 + green-agent.md ×1 + universal templates/workflow/red-phase-formats.md ×1: replaced the now-wrong "class-level disable marker / one marker disables all methods" guidance with per-method placement, since @ExpectedToFail is method-only. Removed the literal @Disabled leak in red-agent.md. Abstract "test disable marker" term kept everywhere else — it resolves to the tech binding's Conventions value.)
 
 ### Step 5: Final verification
-- [~] refactor (./mvnw verify -B green with junit-pioneer on classpath)
+- [x] refactor (./mvnw verify -B → BUILD SUCCESS in 43s: 120 tests run, 0 failures, 0 errors, 0 skipped; JaCoCo coverage checks met; junit-pioneer 2.3.0 on the test classpath)
