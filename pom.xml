@@ -298,17 +298,12 @@
       <artifactId>junit-platform-launcher</artifactId>
     </dependency>
 
-    <!-- junit-pioneer: @ExpectedToFail RED-phase marker (replaces @Disabled). See Task 14 / #141. -->
     <dependency>
       <groupId>org.junit-pioneer</groupId>
       <artifactId>junit-pioneer</artifactId>
       <version>${junit-pioneer.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- Allure (test reporting). allure-junit5 was renamed to allure-jupiter (same
-         artifact, version managed by allure-bom); using the new id avoids the
-         Maven relocation warning. -->
     <dependency>
       <groupId>io.qameta.allure</groupId>
       <artifactId>allure-jupiter</artifactId>
