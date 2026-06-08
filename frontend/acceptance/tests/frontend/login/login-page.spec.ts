@@ -116,4 +116,62 @@ test.describe('Login Page', () => {
       await loginPage.assertErrorBannerShowsGenericError();
     },
   );
+
+  test(
+    'UI Bug #131: Sign In is disabled until both username and password are filled - ' +
+      'Given the user is on the login page, ' +
+      'Then the Sign In button is disabled, ' +
+      'When the user enters only a username, ' +
+      'Then the Sign In button remains disabled, ' +
+      'When the user also enters a password, ' +
+      'Then the Sign In button becomes enabled',
+    async () => {
+      await issue('131');
+      await loginPage.navigateToLoginPage();
+
+      await loginPage.assertSubmitButtonIsDisabled();
+
+      await loginPage.enterLoginText('ivan');
+      await loginPage.assertSubmitButtonIsDisabled();
+
+      await loginPage.enterPasswordText('correct-pass');
+      await loginPage.assertSubmitButtonIsEnabled();
+    },
+  );
+
+  test(
+    'UI Bug #131: Forgot-password placeholder is absent from the login page - ' +
+      'Given the user navigates to the login page, ' +
+      'Then no "Forgot password" element is present',
+    async () => {
+      await issue('131');
+      await loginPage.navigateToLoginPage();
+
+      await loginPage.assertForgotPasswordIsAbsent();
+    },
+  );
+
+  test(
+    'UI Bug #131: Field-validation errors render under their inputs, not in the global banner - ' +
+      'Given the user is on the login page, ' +
+      'And the login endpoint returns a 422 with per-field validation errors for login and password, ' +
+      'When the user fills both the username and password fields, ' +
+      'And the user clicks the "Sign In" button, ' +
+      'Then the login field error message appears under the username input, ' +
+      'And the password field error message appears under the password input, ' +
+      'And the global error banner is not present',
+    async () => {
+      await issue('131');
+      await authBackend.givenLoginReturnsFieldValidationErrors();
+      await loginPage.navigateToLoginPage();
+
+      await loginPage.enterLoginText('ivan');
+      await loginPage.enterPasswordText('short');
+      await loginPage.clickSubmitButton();
+
+      await loginPage.assertLoginFieldErrorShown();
+      await loginPage.assertPasswordFieldErrorShown();
+      await loginPage.assertErrorBannerIsAbsent();
+    },
+  );
 });

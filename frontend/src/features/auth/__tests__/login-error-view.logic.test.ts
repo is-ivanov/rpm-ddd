@@ -12,6 +12,7 @@ describe('Login Error View Mapping', () => {
     expect(view).toEqual({
       errorMessage: 'Something went wrong. Please try again.',
       requiresActivation: false,
+      fieldErrors: {},
     });
   });
 
@@ -23,6 +24,38 @@ describe('Login Error View Mapping', () => {
     expect(view).toEqual({
       errorMessage: 'Account not activated',
       requiresActivation: true,
+      fieldErrors: {},
+    });
+  });
+
+  it('maps per-field errors to their controls and clears the global banner on a 422', async () => {
+    await issue('131');
+
+    const view = mapLoginErrorToView(
+      new LoginError('Validation failed', false, [
+        { property: 'login', message: 'Username is required' },
+        { property: 'password', message: 'Password is required' },
+      ]),
+    );
+
+    expect(view).toEqual({
+      errorMessage: '',
+      requiresActivation: false,
+      fieldErrors: { login: 'Username is required', password: 'Password is required' },
+    });
+  });
+
+  it('ignores an unknown field-error property while still clearing the global banner', async () => {
+    await issue('131');
+
+    const view = mapLoginErrorToView(
+      new LoginError('Validation failed', false, [{ property: 'captcha', message: 'Invalid captcha' }]),
+    );
+
+    expect(view).toEqual({
+      errorMessage: '',
+      requiresActivation: false,
+      fieldErrors: {},
     });
   });
 });
