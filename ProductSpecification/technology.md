@@ -75,7 +75,7 @@ tech-profile:
 
 | Concern | Convention |
 |---------|-----------|
-| Test disable marker | @Disabled |
+| Test disable marker | @ExpectedToFail(withExceptions = ...) (junit-pioneer; withExceptions mandatory) |
 | Not-implemented marker | throw UnsupportedOperationException() |
 | Run command | ./mvnw spring-boot:run |
 | Test command | ./mvnw test (single class: -Dtest='*ClassName*'; DB/acceptance group: -Dgroups=db) |
