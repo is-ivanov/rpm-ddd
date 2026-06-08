@@ -82,10 +82,6 @@ function showLoginError(error: unknown): void {
           Sign In
         </button>
       </form>
-
-      <a class="mt-4 block cursor-default text-center text-[13px] text-[#adb5bd] no-underline" aria-disabled="true">
-        Forgot password?
-      </a>
     </div>
   </main>
 </template>
