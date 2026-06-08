@@ -14,7 +14,7 @@
 ## Tech-Specific Rules
 
 - Plain JUnit 5 — no Spring context, no base class
-- Add `@Disabled` annotation in RED
+- Add `@ExpectedToFail(withExceptions = ...)` on the RED test method (mandatory `withExceptions` — see `testing/red-phase-formats.md`)
 - `@Nested` inner classes grouping tests by method
 - `@DisplayName` with `WHEN ... EXPECT ...` pattern
 - `// GIVEN:`, `// WHEN:`, `// THEN:` section comments

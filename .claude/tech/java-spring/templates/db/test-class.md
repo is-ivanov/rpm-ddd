@@ -27,7 +27,7 @@ When `adapters-discovery` Check 1 produces a potential `db` step, apply this fil
   (or use `@RepositoryTest` meta-annotation when it becomes available)
 - Autowire the Spring Data repository under test
 - Use `@DisplayName` with Gherkin-style description
-- `@Disabled` in RED phase
+- `@ExpectedToFail(withExceptions = ...)` on the RED test method (mandatory `withExceptions`; method-only marker — see `testing/red-phase-formats.md`)
 - Database: PostgreSQL via Testcontainers (auto-started by `DbContainerTestExecutionListener`)
 
 ## Failure Patterns
