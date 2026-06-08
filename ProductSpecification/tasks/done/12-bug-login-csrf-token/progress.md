@@ -18,4 +18,4 @@ and `*.logic.ts` unchanged), so red-frontend / green-frontend / align-design are
 - [S] align-design (no styling change)
 - [x] refactor (extract shared CSRF helper logic/csrf.ts; reuse in login + activation, dedupe readCookie)
 - [x] green-playwright (stub /api/auth/csrf in auth-backend Statements; rerun login spec green)
-- [~] demo
+- [x] demo
