@@ -1,6 +1,12 @@
+export interface ProblemFieldError {
+  readonly property: string;
+  readonly message: string;
+}
+
 export interface ProblemDetail {
   readonly type?: string;
   readonly detail?: string;
+  readonly fieldErrors?: ReadonlyArray<ProblemFieldError>;
 }
 
 export interface LoginRequest {

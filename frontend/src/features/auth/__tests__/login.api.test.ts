@@ -4,7 +4,7 @@ import { issue } from 'allure-js-commons';
 import { server } from '@/test/msw-server';
 import { login } from '../logic/login.api';
 import { LoginError } from '../logic/types';
-import type { LoginRequest } from '../logic/types';
+import type { LoginRequest, ProblemFieldError } from '../logic/types';
 
 const BASE = import.meta.env.VITE_API_URL;
 
@@ -54,6 +54,30 @@ function stubLoginProblem(problem: { type: string; detail: string }): void {
           instance: LOGIN_PATH,
         },
         { status: 401, headers: { 'Content-Type': 'application/problem+json' } },
+      ),
+    ),
+  );
+}
+
+function stubLoginValidationProblem(fieldErrors: ProblemFieldError[]): void {
+  server.use(
+    http.post(`${BASE}${LOGIN_PATH}`, () =>
+      HttpResponse.json(
+        {
+          type: 'https://www.rpm-ddd.my/problem/validation-failed',
+          title: 'Unprocessable Content',
+          status: 422,
+          detail: `Validation failed for object='loginRequest'. Error count: ${fieldErrors.length}.`,
+          instance: LOGIN_PATH,
+          fieldErrors: fieldErrors.map((fieldError) => ({
+            code: 'NotBlank',
+            property: fieldError.property,
+            message: fieldError.message,
+            rejectedValue: '',
+            path: fieldError.property,
+          })),
+        },
+        { status: 422, headers: { 'Content-Type': 'application/problem+json' } },
       ),
     ),
   );
@@ -112,5 +136,23 @@ describe('Login API Client', () => {
     expect(error).toBeInstanceOf(LoginError);
     expect((error as LoginError).message).toBe('Account not activated');
     expect((error as LoginError).requiresActivation).toBe(true);
+  });
+
+  // RED: throwLoginError does not yet parse problem.fieldErrors, so LoginError.fieldErrors defaults to [].
+  it.skip('parses 422 ProblemDetail fieldErrors into a LoginError carrying structured field errors', async () => {
+    await issue('131');
+    stubCsrfSetsCookie({ order: [] });
+    stubLoginValidationProblem([
+      { property: 'login', message: 'must not be blank' },
+      { property: 'password', message: 'must not be blank' },
+    ]);
+
+    const error = await captureLoginRejection({ login: '', password: '' });
+
+    expect(error).toBeInstanceOf(LoginError);
+    expect((error as LoginError).fieldErrors).toEqual([
+      { property: 'login', message: 'must not be blank' },
+      { property: 'password', message: 'must not be blank' },
+    ]);
   });
 });
