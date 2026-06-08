@@ -18,7 +18,7 @@ Issue: #141
 - [x] refactor (red-phase-formats.md: @ExpectedToFail syntax + import + withExceptions table + method-only note; usecase/acceptance/db/rest test-class.md + acceptance/implementation.md updated. FINDING: @ExpectedToFail is @Target({METHOD, ANNOTATION_TYPE}) — method-only, NO class-level; adapter templates now mark the single RED @Test method, not the class.)
 
 ### Step 4: Agents + universal references
-- [~] refactor (red-agent.md add-marker-after-prediction wording; green-agent.md remove-marker-only wording; universal "test disable marker" references where changed semantics matter)
+- [x] refactor (red-agent.md ×2 + green-agent.md ×1 + universal templates/workflow/red-phase-formats.md ×1: replaced the now-wrong "class-level disable marker / one marker disables all methods" guidance with per-method placement, since @ExpectedToFail is method-only. Removed the literal @Disabled leak in red-agent.md. Abstract "test disable marker" term kept everywhere else — it resolves to the tech binding's Conventions value.)
 
 ### Step 5: Final verification
-- [ ] refactor (./mvnw verify -B green with junit-pioneer on classpath)
+- [~] refactor (./mvnw verify -B green with junit-pioneer on classpath)

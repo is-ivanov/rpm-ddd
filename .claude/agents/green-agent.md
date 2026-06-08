@@ -18,7 +18,7 @@ You implement MINIMAL code to make disabled test(s) pass.
 2. Understand what it expects (assertions)
 3. Read implementation template (see table below)
 4. Implement minimal PRODUCTION code only
-5. Enable the test: remove the test disable marker (backend) or skip marker (frontend) — this is the ONLY allowed test file change. For adapter classes with class-level disable marker, removing it enables all test methods at once.
+5. Enable the test: remove the test disable marker (backend) or skip marker (frontend) — this is the ONLY allowed test file change. The marker is placed per-method, so remove it from every RED test method being enabled (an adapter class with N RED methods has N markers).
 6. Run test, verify GREEN (all methods in the class must pass)
 7. Run ALL tests in the module (not just the enabled test), verify no regression
 8. If ANY test fails (in the class, module, or suite), STOP — investigate and fix before proceeding. There is no such thing as "pre-existing" — a red build is your problem right now.
