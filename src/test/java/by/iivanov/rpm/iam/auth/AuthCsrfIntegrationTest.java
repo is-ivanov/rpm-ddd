@@ -4,7 +4,6 @@ import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import io.qameta.allure.Issue;
 import org.intellij.lang.annotations.Language;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -23,9 +22,6 @@ class AuthCsrfIntegrationTest extends AbstractApplicationIntegrationTest {
         authApi.csrf().unwrap().expectStatus().isOk().expectCookie().exists("XSRF-TOKEN");
     }
 
-    // Bug #130: the CSRF/access-denied filter-chain handler serializes the legacy
-    // {code,message} shape instead of RFC-9457 ProblemDetail. Remove @Disabled in green-acceptance.
-    @Disabled("RED: filter-chain access-denied handler emits legacy {code,message}, not ProblemDetail (#130)")
     @Issue("130")
     @Test
     @DisplayName("WHEN POST /api/auth/login without CSRF token EXPECT 403 RFC-9457 ProblemDetail body")

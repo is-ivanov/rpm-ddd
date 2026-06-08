@@ -19,5 +19,5 @@ so `red-usecase` / `green-usecase` are `[S]`. Step list may be refined by `/desi
   - Check 1 (ports): [S] — infrastructure-only fix, no usecase, no outbound ports
   - Check 2 (exceptions): [S] — AccessDeniedException/CSRF is framework-thrown, handled by the filter-chain AccessDeniedHandler, not a @ControllerAdvice mapping
   - Check 3 (response shape): [S] — simple delegation (fixed 403 ProblemDetail, no validation/error-mapping); acceptance test covers behavior + wiring; custom AccessDeniedHandler + ErrorConstants.ACCESS_DENIED_TYPE + SecurityConfig rewiring created in green-acceptance
-- [~] green-acceptance (create custom AccessDeniedHandler emitting ProblemDetail + ErrorConstants.ACCESS_DENIED_TYPE, rewire SecurityConfig, remove @Disabled, verify GREEN)
-- [ ] refactor (strengthen .claude/rules/coding-rules.md Error Handling: all errors incl. security-filter/framework -> ProblemDetail)
+- [x] green-acceptance (created ProblemDetailAccessDeniedHandler + ErrorConstants.ACCESS_DENIED_TYPE, rewired SecurityConfig, removed @Disabled — GREEN, full suite 34 pass)
+- [~] refactor (strengthen .claude/rules/coding-rules.md Error Handling: all errors incl. security-filter/framework -> ProblemDetail)

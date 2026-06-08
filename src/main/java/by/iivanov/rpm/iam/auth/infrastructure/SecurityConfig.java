@@ -1,6 +1,5 @@
 package by.iivanov.rpm.iam.auth.infrastructure;
 
-import io.github.wimdeblauwe.errorhandlingspringbootstarter.ApiErrorResponseAccessDeniedHandler;
 import io.github.wimdeblauwe.errorhandlingspringbootstarter.UnauthorizedEntryPoint;
 import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.ErrorCodeMapper;
 import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.ErrorMessageMapper;
@@ -74,13 +73,8 @@ class SecurityConfig {
     }
 
     @Bean
-    AccessDeniedHandler accessDeniedHandler(
-            HttpStatusMapper httpStatusMapper,
-            ErrorCodeMapper errorCodeMapper,
-            ErrorMessageMapper errorMessageMapper,
-            ObjectMapper objectMapper) {
-        return new ApiErrorResponseAccessDeniedHandler(
-                objectMapper, httpStatusMapper, errorCodeMapper, errorMessageMapper);
+    AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
+        return new ProblemDetailAccessDeniedHandler(objectMapper);
     }
 
     @Bean
