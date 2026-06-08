@@ -139,3 +139,17 @@ Tasks follow the same TDD discipline as stories: `/test-review` after red phases
 **Scoped steps:** Progress should only include TDD steps for layers the fix actually touches — applies to tasks, and to individual story scenarios. If the fix is pure CSS, don't generate logic/API/align-design steps. If the fix is backend-only, don't generate frontend steps. Affected layers are determined from the spec at creation time.
 
 Operational details: `/task` skill (creation, sections, progress format), `/continue` skill (execution, dispatch, adapter discovery).
+
+## Improvements vs Bugs
+
+Not everything found during QA is a bug. Classify before acting:
+
+- **Bug** — behaviour is broken or regressed: it was specified **and** built, and now fails. → a separate `bug` task with a backing GitHub issue (see "Bug Tasks → GitHub Issues").
+- **Improvement** — an enhancement, or behaviour that was under-specified or missing **by design** (never built, never a scenario). → do **not** open a bug task. Collect it in a per-story **improvements backlog**: `ProductSpecification/stories/NN-story-slug/improvements.md` — one running list per story.
+
+Diagnostic: *"Did it ever work / was it specified-and-built?"* Yes → bug task + issue. No (never built / under-spec) → improvements backlog.
+
+Improvements backlog conventions:
+- Items accumulate as `Open` (ids `I1`, `I2`, …), each capturing observed behaviour, spec context, current code state, and scope options. Move an item to `Done` with the resolving task/PR.
+- **Architecture is deferred:** finish the base story in its current form first, then revisit the backlog and design solutions (an ADR, or promote the list into a dedicated improvement story).
+- A real bug discovered while filling the backlog still goes to a separate bug task + issue — never folded into the improvements list.
