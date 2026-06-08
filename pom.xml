@@ -32,6 +32,7 @@
     <jjwt.version>0.13.0</jjwt.version>
     <jmolecules.version>2025.0.2</jmolecules.version>
     <json-unit.version>5.1.2</json-unit.version>
+    <junit-pioneer.version>2.3.0</junit-pioneer.version>
     <nullaway.version>0.13.6</nullaway.version>
     <palantir-java-format.version>2.90.0</palantir-java-format.version>
     <passay.version>2.0.0</passay.version>
@@ -295,6 +296,14 @@
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-launcher</artifactId>
+    </dependency>
+
+    <!-- junit-pioneer: @ExpectedToFail RED-phase marker (replaces @Disabled). See Task 14 / #141. -->
+    <dependency>
+      <groupId>org.junit-pioneer</groupId>
+      <artifactId>junit-pioneer</artifactId>
+      <version>${junit-pioneer.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- Allure (test reporting). allure-junit5 was renamed to allure-jupiter (same
