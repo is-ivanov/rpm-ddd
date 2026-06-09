@@ -93,7 +93,7 @@ tech-profile:
 
 | Concern | Convention |
 |---------|-----------|
-| Test skip marker | .skip |
+| Test skip marker | .fails (it.fails/test.fails; RED-state runs every build — pin the reason via the assertion) |
 | Dev command | npm run dev |
 | Test command | npx vitest run |
 | Node config syntax | process.env.VAR \|\| 'fallback' |
