@@ -18,10 +18,10 @@ Issue: #140
 - [x] refactor (first run analyzed Java 25 bytecode cleanly — SpotBugs core 4.9.8 confirmed JDK 25 compatible. 13 Medium findings triaged → clean baseline (0). REAL FIXES: `CurrentUserResponse` adds `List.copyOf(roles)` defensive copy (EI_EXPOSE_REP/REP2, aligns with the defensive-copies rule); `JwtActivationTokenGenerator` made `final` (CT_CONSTRUCTOR_THROW — consistent with the implicitly-final validating value-object records). EXCLUDED (documented false positives): RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT on record canonical constructors + `AbstractAggregateRoot` super() across `*.domain.*` (6 findings); NM_CLASS_NAMING_CONVENTION on `$jMolecules$` generated classes (4 findings). Also added a forward-looking documented exclusion of CT_CONSTRUCTOR_THROW for `*.application.*` — the finding is N/A to Spring singleton beans (trusted-config construction, no attacker-controlled subclassing; AOP-proxied app services can't be made `final`). SpotBugs has no annotation matcher, so scoped by the application-service `*Service` naming convention — narrow enough to leave command/DTO records and other application-layer types under the detector. `spotbugs:check` exit 0; checkstyle+pmd exit 0; affected tests 9 passed / 0 failed; IDE inspections clean)
 
 ### Step 4: Bind spotbugs:check to verify (fail the build)
-- [~] refactor (add `spotbugs-maven-plugin` to `build/plugins` with the `check` goal bound to the `verify` phase so `./mvnw verify -B` fails on violations)
+- [x] refactor (added a bare `spotbugs-maven-plugin` ref to `build/plugins` with execution `spotbugs-check` binding the `check` goal to the `verify` phase; version+config inherited from `pluginManagement`. Unlike checkstyle/pmd (standalone CI jobs), SpotBugs runs inside the main build per the issue. Verified: `./mvnw -B -DskipTests -Djacoco.skip=true verify` shows `spotbugs:4.9.8.4:check (spotbugs-check)` executing at verify → BUILD SUCCESS on the clean baseline; pom IDE inspection clean)
 
 ### Step 5: Document the command in AGENTS.md
-- [ ] refactor (add a `./mvnw spotbugs:check -B` note to the Build/Test/Development commands section in AGENTS.md)
+- [~] refactor (add a `./mvnw spotbugs:check -B` note to the Build/Test/Development commands section in AGENTS.md)
 
 ### Step 6: Final verification
 - [ ] refactor (`./mvnw verify -B` runs SpotBugs and passes on the clean triaged baseline; confirm a deliberately-introduced bug pattern fails `spotbugs:check`, then revert it)
