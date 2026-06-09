@@ -21,4 +21,4 @@ Issue: #142
 - [x] refactor (green-agent.md: "Frontend Skip Convention" → "Frontend RED-Phase Marker" + two parentheticals now name the `.fails` modifier; red-agent.md reference → frontend RED-phase marker `it.fails`; frontend-rules.md test-skip-marker line now states runs-every-build + GREEN-enforcement + pin-the-reason-via-assertion. Generic "test disable/skip marker" phrasings covering both stacks left intact.)
 
 ### Step 5: Final verification
-- [~] refactor (npm run test green; npm run lint green; confirm no stray `.skip` RED markers and docs consistently reference `.fails`)
+- [x] refactor (npm run test → 17 passed (6 files); npm run lint → exit 0 (eslint + prettier clean); no stray `it.skip`/`test.skip` in frontend code; residual `.skip` doc mentions are intentional contrastive references — `.fails` replaces `.skip` for RED, `.skip` retained for genuine non-RED skips)
