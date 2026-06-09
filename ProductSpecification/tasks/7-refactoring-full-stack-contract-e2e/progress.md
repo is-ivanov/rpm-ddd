@@ -1,4 +1,4 @@
-# Task 7: Pilot Full-Stack Contract E2E — Progress
+# Task 7: Pilot Full-Stack E2E (real backend) — Progress
 
 Type: refactoring
 
@@ -7,36 +7,37 @@ Type: refactoring
 
 ## Fix
 
-### Step 1: Contract login spec with real backend
-Write `login.contract.spec.ts` — happy-path login via real backend + Postgres, no `page.route`
+### Step 1: Full-stack login spec with real backend
+Write `login.fullstack.spec.ts` — happy-path login via real backend + Postgres, no `page.route`
 mocking. `RealAuthBackendStatements` seeds a test user via actual REST API calls (no mocks).
 Test starts disabled with the skip marker.
 - [x] red-playwright
 
-### Step 2: ADR — Two-tier Playwright strategy
-Document the decision: mocked tests (fast, default, every PR) vs contract tests (real stack,
-opt-in, separate job). Resolve the loginable-user seeding path the RED test exposed
-(admin bootstrap vs Postgres seed) — this drives Steps 3, 4, and 5. Record the layout decision:
-contract tests use BOTH a dedicated `contract/` folder AND the `*.contract.spec.ts` filename
-suffix; kept flat for now (revisit grouping by feature if the set grows). Clarify when future
-scenarios should get contract tests (new endpoint/HTTP-contract shape, not frontend branching
-logic).
+### Step 2: ADR — Frontend test taxonomy + full-stack E2E strategy
+Document the decision: mocked UI tests (fast, default, every PR) vs full-stack E2E tests (real
+stack, opt-in, separate job). Record the frontend test taxonomy mapped to the backend pyramid:
+Vitest logic/api = unit; Playwright + mock = integration (UI tests); Playwright + real backend =
+full-stack E2E. Resolve the loginable-user seeding path the RED test exposed (admin bootstrap vs
+Postgres seed) — this drives Steps 3, 4, and 5. Record naming: tier is "full-stack E2E" (NOT Pact
+contract); layout uses BOTH a dedicated `fullstack/` folder AND the `*.fullstack.spec.ts` suffix,
+kept flat for now. Record the mail decision (login needs no mailbox; GreenMail in-JVM only; Mailpit
+only if a future scenario reads email). Clarify when future scenarios get a full-stack test.
 - [ ] refactor (ADR)
 
 ### Step 3: Playwright project config + npm script
-Add a `contract` Playwright project to `playwright.config.ts` matching only `*.contract.spec.ts`
-files. Add `test:e2e:contract` script to `package.json`. Verify default `test:e2e` does NOT pick
-up contract specs.
+Add a `fullstack` Playwright project to `playwright.config.ts` matching only `*.fullstack.spec.ts`
+files. Add `test:e2e:fullstack` script to `package.json`. Verify default `test:e2e` does NOT pick
+up full-stack specs.
 - [ ] refactor (playwright.config.ts + package.json)
 
-### Step 4: Green contract login test (local, real backend)
-Remove the skip marker from `login.contract.spec.ts` and run it locally against the real backend
+### Step 4: Green full-stack login test (local, real backend)
+Remove the skip marker from `login.fullstack.spec.ts` and run it locally against the real backend
 + Postgres, seeding the loginable user per the Step 2 ADR decision. Verify it passes (full
 request↔response cycle, session cookie set).
 - [ ] green-playwright
 
-### Step 5: CI job `frontend-e2e-contract`
-Add `frontend-e2e-contract` job to `.github/workflows/build.yml`. Depends on `build` artifact
+### Step 5: CI job `frontend-e2e-fullstack`
+Add `frontend-e2e-fullstack` job to `.github/workflows/build.yml`. Depends on `build` artifact
 (jar), provisions Postgres service container, starts backend jar, starts Vite frontend, runs
-`npm run test:e2e:contract`. Does NOT replace existing `frontend-e2e` job.
+`npm run test:e2e:fullstack`. Does NOT replace existing `frontend-e2e` job.
 - [ ] refactor (build.yml)
