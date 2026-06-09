@@ -21,7 +21,7 @@ Issue: #140
 - [x] refactor (added a bare `spotbugs-maven-plugin` ref to `build/plugins` with execution `spotbugs-check` binding the `check` goal to the `verify` phase; version+config inherited from `pluginManagement`. Unlike checkstyle/pmd (standalone CI jobs), SpotBugs runs inside the main build per the issue. Verified: `./mvnw -B -DskipTests -Djacoco.skip=true verify` shows `spotbugs:4.9.8.4:check (spotbugs-check)` executing at verify → BUILD SUCCESS on the clean baseline; pom IDE inspection clean)
 
 ### Step 5: Document the command in AGENTS.md
-- [~] refactor (add a `./mvnw spotbugs:check -B` note to the Build/Test/Development commands section in AGENTS.md)
+- [x] refactor (added a `./mvnw spotbugs:check -B` bullet to the Build/Test/Development commands section — notes find-sec-bugs, effort=Max/threshold=Medium, the exclude-filter location, and the verify binding; updated the `verify -B` bullet to mention SpotBugs)
 
 ### Step 6: Final verification
-- [ ] refactor (`./mvnw verify -B` runs SpotBugs and passes on the clean triaged baseline; confirm a deliberately-introduced bug pattern fails `spotbugs:check`, then revert it)
+- [~] refactor (`./mvnw verify -B` runs SpotBugs and passes on the clean triaged baseline; confirm a deliberately-introduced bug pattern fails `spotbugs:check`, then revert it)

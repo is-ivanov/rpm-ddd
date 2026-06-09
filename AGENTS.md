@@ -26,10 +26,11 @@ When unsure, repeated `-m` flags work safely in either shell.
 ## Build, Test, and Development Commands
 Use the Maven wrapper:
 
-- `./mvnw verify -B` runs the full CI build, including tests and Spotless checks.
+- `./mvnw verify -B` runs the full CI build, including tests, Spotless, and SpotBugs checks.
 - `./mvnw test` runs the JUnit test suite only.
 - `./mvnw checkstyle:check -B` runs Checkstyle with `code-quality-config/checkstyle/my_checks.xml`.
 - `./mvnw pmd:check -B` runs PMD and fails on violations.
+- `./mvnw spotbugs:check -B` runs SpotBugs bytecode analysis (with the find-sec-bugs plugin, `effort=Max`, `threshold=Medium`) and fails on violations; triaged false positives live in `code-quality-config/spotbugs/exclude-filter.xml`. Also bound to the `verify` phase.
 - `./mvnw spotless:apply` reformats Java sources with Palantir Java Format.
 - `./mvnw spring-boot:run` starts the application locally.
 
