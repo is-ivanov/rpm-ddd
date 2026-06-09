@@ -25,23 +25,33 @@ Findings surfaced while building the full-stack E2E journey. These are NOT bugs
   post-login destination becomes a story. Until then the polling cookie wait is
   the correct E2E approach.
 
-### I2 — `frontend/acceptance/**` is outside TS type-checking
+### I2 — `frontend/acceptance/**` has no proper static-analysis configuration
 
-- **Observed**: IntelliJ reports "unnecessary non-null assertion" on the
-  `match![0]` / `token!` assertions in `mailpit.statements.ts`, which are in fact
-  REQUIRED under the project's `"strict": true`. The IDE flags them because it
-  analyses the acceptance files with a non-strict fallback.
+- **Observed**:
+  - IntelliJ reports "unnecessary non-null assertion" on `match![0]` / `token!`
+    (`mailpit.statements.ts`) and on `session!` / `csrf!` (×7,
+    `real-auth-backend.statements.ts`) — all REQUIRED under the project's
+    `"strict": true`; the IDE flags them via a non-strict fallback.
+  - SonarLint S2068 ("potentially hard-coded password") fires on
+    `password: 'Fullstack@123'` (`real-auth-backend.statements.ts`) — an
+    intentional test password for a synthetic journey user (the test sets it
+    during activation and reuses it to log in), not a secret.
 - **Spec context**: `frontend/tsconfig.json` has a single config with
   `"strict": true` but `"include": ["src/**/*.ts", ...]` — the entire
   `frontend/acceptance/**` tree (Playwright specs + Statements) is not in any
-  tsconfig `include`. Playwright transpiles via esbuild (no type-check), so the
-  acceptance suite has never been type-checked.
+  tsconfig `include`, and no inspection scope marks it as test code. Playwright
+  transpiles via esbuild (no type-check), so the acceptance suite has never been
+  type-checked.
 - **Current code state**: the build's `vue-tsc --noEmit` (driven by tsconfig)
   silently skips acceptance files; only the IDE checks them, with strictNullChecks
-  effectively off — hence the false-positive `!` warnings and zero real coverage.
+  effectively off and security heuristics applied as if to production code — hence
+  the false-positive `!` warnings, the S2068 noise, and zero real type coverage.
 - **Scope options**: (a) add `frontend/acceptance/**` to a strict tsconfig
   `include` (or a dedicated `tsconfig.acceptance.json` via project references) and
-  wire a type-check into the lint/CI gate; expect it to surface other latent type
-  issues across the existing acceptance tree (handle as its own task). Addressing
-  this also auto-clears the false-positive `!` warnings. Until then the `!`
-  assertions stay (correct under strict); do NOT remove them.
+  wire a type-check into the lint/CI gate — auto-clears the false-positive `!`
+  warnings and gives real coverage; (b) mark the acceptance tree as test code for
+  the IDE/SonarLint inspection scope so secret-detection heuristics (S2068) don't
+  fire on intentional test fixtures. Expect (a) to surface other latent type
+  issues across the existing acceptance tree (handle as its own task). Until then
+  the `!` assertions stay (correct under strict) and the test password stays; do
+  NOT remove them.
