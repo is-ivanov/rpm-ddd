@@ -25,6 +25,7 @@
     <commons-lang3.version>3.20.0</commons-lang3.version>
     <error-handling-spring-boot-starter.version>5.1.1</error-handling-spring-boot-starter.version>
     <error-prone.version>2.49.0</error-prone.version>
+    <findsecbugs.version>1.14.0</findsecbugs.version>
     <greenmail.version>2.1.8</greenmail.version>
     <guava.version>33.6.0-jre</guava.version>
     <instancio.version>5.6.0</instancio.version>
@@ -48,6 +49,7 @@
     <jacoco.version>0.8.15</jacoco.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+    <spotbugs-maven-plugin.version>4.9.8.4</spotbugs-maven-plugin.version>
     <spotless-maven-plugin.version>3.6.0</spotless-maven-plugin.version>
 
     <!--frontend build (activated by the 'frontend' profile) -->
@@ -400,6 +402,23 @@
             <includeTests>true</includeTests>
             <printFailingErrors>true</printFailingErrors>
             <analysisCache>true</analysisCache>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>${spotbugs-maven-plugin.version}</version>
+          <configuration>
+            <effort>Max</effort>
+            <threshold>Medium</threshold>
+            <excludeFilterFile>code-quality-config/spotbugs/exclude-filter.xml</excludeFilterFile>
+            <plugins>
+              <plugin>
+                <groupId>com.h3xstream.findsecbugs</groupId>
+                <artifactId>findsecbugs-plugin</artifactId>
+                <version>${findsecbugs.version}</version>
+              </plugin>
+            </plugins>
           </configuration>
         </plugin>
         <plugin>
