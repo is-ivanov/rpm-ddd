@@ -13,6 +13,10 @@ public record CurrentUserResponse(
         UserStatus status,
         List<String> roles) {
 
+    public CurrentUserResponse {
+        roles = List.copyOf(roles);
+    }
+
     static CurrentUserResponse from(User user) {
         return new CurrentUserResponse(
                 user.getId().id().toString(),
