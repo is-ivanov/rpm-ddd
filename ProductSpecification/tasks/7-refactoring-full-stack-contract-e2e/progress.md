@@ -48,7 +48,7 @@ future UI migration) → read the activation link from Mailpit (polling wait) �
 → user logs in (UI). Created user gets a unique-per-run identity (retry-safe). Statements split by
 concern to stay under 200 lines. Test stays disabled with the skip marker; predict + validate the
 RED failure against the harness.
-- [~] red-playwright
+- [x] red-playwright
 
 ### Step 5: green-playwright — account-lifecycle journey (local)
 Start `Infra-FullStack-Tests-Up` (Postgres + Mailpit), launch the backend with the `fullstack`
