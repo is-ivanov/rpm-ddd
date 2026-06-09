@@ -21,7 +21,7 @@ Issue: #139
 - [x] refactor (added explicit "Run oxlint (fast gate, fail on violations)" step running `npm run lint:oxlint` before the ESLint+Prettier step in code-quality.yml frontend-lint job; oxlint is also already inside the composed `npm run lint`, but the explicit step fast-fails and gives a clearly-labeled CI check. package.json stays the single source of truth for `lint`)
 
 ### Step 5: Document the workflow
-- [~] refactor (frontend README / AGENTS notes + .claude/tech/vue-ts/infrastructure.md "Static Analysis" so the pre-commit gate runs oxlint)
+- [x] refactor (updated .claude/tech/vue-ts/infrastructure.md "Static Analysis (Pre-Commit)" — `npm run lint` now described as oxlint→ESLint→Prettier with the two-linter split + dedup; added new human-facing frontend/README.md documenting scripts + the oxlint/ESLint/Prettier workflow. Prettier-formatted; `npm run lint` green)
 
 ### Step 6: Final verification
-- [ ] refactor (npm run lint:oxlint + npm run lint both clean; CI green)
+- [~] refactor (npm run lint:oxlint + npm run lint both clean; CI green)
