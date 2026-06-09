@@ -65,7 +65,7 @@ remove-marker-only):
 - Write `frontend/acceptance/tests/fullstack/README.md` documenting the exact, just-verified local
   run (console + IntelliJ): infra → backend (fullstack) → seed → Vite → `npm run test:e2e:fullstack`,
   plus the stale-jar caveat and the nightly-workflow pointer. Cross-link from `AGENTS.md`.
-- [~] docs (App-FullStack run config + fullstack/README.md)
+- [x] docs (App-FullStack run config + fullstack/README.md)
 
 ### Step 6: Nightly full-stack workflow
 Add a dedicated scheduled workflow `.github/workflows/nightly-fullstack-e2e.yml` (`on: schedule`
@@ -75,4 +75,4 @@ script), starts the backend jar with `SPRING_PROFILES_ACTIVE=fullstack` (+ stand
 overrides), runs `scripts/seed-fullstack.sh` after health, starts Vite frontend, runs
 `npm run test:e2e:fullstack`. Does NOT run on every PR and does NOT touch the existing
 `frontend-e2e` job.
-- [ ] refactor (nightly-fullstack-e2e.yml)
+- [~] refactor (nightly-fullstack-e2e.yml)
