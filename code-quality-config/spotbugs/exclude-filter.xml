@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SpotBugs exclude filter for triaged false positives.
+
+  Wired into the build via the spotbugs-maven-plugin <excludeFilterFile> in pom.xml.
+  An empty filter (no <Match> elements) excludes nothing — this is the clean
+  baseline. Each exclusion added during triage MUST be documented with a comment
+  explaining why the finding is a false positive (or an accepted, justified
+  deviation), mirroring the documented-deviation convention used for Checkstyle.
+
+  Filter syntax: https://spotbugs.readthedocs.io/en/stable/filter.html
+-->
+<FindBugsFilter>
+
+  <!-- No exclusions yet. Add documented <Match> entries here during triage (Step 3). -->
+
+</FindBugsFilter>
