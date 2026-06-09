@@ -15,10 +15,10 @@ Issue: #139
 - [x] refactor (added `lint:oxlint` = `oxlint --max-warnings=0` so suspicious warnings also fail the gate; `lint` now runs `npm run lint:oxlint && eslint . && prettier --check .` (oxlint as fast first gate); `lint:fix` runs `oxlint --fix` first. Both `npm run lint:oxlint` and composed `npm run lint` exit 0 clean)
 
 ### Step 3: Dedupe ESLint rules via eslint-plugin-oxlint
-- [~] refactor (add `eslint-plugin-oxlint` dev dep; append its flat config to eslint.config.js to disable ESLint rules oxlint already covers; verify `npm run lint` still clean, no double-reporting)
+- [x] refactor (added `eslint-plugin-oxlint` ^1.69.0 dev dep; appended `...oxlint.buildFromOxlintConfigFile('.oxlintrc.json')` as the LAST entry in eslint.config.js — derives the dedup from .oxlintrc.json, turning off 112 ESLint rules oxlint covers (e.g. constructor-super, getter-return, no-async-promise-executor). Composed `npm run lint` exit 0, no double-reporting; IDE inspection clean)
 
 ### Step 4: Wire oxlint into CI
-- [ ] refactor (.github/workflows/code-quality.yml frontend-lint job runs oxlint so violations fail the build)
+- [~] refactor (.github/workflows/code-quality.yml frontend-lint job runs oxlint so violations fail the build)
 
 ### Step 5: Document the workflow
 - [ ] refactor (frontend README / AGENTS notes + .claude/tech/vue-ts/infrastructure.md "Static Analysis" so the pre-commit gate runs oxlint)
