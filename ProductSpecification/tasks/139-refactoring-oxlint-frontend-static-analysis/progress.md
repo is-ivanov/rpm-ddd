@@ -9,10 +9,10 @@ Issue: #139
 ## Fix
 
 ### Step 1: Add oxlint dependency + .oxlintrc.json config
-- [ ] refactor (add `oxlint` dev dep to frontend/package.json; create frontend/.oxlintrc.json with correctness/suspicious categories; align `ignorePatterns` with eslint.config.js ignores)
+- [x] refactor (added `oxlint` ^1.69.0 dev dep to frontend/package.json; created frontend/.oxlintrc.json — categories correctness=error/suspicious=warn, ignorePatterns mirror eslint.config.js. `npx oxlint` exit 0 clean on 25 src files; verified it flags a deliberate redeclaration; `npm run lint` still green)
 
 ### Step 2: Add lint:oxlint script + compose with lint
-- [ ] refactor (add `lint:oxlint` npm script; run oxlint first as a fast gate, then ESLint+Prettier; verify `npm run lint:oxlint` clean or document triaged baseline)
+- [~] refactor (add `lint:oxlint` npm script; run oxlint first as a fast gate, then ESLint+Prettier; verify `npm run lint:oxlint` clean or document triaged baseline)
 
 ### Step 3: Dedupe ESLint rules via eslint-plugin-oxlint
 - [ ] refactor (add `eslint-plugin-oxlint` dev dep; append its flat config to eslint.config.js to disable ESLint rules oxlint already covers; verify `npm run lint` still clean, no double-reporting)
