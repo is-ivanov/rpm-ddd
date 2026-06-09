@@ -23,5 +23,8 @@ Issue: #140
 ### Step 5: Document the command in AGENTS.md
 - [x] refactor (added a `./mvnw spotbugs:check -B` bullet to the Build/Test/Development commands section — notes find-sec-bugs, effort=Max/threshold=Medium, the exclude-filter location, and the verify binding; updated the `verify -B` bullet to mention SpotBugs)
 
-### Step 6: Final verification
-- [~] refactor (`./mvnw verify -B` runs SpotBugs and passes on the clean triaged baseline; confirm a deliberately-introduced bug pattern fails `spotbugs:check`, then revert it)
+### Step 6: Take SpotBugs off the CI critical path (mirror Spotless)
+- [x] refactor (kept the `verify` binding for local `./mvnw verify`; added `-Dspotbugs.skip=true` to both `build.yml` verify invocations (PR + main) so it's off the critical-path `build` job; added a parallel `spotbugs` job to `code-quality.yml` running `mvn -B compile spotbugs:check` — compiles first because SpotBugs analyzes bytecode, unlike the source-based checkstyle/pmd jobs. Verified: parallel command `mvn -B compile spotbugs:check` → BUILD SUCCESS; critical-path `mvn -Dspotbugs.skip=true verify` → "Spotbugs plugin skipped", no analysis, BUILD SUCCESS. YAML IDE inspections clean (build.yml warnings pre-existing codecov-action params))
+
+### Step 7: Final verification
+- [ ] refactor (`./mvnw verify -B` runs SpotBugs and passes on the clean triaged baseline; confirm a deliberately-introduced bug pattern fails `spotbugs:check`, then revert it)

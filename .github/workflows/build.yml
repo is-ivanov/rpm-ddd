@@ -79,18 +79,20 @@ jobs:
         cache: maven
     # The frontend is built/tested in the parallel `frontend-build` job, so the
     # backend build drops `-Pfrontend` to stay off the critical path. spotless:check
-    # (bound to `compile` in pom.xml for local `./mvnw verify`) is skipped here too
-    # and enforced in the parallel Code Quality workflow.
+    # (bound to `compile`) and spotbugs:check (bound to `verify`) are skipped here
+    # too — both stay bound in pom.xml so a local `./mvnw verify` runs them, but CI
+    # enforces each in its own parallel Code Quality job to keep this build off the
+    # critical path.
     #
     # On main only, the deploy artifact (`app-jar`, consumed by deploy.yml) must
     # carry the bundled SPA, so re-enable `-Pfrontend` to run copy-frontend-dist —
     # but skip vitest (`-Dnpm.test.skip=true`), which already runs in frontend-build.
     - name: Build with Maven (PR — backend only)
       if: github.ref != 'refs/heads/main'
-      run: mvn verify -B -Dspotless.check.skip=true
+      run: mvn verify -B -Dspotless.check.skip=true -Dspotbugs.skip=true
     - name: Build with Maven (main — bundle SPA into deploy jar, vitest runs in frontend-build)
       if: github.ref == 'refs/heads/main'
-      run: mvn verify -B -Pfrontend -Dspotless.check.skip=true -Dnpm.test.skip=true
+      run: mvn verify -B -Pfrontend -Dspotless.check.skip=true -Dspotbugs.skip=true -Dnpm.test.skip=true
 
     # Report generation moved to the `allure-report` job so backend + vitest
     # results (here) can be merged with Playwright results from `frontend-e2e`.

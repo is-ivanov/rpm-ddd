@@ -64,6 +64,26 @@ jobs:
       - name: Run PMD (Fail on violations)
         run: mvn pmd:check -B
 
+  # SpotBugs bytecode analysis (+ find-sec-bugs). Moved here off the `build`
+  # critical path: pom.xml binds spotbugs:check to `verify` so a local
+  # `./mvnw verify` runs it, but CI's build job skips it (-Dspotbugs.skip=true)
+  # and this parallel job enforces it instead. Unlike the source-based Checkstyle
+  # and PMD jobs, SpotBugs needs compiled bytecode, so this runs `compile` first
+  # (includeTests defaults to false → main classes only).
+  spotbugs:
+    name: SpotBugs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+      - name: Run SpotBugs (Fail on violations)
+        run: mvn -B compile spotbugs:check
+
   # Spotless (Palantir Java Format) format gate. Moved here off the `build`
   # critical path: pom.xml still binds spotless:check to `compile` so a local
   # `./mvnw verify` runs it, but CI's build job skips it (-Dspotless.check.skip)

@@ -44,6 +44,10 @@ once the baseline is clean.
 - Real-bug fixes in `src/main/java/**` surfaced by the initial triage (scope known
   only after the first run)
 - `AGENTS.md` — add a `./mvnw spotbugs:check` note to the build-commands section
+- `.github/workflows/build.yml` — skip SpotBugs on the critical-path `build` job
+  (`-Dspotbugs.skip=true`), mirroring how Spotless is skipped there
+- `.github/workflows/code-quality.yml` — new parallel `spotbugs` job
+  (`mvn -B compile spotbugs:check`) enforcing it off the hot path
 
 ## Acceptance
 
