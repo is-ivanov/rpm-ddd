@@ -18,7 +18,7 @@ Issue: #142
 - [x] refactor (vue-ts/templates/logic-test.md ".skip Convention" → ".fails Convention (RED-phase marker)" with `it.fails` example + pin-the-reason note; universal templates/workflow/red-phase-formats.md "Frontend Skip Convention" → "Frontend RED-Phase Marker" referencing `it.fails`/`test.fails` + runs-every-build semantics + pin-the-reason)
 
 ### Step 4: Agents + universal rules
-- [~] refactor (red-agent.md + green-agent.md frontend marker wording; .claude/rules/frontend-rules.md test-skip-marker semantics — test now runs every build)
+- [x] refactor (green-agent.md: "Frontend Skip Convention" → "Frontend RED-Phase Marker" + two parentheticals now name the `.fails` modifier; red-agent.md reference → frontend RED-phase marker `it.fails`; frontend-rules.md test-skip-marker line now states runs-every-build + GREEN-enforcement + pin-the-reason-via-assertion. Generic "test disable/skip marker" phrasings covering both stacks left intact.)
 
 ### Step 5: Final verification
-- [ ] refactor (npm run test green; npm run lint green; confirm no stray `.skip` RED markers and docs consistently reference `.fails`)
+- [~] refactor (npm run test green; npm run lint green; confirm no stray `.skip` RED markers and docs consistently reference `.fails`)
