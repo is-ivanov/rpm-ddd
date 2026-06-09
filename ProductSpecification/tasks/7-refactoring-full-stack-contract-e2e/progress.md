@@ -7,44 +7,54 @@ Type: refactoring
 
 ## Fix
 
-### Step 1: Full-stack login spec with real backend
-Write `login.fullstack.spec.ts` — happy-path login via real backend + Postgres, no `page.route`
-mocking. `RealAuthBackendStatements` seeds a test user via actual REST API calls (no mocks).
-Test starts disabled with the skip marker.
+Tier scope (see `decisions/fullstack-e2e-tier-decision.md`): ONE growing critical user-lifecycle
+journey (admin login → create user via API → activate via email → first login), run nightly, not
+per-PR. Mailpit is required (the journey reads the activation link). The committed login RED
+(Step 1) is the first slice; Step 4 expands it into the full journey.
+
+### Step 1: Full-stack login spec with real backend (first journey slice)
+Write `*.fullstack.spec.ts` — happy-path login via real backend + Postgres, no `page.route`
+mocking. `RealAuthBackendStatements` performs real REST calls (no mocks). Test starts disabled
+with the skip marker.
 - [x] red-playwright
 
-### Step 2: ADR — Frontend test taxonomy + full-stack E2E strategy
-Document the decision: mocked UI tests (fast, default, every PR) vs full-stack E2E tests (real
-stack, opt-in, separate job). Record the frontend test taxonomy mapped to the backend pyramid:
-Vitest logic/api = unit; Playwright + mock = integration (UI tests); Playwright + real backend =
-full-stack E2E. Resolve the loginable-user seeding path the RED test exposed (admin bootstrap vs
-Postgres seed) — this drives Steps 3, 4, and 5. Record naming: tier is "full-stack E2E" (NOT Pact
-contract); layout uses BOTH a dedicated `fullstack/` folder AND the `*.fullstack.spec.ts` suffix,
-kept flat for now. Record the mail decision (login needs no mailbox; GreenMail in-JVM only; Mailpit
-only if a future scenario reads email). Clarify when future scenarios get a full-stack test.
-Decision recorded in `decisions/fullstack-e2e-tier-decision.md`: chosen seeding path = dedicated
-`fullstack` Spring profile reusing the `test` Liquibase context (`user.csv` → ACTIVE `admin`) +
-dummy mail host; test logs in as the pre-seeded ACTIVE user, no REST seeding, no mailbox.
+### Step 2: ADR — Frontend test taxonomy + full-stack E2E journey strategy
+Recorded in `decisions/fullstack-e2e-tier-decision.md`: taxonomy (Vitest=unit, Playwright+mock=
+integration/UI tests, Playwright+real backend+Mailpit=full-stack E2E); tier = ONE growing
+account-lifecycle journey run nightly (deliberate exception to the Level-1 "one action" rule);
+naming = "full-stack E2E" not Pact; layout = `fullstack/` folder + `*.fullstack.spec.ts` suffix;
+`retries: 2` with unique-per-run created-user identity; backend boots under a `fullstack` Spring
+profile (test Liquibase context → ACTIVE `admin`, mail → Mailpit); Mailpit required, GreenMail
+stays in-JVM; local infra = new `Infra-FullStack-Tests-Up` (Postgres + Mailpit), WireMock later.
 - [x] refactor (ADR)
 
-### Step 3: Full-stack tier wiring (Playwright project + npm script + Spring profile)
-Add a `fullstack` Playwright project to `playwright.config.ts` matching only `*.fullstack.spec.ts`
-files; default project excludes that suffix. Add `test:e2e:fullstack` script to `package.json`.
-Verify default `test:e2e` does NOT pick up full-stack specs. Add `application-fullstack.yml`
-(datasource → run's Postgres, `spring.liquibase.contexts=test`, dummy `spring.mail.host`) so the
-backend boots mail-safe with the pre-seeded ACTIVE `admin` — per the Step 2 ADR.
-- [~] refactor (playwright.config.ts + package.json + application-fullstack.yml)
+### Step 3: Full-stack harness — infra + Spring profile + Playwright project
+Add `docker/infra-fullstack-tests.yml` (Postgres + Mailpit) + an `Infra-FullStack-Tests-Up` run
+config, mirroring `Infra-Tests-Up` (shared-first, idempotent). Add `application-fullstack.yml`
+(datasource → run's Postgres, `spring.liquibase.contexts=test`, `spring.mail` → Mailpit
+`localhost:1025`). Add a `fullstack` Playwright project to `playwright.config.ts` matching only
+`*.fullstack.spec.ts` with `retries: 2`; default project excludes that suffix. Add
+`test:e2e:fullstack` script to `package.json`. Verify default `test:e2e` does NOT pick up
+full-stack specs.
+- [~] refactor (infra-fullstack-tests.yml + application-fullstack.yml + playwright.config.ts + package.json)
 
-### Step 4: Green full-stack login test (local, real backend)
-Launch the backend locally with the `fullstack` profile against the shared test Postgres (seed
-loaded via the `test` context). Update `login.fullstack.spec.ts` to log in as the pre-seeded
-ACTIVE `admin` (per ADR — admin-created users are PENDING and can't log in), remove the skip
-marker, and verify it passes (full request↔response cycle, JSESSIONID session cookie set).
+### Step 4: red-playwright — expand to the account-lifecycle journey
+Rename the spec to `account-lifecycle.fullstack.spec.ts`. Expand the journey: admin logs in (UI) →
+admin creates a user via API `POST /api/admin/users` (no admin UI yet — comment marks the
+future UI migration) → read the activation link from Mailpit (polling wait) → user activates (UI)
+→ user logs in (UI). Created user gets a unique-per-run identity (retry-safe). Statements split by
+concern to stay under 200 lines. Test stays disabled with the skip marker; predict + validate the
+RED failure against the harness.
+- [ ] red-playwright
+
+### Step 5: green-playwright — account-lifecycle journey (local)
+Start `Infra-FullStack-Tests-Up` (Postgres + Mailpit), launch the backend with the `fullstack`
+profile, start Vite. Remove the skip marker and verify the full journey passes.
 - [ ] green-playwright
 
-### Step 5: CI job `frontend-e2e-fullstack`
-Add `frontend-e2e-fullstack` job to `.github/workflows/build.yml`. Depends on `build` artifact
-(jar), provisions Postgres service container, starts the backend jar with
-`SPRING_PROFILES_ACTIVE=fullstack` (loads the `test`-context seed + dummy mail), starts Vite
-frontend, runs `npm run test:e2e:fullstack`. Does NOT replace existing `frontend-e2e` job.
+### Step 6: Nightly CI job `frontend-e2e-fullstack`
+Add a scheduled (nightly cron) `frontend-e2e-fullstack` job to `.github/workflows/build.yml`.
+Provisions Postgres + Mailpit service containers, starts the backend jar with
+`SPRING_PROFILES_ACTIVE=fullstack`, starts Vite frontend, runs `npm run test:e2e:fullstack`. Does
+NOT run on every PR and does NOT replace the existing `frontend-e2e` job.
 - [ ] refactor (build.yml)
