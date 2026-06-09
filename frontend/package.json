@@ -11,8 +11,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "lint": "eslint . && prettier --check .",
-    "lint:fix": "eslint . --fix && prettier --write .",
+    "lint:oxlint": "oxlint --max-warnings=0",
+    "lint": "npm run lint:oxlint && eslint . && prettier --check .",
+    "lint:fix": "oxlint --fix && eslint . --fix && prettier --write .",
     "format": "prettier --write ."
   },
   "dependencies": {
