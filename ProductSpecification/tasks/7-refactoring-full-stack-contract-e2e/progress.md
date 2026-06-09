@@ -24,19 +24,22 @@ integration/UI tests, Playwright+real backend+Mailpit=full-stack E2E); tier = ON
 account-lifecycle journey run nightly (deliberate exception to the Level-1 "one action" rule);
 naming = "full-stack E2E" not Pact; layout = `fullstack/` folder + `*.fullstack.spec.ts` suffix;
 `retries: 2` with unique-per-run created-user identity; backend boots under a `fullstack` Spring
-profile (test Liquibase context → ACTIVE `admin`, mail → Mailpit); Mailpit required, GreenMail
-stays in-JVM; local infra = new `Infra-FullStack-Tests-Up` (Postgres + Mailpit), WireMock later.
+profile (prod master changelog, mail → Mailpit) + out-of-band seed (SQL fixture + script, jar stays
+clean); Mailpit required, GreenMail stays in-JVM; local infra = new `Infra-FullStack-Tests-Up`
+(Postgres + Mailpit), WireMock later.
 - [x] refactor (ADR)
 
 ### Step 3: Full-stack harness — infra + Spring profile + Playwright project
-Add `docker/infra-fullstack-tests.yml` (Postgres + Mailpit) + an `Infra-FullStack-Tests-Up` run
-config, mirroring `Infra-Tests-Up` (shared-first, idempotent). Add `application-fullstack.yml`
-(datasource → run's Postgres, `spring.liquibase.contexts=test`, `spring.mail` → Mailpit
-`localhost:1025`). Add a `fullstack` Playwright project to `playwright.config.ts` matching only
-`*.fullstack.spec.ts` with `retries: 2`; default project excludes that suffix. Add
-`test:e2e:fullstack` script to `package.json`. Verify default `test:e2e` does NOT pick up
-full-stack specs.
-- [~] refactor (infra-fullstack-tests.yml + application-fullstack.yml + playwright.config.ts + package.json)
+Add `docker/infra-fullstack-tests.yml` (Postgres `:54035` + Mailpit `:1025`/`:8025`) + an
+`Infra-FullStack-Tests-Up` run config, mirroring `Infra-Tests-Up` (shared-first, idempotent). Add
+`application-fullstack.yml` (datasource → `:54035`, prod master changelog — NO override, mail →
+Mailpit, `rpm.frontend-base-url` → Vite). Seed is out-of-band (jar stays clean): SQL fixture
+`src/test/resources/db/fixtures/fullstack-seed.sql` (one ACTIVE admin, `ON CONFLICT DO NOTHING`) +
+`scripts/seed-fullstack.sh` (`docker exec … psql`, used by both local and CI).
+Add a `fullstack` Playwright project (`testMatch` `*.fullstack.spec.ts`, `retries: 2`); the
+`chromium` project excludes the suffix (`testIgnore`). Add `test:e2e:fullstack`
+(`--project=fullstack`); scope `test:e2e` to `--project=chromium`.
+- [x] refactor (infra-fullstack-tests.yml + application-fullstack.yml + fullstack-seed.sql + seed-fullstack.sh + playwright.config.ts + package.json)
 
 ### Step 4: red-playwright — expand to the account-lifecycle journey
 Rename the spec to `account-lifecycle.fullstack.spec.ts`. Expand the journey: admin logs in (UI) →
@@ -45,16 +48,20 @@ future UI migration) → read the activation link from Mailpit (polling wait) �
 → user logs in (UI). Created user gets a unique-per-run identity (retry-safe). Statements split by
 concern to stay under 200 lines. Test stays disabled with the skip marker; predict + validate the
 RED failure against the harness.
-- [ ] red-playwright
+- [~] red-playwright
 
 ### Step 5: green-playwright — account-lifecycle journey (local)
 Start `Infra-FullStack-Tests-Up` (Postgres + Mailpit), launch the backend with the `fullstack`
-profile, start Vite. Remove the skip marker and verify the full journey passes.
+profile (migrates prod schema), run `scripts/seed-fullstack.sh` after health, start Vite. Remove
+the skip marker and verify the full journey passes.
 - [ ] green-playwright
 
-### Step 6: Nightly CI job `frontend-e2e-fullstack`
-Add a scheduled (nightly cron) `frontend-e2e-fullstack` job to `.github/workflows/build.yml`.
-Provisions Postgres + Mailpit service containers, starts the backend jar with
-`SPRING_PROFILES_ACTIVE=fullstack`, starts Vite frontend, runs `npm run test:e2e:fullstack`. Does
-NOT run on every PR and does NOT replace the existing `frontend-e2e` job.
-- [ ] refactor (build.yml)
+### Step 6: Nightly full-stack workflow
+Add a dedicated scheduled workflow `.github/workflows/nightly-fullstack-e2e.yml` (`on: schedule`
+nightly cron + `workflow_dispatch`), mirroring the `checkstyle-updates.yml` precedent — NOT a job
+in `build.yml`. Starts `docker/infra-fullstack-tests.yml` (same compose as local → DRY seed
+script), starts the backend jar with `SPRING_PROFILES_ACTIVE=fullstack` (+ standard Spring env
+overrides), runs `scripts/seed-fullstack.sh` after health, starts Vite frontend, runs
+`npm run test:e2e:fullstack`. Does NOT run on every PR and does NOT touch the existing
+`frontend-e2e` job.
+- [ ] refactor (nightly-fullstack-e2e.yml)
