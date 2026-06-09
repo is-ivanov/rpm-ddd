@@ -1,8 +1,8 @@
-import {test} from '@playwright/test';
-import {LoginPageStatements} from '../statements/frontend/login-page.statements';
-import {ActivationPageStatements} from '../statements/frontend/activation-page.statements';
-import {type CreatedUser, RealAuthBackendStatements} from '../statements/backend/real-auth-backend.statements';
-import {MailpitStatements} from '../statements/backend/mailpit.statements';
+import { test } from '@playwright/test';
+import { LoginPageStatements } from '../statements/frontend/login-page.statements';
+import { ActivationPageStatements } from '../statements/frontend/activation-page.statements';
+import { type CreatedUser, RealAuthBackendStatements } from '../statements/backend/real-auth-backend.statements';
+import { MailpitStatements } from '../statements/backend/mailpit.statements';
 
 const ADMIN_LOGIN = 'admin';
 const ADMIN_PASSWORD = 'admin';
@@ -28,14 +28,6 @@ test.describe('Account Lifecycle Full-Stack E2E (real backend + Postgres + Mailp
       'And the new user activates the account via the activation link and sets a password, ' +
       'And the new user logs in via the UI with the new credentials',
     async () => {
-      // TDD RED: the skip marker stays until green-playwright (Step 5) runs the journey against the
-      // live harness and removes it. RED is pinned by the Statements assertions: exact 201 on
-      // admin create-user, the activation link present in the Mailpit email, the activation success
-      // screen, and the JSESSIONID session cookie set after each UI login. Validated against the
-      // real stack during RED: the journey passes once the async login side effect is awaited via a
-      // polling cookie wait (the login page exposes no post-success UI signal — see improvements.md).
-      test.skip();
-
       const newUser: CreatedUser = realAuthBackend.uniqueUserIdentity();
 
       await adminLogsInViaUi();

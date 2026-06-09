@@ -56,7 +56,7 @@ profile via `./mvnw spring-boot:run -Dspring-boot.run.profiles=fullstack` (NOT a
 lack `application-fullstack.yml`), run `scripts/seed-fullstack.sh` after health, start Vite. Remove
 the skip marker and verify the full journey passes. (remove-marker-only — no production/Statements
 changes)
-- [ ] green-playwright
+- [x] green-playwright
 
 Then capture the verified local-run recipe (separate commit; green-playwright stays
 remove-marker-only):
@@ -65,7 +65,7 @@ remove-marker-only):
 - Write `frontend/acceptance/tests/fullstack/README.md` documenting the exact, just-verified local
   run (console + IntelliJ): infra → backend (fullstack) → seed → Vite → `npm run test:e2e:fullstack`,
   plus the stale-jar caveat and the nightly-workflow pointer. Cross-link from `AGENTS.md`.
-- [ ] docs (App-FullStack run config + fullstack/README.md)
+- [~] docs (App-FullStack run config + fullstack/README.md)
 
 ### Step 6: Nightly full-stack workflow
 Add a dedicated scheduled workflow `.github/workflows/nightly-fullstack-e2e.yml` (`on: schedule`
