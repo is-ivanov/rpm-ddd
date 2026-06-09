@@ -13,7 +13,7 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 
 @DomainService
-public class JwtActivationTokenGenerator {
+public final class JwtActivationTokenGenerator {
 
     private final SecretKey signingKey;
     private final Duration expiration;
