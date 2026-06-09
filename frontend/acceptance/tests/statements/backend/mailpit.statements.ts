@@ -50,7 +50,8 @@ export class MailpitStatements {
   }
 
   private async findActivationMessageId(api: APIRequestContext, email: string): Promise<string> {
-    const response = await api.get(`/api/v1/search?query=${encodeURIComponent(`to:${email}`)}`);
+    const query = encodeURIComponent(`to:${email}`);
+    const response = await api.get(`/api/v1/search?query=${query}`);
     if (response.status() !== 200) {
       return '';
     }
@@ -64,7 +65,7 @@ export class MailpitStatements {
     expect(response.status(), 'Mailpit returns the activation email body').toBe(200);
     const message = (await response.json()) as MailpitMessage;
     expect(message.Subject, 'the delivered email is the activation email').toBe(ACTIVATION_SUBJECT);
-    const match = message.Text.match(ACTIVATION_LINK_PATTERN);
+    const match = ACTIVATION_LINK_PATTERN.exec(message.Text);
     expect(match, 'activation email body contains an absolute frontend activation link').not.toBeNull();
     // Parse the matched link as a real URL (no string-splitting): the host is
     // environment-overridable (RPM_FRONTEND_BASE_URL), so we pin the deterministic

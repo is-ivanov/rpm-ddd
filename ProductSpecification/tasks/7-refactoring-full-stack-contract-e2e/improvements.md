@@ -24,3 +24,24 @@ Findings surfaced while building the full-stack E2E journey. These are NOT bugs
   once that page exists; (b) show a transient success state. Revisit when the
   post-login destination becomes a story. Until then the polling cookie wait is
   the correct E2E approach.
+
+### I2 — `frontend/acceptance/**` is outside TS type-checking
+
+- **Observed**: IntelliJ reports "unnecessary non-null assertion" on the
+  `match![0]` / `token!` assertions in `mailpit.statements.ts`, which are in fact
+  REQUIRED under the project's `"strict": true`. The IDE flags them because it
+  analyses the acceptance files with a non-strict fallback.
+- **Spec context**: `frontend/tsconfig.json` has a single config with
+  `"strict": true` but `"include": ["src/**/*.ts", ...]` — the entire
+  `frontend/acceptance/**` tree (Playwright specs + Statements) is not in any
+  tsconfig `include`. Playwright transpiles via esbuild (no type-check), so the
+  acceptance suite has never been type-checked.
+- **Current code state**: the build's `vue-tsc --noEmit` (driven by tsconfig)
+  silently skips acceptance files; only the IDE checks them, with strictNullChecks
+  effectively off — hence the false-positive `!` warnings and zero real coverage.
+- **Scope options**: (a) add `frontend/acceptance/**` to a strict tsconfig
+  `include` (or a dedicated `tsconfig.acceptance.json` via project references) and
+  wire a type-check into the lint/CI gate; expect it to surface other latent type
+  issues across the existing acceptance tree (handle as its own task). Addressing
+  this also auto-clears the false-positive `!` warnings. Until then the `!`
+  assertions stay (correct under strict); do NOT remove them.
