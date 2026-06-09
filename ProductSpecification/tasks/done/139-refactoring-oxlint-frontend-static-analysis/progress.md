@@ -24,4 +24,4 @@ Issue: #139
 - [x] refactor (updated .claude/tech/vue-ts/infrastructure.md "Static Analysis (Pre-Commit)" — `npm run lint` now described as oxlint→ESLint→Prettier with the two-linter split + dedup; added new human-facing frontend/README.md documenting scripts + the oxlint/ESLint/Prettier workflow. Prettier-formatted; `npm run lint` green)
 
 ### Step 6: Final verification
-- [~] refactor (npm run lint:oxlint + npm run lint both clean; CI green)
+- [x] refactor (npm run lint:oxlint exit 0; composed npm run lint exit 0 (oxlint→ESLint→Prettier); Vitest 17 passed / 6 files. CI frontend-lint job enforces oxlint via the explicit fast-gate step + the composed lint)
