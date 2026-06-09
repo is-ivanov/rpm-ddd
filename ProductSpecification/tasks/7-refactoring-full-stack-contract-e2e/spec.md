@@ -1,6 +1,7 @@
 # Task 7: Pilot Full-Stack Contract E2E
 
 Type: refactoring
+Issue: #120
 
 ## Problem
 

@@ -11,7 +11,7 @@ Type: refactoring
 Write `login.contract.spec.ts` — happy-path login via real backend + Postgres, no `page.route`
 mocking. `RealAuthBackendStatements` seeds a test user via actual REST API calls (no mocks).
 Test starts disabled with the skip marker.
-- [~] red-playwright
+- [x] red-playwright
 - [ ] green-playwright
 
 ### Step 2: Playwright project config + npm script
