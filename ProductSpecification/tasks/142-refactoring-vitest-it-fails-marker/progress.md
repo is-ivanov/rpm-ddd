@@ -15,10 +15,10 @@ Issue: #142
 - [x] refactor (technology.md Conventions Frontend: Test skip marker `.skip` → `.fails`; vue-ts/tdd.md "Test Skip Marker" → "RED-Phase Marker (`it.fails`)" section mirroring backend: behavior table + RED/GREEN mechanics + "pin the reason via the assertion" compensating control + limitations. `.skip` retained for genuine non-RED skips.)
 
 ### Step 3: RED-phase templates
-- [~] refactor (vue-ts/templates/logic-test.md ".skip Convention" → `.fails` syntax + example; universal templates/workflow/red-phase-formats.md frontend marker reference)
+- [x] refactor (vue-ts/templates/logic-test.md ".skip Convention" → ".fails Convention (RED-phase marker)" with `it.fails` example + pin-the-reason note; universal templates/workflow/red-phase-formats.md "Frontend Skip Convention" → "Frontend RED-Phase Marker" referencing `it.fails`/`test.fails` + runs-every-build semantics + pin-the-reason)
 
 ### Step 4: Agents + universal rules
-- [ ] refactor (red-agent.md + green-agent.md frontend marker wording; .claude/rules/frontend-rules.md test-skip-marker semantics — test now runs every build)
+- [~] refactor (red-agent.md + green-agent.md frontend marker wording; .claude/rules/frontend-rules.md test-skip-marker semantics — test now runs every build)
 
 ### Step 5: Final verification
 - [ ] refactor (npm run test green; npm run lint green; confirm no stray `.skip` RED markers and docs consistently reference `.fails`)

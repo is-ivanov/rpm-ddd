@@ -58,16 +58,27 @@ export interface ValidationResult {
 | `return undefined` | expect(undefined).toBe(true) fails |
 | No function exported | Import error |
 
-## .skip Convention
+## .fails Convention (RED-phase marker)
 
-After verified failure, add .skip with comment:
+After verified failure, mark the test `it.fails` (the RED-phase marker — see
+`.claude/tech/vue-ts/tdd.md` → "RED-Phase Marker") with a comment naming the
+predicted failure. The test still **runs** every build: it stays green while it
+fails, and once GREEN makes it pass, the build fails (`Expect test to fail`),
+forcing you to drop `.fails`.
 
 ```typescript
-// TDD Red Phase - validateEmail not implemented
-it.skip('should return valid for correct email format', () => {
+// RED — validateEmail not implemented (throws 'Not implemented')
+it.fails('should return valid for correct email format', () => {
   // ... test unchanged ...
 })
 ```
+
+**Pin the RED reason via the assertion.** `it.fails` has no error-type pin (no
+`withExceptions` analog): any failure in the body counts as "expected fail". Keep a
+specific `expect(...)` that fails for the *predicted* reason, so an incidental
+failure (typo, import error) is not silently absorbed.
+
+At GREEN, remove only the `.fails` modifier — back to `it('should ...', () => {`.
 
 ## Test Verification
 
