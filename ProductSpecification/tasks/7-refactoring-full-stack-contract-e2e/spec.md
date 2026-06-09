@@ -17,52 +17,60 @@ dependent scenarios (§3.1 wrong credentials, §3.2 inactive account), the defer
 
 ## Solution
 
-Add a separate **full-stack E2E** tier: a small set of Playwright tests that run against the real
-backend + Postgres with no `page.route` mocking. These tests verify the actual HTTP contract
-between the frontend and backend — the top of the frontend test pyramid (real frontend + real
-backend + real DB), above the mocked UI tests and the Vitest logic/api unit tests.
+Add a separate **full-stack E2E** tier: Playwright running against the real backend + Postgres +
+Mailpit with no `page.route` mocking — the top of the frontend test pyramid (real frontend + real
+backend + real DB + real mailbox), above the mocked UI tests and the Vitest logic/api unit tests.
 
 Naming note: this tier is "full-stack E2E", not "contract test" in the Pact / consumer-driven sense
 — both sides run together in one process tree rather than verifying a shared contract artifact
-independently. The taxonomy is recorded in the Step 2 ADR.
+independently. The full taxonomy, seeding decision, and rationale live in the Step 2 ADR
+(`decisions/fullstack-e2e-tier-decision.md`).
 
 Key design decisions:
-- **Isolated from the default suite.** Full-stack tests live in a dedicated Playwright project
-  (`fullstack`) matching only `*.fullstack.spec.ts` files, kept flat under a dedicated `fullstack/`
-  folder. `npm run test:e2e` (the default) does NOT include them. A separate script
-  `npm run test:e2e:fullstack` runs them explicitly.
-- **Separate CI job.** A new `frontend-e2e-fullstack` job in `build.yml` depends on the `build`
-  job (backend jar artifact), provisions a Postgres service container, starts the backend jar,
-  starts the Vite dev server, and runs only `test:e2e:fullstack`. It does NOT replace the existing
-  `frontend-e2e` job (fast, mocked, runs on every PR).
-- **Real setup, not page.route.** A `RealAuthBackendStatements` class seeds test users via the
-  actual backend REST API / a seed path decided by the Step 2 ADR (admin bootstrap vs Postgres
-  seed). No mock intercepts.
-- **No mailbox for login.** The login happy path sends no email; the test seeds an already-active
-  user, so neither GreenMail nor Mailpit is needed. GreenMail stays for in-JVM backend tests;
-  Mailpit is the choice only if a future full-stack scenario must read a delivered email.
-- **Scope: login happy path only.** One full-stack test: valid login succeeds and the session
-  cookie is set. This is the minimum to validate the full request↔response cycle. Edge cases (wrong
-  credentials, inactive account) remain in the fast mocked suite — they test frontend branching
-  logic, not the HTTP contract shape.
+- **One growing critical journey, run nightly.** The tier is a single account-lifecycle journey,
+  not a per-scenario suite: admin logs in (UI) → admin creates a user via API `POST /api/admin/users`
+  (no admin UI yet — migrates to UI later) → the new user reads the activation link from Mailpit →
+  activates (UI) → logs in (UI). It runs on a nightly schedule, NOT on every PR (slow, real I/O).
+  Edge cases (wrong credentials, inactive account, validation) stay in the fast mocked UI suite.
+- **Isolated from the default suite.** Full-stack tests live in a dedicated `fullstack/` folder AND
+  use the `*.fullstack.spec.ts` suffix; a `fullstack` Playwright project (`retries: 2`) matches only
+  that suffix, the default `chromium` project excludes it. `npm run test:e2e` (`--project=chromium`)
+  does NOT include them; `npm run test:e2e:fullstack` runs them explicitly.
+- **Dedicated nightly workflow.** A new `.github/workflows/nightly-fullstack-e2e.yml`
+  (`on: schedule` + `workflow_dispatch`), mirroring `checkstyle-updates.yml` — NOT a job in
+  `build.yml`. It starts the same `docker/infra-fullstack-tests.yml` compose, launches the backend
+  with `SPRING_PROFILES_ACTIVE=fullstack`, seeds, starts Vite, and runs `test:e2e:fullstack`. The
+  existing fast mocked `frontend-e2e` job is untouched.
+- **Real setup, not page.route.** `RealAuthBackendStatements` drives real REST (admin login,
+  create-user + CSRF) and `MailpitStatements` polls the Mailpit HTTP API for the activation link.
+  The created user gets a unique-per-run identity so `retries: 2` is collision-free.
+- **Mailbox via Mailpit; prod jar stays clean.** The journey reads the activation email, so Mailpit
+  is required (GreenMail stays for in-JVM backend tests). The backend boots under a `fullstack`
+  Spring profile running ONLY the production master changelog — NO test fixtures in the jar; the
+  journey's entry admin is seeded out-of-band by `scripts/seed-fullstack.sh` after startup.
 
 ## Affected Layers
 
-- Frontend: new `*.fullstack.spec.ts` spec file, new `RealAuthBackendStatements`, `playwright.config.ts` changes, `package.json` script
-- CI: `.github/workflows/build.yml` — new `frontend-e2e-fullstack` job
+- Frontend: `*.fullstack.spec.ts` journey, `RealAuthBackendStatements` + `MailpitStatements`, `playwright.config.ts`, `package.json` scripts
+- Backend config: `application-fullstack.yml` (profile), out-of-band SQL seed fixture (test resources)
+- Infra/CI: `docker/infra-fullstack-tests.yml` (Postgres + Mailpit), `Infra-FullStack-Tests-Up` + `App-FullStack` run configs, `scripts/seed-fullstack.sh`, `.github/workflows/nightly-fullstack-e2e.yml`
+- Docs: `frontend/acceptance/tests/fullstack/README.md` (local-run recipe)
 
 ## Key Files
 
-- `frontend/acceptance/tests/fullstack/login.fullstack.spec.ts` (new)
-- `frontend/acceptance/tests/statements/backend/real-auth-backend.statements.ts` (new)
-- `frontend/playwright.config.ts` — add `fullstack` Playwright project
-- `frontend/package.json` — add `test:e2e:fullstack` script
-- `.github/workflows/build.yml` — add `frontend-e2e-fullstack` job
+- `frontend/acceptance/tests/fullstack/account-lifecycle.fullstack.spec.ts`
+- `frontend/acceptance/tests/statements/backend/real-auth-backend.statements.ts`, `mailpit.statements.ts`
+- `frontend/playwright.config.ts` — `fullstack` project (`retries: 2`); `chromium` excludes the suffix
+- `frontend/package.json` — `test:e2e:fullstack` (+ `test:e2e` scoped to `--project=chromium`)
+- `src/main/resources/application-fullstack.yml`; `src/test/resources/db/fixtures/fullstack-seed.sql`
+- `docker/infra-fullstack-tests.yml`; `scripts/seed-fullstack.sh`; `.run/Infra-FullStack-Tests-Up.run.xml`, `.run/App-FullStack.run.xml`
+- `.github/workflows/nightly-fullstack-e2e.yml`
+- `frontend/acceptance/tests/fullstack/README.md`
 
 ## Notes
 
-- The existing `frontend-e2e` job (mocked, fast) stays unchanged — it covers UI behavior.
-- Full-stack tests are deliberately few. They answer "does the real backend speak the protocol the
-  frontend expects?" — one happy-path login is enough for that.
-- Future full-stack tests should be added only when a new endpoint's response shape, error type URI,
-  or auth mechanism is not otherwise integration-tested by the backend's own Level 1 suite.
+- The existing `frontend-e2e` job (mocked, fast) stays unchanged — it covers UI behavior on every PR.
+- The full-stack tier is deliberately ONE journey. It grows by extending the same journey as new
+  critical-path features land; it is not a place for edge cases (those stay in cheaper tiers).
+- Future full-stack coverage is added only when a new endpoint's response shape, problem+json `type`
+  URI, or auth mechanism on the critical path is not otherwise covered by the backend's Level 1 suite.
