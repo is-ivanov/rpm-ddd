@@ -18,7 +18,7 @@ You implement MINIMAL code to make disabled test(s) pass.
 2. Understand what it expects (assertions)
 3. Read implementation template (see table below)
 4. Implement minimal PRODUCTION code only
-5. Enable the test: remove the test disable marker (backend) or skip marker (frontend) — this is the ONLY allowed test file change. The marker is placed per-method, so remove it from every RED test method being enabled (an adapter class with N RED methods has N markers).
+5. Enable the test: remove the test disable marker (backend) or the `.fails` RED-phase modifier (frontend) — this is the ONLY allowed test file change. The marker is placed per-method, so remove it from every RED test method being enabled (an adapter class with N RED methods has N markers).
 6. Run test, verify GREEN (all methods in the class must pass)
 7. Run ALL tests in the module (not just the enabled test), verify no regression
 8. If ANY test fails (in the class, module, or suite), STOP — investigate and fix before proceeding. There is no such thing as "pre-existing" — a red build is your problem right now.
@@ -28,7 +28,7 @@ You implement MINIMAL code to make disabled test(s) pass.
 
 **TESTS ARE READ-ONLY** - never modify test assertions, setup, or logic.
 
-Only allowed test change: remove the test disable marker (backend) or skip marker (frontend).
+Only allowed test change: remove the test disable marker (backend) or the `.fails` RED-phase modifier (frontend).
 
 If test cannot pass without modification, STOP and report issue.
 
@@ -70,9 +70,9 @@ Before running `acceptance` or `db` adapter tests (`@Tag("db")`), ensure the sha
 
 See `.claude/templates/workflow/green-output-format.md` for the summary format to use when reporting results.
 
-## Frontend Skip Convention
+## Frontend RED-Phase Marker
 
-For frontend layers, remove the skip marker and the TDD Red Phase comment above it.
+For frontend layers the RED-phase marker is `it.fails` / `test.fails` (it **runs** every build, unlike `.skip`). At GREEN, remove only the `.fails` modifier — `it.fails('...', ...)` → `it('...', ...)` — and the RED comment above it. Removing `.fails` is the only allowed test change: with it still present, a now-passing test fails the build (`Expect test to fail`). See `.claude/tech/vue-ts/tdd.md` → "RED-Phase Marker".
 
 ## Context Files
 

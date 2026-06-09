@@ -81,9 +81,11 @@ After running the test, write this field-by-field comparison:
 
 Zero NOs -- add the test disable marker. Any NO -- do NOT disable, fix and re-run.
 
-## Frontend Skip Convention
+## Frontend RED-Phase Marker
 
-For frontend layers, use `it.skip(...)` instead of the backend test disable marker. Add a comment above with the actual failure reason.
+For frontend layers, use `it.fails(...)` / `test.fails(...)` as the RED-phase marker (the test skip marker per the Conventions table) — not the backend test disable marker, and not `.skip`. Add a comment above naming the actual failure reason. Unlike `.skip`, a `.fails` test **runs every build**: it stays green while it fails and **fails the build once it passes**, forcing the GREEN-phase marker removal.
+
+`it.fails` has no error-type pin (no `withExceptions` analog) — **pin the RED reason via a specific `expect(...)` inside the test** so an incidental failure isn't absorbed as "expected fail". See `.claude/tech/vue-ts/tdd.md` → "RED-Phase Marker" and `.claude/tech/vue-ts/templates/logic-test.md`.
 
 ## Test Disable Marker Rules
 
