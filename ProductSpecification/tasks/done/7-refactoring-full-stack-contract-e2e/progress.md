@@ -75,4 +75,4 @@ script), starts the backend jar with `SPRING_PROFILES_ACTIVE=fullstack` (+ stand
 overrides), runs `scripts/seed-fullstack.sh` after health, starts Vite frontend, runs
 `npm run test:e2e:fullstack`. Does NOT run on every PR and does NOT touch the existing
 `frontend-e2e` job.
-- [~] refactor (nightly-fullstack-e2e.yml)
+- [x] refactor (nightly-fullstack-e2e.yml)
