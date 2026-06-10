@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ExpectedToFail;
 import org.threeten.extra.MutableClock;
 
 class ResubmitIncompletePublicationsJobTest {
@@ -30,10 +29,6 @@ class ResubmitIncompletePublicationsJobTest {
 
     @Test
     @Issue("148")
-    @ExpectedToFail(
-            value = "Bug #148: resubmit predicate has no grace lower bound, so an in-flight publication "
-                    + "(30s old, younger than grace) is still selected for resubmission",
-            withExceptions = AssertionError.class)
     @DisplayName("WHEN the resubmit job runs EXPECT only publications older than the grace period and younger "
             + "than 24h are selected; an in-flight publication younger than grace and a stale one older than 24h "
             + "are not")
@@ -44,7 +39,7 @@ class ResubmitIncompletePublicationsJobTest {
         incompletePublications.register(STUCK, NOW.minus(BETWEEN_GRACE_AND_24H));
         incompletePublications.register(STALE, NOW.minus(OLDER_THAN_24H));
 
-        // WHEN: the resubmit job runs
+        // WHEN: resubmit job runs
         sut.resubmit();
 
         // THEN: only the genuinely stuck publication (older than grace, younger than 24h) is resubmitted

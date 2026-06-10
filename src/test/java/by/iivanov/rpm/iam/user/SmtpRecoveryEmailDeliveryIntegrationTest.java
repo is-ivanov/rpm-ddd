@@ -32,13 +32,13 @@ class SmtpRecoveryEmailDeliveryIntegrationTest extends AbstractMailIntegrationTe
             + "email is delivered to the registered email address without re-registering the user")
     void when_smtpRecovers_expect_youngIncompletePublicationRedelivered() {
         // GIVEN: the SMTP server was unavailable when a user registered, leaving the activation-email
-        // publication incomplete and still young (within the 24h resubmit window — no clock advance)
+        // publication incomplete and now older than the grace period (but within the 24h resubmit window)
         var admin = authSessionFactory.loginAsAdmin();
         emailStatements.givenEmptyInbox();
         var registration = emailStatements.givenActivationRegistration();
         stalePublicationStatements.givenActivationSendFails();
         userApi.registerUser(registration.request(), admin).assertCreated();
-        stalePublicationStatements.givenYoungIncompletePublicationFor(registration.email());
+        stalePublicationStatements.givenIncompletePublicationOlderThanGraceFor(registration.email());
 
         // WHEN: the SMTP server becomes available — the resubmit scheduler reprocesses the incomplete
         // publication and the now-recovered transport delivers the activation email

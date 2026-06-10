@@ -10,8 +10,8 @@ Type: bug
 ### Fix: add a grace-period lower bound to the resubmit predicate
 - [x] red-acceptance
 - [x] red-usecase
-- [~] green-usecase
-- [ ] adapters-discovery
+- [x] green-usecase
+- [~] adapters-discovery
 - [ ] green-acceptance
 
 Notes for the fix session (refine on bootstrap/discovery):

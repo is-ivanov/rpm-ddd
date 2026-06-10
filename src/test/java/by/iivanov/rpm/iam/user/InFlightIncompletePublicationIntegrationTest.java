@@ -6,10 +6,8 @@ import by.iivanov.rpm.iam.user.fixtures.StalePublicationStatements;
 import by.iivanov.rpm.iam.user.fixtures.UserApi;
 import by.iivanov.rpm.testing.AbstractMailIntegrationTest;
 import io.qameta.allure.Issue;
-import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ExpectedToFail;
 
 class InFlightIncompletePublicationIntegrationTest extends AbstractMailIntegrationTest {
 
@@ -31,10 +29,6 @@ class InFlightIncompletePublicationIntegrationTest extends AbstractMailIntegrati
 
     @Test
     @Issue("148")
-    @ExpectedToFail(
-            value = "Bug #148: resubmit job has no grace lower bound, so a young in-flight publication is "
-                    + "resubmitted and a duplicate activation email is delivered (expected 0, got 1)",
-            withExceptions = ConditionTimeoutException.class)
     @DisplayName("GIVEN an in-flight activation-email publication younger than the grace period WHEN the resubmit "
             + "scheduler runs THEN the in-flight publication is not resubmitted "
             + "AND no duplicate activation email is delivered for it")
