@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="App-FullStack" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="fullstack" />
+    <module name="rpm-ddd" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="by.iivanov.rpm.RpmDddApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

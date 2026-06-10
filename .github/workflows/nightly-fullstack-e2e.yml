@@ -1,0 +1,103 @@
+# Nightly full-stack E2E (real frontend + backend + Postgres + Mailpit).
+#
+# This is the slow, real-stack tier (see frontend/acceptance/tests/fullstack/README.md and the ADR
+# at ProductSpecification/tasks/7-refactoring-full-stack-contract-e2e/decisions/). It runs the
+# account-lifecycle Playwright journey against a real backend with no page.route mocking, so it is
+# deliberately kept OFF the per-PR critical path: it runs on a nightly schedule (and on demand), in
+# its own workflow, and does NOT touch the fast mocked `frontend-e2e` job in build.yml.
+#
+# It starts the SAME docker/infra-fullstack-tests.yml compose used locally, so scripts/seed-fullstack.sh
+# and the `fullstack` Spring profile defaults (Postgres :54035, Mailpit :1025/:8025) work identically
+# here and on a developer machine — one seeding path, no CI-specific divergence.
+
+name: Nightly Full-Stack E2E
+
+on:
+  schedule:
+    # 03:00 UTC every day
+    - cron: "0 3 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-fullstack-e2e
+  cancel-in-progress: true
+
+jobs:
+  full-stack-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          java-version: "25"
+          distribution: "temurin"
+          cache: maven
+
+      # Backend-only jar (no -Pfrontend): the SPA is served by Vite for the journey, the jar serves /api.
+      - name: Build backend jar
+        run: mvn -B -DskipTests -Dspotless.check.skip=true package
+
+      # Same compose as local (Postgres :54035 + Mailpit :1025/:8025); --wait blocks until healthy.
+      - name: Start full-stack infra (Postgres + Mailpit)
+        working-directory: docker
+        run: docker compose -f infra-fullstack-tests.yml up -d --wait
+
+      - name: Start backend (fullstack profile)
+        run: |
+          java -jar target/*.jar --spring.profiles.active=fullstack > fullstack-backend.log 2>&1 &
+          echo "BACKEND_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Wait for backend readiness
+        run: |
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:8080/api/auth/csrf > /dev/null; then
+              echo "backend ready after ~$((i*2))s"; exit 0
+            fi
+            sleep 2
+          done
+          echo "backend did not become ready"; cat fullstack-backend.log; exit 1
+
+      # Out-of-band seed of the journey's entry admin (prod jar carries no test data).
+      - name: Seed full-stack admin
+        run: bash scripts/seed-fullstack.sh
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      # Playwright's webServer boots Vite (which proxies /api to the running backend).
+      - name: Run full-stack E2E journey
+        working-directory: frontend
+        run: npm run test:e2e:fullstack
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-fullstack-e2e
+          path: target/allure-results
+          retention-days: 7
+
+      - name: Upload backend log
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fullstack-backend-log
+          path: fullstack-backend.log
+          retention-days: 7
