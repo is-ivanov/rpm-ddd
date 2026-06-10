@@ -8,8 +8,8 @@ Type: bug
 ## Backend
 
 ### Fix: add a grace-period lower bound to the resubmit predicate
-- [ ] red-acceptance
-- [ ] red-usecase
+- [x] red-acceptance
+- [~] red-usecase
 - [ ] green-usecase
 - [ ] adapters-discovery
 - [ ] green-acceptance
