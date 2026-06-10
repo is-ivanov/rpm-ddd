@@ -5,17 +5,18 @@ import by.iivanov.rpm.iam.user.fixtures.EmailStatements;
 import by.iivanov.rpm.iam.user.fixtures.StalePublicationStatements;
 import by.iivanov.rpm.iam.user.fixtures.UserApi;
 import by.iivanov.rpm.testing.AbstractMailIntegrationTest;
+import io.qameta.allure.Issue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class SmtpRecoveryEmailDeliveryIntegrationTest extends AbstractMailIntegrationTest {
+class InFlightIncompletePublicationIntegrationTest extends AbstractMailIntegrationTest {
 
     private final AuthSessionFactory authSessionFactory;
     private final UserApi userApi;
     private final EmailStatements emailStatements;
     private final StalePublicationStatements stalePublicationStatements;
 
-    SmtpRecoveryEmailDeliveryIntegrationTest(
+    InFlightIncompletePublicationIntegrationTest(
             AuthSessionFactory authSessionFactory,
             UserApi userApi,
             EmailStatements emailStatements,
@@ -27,24 +28,26 @@ class SmtpRecoveryEmailDeliveryIntegrationTest extends AbstractMailIntegrationTe
     }
 
     @Test
-    @DisplayName("GIVEN the SMTP server was unavailable when a user registered AND the activation email "
-            + "publication remains incomplete WHEN the SMTP server becomes available THEN the activation "
-            + "email is delivered to the registered email address without re-registering the user")
-    void when_smtpRecovers_expect_youngIncompletePublicationRedelivered() {
-        // GIVEN: the SMTP server was unavailable when a user registered, leaving the activation-email
-        // publication incomplete and now older than the grace period (but within the 24h resubmit window)
+    @Issue("148")
+    @DisplayName("GIVEN an in-flight activation-email publication younger than the grace period WHEN the resubmit "
+            + "scheduler runs THEN the in-flight publication is not resubmitted "
+            + "AND no duplicate activation email is delivered for it")
+    void when_resubmitSchedulerRuns_expect_inFlightPublicationNotResubmitted_andNoDuplicateEmailDelivered() {
+        // GIVEN: an activation-email publication is left incomplete and is still young (within the grace window)
         var admin = authSessionFactory.loginAsAdmin();
         emailStatements.givenEmptyInbox();
         var registration = emailStatements.givenActivationRegistration();
         stalePublicationStatements.givenActivationSendFails();
         userApi.registerUser(registration.request(), admin).assertCreated();
-        stalePublicationStatements.givenIncompletePublicationOlderThanGraceFor(registration.email());
+        stalePublicationStatements.givenYoungIncompletePublicationFor(registration.email());
 
-        // WHEN: the SMTP server becomes available — the resubmit scheduler reprocesses the incomplete
-        // publication and the now-recovered transport delivers the activation email
+        // WHEN: resubmit scheduler runs
         emailStatements.whenResubmitSchedulerRuns();
 
-        // THEN: the activation email is delivered to the registered recipient, without re-registering
-        emailStatements.assertActivationEmailDeliveredTo(registration.email());
+        // THEN: no activation email is delivered for it (asserted across a bounded window)
+        stalePublicationStatements.assertNoActivationEmailDeliveredTo(registration.email());
+
+        // AND: the in-flight publication is not resubmitted — it stays incomplete in the registry
+        stalePublicationStatements.assertActivationPublicationStaysIncompleteFor(registration.email());
     }
 }
