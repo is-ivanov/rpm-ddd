@@ -8,7 +8,20 @@ Type: refactoring
 ## Fix
 
 ### Step 1: Add the @NullMarked package-info ArchUnit rule (main packages only)
-- [ ] refactor (add ArchUnit rule in ArchitectureTest: every main package with classes has a @NullMarked package-info)
+- [x] refactor (add ArchUnit rule in ArchitectureTest: every main package with classes has a @NullMarked package-info)
+
+Outcome notes:
+- The "main is already ~100% compliant" assumption in the spec was WRONG: 5 main packages had classes
+  but no package-info at all (`shared.infrastructure`, `shared.infrastructure.scheduling`,
+  `shared.infrastructure.web`, `shared.time.infrastructure`, `shared.web.errors`). Added a
+  `@NullMarked` package-info to each (no jMolecules ring annotations — out of scope, and adding
+  `@InfrastructureRing` to `shared.infrastructure` could break the onion rule because domain/application
+  stereotype annotations live there).
+- Rule implemented as `@ArchTest nullMarkedPackages`; class-level `@AnalyzeClasses` now uses
+  `ImportOption.DoNotIncludeTests`, which also narrows the existing jMolecules rules to main classes
+  (they still pass; test classes don't need DDD/onion checks).
+- Teeth verified both ways: removed `@NullMarked` from one package-info → FAIL naming the package;
+  deleted the package-info entirely → FAIL naming the package; reverted → 5/5 green.
 
 Notes for the fix session:
 - Add the rule to the existing `src/test/java/by/iivanov/rpm/ArchitectureTest.java` (do not create a
