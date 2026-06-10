@@ -15,7 +15,7 @@ Type: bug
   - Check 1 (ports): [S] — `IncompleteEventPublications` + `Clock` are framework/JDK beans, not domain ports we implement; the fix added no new port and did not change the job constructor.
   - Check 2 (exceptions): [S] — the job throws no domain exceptions; its entry point is the `@Scheduled` scheduler, not an HTTP/message adapter with error mapping.
   - Check 3 (response shape): [S] — no HTTP endpoint for this scenario; the inbound adapter is the scheduler (wired & covered by `EventResubmitSchedulingTest`), and the acceptance test invokes the job directly via Statements.
-- [~] green-acceptance
+- [x] green-acceptance
 
 Notes for the fix session (refine on bootstrap/discovery):
 - `red-acceptance` here is integration-level (Modulith event republish), not HTTP: assert that ONE
