@@ -9,8 +9,8 @@ Type: bug
 
 ### Fix: add a grace-period lower bound to the resubmit predicate
 - [x] red-acceptance
-- [~] red-usecase
-- [ ] green-usecase
+- [x] red-usecase
+- [~] green-usecase
 - [ ] adapters-discovery
 - [ ] green-acceptance
 
@@ -24,3 +24,13 @@ Notes for the fix session (refine on bootstrap/discovery):
   NOT selected. Tag with #148.
 - `adapters-discovery` likely `[S]` (no new ports/adapters — pure scheduled-job logic).
 - Keep the production-schedule wiring test green (per tdd-rules "Scheduled / Recurring Jobs").
+- **green-usecase MUST update `SmtpRecoveryEmailDeliveryIntegrationTest`** (collateral, not yet a
+  checkbox): it currently feeds a *young* incomplete publication (`givenYoungIncompletePublicationFor`,
+  no clock advance) and asserts the email IS redelivered. Once the grace lower bound lands, a young
+  publication is no longer resubmitted, so that test will break (no delivery). Fix: advance the test
+  clock PAST the grace period before `whenResubmitSchedulerRuns()` so the publication is "older than
+  grace, younger than 24h" — e.g. add `StalePublicationStatements.givenIncompletePublicationOlderThanGraceFor(email)`.
+  This is NOT loosening an assertion to match behavior — it realigns the test's premise with the new
+  spec (recovery happens AFTER grace, not while in-flight). This existing integration test is the
+  Level-1 proof of "after grace → resubmitted → delivered"; the three selection boundaries themselves
+  are covered cheaply by red-usecase. Do NOT add a new acceptance test for the after-grace case.
