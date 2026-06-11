@@ -24,4 +24,4 @@ Statements. Fix them (config/type-level only; no test-behaviour changes, skip ma
 ### Step 3: Inspection scope for test fixtures
 Mark the acceptance tree as test code for the IDE/SonarLint inspection scope so secret-detection
 heuristics (S2068 "hard-coded password") don't fire on intentional test fixtures.
-- [ ] refactor (inspection scope for acceptance test fixtures)
+- [x] refactor (inspection scope for acceptance test fixtures)
