@@ -13,9 +13,16 @@ coverage is unenforced and can silently regress.
 ## Solution
 
 Add an ArchUnit rule (extend the existing `ArchitectureTest`) asserting that **every `src/main`
-package containing classes has a `package-info.java` annotated with
-`org.jspecify.annotations.NullMarked`**. A new main package added without the annotation must fail
-the build.
+class is null safe: its package has a `package-info.java` annotated with
+`org.jspecify.annotations.NullMarked`, OR the class itself is annotated `@NullMarked`**. A new main
+class covered by neither must fail the build.
+
+> Semantics relaxed from the original "package-info on every package" wording (decided during
+> implementation review): for a single-class package a class-level `@NullMarked` is acceptable;
+> once a package holds several classes, prefer lifting the annotation to a package-info. Note that
+> ArchUnit checks direct annotations only — a nested class inside a `@NullMarked` outer class in an
+> unmarked package is still flagged (JSpecify would cover it); resolve by moving the annotation to
+> the package level.
 
 ### Background — why this does not change build-time null safety
 

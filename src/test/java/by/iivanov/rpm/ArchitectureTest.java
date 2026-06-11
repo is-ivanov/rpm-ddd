@@ -1,6 +1,5 @@
 package by.iivanov.rpm;
 
-import static com.tngtech.archunit.core.domain.JavaClass.Functions.GET_PACKAGE;
 import static com.tngtech.archunit.core.domain.properties.CanBeAnnotated.Predicates.annotatedWith;
 import static com.tngtech.archunit.lang.conditions.ArchConditions.be;
 import static com.tngtech.archunit.lang.conditions.ArchPredicates.is;
@@ -38,7 +37,9 @@ class ArchitectureTest {
      * Evaluates the predicate on the class's package.
      */
     static DescribedPredicate<JavaClass> resideInPackageThat(DescribedPredicate<? super JavaPackage> condition) {
-        return condition.onResultOf(GET_PACKAGE).as("reside in a package that %s", condition.getDescription());
+        return condition
+                .onResultOf(JavaClass.Functions.GET_PACKAGE)
+                .as("reside in a package that %s", condition.getDescription());
     }
 
     /**
@@ -48,15 +49,10 @@ class ArchitectureTest {
         return resideInPackageThat(is(annotatedWith(annotationClass)));
     }
 
-    /**
-     * Checks if the class's package is annotated with a specific annotation.
-     */
-    static DescribedPredicate<JavaClass> resideInPackageAnnotatedWith(String annotationClass) {
-        return resideInPackageThat(is(annotatedWith(annotationClass)));
-    }
-
     private static DescribedPredicate<JavaClass> nullSafe() {
-        return resideInPackageAnnotatedWith(NullMarked.class).or(annotatedWith(NullMarked.class));
+        return resideInPackageAnnotatedWith(NullMarked.class)
+                .or(annotatedWith(NullMarked.class))
+                .as("null safe (reside in a @NullMarked package or be annotated with @NullMarked)");
     }
 
     static final ApplicationModules modules = ApplicationModules.of(RpmDddApplication.class);

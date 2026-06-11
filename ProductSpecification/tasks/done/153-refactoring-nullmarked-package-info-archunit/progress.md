@@ -17,11 +17,17 @@ Outcome notes:
   `@NullMarked` package-info to each (no jMolecules ring annotations — out of scope, and adding
   `@InfrastructureRing` to `shared.infrastructure` could break the onion rule because domain/application
   stereotype annotations live there).
-- Rule implemented as `@ArchTest nullMarkedPackages`; class-level `@AnalyzeClasses` now uses
+- Rule implemented as `@ArchTest classesShouldBeNullSafe`; class-level `@AnalyzeClasses` now uses
   `ImportOption.DoNotIncludeTests`, which also narrows the existing jMolecules rules to main classes
   (they still pass; test classes don't need DDD/onion checks).
-- Teeth verified both ways: removed `@NullMarked` from one package-info → FAIL naming the package;
-  deleted the package-info entirely → FAIL naming the package; reverted → 5/5 green.
+- Semantics deliberately RELAXED vs the original issue text: a class is null safe if its package has
+  a `@NullMarked` package-info OR the class itself is annotated `@NullMarked`. A single-class package
+  may annotate the class directly; once a package holds several classes, prefer lifting the
+  annotation to a package-info. Known strictness quirk: ArchUnit checks direct annotations only, so a
+  nested class inside a `@NullMarked` outer class in an unmarked package is still flagged even though
+  JSpecify covers it — resolution is to move the annotation to the package level.
+- Teeth verified both ways: removed `@NullMarked` from one package-info → FAIL naming each class of
+  the package; deleted the package-info entirely → same FAIL; reverted → 5/5 green.
 
 Notes for the fix session:
 - Add the rule to the existing `src/test/java/by/iivanov/rpm/ArchitectureTest.java` (do not create a
