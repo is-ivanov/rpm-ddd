@@ -530,6 +530,7 @@
             <arg>
               -Xplugin:ErrorProne
               -XepOpt:NullAway:AnnotatedPackages=by.iivanov.rpm
+              -XepOpt:NullAway:JSpecifyMode=true
               -XepOpt:NullAway:SuggestSuppressions=true
               -Xep:NullAway:ERROR
             </arg>
