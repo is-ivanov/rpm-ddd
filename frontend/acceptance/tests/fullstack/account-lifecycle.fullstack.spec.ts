@@ -5,7 +5,7 @@ import { type CreatedUser, RealAuthBackendStatements } from '../statements/backe
 import { MailpitStatements } from '../statements/backend/mailpit.statements';
 
 const ADMIN_LOGIN = 'admin';
-const ADMIN_PASSWORD = 'admin';
+const ADMIN_PASSWORD = 'admin'; // NOSONAR -- pre-seeded local-dev admin fixture, not a real credential (S2068)
 
 test.describe('Account Lifecycle Full-Stack E2E (real backend + Postgres + Mailpit)', () => {
   let loginPage: LoginPageStatements;
