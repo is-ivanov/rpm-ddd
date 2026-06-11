@@ -3,7 +3,6 @@
   <component name="ExternalDependencies">
     <plugin id="CheckStyle-IDEA" />
     <plugin id="PMDPlugin" />
-    <plugin id="org.jetbrains.plugins.spotbugs" />
     <plugin id="org.sonarlint.idea" />
     <plugin id="palantir-java-format" />
   </component>
