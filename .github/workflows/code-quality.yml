@@ -131,5 +131,5 @@ jobs:
         run: npm ci
       - name: Run oxlint (fast gate, fail on violations)
         run: npm run lint:oxlint
-      - name: Run ESLint + Prettier (Fail on violations)
+      - name: Run ESLint + Prettier + type-check (Fail on violations)
         run: npm run lint

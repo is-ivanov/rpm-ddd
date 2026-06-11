@@ -12,12 +12,14 @@ Add `frontend/acceptance/**` to a strict tsconfig `include` (or a dedicated
 `tsconfig.acceptance.json` via project references) and wire a type-check into the lint/CI gate
 (same gate as the frontend lint job). Verify the false-positive `!` warnings disappear (the `!`
 become validated-required under strict). Do NOT remove the existing `!` assertions.
-- [ ] refactor (tsconfig: acceptance under strict + type-check gate wiring)
+- [x] refactor (tsconfig: acceptance under strict + type-check gate wiring)
 
 ### Step 2: Fix type issues surfaced across the acceptance tree
 Enabling the check will likely surface latent type issues across the existing acceptance specs /
 Statements. Fix them (config/type-level only; no test-behaviour changes, skip markers untouched).
-- [ ] refactor (fix surfaced acceptance type issues)
+- [S] refactor (fix surfaced acceptance type issues) — strict type-check over the whole
+  acceptance tree surfaced ZERO errors (verified in Step 1: `npm run type-check` clean);
+  nothing to fix
 
 ### Step 3: Inspection scope for test fixtures
 Mark the acceptance tree as test code for the IDE/SonarLint inspection scope so secret-detection
