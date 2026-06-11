@@ -35,7 +35,7 @@ export class RealAuthBackendStatements {
     return {
       login: `fsuser_${suffix}`,
       email: `fsuser_${suffix}@localhost.com`,
-      password: 'Fullstack@123',
+      password: 'Fullstack@123', // NOSONAR -- intentional test fixture, not a real credential (S2068)
     };
   }
 
