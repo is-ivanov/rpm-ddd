@@ -44,7 +44,6 @@
     <uuid-creator.version>6.1.1</uuid-creator.version>
 
     <!--plugin versions -->
-    <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
     <frontend-maven-plugin.version>2.0.0</frontend-maven-plugin.version>
     <git-build-hook-maven-plugin.version>3.6.0</git-build-hook-maven-plugin.version>
     <jacoco.version>0.8.15</jacoco.version>
@@ -600,31 +599,6 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <!-- Registers frontend/acceptance as a *test* source root so the IDE (and
-           SonarLint via the IDE's test-source classification) treats the Playwright
-           acceptance tree as test code — secret-detection heuristics like S2068
-           ("hard-coded password") are main-code rules and stop firing on intentional
-           test fixtures. The directory contains no .java files, so test compilation
-           is unaffected. -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>${build-helper-maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>mark-frontend-acceptance-as-test-sources</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.basedir}/frontend/acceptance</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
