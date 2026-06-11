@@ -33,6 +33,7 @@ Use the Maven wrapper:
 - `./mvnw spotbugs:check -B` runs SpotBugs bytecode analysis (with the find-sec-bugs plugin, `effort=Max`, `threshold=Medium`) and fails on violations; triaged false positives live in `code-quality-config/spotbugs/exclude-filter.xml`. Also bound to the `verify` phase.
 - `./mvnw spotless:apply` reformats Java sources with Palantir Java Format.
 - `./mvnw spring-boot:run` starts the application locally.
+- Full-stack E2E (real frontend + backend + Postgres + Mailpit, runs nightly, not per-PR): see `frontend/acceptance/tests/fullstack/README.md` for the local run recipe (console + IntelliJ).
 
 ## Comments Policy
 **Do not add comments unless explicitly asked.** However, **always preserve existing comments** when editing files — comments are part of the codebase and must not be silently removed during refactoring, rewriting, or any other file modification.

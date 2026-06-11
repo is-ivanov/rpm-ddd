@@ -31,6 +31,17 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: '**/*.fullstack.spec.ts',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      // Full-stack E2E journey tier: real backend + Postgres + Mailpit, no
+      // page.route mocking. Run only via `npm run test:e2e:fullstack`
+      // (nightly), never in the default `test:e2e`. Retries the whole journey
+      // because a mid-journey failure masks later steps.
+      name: 'fullstack',
+      testMatch: '**/*.fullstack.spec.ts',
+      retries: 2,
       use: { ...devices['Desktop Chrome'] },
     },
   ],

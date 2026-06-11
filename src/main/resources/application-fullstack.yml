@@ -1,0 +1,26 @@
+# ===================================================================
+# Spring Boot configuration for the "fullstack" profile.
+#
+# Boots the backend for the full-stack E2E journey tier (real frontend +
+# backend + Postgres + Mailpit). Runs the production master changelog ONLY
+# (no test fixtures in the jar) — the journey's seed admin is applied
+# out-of-band by scripts/seed-fullstack.sh after startup. Defaults target the
+# local Infra-FullStack-Tests-Up stack; CI overrides via the standard Spring
+# env vars (SPRING_DATASOURCE_URL, SPRING_MAIL_HOST/PORT, RPM_FRONTEND_BASE_URL).
+# See ProductSpecification/tasks/7-refactoring-full-stack-contract-e2e/
+# decisions/fullstack-e2e-tier-decision.md
+# ===================================================================
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:54035/rpm_ddd
+    username: postgres
+    password: postgres
+  mail:
+    host: localhost
+    port: 1025
+
+# The activation link in the email must point at the local frontend so the
+# Playwright journey can open it.
+rpm:
+  frontend-base-url: http://localhost:5173

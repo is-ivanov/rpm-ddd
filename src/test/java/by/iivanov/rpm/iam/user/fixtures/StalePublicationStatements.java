@@ -88,6 +88,18 @@ public class StalePublicationStatements {
     }
 
     /**
+     * Waits until the activation-email publication for the given recipient is incomplete, then advances
+     * the test clock just past the resubmit grace period (but well within 24h) so the publication is
+     * older than the grace and is legitimately eligible for resubmission.
+     *
+     * @param recipientEmail the recipient whose activation publication must become incomplete
+     */
+    public void givenIncompletePublicationOlderThanGraceFor(String recipientEmail) {
+        awaitIncompletePublicationFor(recipientEmail);
+        clock.add(Duration.ofMinutes(2));
+    }
+
+    /**
      * Asserts exactly one incomplete activation-email publication for the recipient remains in the
      * registry — i.e. the stale publication was not resubmitted to completion.
      *

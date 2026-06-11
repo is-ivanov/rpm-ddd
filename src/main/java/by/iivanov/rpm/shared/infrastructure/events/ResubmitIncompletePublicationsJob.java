@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class ResubmitIncompletePublicationsJob {
 
     private static final Duration RESUBMIT_AGE_CUTOFF = Duration.ofHours(24);
+    private static final Duration RESUBMIT_GRACE = Duration.ofMinutes(1);
 
     private final IncompleteEventPublications incompletePublications;
     private final Clock clock;
@@ -26,12 +27,19 @@ public class ResubmitIncompletePublicationsJob {
         this.clock = clock;
     }
 
-    /** Resubmits incomplete event publications that are still within the resubmit age window. */
+    /**
+     * Resubmits incomplete event publications older than the grace period but younger than the resubmit
+     * age cutoff. The grace lower bound excludes in-flight publications whose async listener may still be
+     * mid-attempt, so a transient send is not duplicated; the 24h upper bound excludes stale ones.
+     */
     @Scheduled(fixedDelayString = "${rpm.events.resubmit.interval}")
     @SchedulerLock(name = "resubmitIncompletePublications", lockAtMostFor = "PT30S", lockAtLeastFor = "PT0S")
     public void resubmit() {
-        Instant cutoff = clock.instant().minus(RESUBMIT_AGE_CUTOFF);
+        Instant now = clock.instant();
+        Instant graceCutoff = now.minus(RESUBMIT_GRACE);
+        Instant ageCutoff = now.minus(RESUBMIT_AGE_CUTOFF);
         incompletePublications.resubmitIncompletePublications(
-                publication -> publication.getPublicationDate().isAfter(cutoff));
+                publication -> publication.getPublicationDate().isBefore(graceCutoff)
+                        && publication.getPublicationDate().isAfter(ageCutoff));
     }
 }

@@ -31,6 +31,13 @@ All workflow sequences, progress tracking rules, adapter discovery procedure, an
 
 **File lookup:** Use `find` via Bash (not Glob) when searching for progress files or story folders. Glob is unreliable on Windows/MINGW with large `.gitignore` files. For story resolution, derive the folder name from `ProductSpecification/stories.md` (e.g., story 5 "Create a task" → `05-create-task`) and Read the progress file directly. Use `ls` or `find` via Bash only when the folder name is ambiguous.
 
+**Task folder not found on the current branch — search git BEFORE creating anything.** Task folders are committed on their own `task/N-slug` branches, so the current branch (especially `main`) may simply not contain the folder yet. Before concluding the task doesn't exist or invoking `/task` to create it:
+
+1. **Search branches**: `git branch -a --list "*N*"` (or `git branch -a | grep N`) — look for a `task/N-*` branch, local or remote (run `git fetch` first if remote branches may be stale).
+2. **Search history**: `git log --all --oneline --grep "Task N"` and `git log --all -- "ProductSpecification/tasks/N-*"` — the folder may exist on an unmerged branch.
+3. **If a task branch exists**: report it to the user and switch to it (after confirming the working tree is clean), then resume the normal workflow — read its `progress.md` and execute the next work unit.
+4. **Only if neither a folder nor a branch nor history mentions task N**: check the GitHub issue #N; if it exists, offer to bootstrap the task from it via `/task` (reusing the issue, never opening a duplicate). Do not silently create a new task without this git search first.
+
 ## Work Unit Dispatch
 
 Each progress.md checkbox maps to sub-skills. Dispatch per `workflow.md` sequences. **This table applies equally to stories AND tasks — never skip `/test-review` or `/refactor` for task steps.**
