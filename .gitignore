@@ -14,7 +14,23 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+# Allow-list (deny-by-default): only project-level config that is portable and
+# shared goes into the repo; everything else in .idea/ (personal workspace
+# state, DB credentials, plugin junk, Maven-generated project model) stays
+# ignored. A fully-ignored directory cannot have children re-included, hence
+# `.idea/*` instead of `.idea`.
+.idea/*
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+!.idea/runConfigurations/
+!.idea/checkstyle-idea.xml
+!.idea/PMDPlugin.xml
+!.idea/palantir-java-format.xml
+!.idea/codeInsightSettings.xml
+!.idea/vcs.xml
+!.idea/encodings.xml
+!.idea/externalDependencies.xml
+!.idea/sonarlint.xml
 *.iws
 *.iml
 *.ipr
