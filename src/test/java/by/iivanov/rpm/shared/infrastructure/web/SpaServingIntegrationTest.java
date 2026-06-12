@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.http.MediaType;
 
 class SpaServingIntegrationTest extends AbstractApplicationIntegrationTest {
@@ -47,10 +46,6 @@ class SpaServingIntegrationTest extends AbstractApplicationIntegrationTest {
 
     @Test
     @Issue("162")
-    @ExpectedToFail(
-            value = "TDD Red Phase - /dashboard not in SpaForwardingController allow-list, "
-                    + "denyAll returns 401 instead of the SPA shell",
-            withExceptions = AssertionError.class)
     @DisplayName("Deep-link GET /dashboard returns the SPA index shell (200, text/html)")
     void shouldForwardUnknownNonApiDeepLinkToSpaShell() {
         assertServesSpaShell("/dashboard");

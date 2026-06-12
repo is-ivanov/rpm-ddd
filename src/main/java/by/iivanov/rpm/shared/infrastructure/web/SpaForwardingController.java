@@ -7,14 +7,17 @@ import org.springframework.web.bind.annotation.GetMapping;
  * Forwards client-side single-page-application routes to the bundled {@code index.html} so that
  * deep links and browser refreshes resolve to the SPA shell instead of a 404.
  *
- * <p>Only the explicit, publicly routable SPA paths are forwarded — this mirrors the
- * deny-by-default allow-list in {@code SecurityConfig}. API endpoints under {@code /api/**} and
- * static asset requests are not handled here.
+ * <p>Any extension-less GET path is treated as an SPA route and forwarded — this mirrors the
+ * allow-list in {@code SecurityConfig}, where {@code /api/**} is matched (and gated) before the
+ * SPA catch-all entry. API endpoints under {@code /api/**} and static asset requests (paths with
+ * a file extension, e.g. {@code /assets/app.js}) are not handled here.
  */
 @Controller
 class SpaForwardingController {
 
-    @GetMapping(value = {"/", "/login", "/activate"})
+    // the 'path' variable exists only to constrain the mapping to extension-less segments; its value is unused
+    @SuppressWarnings("MVCPathVariableInspection")
+    @GetMapping(value = {"/", "/{path:[^.]*}"})
     String forwardSpaRoute() {
         return "forward:/index.html";
     }

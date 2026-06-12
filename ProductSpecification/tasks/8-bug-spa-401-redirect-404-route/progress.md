@@ -13,12 +13,12 @@ Type: bug
   - Check 1 (ports): `[S]` — no usecase, no outbound ports; fix is a pure web-layer forwarding rule
   - Check 2 (exceptions): `[S]` — no domain exceptions; 401/403 come from the security layer (`UnauthorizedEntryPoint` / `ProblemDetailAccessDeniedHandler`, already RFC 9457)
   - Check 3 (response shape): `[S]` — simple delegation (forward to `index.html`, no validation/error mapping); acceptance test covers the happy path, adapter code (extended `SpaForwardingController` mapping + `SecurityConfig` allow-list entry for non-API GET routes) created in green-acceptance per the "simple adapter plumbing" exception
-- [~] green-acceptance — `SpaForwardingController` forwards catch-all non-`/api`, non-asset GET routes to `index.html`; confirm `SecurityConfig` allow-list still gates `/api/**`
+- [x] green-acceptance — `SpaForwardingController` forwards catch-all non-`/api`, non-asset GET routes to `index.html`; confirm `SecurityConfig` allow-list still gates `/api/**`
 
 ## Frontend
 
 ### Fix A: Global 401 → login redirect (shared API error layer)
-- [ ] red-playwright — E2E: a protected action while unauthenticated (or after session expiry) lands the user on `/login`
+- [~] red-playwright — E2E: a protected action while unauthenticated (or after session expiry) lands the user on `/login`
 - [ ] red-frontend — logic test: shared response handler redirects to `/login` on 401; does NOT redirect on 403; does NOT redirect when already on `/login`
 - [ ] green-frontend — implement shared 401-handling logic
 - [ ] red-frontend-api — API client test: a 401 from a protected `/api/**` call routes through the shared layer and triggers the redirect path; existing clients (`login.api`, `activation.api`) delegate to it
