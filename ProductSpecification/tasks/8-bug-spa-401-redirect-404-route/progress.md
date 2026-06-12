@@ -9,8 +9,11 @@ Type: bug
 
 ### Fix: SPA catch-all forward (unknown non-/api GET → index.html), deny-by-default preserved
 - [x] red-acceptance — integration test: deep-link `GET /dashboard` → 200 `text/html` (index.html); `GET /api/<unknown>` (unauth) → still 401; `GET /assets/**` unaffected
-- [~] adapters-discovery — web adapter only (`SpaForwardingController`); no usecase/domain; expect `[S]` simple delegation
-- [ ] green-acceptance — `SpaForwardingController` forwards catch-all non-`/api`, non-asset GET routes to `index.html`; confirm `SecurityConfig` allow-list still gates `/api/**`
+- [x] adapters-discovery — web adapter only (`SpaForwardingController`); no usecase/domain; expect `[S]` simple delegation
+  - Check 1 (ports): `[S]` — no usecase, no outbound ports; fix is a pure web-layer forwarding rule
+  - Check 2 (exceptions): `[S]` — no domain exceptions; 401/403 come from the security layer (`UnauthorizedEntryPoint` / `ProblemDetailAccessDeniedHandler`, already RFC 9457)
+  - Check 3 (response shape): `[S]` — simple delegation (forward to `index.html`, no validation/error mapping); acceptance test covers the happy path, adapter code (extended `SpaForwardingController` mapping + `SecurityConfig` allow-list entry for non-API GET routes) created in green-acceptance per the "simple adapter plumbing" exception
+- [~] green-acceptance — `SpaForwardingController` forwards catch-all non-`/api`, non-asset GET routes to `index.html`; confirm `SecurityConfig` allow-list still gates `/api/**`
 
 ## Frontend
 
