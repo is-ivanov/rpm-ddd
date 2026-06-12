@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { issue } from 'allure-js-commons';
 import { server } from '@/test/msw-server';
+import { captureRejection } from '@/test/capture-rejection';
 import { router } from '@/router';
 import { apiFetch } from '@/app/logic/fetch.api';
 import { validateActivationToken } from '@/features/auth/logic/activation.api';
@@ -43,22 +44,12 @@ function stubActivateProblem(problem: Problem): void {
   );
 }
 
-function captureRejection(promise: Promise<unknown>): Promise<unknown> {
-  return promise.then(
-    () => {
-      throw new Error('call resolved but should have rejected on an error status');
-    },
-    (rejected: unknown) => rejected,
-  );
-}
-
 describe('Shared API Fetch Layer', () => {
   beforeEach(async () => {
     await router.push('/activate');
   });
 
-  // RED — apiFetch stub throws 'Not implemented: apiFetch /api/auth/activate?token=expired-session'
-  it.fails('navigates to the login route when a protected API call returns 401', async () => {
+  it('navigates to the login route when a protected API call returns 401', async () => {
     await issue('162');
     stubActivateProblem(UNAUTHORIZED_PROBLEM);
 
@@ -68,8 +59,7 @@ describe('Shared API Fetch Layer', () => {
     expect(router.currentRoute.value.path).toBe('/login');
   });
 
-  // RED — apiFetch stub throws 'Not implemented: apiFetch /api/auth/activate'
-  it.fails('stays on the current route when an API call returns 403', async () => {
+  it('stays on the current route when an API call returns 403', async () => {
     await issue('162');
     stubActivateProblem(FORBIDDEN_PROBLEM);
 
@@ -79,18 +69,14 @@ describe('Shared API Fetch Layer', () => {
     expect(router.currentRoute.value.path).toBe('/activate');
   });
 
-  // RED — activation.api still uses raw fetch, router stays on '/activate': expected '/activate' to be '/login'
-  it.fails(
-    'routes activation token validation through the shared layer so a 401 lands on the login route',
-    async () => {
-      await issue('162');
-      stubActivateProblem(UNAUTHORIZED_PROBLEM);
+  it('routes activation token validation through the shared layer so a 401 lands on the login route', async () => {
+    await issue('162');
+    stubActivateProblem(UNAUTHORIZED_PROBLEM);
 
-      const error = await captureRejection(validateActivationToken('expired-session-token'));
+    const error = await captureRejection(validateActivationToken('expired-session-token'));
 
-      expect(error).toBeInstanceOf(ActivationError);
-      expect((error as ActivationError).message).toBe('Full authentication is required to access this resource');
-      expect(router.currentRoute.value.path).toBe('/login');
-    },
-  );
+    expect(error).toBeInstanceOf(ActivationError);
+    expect((error as ActivationError).message).toBe('Full authentication is required to access this resource');
+    expect(router.currentRoute.value.path).toBe('/login');
+  });
 });

@@ -22,9 +22,9 @@ Type: bug
 - [x] red-frontend — logic test: shared response handler redirects to `/login` on 401; does NOT redirect on 403; does NOT redirect when already on `/login`
 - [x] green-frontend — implement shared 401-handling logic
 - [x] red-frontend-api — API client test: a 401 from a protected `/api/**` call routes through the shared layer and triggers the redirect path; existing clients (`login.api`, `activation.api`) delegate to it
-- [~] green-frontend-api — route existing API clients through the shared layer
-- [ ] align-design — `[S]` (redirect reuses the existing `/login` page; no new visible component)
-- [ ] green-playwright
+- [x] green-frontend-api — route existing API clients through the shared layer
+- [S] align-design — redirect reuses the existing `/login` page; no new visible component
+- [~] green-playwright
 - [ ] demo
 
 ### Fix B: SPA 404 catch-all route + NotFoundPage

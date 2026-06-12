@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/test/msw-server';
+import { captureRejection } from '@/test/capture-rejection';
 import { validateActivationToken } from '../logic/activation.api';
 import { ActivationError } from '../logic/types';
 import type { ActivationTokenResponse } from '../logic/types';
@@ -32,15 +33,6 @@ function stubActivateExpired(): void {
   );
 }
 
-function captureActivationRejection(token: string): Promise<unknown> {
-  return validateActivationToken(token).then(
-    () => {
-      throw new Error('validateActivationToken resolved but should have rejected on 422');
-    },
-    (rejected: unknown) => rejected,
-  );
-}
-
 describe('Activation API Client', () => {
   it('returns the login and email for a valid activation token', async () => {
     const captured: { url?: string } = {};
@@ -59,7 +51,7 @@ describe('Activation API Client', () => {
   it('rejects with an ActivationError when the token is expired (422)', async () => {
     stubActivateExpired();
 
-    const error = await captureActivationRejection('expired-token');
+    const error = await captureRejection(validateActivationToken('expired-token'));
 
     expect(error).toBeInstanceOf(ActivationError);
     expect((error as ActivationError).message).toBe('Token expired');
