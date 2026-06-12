@@ -1,3 +1,5 @@
-export function shouldRedirectToLogin(_status: number, _currentPath: string): boolean {
-  throw new Error('Not implemented');
+const LOGIN_PATH = '/login';
+
+export function shouldRedirectToLogin(status: number, currentPath: string): boolean {
+  return status === 401 && currentPath !== LOGIN_PATH;
 }

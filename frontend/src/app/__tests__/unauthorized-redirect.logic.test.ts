@@ -3,8 +3,7 @@ import { issue } from 'allure-js-commons';
 import { shouldRedirectToLogin } from '../logic/unauthorized-redirect.logic';
 
 describe('Unauthorized Redirect Decision', () => {
-  // RED — shouldRedirectToLogin not implemented (throws 'Not implemented')
-  it.fails.each([
+  it.each([
     {
       name: 'redirects to login when a response is 401 and the user is not on the login route',
       status: 401,
