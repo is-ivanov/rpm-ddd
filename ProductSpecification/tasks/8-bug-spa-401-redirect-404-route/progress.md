@@ -8,8 +8,8 @@ Type: bug
 ## Backend
 
 ### Fix: SPA catch-all forward (unknown non-/api GET → index.html), deny-by-default preserved
-- [ ] red-acceptance — integration test: deep-link `GET /dashboard` → 200 `text/html` (index.html); `GET /api/<unknown>` (unauth) → still 401; `GET /assets/**` unaffected
-- [ ] adapters-discovery — web adapter only (`SpaForwardingController`); no usecase/domain; expect `[S]` simple delegation
+- [x] red-acceptance — integration test: deep-link `GET /dashboard` → 200 `text/html` (index.html); `GET /api/<unknown>` (unauth) → still 401; `GET /assets/**` unaffected
+- [~] adapters-discovery — web adapter only (`SpaForwardingController`); no usecase/domain; expect `[S]` simple delegation
 - [ ] green-acceptance — `SpaForwardingController` forwards catch-all non-`/api`, non-asset GET routes to `index.html`; confirm `SecurityConfig` allow-list still gates `/api/**`
 
 ## Frontend
