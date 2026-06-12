@@ -24,8 +24,8 @@ Type: bug
 - [x] red-frontend-api — API client test: a 401 from a protected `/api/**` call routes through the shared layer and triggers the redirect path; existing clients (`login.api`, `activation.api`) delegate to it
 - [x] green-frontend-api — route existing API clients through the shared layer
 - [S] align-design — redirect reuses the existing `/login` page; no new visible component
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright
+- [~] demo
 
 ### Fix B: SPA 404 catch-all route + NotFoundPage
 - [ ] red-playwright — E2E: navigating to an unknown client route renders the NotFound view with a link back to a known route

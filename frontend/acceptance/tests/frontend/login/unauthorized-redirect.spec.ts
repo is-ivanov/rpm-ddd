@@ -15,10 +15,7 @@ test.describe('Global 401 Redirect', () => {
     activationBackend = new ActivationBackendStatements(page);
   });
 
-  // RED (#162): no global 401 handler exists yet — ActivationPage catches the error locally and
-  // stays on /activate showing the expired-link view; assertNavigatedToLoginPage (toHaveURL
-  // "/login") times out with received URL "/activate?token=expired-session-token".
-  test.fail(
+  test(
     'UI Bug #162: An API call answered with 401 lands the unauthenticated user on the login page - ' +
       'Given the backend session has expired so API calls return 401 Unauthorized, ' +
       'When the user opens the activation page from an email link, ' +

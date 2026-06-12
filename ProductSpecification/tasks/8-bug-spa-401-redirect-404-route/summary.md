@@ -18,3 +18,9 @@
 **Decision:** The 401-redirect E2E drives the activation page with a mocked 401 on its API call, because the SPA has no truly protected UI action yet (HomePage makes zero API calls).
 **Why:** The activation page is the only API-calling non-login view, and the spec's contract is "every API response goes through the shared layer".
 **Where applied:** `frontend/acceptance/tests/frontend/login/unauthorized-redirect.spec.ts`; consequence: `activation.api` must route through the shared 401 layer for this E2E to go green.
+
+## green-playwright (2026-06-12)
+
+**Surprise:** The `/continue` dispatch for green-playwright prescribes `/run-backend` → `/run-frontend` unconditionally, but both are unnecessary for the mocked E2E tier: every spec mocks the backend via `page.route` (Statements like `ActivationBackendStatements`), and Playwright's `webServer` config auto-starts Vite (`npm run dev`, `reuseExistingServer`). The local backend can't even start (`docker/services.yml` Postgres publishes no host 5432 → connection refused); only the nightly `*.fullstack.spec.ts` tier needs the real stack.
+**Mistake worth not repeating:** `/run-frontend` skill references `infrastructure/scripts/setup-ports.sh` / `run-frontend.sh`, which do not exist in the repo (doc drift) — don't hunt for them, just let the Playwright webServer start Vite.
+**Correct approach:** For green-playwright/demo on mocked specs, skip backend/frontend startup entirely and run `npm run test:e2e` (chromium project) from `frontend/`.
