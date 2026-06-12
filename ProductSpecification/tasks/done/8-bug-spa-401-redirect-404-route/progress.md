@@ -33,4 +33,4 @@ Type: bug
 - [S] green-frontend — paired with the skipped logic test
 - [x] align-design — add catch-all route `/:pathMatch(.*)*` in `router/index.ts`; build `NotFoundPage.vue` per mockup/feature-structure rules (`data-testid`s for E2E)
 - [x] green-playwright
-- [~] demo
+- [x] demo
