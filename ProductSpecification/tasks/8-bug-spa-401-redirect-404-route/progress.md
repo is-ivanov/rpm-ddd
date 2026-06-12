@@ -32,5 +32,5 @@ Type: bug
 - [S] red-frontend — catch-all route + NotFound view are presentational/config; no branching/transform logic
 - [S] green-frontend — paired with the skipped logic test
 - [x] align-design — add catch-all route `/:pathMatch(.*)*` in `router/index.ts`; build `NotFoundPage.vue` per mockup/feature-structure rules (`data-testid`s for E2E)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright
+- [~] demo

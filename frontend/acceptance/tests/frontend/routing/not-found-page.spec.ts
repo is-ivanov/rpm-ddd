@@ -12,11 +12,7 @@ test.describe('Not Found Page', () => {
     homePage = new HomePageStatements(page);
   });
 
-  // RED (#162): the router defines only home/login/activate with no catch-all route and no
-  // NotFoundPage component exists — the unknown route matches nothing, router-view renders empty,
-  // so assertNotFoundViewIsVisible (toBeVisible on getByTestId('not-found-page')) times out with
-  // "element(s) not found".
-  test.fail(
+  test(
     'UI Bug #162: Navigating to an unknown client route renders the NotFound view with a link back to a known route - ' +
       'Given the SPA is served, ' +
       'When the user deep-links to an unknown client route, ' +
