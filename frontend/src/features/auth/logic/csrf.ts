@@ -1,15 +1,29 @@
-const BASE_URL = import.meta.env.VITE_API_URL ?? '';
+import { apiFetch } from '@/app/logic/fetch.api';
 
-export function readCookie(name: string): string {
+function readCookie(name: string): string {
   const match = new RegExp(`(?:^|; )${name}=([^;]*)`).exec(document.cookie);
   return match ? decodeURIComponent(match[1]) : '';
 }
 
-export async function primeCsrfToken(): Promise<string> {
-  await fetch(`${BASE_URL}/api/auth/csrf`, {
+async function primeCsrfToken(): Promise<string> {
+  await apiFetch('/api/auth/csrf', {
     method: 'GET',
     credentials: 'include',
   });
 
   return readCookie('XSRF-TOKEN');
+}
+
+export async function postJsonWithCsrf(path: string, body: unknown): Promise<Response> {
+  const xsrfToken = await primeCsrfToken();
+
+  return apiFetch(path, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-XSRF-TOKEN': xsrfToken,
+    },
+    body: JSON.stringify(body),
+  });
 }

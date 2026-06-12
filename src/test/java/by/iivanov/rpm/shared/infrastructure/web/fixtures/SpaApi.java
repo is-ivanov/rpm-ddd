@@ -26,7 +26,21 @@ public class SpaApi extends AbstractApi {
      * @return the assertion-friendly response wrapper
      */
     public AssertionResponse getPage(String uri) {
+        return getWithAccept(uri, MediaType.TEXT_HTML);
+    }
+
+    /**
+     * Performs a browser-style asset GET (accepting all media types) against the given URI.
+     *
+     * @param uri the asset path to request
+     * @return the assertion-friendly response wrapper
+     */
+    public AssertionResponse getAsset(String uri) {
+        return getWithAccept(uri, MediaType.ALL);
+    }
+
+    private AssertionResponse getWithAccept(String uri, MediaType acceptedMediaType) {
         return new AssertionResponse(
-                restClient.get().uri(uri).accept(MediaType.TEXT_HTML).exchange());
+                restClient.get().uri(uri).accept(acceptedMediaType).exchange());
     }
 }

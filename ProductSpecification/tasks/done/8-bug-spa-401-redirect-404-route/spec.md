@@ -1,6 +1,7 @@
 # Task 8: SPA global 401→login redirect and 404 catch-all route
 
 Type: bug
+Issue: #162 (opened retroactively — legacy task predates the issue-backed numbering scheme)
 
 ## Problem
 

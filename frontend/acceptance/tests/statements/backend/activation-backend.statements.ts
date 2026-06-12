@@ -10,29 +10,58 @@ interface Account {
   readonly email: string;
 }
 
+interface ProblemDetail {
+  readonly type: string;
+  readonly title: string;
+  readonly status: number;
+  readonly detail: string;
+  readonly instance?: string;
+}
+
 export class ActivationBackendStatements {
   constructor(private readonly page: Page) {}
 
   async givenPendingAccountForToken(account: Account): Promise<void> {
-    await this.installCsrfRoute();
-    await this.page.route(ACTIVATE_URL_PATTERN, (route) => this.handleActivate(route, account));
+    await this.installActivationRoutes((route) => this.handleActivate(route, account));
   }
 
   async givenExpiredToken(): Promise<void> {
+    await this.installActivationRoutes((route) => this.handleExpiredToken(route));
+  }
+
+  async givenSessionExpired(): Promise<void> {
+    await this.installActivationRoutes((route) => this.handleUnauthorized(route));
+  }
+
+  private async installActivationRoutes(handler: (route: Route) => Promise<void>): Promise<void> {
     await this.installCsrfRoute();
-    await this.page.route(ACTIVATE_URL_PATTERN, (route) => this.handleExpiredToken(route));
+    await this.page.route(ACTIVATE_URL_PATTERN, handler);
+  }
+
+  private async handleUnauthorized(route: Route): Promise<void> {
+    await this.fulfillProblem(route, {
+      type: 'https://www.rpm-ddd.my/problem/unauthorized',
+      title: 'Unauthorized',
+      status: 401,
+      detail: 'Full authentication is required to access this resource',
+      instance: '/api/auth/activate',
+    });
   }
 
   private async handleExpiredToken(route: Route): Promise<void> {
-    await route.fulfill({
+    await this.fulfillProblem(route, {
+      type: 'about:blank',
+      title: 'Unprocessable Entity',
       status: 422,
+      detail: 'The activation link is invalid or has expired.',
+    });
+  }
+
+  private async fulfillProblem(route: Route, problem: ProblemDetail): Promise<void> {
+    await route.fulfill({
+      status: problem.status,
       contentType: 'application/problem+json',
-      body: JSON.stringify({
-        type: 'about:blank',
-        title: 'Unprocessable Entity',
-        status: 422,
-        detail: 'The activation link is invalid or has expired.',
-      }),
+      body: JSON.stringify(problem),
     });
   }
 

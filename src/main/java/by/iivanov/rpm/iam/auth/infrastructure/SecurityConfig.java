@@ -1,5 +1,6 @@
 package by.iivanov.rpm.iam.auth.infrastructure;
 
+import by.iivanov.rpm.shared.infrastructure.web.SpaRoutes;
 import io.github.wimdeblauwe.errorhandlingspringbootstarter.UnauthorizedEntryPoint;
 import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.ErrorCodeMapper;
 import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.ErrorMessageMapper;
@@ -33,21 +34,23 @@ class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(
             HttpSecurity http, UnauthorizedEntryPoint unauthorizedEntryPoint, AccessDeniedHandler accessDeniedHandler) {
-        return http.authorizeHttpRequests(auth -> auth.requestMatchers(
-                                HttpMethod.GET, "/", "/index.html", "/favicon.svg", "/assets/**", "/login", "/activate")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/auth/csrf")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/auth/activate")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/activate")
-                        .permitAll()
-                        .requestMatchers("/api/**")
-                        .authenticated()
-                        .anyRequest()
-                        .denyAll())
+        return http.authorizeHttpRequests(
+                        auth -> auth.requestMatchers(HttpMethod.GET, "/", "/index.html", "/favicon.svg", "/assets/**")
+                                .permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/auth/csrf")
+                                .permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/auth/login")
+                                .permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/auth/activate")
+                                .permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/auth/activate")
+                                .permitAll()
+                                .requestMatchers("/api/**")
+                                .authenticated()
+                                .requestMatchers(HttpMethod.GET, SpaRoutes.SPA_ROUTE_PATTERN)
+                                .permitAll()
+                                .anyRequest()
+                                .denyAll())
                 .csrf(CsrfConfigurer::spa)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .formLogin(AbstractHttpConfigurer::disable)

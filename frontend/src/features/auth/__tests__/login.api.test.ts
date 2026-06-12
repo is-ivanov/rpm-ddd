@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { issue } from 'allure-js-commons';
 import { server } from '@/test/msw-server';
+import { captureRejection } from '@/test/capture-rejection';
 import { login } from '../logic/login.api';
 import { LoginError } from '../logic/types';
 import type { LoginRequest, ProblemFieldError } from '../logic/types';
@@ -83,15 +84,6 @@ function stubLoginValidationProblem(fieldErrors: ProblemFieldError[]): void {
   );
 }
 
-function captureLoginRejection(request: LoginRequest): Promise<unknown> {
-  return login(request).then(
-    () => {
-      throw new Error('login resolved but should have rejected on 401');
-    },
-    (rejected: unknown) => rejected,
-  );
-}
-
 describe('Login API Client', () => {
   afterEach(() => {
     document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
@@ -117,7 +109,7 @@ describe('Login API Client', () => {
       detail: 'Bad credentials',
     });
 
-    const error = await captureLoginRejection({ login: 'ivan', password: 'wrong-pass' });
+    const error = await captureRejection(login({ login: 'ivan', password: 'wrong-pass' }));
 
     expect(error).toBeInstanceOf(LoginError);
     expect((error as LoginError).message).toBe('Bad credentials');
@@ -131,7 +123,7 @@ describe('Login API Client', () => {
       detail: 'Account not activated',
     });
 
-    const error = await captureLoginRejection(VALID_CREDENTIALS);
+    const error = await captureRejection(login(VALID_CREDENTIALS));
 
     expect(error).toBeInstanceOf(LoginError);
     expect((error as LoginError).message).toBe('Account not activated');
@@ -146,7 +138,7 @@ describe('Login API Client', () => {
       { property: 'password', message: 'must not be blank' },
     ]);
 
-    const error = await captureLoginRejection({ login: '', password: '' });
+    const error = await captureRejection(login({ login: '', password: '' }));
 
     expect(error).toBeInstanceOf(LoginError);
     expect((error as LoginError).fieldErrors).toEqual([
