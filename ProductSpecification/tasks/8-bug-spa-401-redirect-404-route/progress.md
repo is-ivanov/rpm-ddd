@@ -25,10 +25,10 @@ Type: bug
 - [x] green-frontend-api — route existing API clients through the shared layer
 - [S] align-design — redirect reuses the existing `/login` page; no new visible component
 - [x] green-playwright
-- [~] demo
+- [x] demo
 
 ### Fix B: SPA 404 catch-all route + NotFoundPage
-- [ ] red-playwright — E2E: navigating to an unknown client route renders the NotFound view with a link back to a known route
+- [~] red-playwright — E2E: navigating to an unknown client route renders the NotFound view with a link back to a known route
 - [ ] red-frontend — `[S]` (catch-all route + NotFound view are presentational/config; no branching/transform logic)
 - [ ] green-frontend — `[S]` (paired with the skipped logic test)
 - [ ] align-design — add catch-all route `/:pathMatch(.*)*` in `router/index.ts`; build `NotFoundPage.vue` per mockup/feature-structure rules (`data-testid`s for E2E)
