@@ -30,4 +30,8 @@
   .field-error {
     @apply mt-1.5 text-[13px] text-[#fa5252];
   }
+
+  .link-primary {
+    @apply text-[#228be6] hover:underline;
+  }
 }
