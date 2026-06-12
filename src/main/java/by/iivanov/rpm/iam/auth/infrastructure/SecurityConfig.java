@@ -1,5 +1,6 @@
 package by.iivanov.rpm.iam.auth.infrastructure;
 
+import by.iivanov.rpm.shared.infrastructure.web.SpaRoutes;
 import io.github.wimdeblauwe.errorhandlingspringbootstarter.UnauthorizedEntryPoint;
 import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.ErrorCodeMapper;
 import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.ErrorMessageMapper;
@@ -46,7 +47,7 @@ class SecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/api/**")
                                 .authenticated()
-                                .requestMatchers(HttpMethod.GET, "/{path:[^.]*}")
+                                .requestMatchers(HttpMethod.GET, SpaRoutes.SPA_ROUTE_PATTERN)
                                 .permitAll()
                                 .anyRequest()
                                 .denyAll())
