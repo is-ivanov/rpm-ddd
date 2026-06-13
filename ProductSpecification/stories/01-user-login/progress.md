@@ -208,10 +208,10 @@
 - [S] red-domain
 - [S] green-domain
 - [x] adapters-discovery (existing adapters sufficient: parameterized Spring Data query path, no new ports/exceptions/response shapes)
-- [~] green-acceptance
+- [x] green-acceptance (LoginSqlInjectionIntegrationTest 2/2 GREEN — no marker to remove, feature already implemented; confirmed alongside LoginStatusValidationIntegrationTest 3/3 for db provisioning. BUILD SUCCESS, no production changes)
 
 ### Scenario 5.2: Login rate limiting blocks after N failed attempts
-- [ ] red-acceptance
+- [~] red-acceptance
 - [ ] design
 - [ ] red-usecase
 - [ ] green-usecase
