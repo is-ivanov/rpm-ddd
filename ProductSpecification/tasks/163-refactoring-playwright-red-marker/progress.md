@@ -11,7 +11,7 @@ Type: refactoring
 - [x] refactor (docs)
 
 ### Step 2: fix Conventions table in technology.md
-- [~] refactor (docs)
+- [x] refactor (docs)
 
 ### Step 3: sweep universal RED template/agent references + grep verification
-- [ ] refactor (docs)
+- [~] refactor (docs)
