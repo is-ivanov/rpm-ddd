@@ -83,9 +83,9 @@ Zero NOs -- add the test disable marker. Any NO -- do NOT disable, fix and re-ru
 
 ## Frontend RED-Phase Marker
 
-For frontend layers, use `it.fails(...)` / `test.fails(...)` as the RED-phase marker (the test skip marker per the Conventions table) — not the backend test disable marker, and not `.skip`. Add a comment above naming the actual failure reason. Unlike `.skip`, a `.fails` test **runs every build**: it stays green while it fails and **fails the build once it passes**, forcing the GREEN-phase marker removal.
+For frontend and browser-testing layers, use the **test skip marker named in the Conventions table** — its exact name differs per concern, so never hardcode one name across both: Vitest frontend-unit uses `it.fails(...)`; Playwright browser-testing uses `test.fail(...)` (Playwright has **no** `test.fails` — that name throws `TypeError: test.fails is not a function`). It is neither the backend test disable marker nor `.skip`. Add a comment above naming the actual failure reason. Unlike `.skip`, this marker **runs every build**: it stays green while it fails and **fails the build once it passes**, forcing the GREEN-phase marker removal.
 
-`it.fails` has no error-type pin (no `withExceptions` analog) — **pin the RED reason via a specific `expect(...)` inside the test** so an incidental failure isn't absorbed as "expected fail". See `.claude/tech/vue-ts/tdd.md` → "RED-Phase Marker" and `.claude/tech/vue-ts/templates/logic-test.md`.
+This marker has no error-type pin (no `withExceptions` analog) — **pin the RED reason via a specific `expect(...)` inside the test** so an incidental failure isn't absorbed as "expected fail". See `.claude/tech/vue-ts/tdd.md` → "RED-Phase Marker" (Vitest) and `.claude/tech/playwright/tdd.md` → "Test Disable Marker" (Playwright).
 
 ## Test Disable Marker Rules
 

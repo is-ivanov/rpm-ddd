@@ -110,7 +110,7 @@ For adapter layers, follow the test pyramid from `TESTING.md`. Each level tests 
 
 ## Disable Marker / Output Formats
 
-See `.claude/tech/{backend}/templates/testing/red-phase-formats.md` for test disable marker format. See `.claude/templates/workflow/red-phase-formats.md` for output summary format and the frontend RED-phase marker (`it.fails`).
+See `.claude/tech/{backend}/templates/testing/red-phase-formats.md` for test disable marker format. See `.claude/templates/workflow/red-phase-formats.md` for output summary format and the frontend/browser-testing RED-phase marker (per the Conventions table: `it.fails` for Vitest, `test.fail` for Playwright).
 
 ## Reuse Checks (before writing)
 

@@ -70,9 +70,9 @@ Before running `acceptance` or `db` adapter tests (`@Tag("db")`), ensure the sha
 
 See `.claude/templates/workflow/green-output-format.md` for the summary format to use when reporting results.
 
-## Frontend RED-Phase Marker
+## Frontend / Browser-Testing RED-Phase Marker
 
-For frontend layers the RED-phase marker is `it.fails` / `test.fails` (it **runs** every build, unlike `.skip`). At GREEN, remove only the `.fails` modifier — `it.fails('...', ...)` → `it('...', ...)` — and the RED comment above it. Removing `.fails` is the only allowed test change: with it still present, a now-passing test fails the build (`Expect test to fail`). See `.claude/tech/vue-ts/tdd.md` → "RED-Phase Marker".
+The RED-phase marker name differs per concern (see the Conventions table): Vitest frontend-unit uses `it.fails` / `test.fails`; Playwright browser-testing uses `test.fail()` (Playwright has no `test.fails`). Either way it **runs** every build, unlike `.skip`. At GREEN, remove only the marker — `it.fails('...', ...)` → `it('...', ...)`, or delete the `test.fail()` line — plus the RED comment above it. That removal is the only allowed test change: with the marker still present, a now-passing test fails the build (`Expect test to fail`). See `.claude/tech/vue-ts/tdd.md` (Vitest) and `.claude/tech/playwright/tdd.md` (Playwright) → "RED-Phase / Test Disable Marker".
 
 ## Context Files
 

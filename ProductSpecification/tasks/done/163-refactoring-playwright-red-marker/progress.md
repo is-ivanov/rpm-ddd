@@ -14,4 +14,4 @@ Type: refactoring
 - [x] refactor (docs)
 
 ### Step 3: sweep universal RED template/agent references + grep verification
-- [~] refactor (docs)
+- [x] refactor (docs)
