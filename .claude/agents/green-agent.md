@@ -72,7 +72,7 @@ See `.claude/templates/workflow/green-output-format.md` for the summary format t
 
 ## Frontend / Browser-Testing RED-Phase Marker
 
-The RED-phase marker name differs per concern (see the Conventions table): Vitest frontend-unit uses `it.fails` / `test.fails`; Playwright browser-testing uses `test.fail()` (Playwright has no `test.fails`). Either way it **runs** every build, unlike `.skip`. At GREEN, remove only the marker — `it.fails('...', ...)` → `it('...', ...)`, or delete the `test.fail()` line — plus the RED comment above it. That removal is the only allowed test change: with the marker still present, a now-passing test fails the build (`Expect test to fail`). See `.claude/tech/vue-ts/tdd.md` (Vitest) and `.claude/tech/playwright/tdd.md` (Playwright) → "RED-Phase / Test Disable Marker".
+The RED-phase marker name differs per concern — look it up in the **Conventions table** (`ProductSpecification/technology.md`, "Test skip marker" row for the frontend and browser-testing concerns); never hardcode one name across both. Unlike a plain skip, this marker **runs** every build. At GREEN, the only allowed test change is removing the marker (and the RED comment above it): with the marker still present, a now-passing test fails the build. For the exact marker syntax, how to strip it, and the build error a still-present marker produces, see the tech binding's RED-phase marker section (`.claude/tech/{frontend}/tdd.md` and `.claude/tech/{browser-testing}/tdd.md`).
 
 ## Context Files
 
