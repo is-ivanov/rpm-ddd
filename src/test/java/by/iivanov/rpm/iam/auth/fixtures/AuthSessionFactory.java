@@ -1,5 +1,6 @@
 package by.iivanov.rpm.iam.auth.fixtures;
 
+import by.iivanov.rpm.testing.api.AssertionResponse;
 import by.iivanov.rpm.testing.session.SessionContext;
 import java.util.Objects;
 import org.springframework.http.ResponseCookie;
@@ -27,10 +28,16 @@ public final class AuthSessionFactory {
     /** Logs in as the test admin user and returns the resulting session state. */
     public SessionContext loginAsAdmin() {
         var csrfToken = getCsrfToken();
-        var loginResult = authApi.login(adminLoginRequest(), csrfToken).unwrap().returnResult();
+        var loginResult =
+                authApi.login(ADMIN_LOGIN, ADMIN_PASSWORD, csrfToken).unwrap().returnResult();
         var sessionCookie = loginResult.getResponseCookies().getFirst("JSESSIONID");
         var sessionId = Objects.requireNonNull(sessionCookie).getValue();
         return new SessionContext(sessionId, csrfToken);
+    }
+
+    /** Fetches a fresh CSRF token and performs a single login with the given credentials. */
+    public AssertionResponse login(String login, String password) {
+        return authApi.login(login, password, getCsrfToken());
     }
 
     public String getCsrfToken() {
@@ -41,15 +48,5 @@ public final class AuthSessionFactory {
     public String extractCsrfToken(ExchangeResult result) {
         ResponseCookie csrfCookie = result.getResponseCookies().getFirst("XSRF-TOKEN");
         return Objects.requireNonNull(csrfCookie).getValue();
-    }
-
-    private String adminLoginRequest() {
-        // language=JSON
-        return """
-                {
-                  "login": "%s",
-                  "password": "%s"
-                }
-                """.formatted(ADMIN_LOGIN, ADMIN_PASSWORD);
     }
 }

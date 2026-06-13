@@ -213,8 +213,8 @@
 - [S] green-acceptance (no acceptance test — security property covered at db-adapter level)
 
 ### Scenario 5.2: Login rate limiting blocks after N failed attempts
-- [~] red-acceptance
-- [ ] design
+- [x] red-acceptance (LoginRateLimitIntegrationTest + LoginRateLimitStatements — genuine RED, feature unimplemented. 5 wrong-password logins for seeded admin → asserts 5th is 429 + application/problem+json (too-many-login-attempts), then correct password also 429 (locked within window). No clock manipulation (window doesn't elapse). PREDICT 429-expected-but-401-actual matched exactly (Type/Status/Message all YES); @ExpectedToFail(withExceptions=AssertionError.class) added. 5-attempt loop + LOCKOUT_THRESHOLD=5 + status/cred literals in Statements; test class pure DSL. test-review added .assertProblemJson() content-type check (RFC 9457) at both sites + reusable AssertionResponse.assertContentType/assertProblemJson. refactor extracted assertRateLimited(). Zero production files. 1 skipped, BUILD SUCCESS.)
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain
