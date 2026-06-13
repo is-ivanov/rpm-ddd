@@ -201,14 +201,16 @@
 ## Security Scenarios
 
 ### Scenario 5.1: SQL injection in login field does not bypass authentication
-- [x] red-acceptance (LoginSqlInjectionIntegrationTest — single @ParameterizedTest over login-field & password-field payloads; asserts 401 + no JSESSIONID. Feature already implemented (JPA parameterizes queries → payloads literal); PREDICT "test passes" matched, no @ExpectedToFail marker. The two payloads hit different paths (authentication-failed "Account not activated" vs bad-credentials) so the shared invariant is 401+no-session, not an exact body message. Note: parameterized-only class doesn't self-provision the db datasource (db-tag-on-leaf quirk) — run with a plain-@Test db class or full verify. test-review CLEAN, refactor CLEAN (added // language=JSON marker))
+- [S] red-acceptance (acceptance test REMOVED after review — Level 1 can't distinguish protected vs vulnerable: login=`x' OR '1'='1` simply has no matching user → 401, identical to any nonexistent login. Worse, in this architecture login-field injection can NEVER bypass auth regardless of parameterization, because the password is verified separately by BCrypt after findByLogin (RpmUserDetailsService). The original LoginSqlInjectionIntegrationTest (401 + no JSESSIONID) proved nothing. The literal-treatment property is now proven directly at the db-adapter level — see red-adapter db below.)
 - [x] design (existing implementation — SQL injection prevented structurally by Spring Data derived query findByLogin(Login): no @Query/native SQL/concatenation, value bound as parameterized criteria; Login value-object boundary. Password never touches SQL (in-memory BCrypt). No new code. Approved "confirm existing", no ADR — single viable approach, no trade-off.)
-- [S] red-usecase (no new usecase logic — injection-as-literal behavior covered at Level 1 acceptance; happy path & corner cases of login already tested by AuthenticationServiceTest)
+- [S] red-usecase (no new usecase logic — login lookup corner cases already tested by AuthenticationServiceTest)
 - [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [x] adapters-discovery (existing adapters sufficient: parameterized Spring Data query path, no new ports/exceptions/response shapes)
-- [x] green-acceptance (LoginSqlInjectionIntegrationTest 2/2 GREEN — no marker to remove, feature already implemented; confirmed alongside LoginStatusValidationIntegrationTest 3/3 for db provisioning. BUILD SUCCESS, no production changes)
+- [x] adapters-discovery (db adapter gets a security-regression test for SQLi literal-treatment — see red-adapter db; no new ports/exceptions/response shapes; rest adapter unchanged)
+- [x] red-adapter db (UserRepositorySqlInjectionTest — @DataJpaTest + @DbTest + replace=NONE; project's first repository test. Asserts findByLogin(new Login("admin' OR '1'='1")) → empty (tautology bound as literal parameter, no row), with a control assert that findByLogin("admin") finds the seeded user — proving the empty result is literal-matching, not an empty DB. Deliberate exception to the "skip derived-query db tests" template rule: this is a security-intent regression guard, not a query-correctness test. Passes immediately — derived query is already parameterized; if someone replaced it with a concatenated native query the tautology would match admin and this test would fail. 2/2 GREEN, PostgreSQL via shared test DB. checkstyle/pmd clean.)
+- [S] green-adapter db (no production change — the existing derived query already satisfies the test; red+green collapse for an already-correct implementation, like the prior "already passes" scenarios)
+- [S] green-acceptance (no acceptance test — security property covered at db-adapter level)
 
 ### Scenario 5.2: Login rate limiting blocks after N failed attempts
 - [~] red-acceptance
