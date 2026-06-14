@@ -43,9 +43,12 @@ error:
       org.springframework.web.bind.MethodArgumentNotValidException: unprocessable-content
       io.jsonwebtoken.ExpiredJwtException: unprocessable-content
       io.jsonwebtoken.MalformedJwtException: unprocessable-content
+      io.jsonwebtoken.security.SignatureException: unprocessable-content
     codes:
       by.iivanov.rpm.iam.user.domain.UserAuthenticationException: authentication-failed
       by.iivanov.rpm.iam.user.domain.TooManyLoginAttemptsException: too-many-login-attempts
+    messages:
+      io.jsonwebtoken.security.SignatureException: "Invalid activation token"
 
 
 # ===================================================================

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.http.HttpStatus;
 
 @WebTest
@@ -138,9 +137,6 @@ class AuthResourceTest {
 
         @Test
         @DisplayName("Tampered activation token (bad signature) returns 422 with Invalid activation token")
-        @ExpectedToFail(
-                value = "TDD Red Phase - SignatureException unmapped, falls through to 500 default",
-                withExceptions = AssertionError.class)
         void should_return422_when_tamperedActivationToken() {
             givenActivationFailsSignature();
 
