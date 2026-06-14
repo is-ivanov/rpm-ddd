@@ -7,6 +7,7 @@ import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.UserAuthenticationException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
+import by.iivanov.rpm.iam.user.fixtures.LoginThrottleStatements;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
 import java.time.Clock;
 import java.time.Instant;
@@ -32,12 +33,14 @@ class AuthenticationServiceTest {
 
     private AuthenticationService sut;
     private UserStatements userStatements;
+    private LoginThrottleStatements throttleStatements;
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     @SuppressWarnings("deprecation")
     void setUp() {
         userStatements = new UserStatements();
+        throttleStatements = new LoginThrottleStatements(userStatements.userRepository);
         passwordEncoder = NoOpPasswordEncoder.getInstance();
         var fixedClock = Clock.fixed(Instant.parse("2026-06-14T12:00:00Z"), ZoneOffset.UTC);
         sut = new AuthenticationService(userStatements.userRepository, passwordEncoder, fixedClock);
@@ -83,14 +86,14 @@ class AuthenticationServiceTest {
                 withExceptions = AssertionError.class)
         void when_thresholdConsecutiveWrongPasswords_expect_rateLimited() {
             // GIVEN:
-            userStatements.givenActiveUserForThrottling();
-            userStatements.givenFailedAttemptsJustBelowThreshold(sut);
+            throttleStatements.givenActiveUserForThrottling();
+            throttleStatements.givenFailedAttemptsJustBelowThreshold(sut);
 
             // WHEN:
-            userStatements.whenLoginWithWrongPassword(sut);
+            throttleStatements.whenLoginWithWrongPassword(sut);
 
             // THEN:
-            userStatements.assertRateLimited();
+            throttleStatements.assertRateLimited();
         }
 
         @Test
@@ -100,14 +103,14 @@ class AuthenticationServiceTest {
                 withExceptions = AssertionError.class)
         void when_correctPasswordWhileLocked_expect_rateLimited() {
             // GIVEN:
-            userStatements.givenActiveUserForThrottling();
-            userStatements.givenAccountLockedByFailedAttempts(sut);
+            throttleStatements.givenActiveUserForThrottling();
+            throttleStatements.givenAccountLockedByFailedAttempts(sut);
 
             // WHEN:
-            userStatements.whenLoginWithCorrectPassword(sut);
+            throttleStatements.whenLoginWithCorrectPassword(sut);
 
             // THEN:
-            userStatements.assertRateLimited();
+            throttleStatements.assertRateLimited();
         }
 
         @Test
@@ -115,18 +118,18 @@ class AuthenticationServiceTest {
         @ExpectedToFail(
                 value = "Rate limiting not implemented: counter reset/relock unsupported, throws BadCredentials",
                 withExceptions = AssertionError.class)
+        // Assertions live in the THEN Statements method (3-tier DSL), which the inspection cannot see.
+        @SuppressWarnings("java:S2699")
         void when_successfulLoginResetsCounter_expect_freshThresholdRelocks() {
             // GIVEN:
-            userStatements.givenActiveUserForThrottling();
-            userStatements.givenFailedAttemptsJustBelowThreshold(sut);
-            userStatements.whenLoginWithCorrectPassword(sut);
-            userStatements.givenFailedAttemptsJustBelowThreshold(sut);
+            throttleStatements.givenActiveUserForThrottling();
+            throttleStatements.givenFailedAttemptsJustBelowThreshold(sut);
 
             // WHEN:
-            userStatements.whenLoginWithWrongPassword(sut);
+            throttleStatements.whenLoginWithCorrectPassword(sut);
 
             // THEN:
-            userStatements.assertRateLimited();
+            throttleStatements.thenFreshThresholdRunIsRequiredToRelock(sut);
         }
     }
 
