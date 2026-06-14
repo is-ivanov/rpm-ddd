@@ -1,7 +1,9 @@
 package by.iivanov.rpm.iam.auth.infrastructure.web;
 
 import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.aUser;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 
 import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
 import by.iivanov.rpm.iam.user.application.ActivationService;
@@ -10,15 +12,18 @@ import by.iivanov.rpm.testing.api.AssertionResponse;
 import by.iivanov.rpm.testing.api.FieldError;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.http.HttpStatus;
 
 @WebTest
+@Execution(ExecutionMode.SAME_THREAD)
 class AuthResourceTest {
 
     private final AuthApi authApi;
@@ -27,6 +32,18 @@ class AuthResourceTest {
     AuthResourceTest(AuthApi authApi, ActivationService activationService) {
         this.authApi = authApi;
         this.activationService = activationService;
+    }
+
+    private void assertUnprocessable(AssertionResponse response, String detail) {
+        response.assertStatus(HttpStatus.UNPROCESSABLE_CONTENT);
+        response.assertBodyMatches("""
+                {
+                  "status": 422,
+                  "title": "Unprocessable Content",
+                  "detail": "%s",
+                  "instance": "/api/auth/activate"
+                }
+                """.formatted(detail), Option.IGNORING_EXTRA_FIELDS);
     }
 
     @Nested
@@ -86,18 +103,6 @@ class AuthResourceTest {
         private void givenTokenValidationFails(String token, RuntimeException exception) {
             given(activationService.validateToken(token)).willThrow(exception);
         }
-
-        private void assertUnprocessable(AssertionResponse response, String detail) {
-            response.assertStatus(HttpStatus.UNPROCESSABLE_CONTENT);
-            response.assertBodyMatches("""
-                {
-                  "status": 422,
-                  "title": "Unprocessable Content",
-                  "detail": "%s",
-                  "instance": "/api/auth/activate"
-                }
-                """.formatted(detail), Option.IGNORING_EXTRA_FIELDS);
-        }
     }
 
     @Nested
@@ -129,6 +134,30 @@ class AuthResourceTest {
                             .message("size must be between 12 and 128")
                             .rejectedValue(password)
                             .path("password"));
+        }
+
+        @Test
+        @DisplayName("Tampered activation token (bad signature) returns 422 with Invalid activation token")
+        @ExpectedToFail(
+                value = "TDD Red Phase - SignatureException unmapped, falls through to 500 default",
+                withExceptions = AssertionError.class)
+        void should_return422_when_tamperedActivationToken() {
+            givenActivationFailsSignature();
+
+            var response = authApi.activate("""
+                {
+                  "token": "some.jwt.token",
+                  "password": "ValidPass12!@"
+                }
+                """);
+
+            assertUnprocessable(response, "Invalid activation token");
+        }
+
+        private void givenActivationFailsSignature() {
+            willThrow(new SignatureException("JWT signature does not match"))
+                    .given(activationService)
+                    .activate(anyString(), anyString());
         }
     }
 }
