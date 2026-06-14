@@ -214,7 +214,7 @@
 
 ### Scenario 5.2: Login rate limiting blocks after N failed attempts
 - [x] red-acceptance (LoginRateLimitIntegrationTest + LoginRateLimitStatements — genuine RED, feature unimplemented. 5 wrong-password logins for seeded admin → asserts 5th is 429 + application/problem+json (too-many-login-attempts), then correct password also 429 (locked within window). No clock manipulation (window doesn't elapse). PREDICT 429-expected-but-401-actual matched exactly (Type/Status/Message all YES); @ExpectedToFail(withExceptions=AssertionError.class) added. 5-attempt loop + LOCKOUT_THRESHOLD=5 + status/cred literals in Statements; test class pure DSL. test-review added .assertProblemJson() content-type check (RFC 9457) at both sites + reusable AssertionResponse.assertContentType/assertProblemJson. refactor extracted assertRateLimited(). Zero production files. 1 skipped, BUILD SUCCESS.)
-- [~] design
+- [x] design (ADR: login-rate-limit-decision.md — Option A: embed LoginThrottle VO on User aggregate + columns on iam_user, reuse UserRepository + Clock, typed LoginRateLimitPolicy config, TooManyLoginAttemptsException→429 via config-driven mapping. 5th wrong attempt trips lock AND responds 429; correct pw while locked = 429. Rejected B: dedicated LoginAttempt table/2nd port; C: web-layer filter)
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain
