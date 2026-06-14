@@ -1,5 +1,6 @@
 package by.iivanov.rpm.iam.user.domain;
 
+import by.iivanov.rpm.shared.domain.errors.DomainValidationException;
 import java.time.Duration;
 import java.time.Instant;
 import org.jmolecules.ddd.annotation.ValueObject;
@@ -9,8 +10,20 @@ import org.jspecify.annotations.Nullable;
 @ValueObject
 public record LoginThrottle(int failedAttempts, @Nullable Instant lockedUntil) {
 
-    static final int MAX_ATTEMPTS = 5;
-    static final Duration LOCKOUT_WINDOW = Duration.ofMinutes(15);
+    private static final int MAX_ATTEMPTS = 5;
+    private static final Duration LOCKOUT_WINDOW = Duration.ofMinutes(15);
+
+    /**
+     * Constructor.
+     *
+     * @throws DomainValidationException if failedAttempts is negative
+     */
+    public LoginThrottle {
+        if (failedAttempts < 0) {
+            throw new DomainValidationException(
+                    "Failed login attempts must not be negative, but was " + failedAttempts);
+        }
+    }
 
     public static LoginThrottle empty() {
         return new LoginThrottle(0, null);
