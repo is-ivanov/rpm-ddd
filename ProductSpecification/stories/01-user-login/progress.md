@@ -225,8 +225,8 @@
 - [x] green-acceptance
 
 ### Scenario 5.3: Passwords are stored hashed
-- [ ] red-acceptance
-- [ ] design
+- [S] red-acceptance (Level 1 acceptance is black-box HTTP only and NEVER touches the DB — see TESTING.md "Level 1" and tdd-rules.md. The scenario's only observable is the stored password value in the iam_user row; there is no HTTP-observable behavior, so a true Level-1 test cannot assert the "$2a$" BCrypt prefix or plaintext-absence — it would have to query the DB directly, which the rules forbid. Mirrors Scenario 5.1 red-acceptance [S]: Level 1 cannot distinguish a hashed column from a plaintext one over HTTP, so the property is proven at a lower, cheaper level. The real security property — "the application turns a plaintext password into a "$2a$" BCrypt hash and never stores the plaintext" — lives in PasswordPolicy.hashPlain() and is proven by a focused Level-4 domain test using the REAL BCryptPasswordEncoder (see design/red-domain recommendation below). The existing PasswordPolicyTest uses NoOpPasswordEncoder and only asserts encoder.matches(plain, hash) — under NoOp that is plain.equals(hash), so it does NOT cover the "$2a$" format or plaintext-absence; a new domain test is a justified security-regression guard, not a duplicate.)
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain
