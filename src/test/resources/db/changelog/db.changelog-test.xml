@@ -8,9 +8,10 @@
   <include file="db/changelog/db.changelog-master.xml" relativeToChangelogFile="false"/>
 
   <changeSet id="test-data-user" author="i.s.ivanov" runAlways="true" context="test">
-    <loadData tableName="iam_user" file="db/data/user.csv" separator=";" usePreparedStatements="true">
+    <loadUpdateData tableName="iam_user" file="db/data/user.csv" separator=";" primaryKey="id"
+                    usePreparedStatements="true">
       <column name="password_hash" type="text"/>
       <column name="status" type="other"/>
-    </loadData>
+    </loadUpdateData>
   </changeSet>
 </databaseChangeLog>
