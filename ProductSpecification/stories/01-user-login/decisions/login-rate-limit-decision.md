@@ -9,14 +9,13 @@ Consecutive failed logins must temporarily lock an account across all backend in
 | Dedicated `LoginAttempt` aggregate + repository | Adds a second storage port queried in sequence inside `AuthenticationService` (tension with the single-rich-aggregate rule) plus a new table/migration/aggregate — for "throttle any login incl. non-existent" behaviour the scenario does not require. |
 | Web-layer rate-limit filter (e.g. bucket4j) | Needs a distributed/DB-backed store to be correct across instances (awkward); bypasses the domain; cannot be driven by the test `Clock`; doesn't fit the pending `red-usecase`/`green-usecase` steps. |
 
-**Chosen**: Embed a cohesive `LoginThrottle` value object on the existing `User` aggregate, persisted as columns on `iam_user`. `AuthenticationService.authenticate` reuses the already-loaded user (single `UserRepository` port) to check and record throttle state, gated by a typed `LoginRateLimitPolicy` config object and the existing `Clock` bean. The transient throttle is **distinct** from the permanent `UserStatus.LOCKED` admin lock.
+**Chosen**: Embed a cohesive `LoginThrottle` value object on the existing `User` aggregate, persisted as columns on `iam_user`. `AuthenticationService.authenticate` reuses the already-loaded user (single `UserRepository` port) to check and record throttle state, using the existing `Clock` bean. The threshold and window stay **domain constants** (not `@ConfigurationProperties` for now — deferred until a tuning need arises). The transient throttle is **distinct** from the permanent `UserStatus.LOCKED` admin lock.
 
 ## Model
 
-- `LoginThrottle` — new domain value object embedded in `User`: `failedAttempts` (int) + `lockedUntil` (Instant, optional). Behaviour: `recordFailure(now, policy)`, `clear()`, `isLocked(now)`. Persisted as `failed_login_attempts` + `locked_until` columns on `iam_user` (column migration, no new table).
-- `User` — delegates to its `LoginThrottle`: `isThrottled(now)`, `recordFailedLogin(now, policy)`, `clearFailedLogins()`.
-- `LoginRateLimitPolicy` — typed `@ConfigurationProperties` object: `maxAttempts` (default 5) + `window` (Duration). One documented field per value.
-- `AuthenticationService.authenticate` — gains `Clock` + `LoginRateLimitPolicy`. Flow: throttled? → throw; validate active; bad password → `recordFailedLogin` + `save` then throw `TooManyLoginAttemptsException` (if now locked) else `BadCredentialsException`; success → `clearFailedLogins` + `save`.
+- `LoginThrottle` — new domain value object embedded in `User`: `failedAttempts` (int) + `lockedUntil` (Instant, optional). Behaviour: `recordFailure(now)`, `clear()`, `isLocked(now)`. Owns the rate-limit rule as domain constants: `MAX_ATTEMPTS = 5` + `LOCKOUT_WINDOW` (Duration). Persisted as `failed_login_attempts` + `locked_until` columns on `iam_user` (column migration, no new table).
+- `User` — delegates to its `LoginThrottle`: `isThrottled(now)`, `recordFailedLogin(now)`, `clearFailedLogins()`.
+- `AuthenticationService.authenticate` — gains `Clock`. Flow: throttled? → throw; validate active; bad password → `recordFailedLogin` + `save` then throw `TooManyLoginAttemptsException` (if now locked) else `BadCredentialsException`; success → `clearFailedLogins` + `save`.
 - `TooManyLoginAttemptsException` — new domain exception, message "Too many failed attempts". Mapped in `application.yml` → status `too-many-requests` (429) + code `too-many-login-attempts` (same config-driven mechanism as `UserAuthenticationException` → 401). RFC 9457 type `https://www.rpm-ddd.my/problem/too-many-login-attempts`, title "Too Many Requests".
 
 ## Edge Cases
