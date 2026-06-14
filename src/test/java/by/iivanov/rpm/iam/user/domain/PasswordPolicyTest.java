@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,6 +33,49 @@ class PasswordPolicyTest {
             var result = sut.hashPlain(validPassword);
             // THEN:
             then(encoder.matches(validPassword, result.hash())).isTrue();
+        }
+    }
+
+    @Nested
+    @DisplayName("hashPlain() - storage format (security)")
+    class StorageFormatTest {
+
+        private static final String VALID_PLAINTEXT = "Passw0rd!Secur3";
+
+        @SuppressWarnings("deprecation")
+        private final PasswordPolicy productionSut =
+                new PasswordPolicy(PasswordEncoderFactories.createDelegatingPasswordEncoder());
+
+        @Test
+        @DisplayName("WHEN valid password hashed EXPECT stored hash hides plaintext and uses BCrypt")
+        void when_validPassword_expect_storedHashHidesPlaintextAndIsBcrypt() {
+            // GIVEN:
+            String plain = VALID_PLAINTEXT;
+
+            // WHEN:
+            String hash = productionSut.hashPlain(plain).hash();
+
+            // THEN:
+            // The production encoder is a DelegatingPasswordEncoder, which prepends the
+            // algorithm id, so the stored hash is "{bcrypt}$2a$..." rather than bare "$2a$".
+            then(hash).doesNotContain(plain);
+            then(hash).startsWith("{bcrypt}$2a$");
+        }
+
+        @Test
+        @DisplayName("WHEN same password hashed twice EXPECT different salted hashes")
+        void when_samePasswordHashedTwice_expect_differentSaltedHashes() {
+            // GIVEN:
+            String plain = VALID_PLAINTEXT;
+
+            // WHEN:
+            String firstHash = productionSut.hashPlain(plain).hash();
+            String secondHash = productionSut.hashPlain(plain).hash();
+
+            // THEN:
+            // BCrypt salts each hash, so the same plaintext must never produce an
+            // identical stored hash. A regression to an unsalted digest would fail here.
+            then(secondHash).isNotEqualTo(firstHash);
         }
     }
 
