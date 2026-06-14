@@ -8,6 +8,9 @@ import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.UserAuthenticationException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -35,7 +39,8 @@ class AuthenticationServiceTest {
     void setUp() {
         userStatements = new UserStatements();
         passwordEncoder = NoOpPasswordEncoder.getInstance();
-        sut = new AuthenticationService(userStatements.userRepository, passwordEncoder);
+        var fixedClock = Clock.fixed(Instant.parse("2026-06-14T12:00:00Z"), ZoneOffset.UTC);
+        sut = new AuthenticationService(userStatements.userRepository, passwordEncoder, fixedClock);
     }
 
     @Nested
@@ -69,6 +74,59 @@ class AuthenticationServiceTest {
                             UserStatus.PENDING,
                             "Account not activated"),
                     argumentSet("LOCKED user", LOCKED_LOGIN, LOCKED_PASSWORD, UserStatus.LOCKED, "Account locked"));
+        }
+
+        @Test
+        @DisplayName("WHEN the threshold-th consecutive wrong password is reached EXPECT TooManyLoginAttemptsException")
+        @ExpectedToFail(
+                value = "Rate limiting not implemented: threshold-th wrong password throws BadCredentials, not 429",
+                withExceptions = AssertionError.class)
+        void when_thresholdConsecutiveWrongPasswords_expect_rateLimited() {
+            // GIVEN:
+            userStatements.givenActiveUserForThrottling();
+            userStatements.givenFailedAttemptsJustBelowThreshold(sut);
+
+            // WHEN:
+            userStatements.whenLoginWithWrongPassword(sut);
+
+            // THEN:
+            userStatements.assertRateLimited();
+        }
+
+        @Test
+        @DisplayName("WHEN the correct password is used while locked EXPECT TooManyLoginAttemptsException")
+        @ExpectedToFail(
+                value = "Rate limiting not implemented: correct password while locked authenticates, no 429",
+                withExceptions = AssertionError.class)
+        void when_correctPasswordWhileLocked_expect_rateLimited() {
+            // GIVEN:
+            userStatements.givenActiveUserForThrottling();
+            userStatements.givenAccountLockedByFailedAttempts(sut);
+
+            // WHEN:
+            userStatements.whenLoginWithCorrectPassword(sut);
+
+            // THEN:
+            userStatements.assertRateLimited();
+        }
+
+        @Test
+        @DisplayName("WHEN a successful login resets the counter EXPECT a fresh threshold run is required to lock")
+        @ExpectedToFail(
+                value = "Rate limiting not implemented: counter reset/relock unsupported, throws BadCredentials",
+                withExceptions = AssertionError.class)
+        void when_successfulLoginResetsCounter_expect_freshThresholdRelocks() {
+            // GIVEN:
+            userStatements.givenActiveUserForThrottling();
+            userStatements.givenFailedAttemptsJustBelowThreshold(sut);
+            userStatements.whenLoginWithCorrectPassword(sut);
+            userStatements.givenFailedAttemptsJustBelowThreshold(sut);
+
+            // WHEN:
+            userStatements.whenLoginWithWrongPassword(sut);
+
+            // THEN:
+            userStatements.assertRateLimited();
         }
     }
 

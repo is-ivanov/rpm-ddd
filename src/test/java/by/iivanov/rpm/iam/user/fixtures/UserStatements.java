@@ -5,11 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 import by.iivanov.rpm.iam.user.application.ActivationService;
+import by.iivanov.rpm.iam.user.application.AuthenticateUserCommand;
 import by.iivanov.rpm.iam.user.application.AuthenticationService;
 import by.iivanov.rpm.iam.user.domain.InvalidPasswordException;
 import by.iivanov.rpm.iam.user.domain.JtiGenerator;
 import by.iivanov.rpm.iam.user.domain.JwtActivationTokenGenerator;
+import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.PasswordPolicy;
+import by.iivanov.rpm.iam.user.domain.TooManyLoginAttemptsException;
 import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.iam.user.domain.UserId;
 import by.iivanov.rpm.iam.user.domain.UserNotFoundException;
@@ -133,5 +136,56 @@ public class UserStatements {
                 .hasMessageContaining("Password must contain 1 or more uppercase characters.")
                 .hasMessageContaining("Password must contain 1 or more digit characters.")
                 .hasMessageContaining("Password must contain 1 or more special characters.");
+    }
+
+    private static final int LOCKOUT_THRESHOLD = 5;
+    private static final String THROTTLE_LOGIN = "throttle_user";
+    private static final String THROTTLE_PASSWORD = "Throttle@123";
+    private static final String WRONG_PASSWORD = "Wrong@000";
+
+    /** Saves an ACTIVE user used for the login throttle scenarios. */
+    public void givenActiveUserForThrottling() {
+        givenUserWithLoginPasswordAndStatus(THROTTLE_LOGIN, THROTTLE_PASSWORD, UserStatus.ACTIVE);
+    }
+
+    /** Drives the service through one failed login below the lockout threshold (4 wrong passwords). */
+    public void givenFailedAttemptsJustBelowThreshold(AuthenticationService service) {
+        attemptWrongPasswordLogins(service, LOCKOUT_THRESHOLD - 1);
+    }
+
+    /** Drives the service through the full lockout threshold of failed logins so the account is locked. */
+    public void givenAccountLockedByFailedAttempts(AuthenticationService service) {
+        attemptWrongPasswordLogins(service, LOCKOUT_THRESHOLD);
+    }
+
+    private void attemptWrongPasswordLogins(AuthenticationService service, int times) {
+        var wrongCommand = wrongPasswordCommand();
+        for (int attempt = 0; attempt < times; attempt++) {
+            thrownException = catchThrowable(() -> service.authenticate(wrongCommand));
+        }
+    }
+
+    /** Performs a single login with the wrong password, capturing any thrown exception. */
+    public void whenLoginWithWrongPassword(AuthenticationService service) {
+        var wrongCommand = wrongPasswordCommand();
+        thrownException = catchThrowable(() -> service.authenticate(wrongCommand));
+    }
+
+    private static AuthenticateUserCommand wrongPasswordCommand() {
+        return new AuthenticateUserCommand(new Login(THROTTLE_LOGIN), WRONG_PASSWORD);
+    }
+
+    /** Performs a single login with the correct password, capturing any thrown exception. */
+    public void whenLoginWithCorrectPassword(AuthenticationService service) {
+        var correctCommand = new AuthenticateUserCommand(new Login(THROTTLE_LOGIN), THROTTLE_PASSWORD);
+        thrownException = catchThrowable(() -> service.authenticate(correctCommand));
+    }
+
+    /** Asserts that the captured exception is a TooManyLoginAttemptsException with the lockout message. */
+    public void assertRateLimited() {
+        assertThat(thrownException)
+                .as("Should throw TooManyLoginAttemptsException once the account is locked")
+                .isInstanceOf(TooManyLoginAttemptsException.class)
+                .hasMessage("Too many failed attempts");
     }
 }
