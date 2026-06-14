@@ -26,10 +26,10 @@ class LoginRateLimitIntegrationTest extends AbstractApplicationIntegrationTest {
         // when a further login with a wrong password is sent
         var lockingAttempt = statements.attemptLoginWithWrongPassword(csrfToken);
 
-        // then that attempt is rate limited
+        // then that attempt is rate-limited
         statements.assertRateLimited(lockingAttempt);
 
-        // and a subsequent login with the correct password is still rate limited within the window
+        // and a subsequent login with the correct password is still rate-limited within the window
         var correctPasswordAttempt = statements.attemptLoginWithCorrectPassword(csrfToken);
         statements.assertRateLimited(correctPasswordAttempt);
     }
