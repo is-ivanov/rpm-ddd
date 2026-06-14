@@ -1,6 +1,6 @@
 {
   "enabledPlugins": {
-    "jdtls-lsp@claude-plugins-official": true,
+    "jdtls-lsp@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": false,
     "frontend-design@claude-code-plugins": true
   },
