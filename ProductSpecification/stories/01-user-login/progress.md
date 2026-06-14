@@ -219,10 +219,10 @@
 - [x] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [x] adapters-discovery (Check 1 ports: db [S] — UserRepository.findByLogin simple derived query + full-aggregate save on active-persistence User; throttle columns auto-persist via JPA + migration, proven by integration suite. Check 2 exceptions: TooManyLoginAttemptsException → 429 unmapped in application.yml → red/green-adapter rest below, mirrors Scenario 2.2 JWT→422 config mapping. Check 3 response shape: login success has no body, throttle path is an error response handled by Check 2 → [S].)
-- [ ] red-adapter rest (AuthResourceTest — TooManyLoginAttemptsException → 429 + application/problem+json type too-many-login-attempts; @WebTest slice, mocked service throws the exception)
-- [ ] green-adapter rest (application.yml error.handling: http-statuses TooManyLoginAttemptsException → too-many-requests + codes → too-many-login-attempts)
-- [ ] green-acceptance
+- [x] adapters-discovery (Check 1 ports: db [S] — UserRepository.findByLogin simple derived query + full-aggregate save on active-persistence User; throttle columns auto-persist via JPA + migration, proven by integration suite. Check 2 exceptions: TooManyLoginAttemptsException → 429 is config-only (error-handling starter in application.yml, no Java adapter logic) AND already asserted end-to-end by the Level 1 LoginRateLimitIntegrationTest (429 + application/problem+json + type) → a @WebTest slice would duplicate Level 1 (pyramid: level N skips what N-1 covers), so rest adapter is [S]; the minimal config mapping is applied in green-acceptance — it must be atomic with removing the @ExpectedToFail marker because adding the mapping makes the marked Level 1 test pass (junit-pioneer fails the build on an @ExpectedToFail test that passes). Mirrors Scenario 5.1 red/green-adapter rest [S] + production code in green-acceptance. Check 3 response shape: login success has no body, throttle path is an error response handled by Check 2 → [S].)
+- [S] red-adapter rest (429 + application/problem+json already asserted by Level 1 LoginRateLimitIntegrationTest; mapping is config-only, no Java adapter logic — a web slice duplicates Level 1)
+- [S] green-adapter rest (no separate green — the config mapping is applied in green-acceptance, atomically with the @ExpectedToFail marker removal)
+- [x] green-acceptance
 
 ### Scenario 5.3: Passwords are stored hashed
 - [ ] red-acceptance

@@ -4,7 +4,6 @@ import by.iivanov.rpm.iam.auth.fixtures.LoginRateLimitStatements;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ExpectedToFail;
 
 class LoginRateLimitIntegrationTest extends AbstractApplicationIntegrationTest {
 
@@ -16,9 +15,6 @@ class LoginRateLimitIntegrationTest extends AbstractApplicationIntegrationTest {
 
     @Test
     @DisplayName("Account is temporarily locked after 5 consecutive failed login attempts")
-    @ExpectedToFail(
-            value = "Rate limiting not implemented: 5th failed login returns 401, not 429",
-            withExceptions = AssertionError.class)
     void when_fiveConsecutiveFailedLogins_expect_rateLimitedEvenWithCorrectPassword() {
         // given the account is one failed attempt away from lockout
         var csrfToken = statements.givenFailedAttemptsJustBelowLockoutThreshold();
