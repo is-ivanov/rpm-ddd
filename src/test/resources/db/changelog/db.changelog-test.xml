@@ -12,6 +12,8 @@
                     usePreparedStatements="true">
       <column name="password_hash" type="text"/>
       <column name="status" type="other"/>
+      <column name="failed_login_attempts" type="numeric"/>
+      <column name="locked_until" type="date"/>
     </loadUpdateData>
   </changeSet>
 </databaseChangeLog>

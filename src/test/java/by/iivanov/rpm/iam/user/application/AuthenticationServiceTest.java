@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -81,9 +80,6 @@ class AuthenticationServiceTest {
 
         @Test
         @DisplayName("WHEN the threshold-th consecutive wrong password is reached EXPECT TooManyLoginAttemptsException")
-        @ExpectedToFail(
-                value = "Rate limiting not implemented: threshold-th wrong password throws BadCredentials, not 429",
-                withExceptions = AssertionError.class)
         void when_thresholdConsecutiveWrongPasswords_expect_rateLimited() {
             // GIVEN:
             throttleStatements.givenActiveUserForThrottling();
@@ -98,9 +94,6 @@ class AuthenticationServiceTest {
 
         @Test
         @DisplayName("WHEN the correct password is used while locked EXPECT TooManyLoginAttemptsException")
-        @ExpectedToFail(
-                value = "Rate limiting not implemented: correct password while locked authenticates, no 429",
-                withExceptions = AssertionError.class)
         void when_correctPasswordWhileLocked_expect_rateLimited() {
             // GIVEN:
             throttleStatements.givenActiveUserForThrottling();
@@ -115,9 +108,6 @@ class AuthenticationServiceTest {
 
         @Test
         @DisplayName("WHEN a successful login resets the counter EXPECT a fresh threshold run is required to lock")
-        @ExpectedToFail(
-                value = "Rate limiting not implemented: counter reset/relock unsupported, throws BadCredentials",
-                withExceptions = AssertionError.class)
         // Assertions live in the THEN Statements method (3-tier DSL), which the inspection cannot see.
         @SuppressWarnings("java:S2699")
         void when_successfulLoginResetsCounter_expect_freshThresholdRelocks() {

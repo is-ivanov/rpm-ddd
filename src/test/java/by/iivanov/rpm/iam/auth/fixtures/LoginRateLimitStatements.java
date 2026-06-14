@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 public final class LoginRateLimitStatements {
 
     private static final int LOCKOUT_THRESHOLD = 5;
-    private static final String ACTIVE_LOGIN = "admin";
-    private static final String CORRECT_PASSWORD = "admin";
+    private static final String ACTIVE_LOGIN = "throttle_victim";
+    private static final String CORRECT_PASSWORD = "Throttle@123";
     private static final String WRONG_PASSWORD = "wrong-password";
 
     private static final String TOO_MANY_ATTEMPTS_PROBLEM = """
