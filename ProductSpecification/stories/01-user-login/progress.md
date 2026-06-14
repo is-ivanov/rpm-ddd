@@ -230,7 +230,7 @@
 - [S] red-usecase (no new usecase logic — hashPlain() already exists and is exercised end-to-end by activation scenarios 3.1/4.1; the "stored hashed" property is a domain-service concern proven at red-domain. Zero usecase production files modified.)
 - [S] green-usecase (no new usecase code needed)
 - [x] red-domain (PasswordPolicyTest.StorageFormatTest added — own SUT built with production-equivalent createDelegatingPasswordEncoder(); asserts hash doesNotContain plaintext AND startsWith "{bcrypt}$2a$". test-review added a 2nd guard: same plaintext hashed twice → different hashes (BCrypt salting — catches a swap to an unsalted digest the prefix check can't). refactor extracted VALID_PLAINTEXT constant. Predicted PASS (feature already implemented) → actual PASS; PasswordPolicyTest 11 tests, 0 fail; checkstyle/pmd clean. No @ExpectedToFail (red+green collapse, regression guard mirroring 5.1). No production files changed.)
-- [~] green-domain
+- [S] green-domain (no production change — existing PasswordPolicy.hashPlain() already produces the "{bcrypt}$2a$…" salted hash the red-domain test asserts; red+green collapse, mirrors Scenario 5.1 green-adapter db [S]. PasswordPolicyTest green: 11 tests, 0 fail. No coverage step — no new production code.)
 - [S] adapters-discovery (feature already implemented — no new ports, exceptions, or response shapes; existing REST/security/error mapping unchanged by this scenario)
 - [S] green-acceptance (no acceptance test to enable — red-acceptance [S]; security property proven at Level-4 domain)
 
