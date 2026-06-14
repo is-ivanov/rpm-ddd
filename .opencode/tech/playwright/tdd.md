@@ -4,9 +4,11 @@ Tech binding for `tdd-rules.md`. Load alongside the universal rules.
 
 ## Test Disable Marker
 
-- Playwright: `test.skip()` as first line inside the test body
-- In RED: add `test.skip()` after validating prediction
-- In GREEN: remove `test.skip()` (the only test modification allowed)
+- Playwright: `test.fail()` as the first line inside the test body — an **expected-failure** marker, NOT a skip.
+  Unlike `test.skip()`, the test still RUNS every build: it stays green while it fails (RED), and fails the build the moment it starts passing (enforcing the GREEN transition).
+  There is no `test.fails` in Playwright — that is the Vitest API; using it dies with `TypeError: test.fails is not a function`.
+- In RED: add `test.fail()` after validating prediction. The marker cannot pin an error type, so pin the RED reason two ways: a comment above the marker documenting the failure, AND a specific assertion inside the test — so an incidental failure is not absorbed as "expected fail".
+- In GREEN: remove `test.fail()` (the only test modification allowed)
 
 ## Test Description
 

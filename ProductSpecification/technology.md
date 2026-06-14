@@ -93,7 +93,7 @@ tech-profile:
 
 | Concern | Convention |
 |---------|-----------|
-| Test skip marker | .fails (it.fails/test.fails; RED-state runs every build — pin the reason via the assertion) |
+| Test skip marker | it.fails(...) (Vitest expected-failure; RED-state runs every build — pin the reason via the assertion) |
 | Dev command | npm run dev |
 | Test command | npx vitest run |
 | Node config syntax | process.env.VAR \|\| 'fallback' |
@@ -102,4 +102,5 @@ tech-profile:
 
 | Concern | Convention |
 |---------|-----------|
+| Test skip marker | test.fail(...) (Playwright expected-failure — NOT test.skip()/test.fails; RED-state runs every build — pin the reason via a comment + assertion) |
 | Acceptance test command | ./mvnw verify -B -Pfrontend |

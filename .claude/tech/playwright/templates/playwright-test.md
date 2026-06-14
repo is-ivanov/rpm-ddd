@@ -18,7 +18,7 @@ test.describe('Create Task Page', () => {
     });
 
     test('UI Test Scenario 1: Create Task Form Initial State - Given the user navigates to the create task page, Then the task form is displayed...', async () => {
-        test.skip(); // TDD Red Phase - task-form not found
+        test.fail(); // RED: task-form not yet rendered — pinned by assertFormIsDisplayed() below
 
         await createTaskPage.navigateToCreateTaskPage();
 
