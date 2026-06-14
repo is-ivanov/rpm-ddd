@@ -10,6 +10,7 @@ import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.TooManyLoginAttemptsException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.infrastructure.InMemoryUserRepository;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.BadCredentialsException;
 
 /** Statements for the login rate-limiting (throttle) scenarios on AuthenticationService. */
@@ -21,9 +22,8 @@ public class LoginThrottleStatements {
     private static final String WRONG_PASSWORD = "Wrong@000";
 
     private final InMemoryUserRepository userRepository;
-    private Throwable thrownException;
+    private @Nullable Throwable thrownException;
 
-    @SuppressWarnings("NullAway.Init")
     public LoginThrottleStatements(InMemoryUserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -76,7 +76,7 @@ public class LoginThrottleStatements {
                 .hasMessage("Too many failed attempts");
     }
 
-    /** Asserts the last attempt was rejected as bad credentials, not rate-limited (account still open). */
+    /** Asserts the last attempt was rejected as bad credentials, not rate-limited (accounts still open). */
     public void assertNotRateLimited() {
         assertThat(thrownException)
                 .as("Account should still accept attempts (not locked) — bad credentials, not rate-limited")

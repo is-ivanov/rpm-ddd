@@ -17,13 +17,13 @@ import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.infrastructure.InMemoryUserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import org.jspecify.annotations.Nullable;
 
 public class UserStatements {
 
     public final InMemoryUserRepository userRepository;
-    private Throwable thrownException;
+    private @Nullable Throwable thrownException;
 
-    @SuppressWarnings("NullAway.Init")
     public UserStatements() {
         this.userRepository = new InMemoryUserRepository();
     }
