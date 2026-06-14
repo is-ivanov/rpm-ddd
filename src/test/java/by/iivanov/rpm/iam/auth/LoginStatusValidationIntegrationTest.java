@@ -1,10 +1,14 @@
 package by.iivanov.rpm.iam.auth;
 
-import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
-import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
+import static org.junit.jupiter.params.provider.Arguments.argumentSet;
+
+import by.iivanov.rpm.iam.auth.fixtures.LoginStatusValidationStatements;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class LoginStatusValidationIntegrationTest extends AbstractApplicationIntegrationTest {
 
@@ -15,52 +19,30 @@ class LoginStatusValidationIntegrationTest extends AbstractApplicationIntegratio
     private static final String INACTIVE_USER_LOGIN = "inactive_user";
     private static final String INACTIVE_USER_PASSWORD = "Inactive@123";
 
-    private final AuthApi authApi;
-    private final AuthSessionFactory authSessionFactory;
+    private final LoginStatusValidationStatements statements;
 
-    LoginStatusValidationIntegrationTest(AuthApi authApi, AuthSessionFactory authSessionFactory) {
-        this.authApi = authApi;
-        this.authSessionFactory = authSessionFactory;
+    LoginStatusValidationIntegrationTest(LoginStatusValidationStatements statements) {
+        this.statements = statements;
     }
 
-    @Test
-    @DisplayName("Login with PENDING user returns 401 with activation message")
-    void should_return401_when_loginWithPendingUser() {
-        assertLoginRejected(
-                PENDING_USER_LOGIN, PENDING_USER_PASSWORD, "Account not activated", "authentication-failed");
+    static Stream<Arguments> nonActiveUsers() {
+        return Stream.of(
+                argumentSet("PENDING user", PENDING_USER_LOGIN, PENDING_USER_PASSWORD, "Account not activated"),
+                argumentSet("LOCKED user", LOCKED_USER_LOGIN, LOCKED_USER_PASSWORD, "Account locked"),
+                argumentSet("INACTIVE user", INACTIVE_USER_LOGIN, INACTIVE_USER_PASSWORD, "Account deactivated"));
     }
 
-    @Test
-    @DisplayName("Login with LOCKED user returns 401 with locked message")
-    void should_return401_when_loginWithLockedUser() {
-        assertLoginRejected(LOCKED_USER_LOGIN, LOCKED_USER_PASSWORD, "Account locked", "authentication-failed");
-    }
+    @ParameterizedTest
+    @MethodSource("nonActiveUsers")
+    @DisplayName("Login with a non-ACTIVE user returns 401 with the account-status message")
+    void should_return401_when_loginWithNonActiveUser(String login, String password, String expectedDetail) {
+        // given a CSRF token for the login request
+        var csrfToken = statements.givenCsrfToken();
 
-    @Test
-    @DisplayName("Login with INACTIVE user returns 401 with deactivated message")
-    void should_return401_when_loginWithInactiveUser() {
-        assertLoginRejected(
-                INACTIVE_USER_LOGIN, INACTIVE_USER_PASSWORD, "Account deactivated", "authentication-failed");
-    }
+        // when logging in with the non-ACTIVE user's credentials
+        var response = statements.attemptLogin(login, password, csrfToken);
 
-    private void assertLoginRejected(String login, String password, String expectedDetail, String expectedType) {
-        var csrfToken = authSessionFactory.getCsrfToken();
-        String loginRequest = """
-                {
-                  "login": "%s",
-                  "password": "%s"
-                }
-                """.formatted(login, password);
-        var response = authApi.login(loginRequest, csrfToken);
-        response.unwrap().expectStatus().isUnauthorized().expectBody().json("""
-                        {
-                          "detail": "%s",
-                          "instance": "/api/auth/login",
-                          "status": 401,
-                          "title": "Unauthorized",
-                          "type": "https://www.rpm-ddd.my/problem/%s"
-                        }
-                        """.formatted(
-                        expectedDetail, expectedType));
+        // then the login is rejected as 401 with the status-specific message
+        statements.assertRejectedAsUnauthorized(response, expectedDetail);
     }
 }
