@@ -56,10 +56,12 @@ class PasswordPolicyTest {
             String hash = productionSut.hashPlain(plain).hash();
 
             // THEN:
-            // The production encoder is a DelegatingPasswordEncoder, which prepends the
-            // algorithm id, so the stored hash is "{bcrypt}$2a$..." rather than bare "$2a$".
-            then(hash).doesNotContain(plain);
-            then(hash).startsWith("{bcrypt}$2a$");
+            then(hash)
+                    .as("stored hash must not leak the plaintext password")
+                    .doesNotContain(plain)
+                    .as("DelegatingPasswordEncoder prepends the algorithm id, so the stored hash is "
+                            + "\"{bcrypt}$2a$...\" rather than bare \"$2a$\"")
+                    .startsWith("{bcrypt}$2a$");
         }
 
         @Test
@@ -73,9 +75,10 @@ class PasswordPolicyTest {
             String secondHash = productionSut.hashPlain(plain).hash();
 
             // THEN:
-            // BCrypt salts each hash, so the same plaintext must never produce an
-            // identical stored hash. A regression to an unsalted digest would fail here.
-            then(secondHash).isNotEqualTo(firstHash);
+            then(secondHash)
+                    .as("BCrypt salts each hash, so the same plaintext must never produce an "
+                            + "identical stored hash; a regression to an unsalted digest would fail here")
+                    .isNotEqualTo(firstHash);
         }
     }
 
