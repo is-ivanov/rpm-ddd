@@ -219,7 +219,9 @@
 - [x] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [~] adapters-discovery
+- [x] adapters-discovery (Check 1 ports: db [S] — UserRepository.findByLogin simple derived query + full-aggregate save on active-persistence User; throttle columns auto-persist via JPA + migration, proven by integration suite. Check 2 exceptions: TooManyLoginAttemptsException → 429 unmapped in application.yml → red/green-adapter rest below, mirrors Scenario 2.2 JWT→422 config mapping. Check 3 response shape: login success has no body, throttle path is an error response handled by Check 2 → [S].)
+- [ ] red-adapter rest (AuthResourceTest — TooManyLoginAttemptsException → 429 + application/problem+json type too-many-login-attempts; @WebTest slice, mocked service throws the exception)
+- [ ] green-adapter rest (application.yml error.handling: http-statuses TooManyLoginAttemptsException → too-many-requests + codes → too-many-login-attempts)
 - [ ] green-acceptance
 
 ### Scenario 5.3: Passwords are stored hashed
