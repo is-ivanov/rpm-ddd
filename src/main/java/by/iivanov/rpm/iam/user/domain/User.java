@@ -2,7 +2,6 @@ package by.iivanov.rpm.iam.user.domain;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.time.Instant;
@@ -30,7 +29,7 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private UserStatus status;
 
-    @Embedded
+    @AttributeOverride(name = "failedAttempts", column = @Column(name = "failed_login_attempts"))
     private LoginThrottle loginThrottle = LoginThrottle.empty();
 
     @Version
@@ -109,11 +108,11 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
     }
 
     public void recordFailedLogin(Instant now) {
-        loginThrottle.recordFailure(now);
+        this.loginThrottle = loginThrottle.recordFailure(now);
     }
 
     public void clearFailedLogins() {
-        loginThrottle.clear();
+        this.loginThrottle = loginThrottle.clear();
     }
 
     public EmailAddress getEmail() {
