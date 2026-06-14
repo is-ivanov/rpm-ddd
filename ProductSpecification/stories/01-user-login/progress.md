@@ -226,13 +226,13 @@
 
 ### Scenario 5.3: Passwords are stored hashed
 - [S] red-acceptance (Level 1 acceptance is black-box HTTP only and NEVER touches the DB — see TESTING.md "Level 1" and tdd-rules.md. The scenario's only observable is the stored password value in the iam_user row; there is no HTTP-observable behavior, so a true Level-1 test cannot assert the "$2a$" BCrypt prefix or plaintext-absence — it would have to query the DB directly, which the rules forbid. Mirrors Scenario 5.1 red-acceptance [S]: Level 1 cannot distinguish a hashed column from a plaintext one over HTTP, so the property is proven at a lower, cheaper level. The real security property — "the application turns a plaintext password into a "$2a$" BCrypt hash and never stores the plaintext" — lives in PasswordPolicy.hashPlain() and is proven by a focused Level-4 domain test using the REAL BCryptPasswordEncoder (see design/red-domain recommendation below). The existing PasswordPolicyTest uses NoOpPasswordEncoder and only asserts encoder.matches(plain, hash) — under NoOp that is plain.equals(hash), so it does NOT cover the "$2a$" format or plaintext-absence; a new domain test is a justified security-regression guard, not a duplicate.)
-- [~] design
-- [ ] red-usecase
-- [ ] green-usecase
-- [S] red-domain
-- [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] design (feature already implemented — PasswordPolicy.hashPlain() validates complexity then BCrypt-encodes via the wired DelegatingPasswordEncoder, ActivationService.activate() saves it; no production code needed. Test strategy: Level-4 domain test on hashPlain() — Option A "Faithful": inject the production-equivalent PasswordEncoderFactories.createDelegatingPasswordEncoder(), assert the returned hash does NOT contain the plaintext AND startsWith("{bcrypt}$2a$"). ⚠ Production stores "{bcrypt}$2a$…" (DelegatingPasswordEncoder prepends the {bcrypt} id), NOT bare "$2a$…" — test spec §5.3 "starts with $2a$" is inaccurate (didn't account for the delegating prefix); the test documents this. Rejected Option B (plain BCryptPasswordEncoder + startsWith "$2a$"): not the wired encoder → weaker guard. No ADR — test-strategy detail, no structural trade-off. Activates red-domain/green-domain; red-usecase/green-usecase/adapters-discovery/green-acceptance [S] below.)
+- [S] red-usecase (no new usecase logic — hashPlain() already exists and is exercised end-to-end by activation scenarios 3.1/4.1; the "stored hashed" property is a domain-service concern proven at red-domain. Zero usecase production files modified.)
+- [S] green-usecase (no new usecase code needed)
+- [~] red-domain (PasswordPolicy.hashPlain() security-regression test — Faithful {bcrypt}$2a$ + no-plaintext; see design)
+- [ ] green-domain
+- [S] adapters-discovery (feature already implemented — no new ports, exceptions, or response shapes; existing REST/security/error mapping unchanged by this scenario)
+- [S] green-acceptance (no acceptance test to enable — red-acceptance [S]; security property proven at Level-4 domain)
 
 ### Scenario 5.4: Tampered JWT activation token is rejected
 - [ ] red-acceptance
