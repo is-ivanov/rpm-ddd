@@ -260,13 +260,13 @@
 
 ### Scenario 5.6: POST /api/auth/activate without CSRF token returns 403
 - [x] red-acceptance (ActivateAccountCsrfIntegrationTest — Level 1 regression guard, red+green collapse. POST /api/auth/activate without a CSRF token → 403. SecurityConfig enables `.csrf(CsrfConfigurer::spa)`, so the activate POST is CSRF-protected and the no-CSRF AuthApi.activate(body) path is rejected by Spring Security's CSRF filter before the handler. Reuses ActivationTokenFixture (PENDING user + valid token), AuthApi no-CSRF POST, AssertionResponse. Predicted PASS → actual PASS (Tests run: 1, 0 fail, 0 skip); NO @ExpectedToFail (mirrors AuthCsrfIntegrationTest #130 + scenarios 5.1/5.3/5.4 collapse). test-review tightened status-only → full RFC 9457 ProblemDetail body match (detail/title/type/instance/status via ProblemDetailAccessDeniedHandler). refactor CLEAN — 50 lines, no smells. checkstyle/pmd/IDE clean.)
-- [~] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [x] design (Confirm existing implementation — no new code; no ADR. Single viable approach, no trade-off. CSRF is enforced globally by SecurityConfig `.csrf(CsrfConfigurer::spa)`; POST /api/auth/activate is permitAll for authentication but still CSRF-protected, so a request without the XSRF-TOKEN cookie / X-XSRF-TOKEN header is rejected by Spring Security's CSRF filter before the handler → AccessDeniedException → 403 + RFC 9457 Problem Detail via the wired ProblemDetailAccessDeniedHandler. Mirrors AuthCsrfIntegrationTest #130 (login CSRF) + scenarios 5.1/5.3/5.4 red+green collapse. Downstream steps [S] — zero production files change.)
+- [S] red-usecase (no usecase logic — CSRF rejection is a framework/security-filter concern enforced before any usecase runs; ActivationService is never reached. Zero usecase production files modified.)
+- [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (no new ports, exceptions, or response shapes — CSRF protection + 403 Problem Detail handled by existing SecurityConfig `.csrf(CsrfConfigurer::spa)` + ProblemDetailAccessDeniedHandler, both unchanged by this scenario)
+- [S] green-acceptance (no acceptance test to enable — red-acceptance is a red+green collapse that already passes with no @ExpectedToFail marker; the security property is proven at Level 1 by ActivateAccountCsrfIntegrationTest)
 
 ### Scenario 5.7: Mass assignment on activate endpoint — extra fields ignored
 - [ ] red-acceptance
