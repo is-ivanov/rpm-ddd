@@ -269,8 +269,8 @@
 - [S] green-acceptance (no acceptance test to enable — red-acceptance is a red+green collapse that already passes with no @ExpectedToFail marker; the security property is proven at Level 1 by ActivateAccountCsrfIntegrationTest)
 
 ### Scenario 5.7: Mass assignment on activate endpoint — extra fields ignored
-- [ ] red-acceptance
-- [ ] design
+- [x] red-acceptance (ActivateAccountMassAssignmentIntegrationTest — Level 1 regression guard, red+green collapse, predicted PASS → actual PASS, NO @ExpectedToFail. POST /api/auth/activate with token + injected extra JSON `role:"ADMIN"` + `status:"LOCKED"` → 200; then login as the activated user + GET /api/auth/me asserts the FULL body exact (all 7 fields): status="ACTIVE" (proves activation came from the flow, not the injected field), roles=[] (no elevation). Jackson silently drops unknown props on the closed `ActivateAccountRequest(token, password)` record. test-review HARDENED the guard: injected status="LOCKED" (a value the flow never produces — if mass-assigned, login would fail "Account locked"), dropped IGNORING_EXTRA_FIELDS for full-body exact match, added firstName/lastName to ActivatedUserRegistration + FIRST_NAME/LAST_NAME constants; AuthSessionFactory.loginAs(login,password) extracted (loginAsAdmin delegates). refactor CLEAN — inline JSON payload mirrors sibling ActivateAccount*IntegrationTest convention (malicious payload visible = test subject). CONSTRAINT: literal "role remains USER" is NOT HTTP-observable — no role concept in domain (CurrentUserResponse.roles hardcoded List.of()); roles=[] is the strongest proxy. 1 passed, 0 failed, 0 skipped. checkstyle/pmd/IDE clean.)
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain

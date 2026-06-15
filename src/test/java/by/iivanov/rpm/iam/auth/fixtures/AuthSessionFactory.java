@@ -27,9 +27,13 @@ public final class AuthSessionFactory {
 
     /** Logs in as the test admin user and returns the resulting session state. */
     public SessionContext loginAsAdmin() {
+        return loginAs(ADMIN_LOGIN, ADMIN_PASSWORD);
+    }
+
+    /** Logs in with the given credentials and returns the resulting session state. */
+    public SessionContext loginAs(String login, String password) {
         var csrfToken = getCsrfToken();
-        var loginResult =
-                authApi.login(ADMIN_LOGIN, ADMIN_PASSWORD, csrfToken).unwrap().returnResult();
+        var loginResult = authApi.login(login, password, csrfToken).unwrap().returnResult();
         var sessionCookie = loginResult.getResponseCookies().getFirst("JSESSIONID");
         var sessionId = Objects.requireNonNull(sessionCookie).getValue();
         return new SessionContext(sessionId, csrfToken);
