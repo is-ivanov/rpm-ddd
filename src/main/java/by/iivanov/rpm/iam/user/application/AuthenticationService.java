@@ -6,6 +6,8 @@ import by.iivanov.rpm.iam.user.domain.UserId;
 import by.iivanov.rpm.iam.user.domain.UserNotFoundException;
 import by.iivanov.rpm.iam.user.domain.UserRepository;
 import by.iivanov.rpm.shared.infrastructure.ApplicationService;
+import java.time.Clock;
+import java.time.Instant;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,10 +16,12 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Clock clock;
 
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, Clock clock) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.clock = clock;
     }
 
     /**
@@ -28,14 +32,25 @@ public class AuthenticationService {
      * @throws BadCredentialsException if the provided password does not match the stored password
      */
     public User authenticate(AuthenticateUserCommand command) {
+        var now = Instant.now(clock);
         var user = userRepository
                 .findByLogin(command.login())
                 .orElseThrow(() -> new UserAuthenticationException("Account not activated"));
+        user.ensureNotThrottled(now);
         user.validateActiveForAuthentication();
         if (!passwordEncoder.matches(command.password(), user.getPassword().hash())) {
-            throw new BadCredentialsException("Bad credentials");
+            return rejectFailedAttempt(user, now);
         }
+        user.clearFailedLogins();
+        userRepository.save(user);
         return user;
+    }
+
+    private User rejectFailedAttempt(User user, Instant now) {
+        user.recordFailedLogin(now);
+        userRepository.save(user);
+        user.ensureNotThrottled(now);
+        throw new BadCredentialsException("Bad credentials");
     }
 
     /**

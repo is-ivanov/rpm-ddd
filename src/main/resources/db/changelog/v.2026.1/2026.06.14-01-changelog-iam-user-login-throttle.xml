@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!-- Login rate limiting (Scenario 5.2): throttle state columns on iam_user -->
+  <changeSet id="2026-06-14-01-add-login-throttle-columns" author="i.s.ivanov">
+    <addColumn tableName="iam_user">
+      <column name="failed_login_attempts" type="int" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+      <column name="locked_until" type="timestamptz"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

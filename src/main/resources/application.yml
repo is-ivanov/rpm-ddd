@@ -39,11 +39,17 @@ error:
       org.springframework.security.authentication.BadCredentialsException: unauthorized
       org.springframework.security.authentication.InternalAuthenticationServiceException: unauthorized
       by.iivanov.rpm.iam.user.domain.UserAuthenticationException: unauthorized
+      by.iivanov.rpm.iam.user.domain.TooManyLoginAttemptsException: too-many-requests
       org.springframework.web.bind.MethodArgumentNotValidException: unprocessable-content
       io.jsonwebtoken.ExpiredJwtException: unprocessable-content
       io.jsonwebtoken.MalformedJwtException: unprocessable-content
+      io.jsonwebtoken.security.SignatureException: unprocessable-content
     codes:
       by.iivanov.rpm.iam.user.domain.UserAuthenticationException: authentication-failed
+      by.iivanov.rpm.iam.user.domain.TooManyLoginAttemptsException: too-many-login-attempts
+    messages:
+      io.jsonwebtoken.security.SignatureException: "Invalid activation token"
+      io.jsonwebtoken.ExpiredJwtException: "Activation token has expired"
 
 
 # ===================================================================

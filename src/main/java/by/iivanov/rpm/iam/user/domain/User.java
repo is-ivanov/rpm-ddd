@@ -29,6 +29,9 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private UserStatus status;
 
+    @AttributeOverride(name = "failedAttempts", column = @Column(name = "failed_login_attempts"))
+    private LoginThrottle loginThrottle = LoginThrottle.empty();
+
     @Version
     private int version;
 
@@ -96,6 +99,20 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
         if (status != UserStatus.ACTIVE) {
             throw new UserAuthenticationException(status.authenticationErrorMessage());
         }
+    }
+
+    public void ensureNotThrottled(Instant now) {
+        if (loginThrottle.isLocked(now)) {
+            throw new TooManyLoginAttemptsException("Too many failed attempts");
+        }
+    }
+
+    public void recordFailedLogin(Instant now) {
+        this.loginThrottle = loginThrottle.recordFailure(now);
+    }
+
+    public void clearFailedLogins() {
+        this.loginThrottle = loginThrottle.clear();
     }
 
     public EmailAddress getEmail() {

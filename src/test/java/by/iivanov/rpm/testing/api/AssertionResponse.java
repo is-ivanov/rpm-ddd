@@ -28,6 +28,15 @@ public class AssertionResponse {
         return this;
     }
 
+    public AssertionResponse assertContentType(MediaType expected) {
+        responseSpec.expectHeader().contentType(expected);
+        return this;
+    }
+
+    public AssertionResponse assertProblemJson() {
+        return assertContentType(MediaType.APPLICATION_PROBLEM_JSON);
+    }
+
     public AssertionResponse assertOk() {
         return assertStatus(HttpStatus.OK);
     }
@@ -75,7 +84,7 @@ public class AssertionResponse {
 
     private void assertUnprocessableProblemJson() {
         assertStatus(HttpStatus.UNPROCESSABLE_CONTENT);
-        responseSpec.expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON);
+        assertProblemJson();
     }
 
     private void assertFieldErrors(FieldError... fieldErrors) {

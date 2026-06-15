@@ -4,6 +4,7 @@ import static org.instancio.Select.field;
 
 import by.iivanov.rpm.iam.user.domain.EmailAddress;
 import by.iivanov.rpm.iam.user.domain.Login;
+import by.iivanov.rpm.iam.user.domain.LoginThrottle;
 import by.iivanov.rpm.iam.user.domain.Password;
 import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
@@ -12,7 +13,8 @@ import org.instancio.InstancioApi;
 
 public class UserBuilder {
 
-    private final InstancioApi<User> builder = Instancio.of(User.class);
+    private final InstancioApi<User> builder =
+            Instancio.of(User.class).supply(field(User.class, "loginThrottle"), LoginThrottle::empty);
 
     public static UserBuilder aUser() {
         return new UserBuilder();

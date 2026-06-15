@@ -45,9 +45,6 @@ public class DbContainerTestExecutionListener implements TestExecutionListener {
     }
 
     private boolean hasDbTag(TestIdentifier testIdentifier) {
-        if (!testIdentifier.isTest()) {
-            return false;
-        }
         return testIdentifier.getTags().stream().anyMatch(tag -> tag.getName().equals(Constants.DB_TEST_TAG));
     }
 

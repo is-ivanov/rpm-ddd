@@ -7,7 +7,11 @@ import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.UserAuthenticationException;
 import by.iivanov.rpm.iam.user.domain.UserStatus;
+import by.iivanov.rpm.iam.user.fixtures.LoginThrottleStatements;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,14 +32,17 @@ class AuthenticationServiceTest {
 
     private AuthenticationService sut;
     private UserStatements userStatements;
+    private LoginThrottleStatements throttleStatements;
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     @SuppressWarnings("deprecation")
     void setUp() {
         userStatements = new UserStatements();
+        throttleStatements = new LoginThrottleStatements(userStatements.userRepository);
         passwordEncoder = NoOpPasswordEncoder.getInstance();
-        sut = new AuthenticationService(userStatements.userRepository, passwordEncoder);
+        var fixedClock = Clock.fixed(Instant.parse("2026-06-14T12:00:00Z"), ZoneOffset.UTC);
+        sut = new AuthenticationService(userStatements.userRepository, passwordEncoder, fixedClock);
     }
 
     @Nested
@@ -69,6 +76,50 @@ class AuthenticationServiceTest {
                             UserStatus.PENDING,
                             "Account not activated"),
                     argumentSet("LOCKED user", LOCKED_LOGIN, LOCKED_PASSWORD, UserStatus.LOCKED, "Account locked"));
+        }
+
+        @Test
+        @DisplayName("WHEN the threshold-th consecutive wrong password is reached EXPECT TooManyLoginAttemptsException")
+        void when_thresholdConsecutiveWrongPasswords_expect_rateLimited() {
+            // GIVEN:
+            throttleStatements.givenActiveUserForThrottling();
+            throttleStatements.givenFailedAttemptsJustBelowThreshold(sut);
+
+            // WHEN:
+            throttleStatements.whenLoginWithWrongPassword(sut);
+
+            // THEN:
+            throttleStatements.assertRateLimited();
+        }
+
+        @Test
+        @DisplayName("WHEN the correct password is used while locked EXPECT TooManyLoginAttemptsException")
+        void when_correctPasswordWhileLocked_expect_rateLimited() {
+            // GIVEN:
+            throttleStatements.givenActiveUserForThrottling();
+            throttleStatements.givenAccountLockedByFailedAttempts(sut);
+
+            // WHEN:
+            throttleStatements.whenLoginWithCorrectPassword(sut);
+
+            // THEN:
+            throttleStatements.assertRateLimited();
+        }
+
+        @Test
+        @DisplayName("WHEN a successful login resets the counter EXPECT a fresh threshold run is required to lock")
+        // Assertions live in the THEN Statements method (3-tier DSL), which the inspection cannot see.
+        @SuppressWarnings("java:S2699")
+        void when_successfulLoginResetsCounter_expect_freshThresholdRelocks() {
+            // GIVEN:
+            throttleStatements.givenActiveUserForThrottling();
+            throttleStatements.givenFailedAttemptsJustBelowThreshold(sut);
+
+            // WHEN:
+            throttleStatements.whenLoginWithCorrectPassword(sut);
+
+            // THEN:
+            throttleStatements.thenFreshThresholdRunIsRequiredToRelock(sut);
         }
     }
 
