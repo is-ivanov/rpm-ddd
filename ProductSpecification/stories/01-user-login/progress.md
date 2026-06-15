@@ -259,8 +259,8 @@
 - [S] green-acceptance (no acceptance test to enable — red-acceptance [S]; expired-token 422 + detail mapping proven at Level-2 web slice)
 
 ### Scenario 5.6: POST /api/auth/activate without CSRF token returns 403
-- [ ] red-acceptance
-- [ ] design
+- [x] red-acceptance (ActivateAccountCsrfIntegrationTest — Level 1 regression guard, red+green collapse. POST /api/auth/activate without a CSRF token → 403. SecurityConfig enables `.csrf(CsrfConfigurer::spa)`, so the activate POST is CSRF-protected and the no-CSRF AuthApi.activate(body) path is rejected by Spring Security's CSRF filter before the handler. Reuses ActivationTokenFixture (PENDING user + valid token), AuthApi no-CSRF POST, AssertionResponse. Predicted PASS → actual PASS (Tests run: 1, 0 fail, 0 skip); NO @ExpectedToFail (mirrors AuthCsrfIntegrationTest #130 + scenarios 5.1/5.3/5.4 collapse). test-review tightened status-only → full RFC 9457 ProblemDetail body match (detail/title/type/instance/status via ProblemDetailAccessDeniedHandler). refactor CLEAN — 50 lines, no smells. checkstyle/pmd/IDE clean.)
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain
