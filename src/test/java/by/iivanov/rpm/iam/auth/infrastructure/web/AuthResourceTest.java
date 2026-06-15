@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.http.HttpStatus;
 
 @WebTest
@@ -152,6 +153,30 @@ class AuthResourceTest {
 
         private void givenActivationFailsSignature() {
             willThrow(new SignatureException("JWT signature does not match"))
+                    .given(activationService)
+                    .activate(anyString(), anyString());
+        }
+
+        @Test
+        @DisplayName("Expired activation token returns 422 with Activation token has expired")
+        @ExpectedToFail(
+                value = "Security 5.5: no messages override for ExpiredJwtException; detail is raw jjwt message",
+                withExceptions = AssertionError.class)
+        void should_return422_when_expiredActivationToken() {
+            givenActivationFailsExpired();
+
+            var response = authApi.activate("""
+                {
+                  "token": "some.jwt.token",
+                  "password": "ValidPass12!@"
+                }
+                """);
+
+            assertUnprocessable(response, "Activation token has expired");
+        }
+
+        private void givenActivationFailsExpired() {
+            willThrow(new ExpiredJwtException(null, null, "JWT expired"))
                     .given(activationService)
                     .activate(anyString(), anyString());
         }
