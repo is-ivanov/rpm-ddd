@@ -290,54 +290,62 @@
 
 ## Load Scenarios
 
+> ⏸ DEFERRED (2026-06-15, user scope review): all Load scenarios deferred out of MVP — premature
+> optimization (hardware-coupled flaky thresholds; 4.1 needs a load-test harness the project lacks).
+> Tracked in `improvements.md` → I2. Revisit in a "Login hardening / performance" story.
+
 ### Scenario 3.1: Login response time under 200ms
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (deferred — see improvements.md I2)
+- [S] design (deferred — see improvements.md I2)
+- [S] red-usecase (deferred — see improvements.md I2)
+- [S] green-usecase (deferred — see improvements.md I2)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (deferred — see improvements.md I2)
+- [S] green-acceptance (deferred — see improvements.md I2)
 
 ### Scenario 4.1: Concurrent login requests complete under 500ms
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (deferred — see improvements.md I2)
+- [S] design (deferred — see improvements.md I2)
+- [S] red-usecase (deferred — see improvements.md I2)
+- [S] green-usecase (deferred — see improvements.md I2)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (deferred — see improvements.md I2)
+- [S] green-acceptance (deferred — see improvements.md I2)
 
 ### Scenario 5.1: Activation token validation response time under 200ms
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (deferred — see improvements.md I2)
+- [S] design (deferred — see improvements.md I2)
+- [S] red-usecase (deferred — see improvements.md I2)
+- [S] green-usecase (deferred — see improvements.md I2)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (deferred — see improvements.md I2)
+- [S] green-acceptance (deferred — see improvements.md I2)
 
 ## Infrastructure Scenarios
 
+> ⏸ DEFERRED (2026-06-15, user scope review): all Infrastructure scenarios deferred out of MVP —
+> require a stateful DB-outage harness (expensive, low value pre-production-traffic).
+> Tracked in `improvements.md` → I3. Revisit in a "Login hardening / resilience" story.
+
 ### Scenario 4.1: Database unavailable during login returns 500
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (deferred — see improvements.md I3)
+- [S] design (deferred — see improvements.md I3)
+- [S] red-usecase (deferred — see improvements.md I3)
+- [S] green-usecase (deferred — see improvements.md I3)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (deferred — see improvements.md I3)
+- [S] green-acceptance (deferred — see improvements.md I3)
 
 ### Scenario 5.1: Database recovery allows login after outage
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (deferred — see improvements.md I3)
+- [S] design (deferred — see improvements.md I3)
+- [S] red-usecase (deferred — see improvements.md I3)
+- [S] green-usecase (deferred — see improvements.md I3)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (deferred — see improvements.md I3)
+- [S] green-acceptance (deferred — see improvements.md I3)
