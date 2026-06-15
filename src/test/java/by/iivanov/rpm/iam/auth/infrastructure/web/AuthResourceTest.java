@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.http.HttpStatus;
 
 @WebTest
@@ -95,9 +94,9 @@ class AuthResourceTest {
         @Test
         @DisplayName("Expired activation token returns 422")
         void should_return422_when_expiredActivationToken() {
-            givenTokenValidationFails("expired-token", new ExpiredJwtException(null, null, "Token expired"));
+            givenTokenValidationFails("expired-token", new ExpiredJwtException(null, null, "JWT expired"));
             var response = authApi.validateActivationToken("expired-token");
-            assertUnprocessable(response, "Token expired");
+            assertUnprocessable(response, "Activation token has expired");
         }
 
         private void givenTokenValidationFails(String token, RuntimeException exception) {
@@ -159,9 +158,6 @@ class AuthResourceTest {
 
         @Test
         @DisplayName("Expired activation token returns 422 with Activation token has expired")
-        @ExpectedToFail(
-                value = "Security 5.5: no messages override for ExpiredJwtException; detail is raw jjwt message",
-                withExceptions = AssertionError.class)
         void should_return422_when_expiredActivationToken() {
             givenActivationFailsExpired();
 

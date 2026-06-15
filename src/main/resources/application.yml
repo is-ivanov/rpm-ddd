@@ -49,6 +49,7 @@ error:
       by.iivanov.rpm.iam.user.domain.TooManyLoginAttemptsException: too-many-login-attempts
     messages:
       io.jsonwebtoken.security.SignatureException: "Invalid activation token"
+      io.jsonwebtoken.ExpiredJwtException: "Activation token has expired"
 
 
 # ===================================================================
