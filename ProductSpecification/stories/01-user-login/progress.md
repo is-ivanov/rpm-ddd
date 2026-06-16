@@ -285,8 +285,8 @@
 - [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [~] adapters-discovery
-- [S] green-acceptance (no acceptance test to enable — red-acceptance [S]; the 422 + length-error property is proven at Level 2 web slice via red-adapter rest)
+- [x] adapters-discovery (existence check — MAX boundary ALREADY covered, no new adapter steps. Check 1 ports: db [S] — @Size rejects at the controller boundary before ActivationService/storage is reached; no new ports. Check 2 exceptions: rest [S] — the MAX boundary is already tested by `ActivateAccountRequestTest.invalidFields()` "Invalid password: too long" (`"a".repeat(MAX_LENGTH+1)` → Size violation "size must be between 12 and 128"), a focused fast bean-validation test on the DTO constraints; the MethodArgumentNotValidException→422+fieldErrors mapping is the framework's generic handler already exercised by 3.1's web slice. No new exception mapping, no new web-slice test needed — supersedes the design note's "rest [add]" expectation (the coverage already exists). Check 3 response shape: rest [S] — error response (RFC 9457 + fieldErrors) unchanged. Verified green: ActivateAccountRequestTest 5/5, 0 failed.)
+- [S] green-acceptance (no acceptance test to enable — red-acceptance [S]; the oversized-password 422 + length-error property is proven at the DTO bean-validation level by ActivateAccountRequestTest "Invalid password: too long")
 
 ## Load Scenarios
 
