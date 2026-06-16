@@ -1,6 +1,5 @@
 package by.iivanov.rpm.iam.user.infrastructure.security;
 
-import by.iivanov.rpm.iam.auth.infrastructure.RpmUserDetails;
 import by.iivanov.rpm.iam.user.domain.UserId;
 import by.iivanov.rpm.shared.infrastructure.InfrastructureComponent;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package by.iivanov.rpm.iam.auth.infrastructure;
+package by.iivanov.rpm.iam.user.infrastructure.security;
 
 import static org.assertj.core.api.BDDAssertions.catchException;
 import static org.assertj.core.api.BDDAssertions.then;

@@ -1,11 +1,11 @@
 package by.iivanov.rpm.iam.auth.infrastructure.web;
 
-import by.iivanov.rpm.iam.auth.infrastructure.RpmUserDetails;
 import by.iivanov.rpm.iam.user.application.ActivationService;
 import by.iivanov.rpm.iam.user.application.AuthenticateUserCommand;
 import by.iivanov.rpm.iam.user.application.AuthenticationService;
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.User;
+import by.iivanov.rpm.iam.user.infrastructure.security.RpmUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

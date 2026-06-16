@@ -1,4 +1,4 @@
-package by.iivanov.rpm.iam.auth.infrastructure;
+package by.iivanov.rpm.iam.user.infrastructure.security;
 
 import by.iivanov.rpm.shared.web.errors.ErrorConstants;
 import jakarta.servlet.http.HttpServletRequest;
