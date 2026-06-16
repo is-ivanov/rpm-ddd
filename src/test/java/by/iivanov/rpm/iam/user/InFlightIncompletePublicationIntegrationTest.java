@@ -1,6 +1,6 @@
 package by.iivanov.rpm.iam.user;
 
-import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
+import by.iivanov.rpm.iam.user.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.iam.user.fixtures.EmailStatements;
 import by.iivanov.rpm.iam.user.fixtures.StalePublicationStatements;
 import by.iivanov.rpm.iam.user.fixtures.UserApi;
