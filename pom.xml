@@ -412,6 +412,16 @@
             <effort>Max</effort>
             <threshold>Medium</threshold>
             <excludeFilterFile>code-quality-config/spotbugs/exclude-filter.xml</excludeFilterFile>
+            <!--
+              Nullability is owned by NullAway (Error Prone, JSpecifyMode=true, level ERROR),
+              which fully understands JSpecify @NullMarked and fails the build on violations.
+              SpotBugs only reads explicit @Nullable/@NonNull and does NOT apply the @NullMarked
+              package default, so its null-deref detector produces systematic false positives on
+              @NullMarked code — e.g. it inherits the JSpecify @Nullable on the jMolecules-woven
+              Spring Data Persistable.getId() and flags every aggregate getId() dereference.
+              Disable SpotBugs' null-deref detector and let NullAway be the single source of truth.
+            -->
+            <omitVisitors>FindNullDeref</omitVisitors>
             <plugins>
               <plugin>
                 <groupId>com.h3xstream.findsecbugs</groupId>

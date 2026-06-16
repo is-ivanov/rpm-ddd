@@ -20,5 +20,5 @@ Type: refactoring
 - [x] refactor (cleanup: verify imports/static-analysis)
 
 ### Step 4: Remove empty auth package and verify
-- [~] refactor (delete auth package-info.java files + empty auth dirs)
-- [ ] green-acceptance (full build: ArchitectureTest + ./mvnw verify green)
+- [x] refactor (delete auth package-info.java files + empty auth dirs)
+- [x] green-acceptance (full build: ArchitectureTest + ./mvnw verify green)
