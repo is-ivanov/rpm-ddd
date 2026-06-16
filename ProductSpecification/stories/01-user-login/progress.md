@@ -279,8 +279,8 @@
 - [S] green-acceptance (no acceptance test to enable — red-acceptance is a red+green collapse that already passes with no @ExpectedToFail; the security property is proven at Level 1 by ActivateAccountMassAssignmentIntegrationTest)
 
 ### Scenario 5.8: Oversized password input rejected
-- [ ] red-acceptance
-- [ ] design
+- [S] red-acceptance (validation error case — belongs at Level 2 web slice, not Level 1 acceptance; Level 1 = happy path only. Oversized input is HTTP-observable, but observability does not promote an error case to Level 1. The @Size(min=12,max=128) on ActivateAccountRequest.password already rejects a 200-char password → MethodArgumentNotValidException → 422 + FieldError.size() "size must be between 12 and 128"; zero production change. The existing web slice AuthResourceTest.ActivateAccountTest.should_return422WithSizeError_when_requestInvalid() covers only the MIN boundary — real coverage for the MAX boundary lives in red-adapter rest below. Mirrors 2.2/3.2/5.4/5.5.)
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain
