@@ -1,4 +1,4 @@
-package by.iivanov.rpm.iam.auth.infrastructure.web;
+package by.iivanov.rpm.iam.user.infrastructure.web;
 
 import static org.instancio.Select.field;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;

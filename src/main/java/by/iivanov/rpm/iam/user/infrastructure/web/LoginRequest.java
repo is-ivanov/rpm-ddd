@@ -1,4 +1,4 @@
-package by.iivanov.rpm.iam.auth.infrastructure.web;
+package by.iivanov.rpm.iam.user.infrastructure.web;
 
 import jakarta.validation.constraints.NotBlank;
 

@@ -1,4 +1,4 @@
-package by.iivanov.rpm.iam.auth.infrastructure.web;
+package by.iivanov.rpm.iam.user.infrastructure.web;
 
 import by.iivanov.rpm.iam.user.application.ActivationService;
 import by.iivanov.rpm.iam.user.application.AuthenticateUserCommand;

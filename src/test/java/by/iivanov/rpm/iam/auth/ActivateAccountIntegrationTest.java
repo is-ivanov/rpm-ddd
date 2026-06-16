@@ -3,7 +3,7 @@ package by.iivanov.rpm.iam.auth;
 import by.iivanov.rpm.iam.auth.fixtures.ActivationTokenFixture;
 import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
 import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
-import by.iivanov.rpm.iam.auth.infrastructure.web.LoginRequest;
+import by.iivanov.rpm.iam.user.infrastructure.web.LoginRequest;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

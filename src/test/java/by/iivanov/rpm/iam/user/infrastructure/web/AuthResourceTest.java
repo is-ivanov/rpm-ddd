@@ -1,4 +1,4 @@
-package by.iivanov.rpm.iam.auth.infrastructure.web;
+package by.iivanov.rpm.iam.user.infrastructure.web;
 
 import static by.iivanov.rpm.iam.user.fixtures.UserBuilder.aUser;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -53,7 +53,7 @@ class AuthResourceTest {
         @DisplayName("WHEN empty body EXPECT 422 with field errors")
         void should_return422WithFieldErrors_when_emptyBody() {
             var response = authApi.login("{}");
-            response.assertBindingError("__files/iam/auth/web/login_beanValidation_out.json");
+            response.assertBindingError("__files/iam/user/web/login_beanValidation_out.json");
         }
     }
 
