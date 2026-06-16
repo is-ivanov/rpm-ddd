@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ActivationTokenFixture {
 
+    private static final String FIRST_NAME = "Test";
+    private static final String LAST_NAME = "User";
+
     private final JwtActivationTokenGenerator tokenGenerator;
     private final UserApi userApi;
     private final AuthSessionFactory authSessionFactory;
@@ -33,14 +36,20 @@ public class ActivationTokenFixture {
         var uniqueSuffix = UUID.randomUUID().toString();
         var login = "activate_user_" + uniqueSuffix;
         var email = login + "@example.com";
-        var request = new RegisterUserRequest("Test", null, "User", login, email);
+        var request = new RegisterUserRequest(FIRST_NAME, null, LAST_NAME, login, email);
         var registerResponse = userApi.registerUser(request, admin);
         var userId = userApi.extractCreatedUserId(registerResponse);
         var userIdObj = new UserId(UUID.fromString(userId));
         var token = generateValidToken(userIdObj);
-        return new ActivatedUserRegistration(login, email, userIdObj, token, admin);
+        return new ActivatedUserRegistration(login, email, FIRST_NAME, LAST_NAME, userIdObj, token, admin);
     }
 
     public record ActivatedUserRegistration(
-            String login, String email, UserId userId, String token, SessionContext adminSession) {}
+            String login,
+            String email,
+            String firstName,
+            String lastName,
+            UserId userId,
+            String token,
+            SessionContext adminSession) {}
 }

@@ -259,85 +259,93 @@
 - [S] green-acceptance (no acceptance test to enable — red-acceptance [S]; expired-token 422 + detail mapping proven at Level-2 web slice)
 
 ### Scenario 5.6: POST /api/auth/activate without CSRF token returns 403
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [x] red-acceptance (ActivateAccountCsrfIntegrationTest — Level 1 regression guard, red+green collapse. POST /api/auth/activate without a CSRF token → 403. SecurityConfig enables `.csrf(CsrfConfigurer::spa)`, so the activate POST is CSRF-protected and the no-CSRF AuthApi.activate(body) path is rejected by Spring Security's CSRF filter before the handler. Reuses ActivationTokenFixture (PENDING user + valid token), AuthApi no-CSRF POST, AssertionResponse. Predicted PASS → actual PASS (Tests run: 1, 0 fail, 0 skip); NO @ExpectedToFail (mirrors AuthCsrfIntegrationTest #130 + scenarios 5.1/5.3/5.4 collapse). test-review tightened status-only → full RFC 9457 ProblemDetail body match (detail/title/type/instance/status via ProblemDetailAccessDeniedHandler). refactor CLEAN — 50 lines, no smells. checkstyle/pmd/IDE clean.)
+- [x] design (Confirm existing implementation — no new code; no ADR. Single viable approach, no trade-off. CSRF is enforced globally by SecurityConfig `.csrf(CsrfConfigurer::spa)`; POST /api/auth/activate is permitAll for authentication but still CSRF-protected, so a request without the XSRF-TOKEN cookie / X-XSRF-TOKEN header is rejected by Spring Security's CSRF filter before the handler → AccessDeniedException → 403 + RFC 9457 Problem Detail via the wired ProblemDetailAccessDeniedHandler. Mirrors AuthCsrfIntegrationTest #130 (login CSRF) + scenarios 5.1/5.3/5.4 red+green collapse. Downstream steps [S] — zero production files change.)
+- [S] red-usecase (no usecase logic — CSRF rejection is a framework/security-filter concern enforced before any usecase runs; ActivationService is never reached. Zero usecase production files modified.)
+- [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (no new ports, exceptions, or response shapes — CSRF protection + 403 Problem Detail handled by existing SecurityConfig `.csrf(CsrfConfigurer::spa)` + ProblemDetailAccessDeniedHandler, both unchanged by this scenario)
+- [S] green-acceptance (no acceptance test to enable — red-acceptance is a red+green collapse that already passes with no @ExpectedToFail marker; the security property is proven at Level 1 by ActivateAccountCsrfIntegrationTest)
 
 ### Scenario 5.7: Mass assignment on activate endpoint — extra fields ignored
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [x] red-acceptance (ActivateAccountMassAssignmentIntegrationTest — Level 1 regression guard, red+green collapse, predicted PASS → actual PASS, NO @ExpectedToFail. POST /api/auth/activate with token + injected extra JSON `role:"ADMIN"` + `status:"LOCKED"` → 200; then login as the activated user + GET /api/auth/me asserts the FULL body exact (all 7 fields): status="ACTIVE" (proves activation came from the flow, not the injected field), roles=[] (no elevation). Jackson silently drops unknown props on the closed `ActivateAccountRequest(token, password)` record. test-review HARDENED the guard: injected status="LOCKED" (a value the flow never produces — if mass-assigned, login would fail "Account locked"), dropped IGNORING_EXTRA_FIELDS for full-body exact match, added firstName/lastName to ActivatedUserRegistration + FIRST_NAME/LAST_NAME constants; AuthSessionFactory.loginAs(login,password) extracted (loginAsAdmin delegates). refactor CLEAN — inline JSON payload mirrors sibling ActivateAccount*IntegrationTest convention (malicious payload visible = test subject). CONSTRAINT: literal "role remains USER" is NOT HTTP-observable — no role concept in domain (CurrentUserResponse.roles hardcoded List.of()); roles=[] is the strongest proxy. 1 passed, 0 failed, 0 skipped. checkstyle/pmd/IDE clean.)
+- [x] design (Confirm existing implementation — no new code; no ADR. Single viable approach, no trade-off. Mass assignment is structurally impossible: (1) `ActivateAccountRequest` is a CLOSED Java record exposing only `{token, password}` — no binder surface for `role`/`status`; (2) Spring Boot's default Jackson config has `FAIL_ON_UNKNOWN_PROPERTIES=false`, so unknown JSON props are silently dropped, never bound; (3) the use case signature is `activationService.activate(token, password)` — extra fields cannot flow through. The domain has NO role/arbitrary-status concept settable from outside (`CurrentUserResponse.roles` hardcoded `List.of()`). Proven end-to-end by the red+green collapse at Level 1 (ActivateAccountMassAssignmentIntegrationTest). Mirrors 5.6 confirm-existing. Downstream steps [S] — zero production files change.)
+- [S] red-usecase (no usecase logic — mass-assignment protection is structural at the DTO/Jackson boundary; the closed record + activate(token,password) signature give no surface for extra fields. Zero usecase production files modified.)
+- [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (no new ports, exceptions, or response shapes — the closed `ActivateAccountRequest(token, password)` record + Spring default Jackson unknown-property handling already enforce the behavior; existing REST adapter unchanged by this scenario)
+- [S] green-acceptance (no acceptance test to enable — red-acceptance is a red+green collapse that already passes with no @ExpectedToFail; the security property is proven at Level 1 by ActivateAccountMassAssignmentIntegrationTest)
 
 ### Scenario 5.8: Oversized password input rejected
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (validation error case — belongs at Level 2 web slice, not Level 1 acceptance; Level 1 = happy path only. Oversized input is HTTP-observable, but observability does not promote an error case to Level 1. The @Size(min=12,max=128) on ActivateAccountRequest.password already rejects a 200-char password → MethodArgumentNotValidException → 422 + FieldError.size() "size must be between 12 and 128"; zero production change. The existing web slice AuthResourceTest.ActivateAccountTest.should_return422WithSizeError_when_requestInvalid() covers only the MIN boundary — real coverage for the MAX boundary lives in red-adapter rest below. Mirrors 2.2/3.2/5.4/5.5.)
+- [x] design (Confirm existing implementation — no new code; no ADR. Single viable approach, no trade-off. Oversized-password rejection is declarative bean validation at the web boundary: `@Size(min=12, max=128)` on `ActivateAccountRequest.password`. A 200-char password violates `max=128` → `MethodArgumentNotValidException` → 422 + `FieldError.size()` "size must be between 12 and 128". This is adapter-layer input validation, NOT domain or usecase logic — so red-usecase/green-usecase [S]. The only test gap is the MAX boundary of @Size (the existing web slice `should_return422WithSizeError_when_requestInvalid` covers only MIN). adapters-discovery activates rest [add]: a Level-2 web slice MAX-boundary regression guard; green-adapter rest is a likely red+green collapse (@Size already rejects). Mirrors 3.1 (password-policy validation at adapter level) + the 5.7/5.6 confirm-existing pattern.)
+- [S] red-usecase (no usecase logic — oversized-password rejection is declarative @Size bean validation at the web/DTO boundary, rejected before ActivationService runs. Zero usecase production files modified.)
+- [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [x] adapters-discovery (existence check — MAX boundary ALREADY covered, no new adapter steps. Check 1 ports: db [S] — @Size rejects at the controller boundary before ActivationService/storage is reached; no new ports. Check 2 exceptions: rest [S] — the MAX boundary is already tested by `ActivateAccountRequestTest.invalidFields()` "Invalid password: too long" (`"a".repeat(MAX_LENGTH+1)` → Size violation "size must be between 12 and 128"), a focused fast bean-validation test on the DTO constraints; the MethodArgumentNotValidException→422+fieldErrors mapping is the framework's generic handler already exercised by 3.1's web slice. No new exception mapping, no new web-slice test needed — supersedes the design note's "rest [add]" expectation (the coverage already exists). Check 3 response shape: rest [S] — error response (RFC 9457 + fieldErrors) unchanged. Verified green: ActivateAccountRequestTest 5/5, 0 failed.)
+- [S] green-acceptance (no acceptance test to enable — red-acceptance [S]; the oversized-password 422 + length-error property is proven at the DTO bean-validation level by ActivateAccountRequestTest "Invalid password: too long")
 
 ## Load Scenarios
 
+> ⏸ DEFERRED (2026-06-15, user scope review): all Load scenarios deferred out of MVP — premature
+> optimization (hardware-coupled flaky thresholds; 4.1 needs a load-test harness the project lacks).
+> Tracked in `improvements.md` → I2. Revisit in a "Login hardening / performance" story.
+
 ### Scenario 3.1: Login response time under 200ms
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (deferred — see improvements.md I2)
+- [S] design (deferred — see improvements.md I2)
+- [S] red-usecase (deferred — see improvements.md I2)
+- [S] green-usecase (deferred — see improvements.md I2)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (deferred — see improvements.md I2)
+- [S] green-acceptance (deferred — see improvements.md I2)
 
 ### Scenario 4.1: Concurrent login requests complete under 500ms
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (deferred — see improvements.md I2)
+- [S] design (deferred — see improvements.md I2)
+- [S] red-usecase (deferred — see improvements.md I2)
+- [S] green-usecase (deferred — see improvements.md I2)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (deferred — see improvements.md I2)
+- [S] green-acceptance (deferred — see improvements.md I2)
 
 ### Scenario 5.1: Activation token validation response time under 200ms
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (deferred — see improvements.md I2)
+- [S] design (deferred — see improvements.md I2)
+- [S] red-usecase (deferred — see improvements.md I2)
+- [S] green-usecase (deferred — see improvements.md I2)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (deferred — see improvements.md I2)
+- [S] green-acceptance (deferred — see improvements.md I2)
 
 ## Infrastructure Scenarios
 
+> ⏸ DEFERRED (2026-06-15, user scope review): all Infrastructure scenarios deferred out of MVP —
+> require a stateful DB-outage harness (expensive, low value pre-production-traffic).
+> Tracked in `improvements.md` → I3. Revisit in a "Login hardening / resilience" story.
+
 ### Scenario 4.1: Database unavailable during login returns 500
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (deferred — see improvements.md I3)
+- [S] design (deferred — see improvements.md I3)
+- [S] red-usecase (deferred — see improvements.md I3)
+- [S] green-usecase (deferred — see improvements.md I3)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (deferred — see improvements.md I3)
+- [S] green-acceptance (deferred — see improvements.md I3)
 
 ### Scenario 5.1: Database recovery allows login after outage
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] red-acceptance (deferred — see improvements.md I3)
+- [S] design (deferred — see improvements.md I3)
+- [S] red-usecase (deferred — see improvements.md I3)
+- [S] green-usecase (deferred — see improvements.md I3)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (deferred — see improvements.md I3)
+- [S] green-acceptance (deferred — see improvements.md I3)

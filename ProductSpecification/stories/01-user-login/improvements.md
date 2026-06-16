@@ -37,6 +37,46 @@ only **6.1** activation→login) nor implemented. No concrete destination page i
 - *Likely also needed:* auth router guard, redirect-after-login back to the originally requested URL,
   and a defined landing for unauthenticated users.
 
+### I2 — Load/performance baselines deferred from MVP (decided 2026-06-15)
+
+**Observed:** Story 1 `tests/03_Load_Tests.md` defines three performance scenarios that were
+deferred at first-stage scope review — none implemented:
+- **3.1** Login response time under 200ms
+- **4.1** 50 concurrent login requests, max response time under 500ms
+- **5.1** Activation token validation response time under 200ms
+
+**Why deferred:** premature optimization for an MVP — the thresholds (200ms/500ms) are
+hardware-coupled to CI and inherently flaky, and 4.1 needs a load-test harness
+(JMeter/Gatling/virtual threads) the project doesn't yet have. Value appears only once there is
+production traffic and an agreed SLA.
+
+**Current state of the code:** no load-test harness, no timing assertions; functional login /
+activation paths fully implemented and covered by the Backend + Security scenarios.
+
+**Scope options to decide at design time:** introduce a dedicated load-test harness and revisit the
+thresholds against real CI/prod hardware, or promote into a "Login hardening / performance" story.
+Marked `[S] deferred` in `progress.md` (Load Scenarios).
+
+### I3 — DB-failure resilience deferred from MVP (decided 2026-06-15)
+
+**Observed:** Story 1 `tests/04_Infrastructure_Tests.md` defines two resilience scenarios deferred
+at first-stage scope review — none implemented:
+- **4.1** Database unavailable during login returns 500
+- **5.1** Database recovery allows login after outage
+
+**Why deferred:** exercising these requires a stateful infra harness that takes the DB down and back
+up mid-test — expensive to build and maintain, low value before production traffic. The
+"unavailable → 500 (no leaked stack trace)" guarantee is worth having eventually but belongs in a
+hardening phase, not the MVP.
+
+**Current state of the code:** no DB-outage simulation in tests; the global exception handler /
+error-handling config governs error responses for the happy paths.
+
+**Scope options to decide at design time:** build a DB-toggle test harness (Testcontainers
+pause/resume or a failing DataSource proxy) and assert graceful 500 + RFC 9457 Problem Detail, or
+fold into a "Login hardening / resilience" story. Marked `[S] deferred` in `progress.md`
+(Infrastructure Scenarios).
+
 ## Done
 
 _(none yet)_
