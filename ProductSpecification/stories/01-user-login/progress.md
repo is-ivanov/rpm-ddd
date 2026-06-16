@@ -270,13 +270,13 @@
 
 ### Scenario 5.7: Mass assignment on activate endpoint — extra fields ignored
 - [x] red-acceptance (ActivateAccountMassAssignmentIntegrationTest — Level 1 regression guard, red+green collapse, predicted PASS → actual PASS, NO @ExpectedToFail. POST /api/auth/activate with token + injected extra JSON `role:"ADMIN"` + `status:"LOCKED"` → 200; then login as the activated user + GET /api/auth/me asserts the FULL body exact (all 7 fields): status="ACTIVE" (proves activation came from the flow, not the injected field), roles=[] (no elevation). Jackson silently drops unknown props on the closed `ActivateAccountRequest(token, password)` record. test-review HARDENED the guard: injected status="LOCKED" (a value the flow never produces — if mass-assigned, login would fail "Account locked"), dropped IGNORING_EXTRA_FIELDS for full-body exact match, added firstName/lastName to ActivatedUserRegistration + FIRST_NAME/LAST_NAME constants; AuthSessionFactory.loginAs(login,password) extracted (loginAsAdmin delegates). refactor CLEAN — inline JSON payload mirrors sibling ActivateAccount*IntegrationTest convention (malicious payload visible = test subject). CONSTRAINT: literal "role remains USER" is NOT HTTP-observable — no role concept in domain (CurrentUserResponse.roles hardcoded List.of()); roles=[] is the strongest proxy. 1 passed, 0 failed, 0 skipped. checkstyle/pmd/IDE clean.)
-- [~] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [x] design (Confirm existing implementation — no new code; no ADR. Single viable approach, no trade-off. Mass assignment is structurally impossible: (1) `ActivateAccountRequest` is a CLOSED Java record exposing only `{token, password}` — no binder surface for `role`/`status`; (2) Spring Boot's default Jackson config has `FAIL_ON_UNKNOWN_PROPERTIES=false`, so unknown JSON props are silently dropped, never bound; (3) the use case signature is `activationService.activate(token, password)` — extra fields cannot flow through. The domain has NO role/arbitrary-status concept settable from outside (`CurrentUserResponse.roles` hardcoded `List.of()`). Proven end-to-end by the red+green collapse at Level 1 (ActivateAccountMassAssignmentIntegrationTest). Mirrors 5.6 confirm-existing. Downstream steps [S] — zero production files change.)
+- [S] red-usecase (no usecase logic — mass-assignment protection is structural at the DTO/Jackson boundary; the closed record + activate(token,password) signature give no surface for extra fields. Zero usecase production files modified.)
+- [S] green-usecase (no new usecase code needed)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] adapters-discovery (no new ports, exceptions, or response shapes — the closed `ActivateAccountRequest(token, password)` record + Spring default Jackson unknown-property handling already enforce the behavior; existing REST adapter unchanged by this scenario)
+- [S] green-acceptance (no acceptance test to enable — red-acceptance is a red+green collapse that already passes with no @ExpectedToFail; the security property is proven at Level 1 by ActivateAccountMassAssignmentIntegrationTest)
 
 ### Scenario 5.8: Oversized password input rejected
 - [ ] red-acceptance
