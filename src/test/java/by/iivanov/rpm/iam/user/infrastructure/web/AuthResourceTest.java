@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 
-import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
 import by.iivanov.rpm.iam.user.application.ActivationService;
+import by.iivanov.rpm.iam.user.fixtures.AuthApi;
 import by.iivanov.rpm.testing.WebTest;
 import by.iivanov.rpm.testing.api.AssertionResponse;
 import by.iivanov.rpm.testing.api.FieldError;

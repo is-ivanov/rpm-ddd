@@ -1,4 +1,4 @@
-package by.iivanov.rpm.iam.auth.fixtures;
+package by.iivanov.rpm.iam.user.fixtures;
 
 import by.iivanov.rpm.testing.api.AssertionResponse;
 import org.springframework.http.HttpStatus;

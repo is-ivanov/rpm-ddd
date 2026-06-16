@@ -1,6 +1,6 @@
-package by.iivanov.rpm.iam.auth;
+package by.iivanov.rpm.iam.user;
 
-import by.iivanov.rpm.iam.auth.fixtures.LoginRateLimitStatements;
+import by.iivanov.rpm.iam.user.fixtures.LoginRateLimitStatements;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

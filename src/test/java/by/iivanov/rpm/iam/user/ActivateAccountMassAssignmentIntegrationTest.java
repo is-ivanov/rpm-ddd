@@ -1,8 +1,8 @@
-package by.iivanov.rpm.iam.auth;
+package by.iivanov.rpm.iam.user;
 
-import by.iivanov.rpm.iam.auth.fixtures.ActivationTokenFixture;
-import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
-import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
+import by.iivanov.rpm.iam.user.fixtures.ActivationTokenFixture;
+import by.iivanov.rpm.iam.user.fixtures.AuthApi;
+import by.iivanov.rpm.iam.user.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.DisplayName;

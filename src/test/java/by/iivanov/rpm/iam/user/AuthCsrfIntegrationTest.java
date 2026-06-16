@@ -1,6 +1,6 @@
-package by.iivanov.rpm.iam.auth;
+package by.iivanov.rpm.iam.user;
 
-import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
+import by.iivanov.rpm.iam.user.fixtures.AuthApi;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import io.qameta.allure.Issue;
 import org.intellij.lang.annotations.Language;

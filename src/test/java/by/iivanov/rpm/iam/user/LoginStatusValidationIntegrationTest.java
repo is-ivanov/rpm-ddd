@@ -1,9 +1,9 @@
-package by.iivanov.rpm.iam.auth;
+package by.iivanov.rpm.iam.user;
 
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 
-import by.iivanov.rpm.iam.auth.fixtures.AuthApi;
-import by.iivanov.rpm.iam.auth.fixtures.AuthSessionFactory;
+import by.iivanov.rpm.iam.user.fixtures.AuthApi;
+import by.iivanov.rpm.iam.user.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import by.iivanov.rpm.testing.api.AssertionResponse;
 import java.util.stream.Stream;

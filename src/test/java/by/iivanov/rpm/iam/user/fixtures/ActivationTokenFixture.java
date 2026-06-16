@@ -1,9 +1,8 @@
-package by.iivanov.rpm.iam.auth.fixtures;
+package by.iivanov.rpm.iam.user.fixtures;
 
 import by.iivanov.rpm.iam.user.domain.JtiGenerator;
 import by.iivanov.rpm.iam.user.domain.JwtActivationTokenGenerator;
 import by.iivanov.rpm.iam.user.domain.UserId;
-import by.iivanov.rpm.iam.user.fixtures.UserApi;
 import by.iivanov.rpm.iam.user.infrastructure.web.RegisterUserRequest;
 import by.iivanov.rpm.testing.session.SessionContext;
 import java.util.UUID;
