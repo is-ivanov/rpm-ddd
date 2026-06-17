@@ -50,7 +50,7 @@
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
     <spotbugs-maven-plugin.version>4.10.2.0</spotbugs-maven-plugin.version>
-    <spotless-maven-plugin.version>3.6.0</spotless-maven-plugin.version>
+    <spotless-maven-plugin.version>3.7.0</spotless-maven-plugin.version>
 
     <!--frontend build (activated by the 'frontend' profile) -->
     <node.version>v22.13.0</node.version>
