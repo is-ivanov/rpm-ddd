@@ -40,7 +40,7 @@
     <pmd.version>7.25.0</pmd.version>
     <shedlock.version>7.7.0</shedlock.version>
     <spring-modulith.version>2.1.0</spring-modulith.version>
-    <threeten-extra.version>1.9.0</threeten-extra.version>
+    <threeten-extra.version>1.10.0</threeten-extra.version>
     <uuid-creator.version>6.1.1</uuid-creator.version>
 
     <!--plugin versions -->
