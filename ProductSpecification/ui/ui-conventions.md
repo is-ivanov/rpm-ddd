@@ -121,6 +121,16 @@
 - Mobile: hamburger left, page title center, action icon right
 - Horizontal padding: 24px (desktop), 16px (mobile)
 
+#### App Shell variant (logo in top bar)
+
+The authenticated app shell places the **logo at the left of the top bar** (not the sidebar) and the **user menu at the right**; the top bar spans the full width above both the sidebar and the content. Used by the dashboard and every authenticated page going forward.
+
+- Logo: 20px/700, `--accent`, left-aligned
+- User menu (right): avatar (32px) + user name (14px/500) + `chevron-down` icon, 4px/8px padding, `--bg-primary` on hover
+- Clicking the user menu opens a dropdown anchored top-right: header row (name 14px/600 + email 13px/`--text-secondary`), divider, then items (e.g. `log-out` "Выйти")
+- Mobile: logo left, avatar right (no name); dropdown anchored under the avatar
+- Reusable scaffold: `templates/dashboard-layout.html`
+
 ### Card
 
 - White background, 8px radius, card shadow
@@ -256,3 +266,21 @@
 - `--bg-primary` background
 - No sidebar, no top bar
 - Mobile: same layout, 16px padding
+
+### Welcome / Landing (unauthenticated home)
+
+- Centered hero, no card, no sidebar, no top bar, `--bg-primary` background
+- Logo: large wordmark (48px desktop / 40px mobile, 700, `--accent`)
+- Tagline below logo (18px/600, `--text-primary`), then a short description (14px/`--text-secondary`)
+- Single primary CTA button below ("Войти" with `log-in` icon), 44px height
+- Max width 480px (desktop); full width minus 32px (mobile)
+
+### App Shell (Dashboard Layout)
+
+The authenticated layout for all signed-in pages.
+
+- **Top bar** (full width, 56px): logo left, user menu right — see "Top Bar → App Shell variant"
+- **Sidebar** (240px, `--bg-sidebar`, below the top bar): navigation items per the Sidebar component. The shell renders an empty sidebar until a story adds nav entries; an empty sidebar must read as intentional (subtle muted placeholder), never broken
+- **Content** (`--bg-primary`, fluid, 32px padding): page title (24px/700) + page content; use the Empty State component when a section has no data yet
+- Loading: while the current-user fetch resolves, show a centered `loader-2` spinner (32px, `--accent`) on `--bg-primary`
+- Reusable scaffold: `templates/dashboard-layout.html`

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=375">
+    <title>RPM — Главная (меню пользователя)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-white: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-placeholder: #adb5bd;
+            --border: #dee2e6;
+            --accent: #228be6;
+            --accent-light: #e7f5ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); min-height: 100vh; }
+
+        .topbar {
+            position: relative;
+            height: 56px;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+
+        .topbar-logo { font-size: 20px; font-weight: 700; color: var(--accent); }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 16px;
+            min-width: 240px;
+            background: var(--bg-white);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .dropdown-header { padding: 12px; }
+        .dropdown-header .dh-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .dropdown-header .dh-email { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+        .dropdown-divider { height: 1px; background: var(--border); }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 44px;
+            padding: 0 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .dropdown-item i { width: 18px; height: 18px; color: var(--text-secondary); }
+
+        .content {
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 56px);
+        }
+
+        .page-title { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .empty-state .empty-icon { width: 48px; height: 48px; color: var(--text-placeholder); }
+        .empty-state .empty-title { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+        .empty-state .empty-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-logo">RPM</div>
+        <div class="avatar">ИП</div>
+        <div class="dropdown">
+            <div class="dropdown-header">
+                <div class="dh-name">Иван Петров</div>
+                <div class="dh-email">i.petrov@rpm.local</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item">
+                <i data-lucide="log-out"></i>
+                Выйти
+            </div>
+        </div>
+    </header>
+
+    <main class="content">
+        <h1 class="page-title">Главная</h1>
+        <div class="empty-state">
+            <i data-lucide="layout-dashboard" class="empty-icon"></i>
+            <div class="empty-title">Панель управления</div>
+            <p class="empty-desc">Здесь появятся данные по пациентам, заказам и оповещениям по мере подключения модулей.</p>
+        </div>
+    </main>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -2,19 +2,20 @@
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |---|-------|------|------|------|-------|-----|------|-------|-------|----|
+| 3 | Home page | 🔧 | — | — | — | — | — | — | | |
 
 # Backlog
 
-| # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
-|---|-------|------|------|------|-------|-----|------|-------|-------|----|
-| 3 | User management: roles, agencies, basic permissions | · | · | · | · | · | · | · | | |
-| 4 | Patient creation | · | · | · | · | · | · | · | | |
-| 5 | Monitoring order: create and view | · | · | · | · | · | · | · | | |
-| 6 | IoT device registration and patient assignment | · | · | · | · | · | · | · | | |
-| 7 | Vitals collection from IoT devices | · | · | · | · | · | · | · | | |
-| 8 | Alerting on abnormal readings | · | · | · | · | · | · | · | | |
-| 9 | Home visit route planning | · | · | · | · | · | · | · | | |
-| 10 | Insurance report generation | · | · | · | · | · | · | · | | |
+| #  | Story                                               | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
+|----|-----------------------------------------------------|------|------|------|-------|-----|------|-------|-------|----|
+| 4  | User management: roles, agencies, basic permissions | · | · | · | · | · | · | · | | |
+| 5  | Patient creation                                    | · | · | · | · | · | · | · | | |
+| 6  | Monitoring order: create and view                   | · | · | · | · | · | · | · | | |
+| 7  | IoT device registration and patient assignment      | · | · | · | · | · | · | · | | |
+| 8  | Vitals collection from IoT devices                  | · | · | · | · | · | · | · | | |
+| 9  | Alerting on abnormal readings                       | · | · | · | · | · | · | · | | |
+| 10 | Home visit route planning                           | · | · | · | · | · | · | · | | |
+| 11 | Insurance report generation                         | · | · | · | · | · | · | · | | |
 
 # Done
 
