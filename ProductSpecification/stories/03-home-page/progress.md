@@ -16,8 +16,8 @@
 ## Frontend Scenarios (02_UI_Tests.md)
 
 ### Scenario 1.1: Unauthenticated home shows welcome with logo, tagline, and login button
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
