@@ -82,7 +82,8 @@ fold into a "Login hardening / resilience" story. Marked `[S] deferred` in `prog
 
 ### I4 — Deferred extended UI cases never promoted (found 2026-06-20, FE audit)
 
-**Observed:** the senior FE audit (`audit.md`) flagged several auth-form gaps that turned out to be
+**Observed:** the senior FE audit (`ProductSpecification/audits/2026-06-20-frontend-audit.md`) flagged
+several auth-form gaps that turned out to be
 **already specified** in `tests/extended/02_UI_Tests_Extended.md` (header *"Implement after core tests
 pass"*) but never tracked in `progress.md` and never promoted:
 

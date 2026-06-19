@@ -16,7 +16,8 @@ tests pass"*, but nothing ever pulls those cases into work:
 
 Result: extended cases are generated and then orphaned. Story 1's extended UI cases (password
 mismatch, real-time strength indicator, login loading state, banner dismiss) were silently dropped
-and only resurfaced via an external FE audit (`audit.md`). The instruction *"implement after core"*
+and only resurfaced via an external FE audit (`ProductSpecification/audits/2026-06-20-frontend-audit.md`).
+The instruction *"implement after core"*
 has no owner and no trigger in the process.
 
 ## Solution

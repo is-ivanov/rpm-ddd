@@ -5,7 +5,8 @@ Issue: #190
 
 ## Problem
 
-Findings from the senior FE audit (`audit.md`) that are pure quality / tech-debt — no behaviour
+Findings from the senior FE audit (`ProductSpecification/audits/2026-06-20-frontend-audit.md`) that
+are pure quality / tech-debt — no behaviour
 change required. Grouped into one task with four independent steps.
 
 ## Solution
