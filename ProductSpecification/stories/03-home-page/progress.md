@@ -5,6 +5,81 @@
 - [x] story
 - [x] mockups
 - [S] api-spec (no new HTTP endpoints — Home page is frontend-only and consumes the existing GET /api/auth/me + POST /api/auth/logout, both already documented in Story 1's `endpoints.md` with auth/CSRF notes; per api-spec MVP "when in doubt, leave it out". Mirrors Story 2's `[S] api-spec`.)
-- [~] test-spec
+- [x] test-spec
 
-<!-- Scenario sections (Frontend / Backend / Security / …) are appended when test-spec is generated — they are derived from tests/*.md. This is a frontend-only story: no new backend endpoints (GET /api/auth/me and POST /api/auth/logout already exist from Story 1). -->
+## Backend Scenarios
+(none — n/a: frontend-only story, no new endpoints; consumes existing GET /api/auth/me + POST /api/auth/logout covered by Story 1. See `tests/01_API_Tests.md`.)
+
+## Integration Scenarios
+(none — n/a: no external services, scheduled jobs, or cross-context flows. See `tests/06_Integration_Tests.md`.)
+
+## Frontend Scenarios (02_UI_Tests.md)
+
+### Scenario 1.1: Unauthenticated home shows welcome with logo, tagline, and login button
+- [~] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 2.1: Authenticated home shows the dashboard shell with the current user
+- [ ] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 3.1: Opening the user menu shows the user's name, email, and logout action
+- [ ] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 4.1: Clicking "Войти" on the welcome page opens the login page
+- [ ] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 4.2: Successful login redirects to the dashboard
+- [ ] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 4.3: Logging out from the user menu returns to the welcome page
+- [ ] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
+## Security Scenarios
+(none in main suite — n/a: no new endpoints/input; authorization + CSRF enforced server-side and covered by Story 1, profile-name XSS is framework-auto-escaped and self-scoped. One defence-in-depth check in `tests/extended/05_Security_Tests_Extended.md`. See `tests/05_Security_Tests.md`.)
+
+## Load Scenarios
+(none — n/a: frontend-only, one GET /api/auth/me per page load (existing endpoint). See `tests/03_Load_Tests.md`.)
+
+## Infrastructure Scenarios
+(none — n/a: no new persistence or external dependencies. See `tests/04_Infrastructure_Tests.md`.)
