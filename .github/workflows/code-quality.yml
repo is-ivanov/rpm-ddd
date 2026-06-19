@@ -28,7 +28,7 @@ jobs:
     name: Checkstyle
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Cache Checkstyle cache-file
         id: cache-checkstyle
         uses: actions/cache@v5
@@ -48,7 +48,7 @@ jobs:
     name: PMD
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Cache PMD cache-file
         id: cache-pmd
         uses: actions/cache@v5
@@ -74,7 +74,7 @@ jobs:
     name: SpotBugs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up JDK 25
         uses: actions/setup-java@v5
         with:
@@ -92,7 +92,7 @@ jobs:
     name: Spotless
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       # Job-owned Maven cache. Spotless resolves the Palantir formatter
       # (palantir-java-format + google-java-format + transitive) at goal-execution
       # time; those artifacts are NOT in the shared setup-java `cache: maven` (no
@@ -120,7 +120,7 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
