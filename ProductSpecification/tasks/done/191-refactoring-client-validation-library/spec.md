@@ -6,15 +6,6 @@ Issue: #191
 > **Discussion task.** Decide *whether* to apply before writing any code. Step 1 produces the
 > decision (and an ADR if the change is adopted); implementation steps are added only if adopted.
 
-## Dependencies
-
-- **Blocks #190 Step 2** (runtime response validation) — deferred there and folded into this task's
-  Step 2 implementation (see `progress.md`).
-- **Blocks #189** (password-rules + confirm-password) — a schema library underpins client-side
-  password validation; do the #189 password work after this decision.
-- **Do this first** within the FE-audit family (#187, #189–#193): it unblocks the most downstream
-  work. No upstream dependency of its own.
-
 ## Problem
 
 The FE audit notes our client-side validation is hand-rolled, while the current industry standard is
