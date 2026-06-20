@@ -10,7 +10,7 @@ export default tseslint.config(
     ignores: ['dist/**', 'coverage/**', 'node_modules/**', 'test-results/**', 'playwright-report/**', '**/*.d.ts'],
   },
   eslint.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
   ...pluginVue.configs['flat/recommended'],
   {
     files: ['**/*.{ts,vue}'],
@@ -20,6 +20,9 @@ export default tseslint.config(
       globals: { ...globals.browser },
       parserOptions: {
         parser: tseslint.parser,
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        extraFileExtensions: ['.vue'],
       },
     },
     rules: {
@@ -31,6 +34,10 @@ export default tseslint.config(
     languageOptions: {
       globals: { ...globals.node },
     },
+  },
+  {
+    files: ['**/*.js'],
+    ...tseslint.configs.disableTypeChecked,
   },
   eslintConfigPrettier,
   ...oxlint.buildFromOxlintConfigFile('.oxlintrc.json'),

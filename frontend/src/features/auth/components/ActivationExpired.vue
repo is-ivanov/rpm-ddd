@@ -6,7 +6,7 @@ import ActivationResultCard from './ActivationResultCard.vue';
 const router = useRouter();
 
 function requestNewLink(): void {
-  router.push('/login');
+  void router.push('/login');
 }
 </script>
 

@@ -8,10 +8,10 @@ Type: refactoring
 ## Fix
 
 ### Step 1: type-checked ESLint (recommendedTypeChecked)
-- [ ] refactor (eslint config + fix surfaced violations)
+- [x] refactor (eslint config + fix surfaced violations)
 
 ### Step 2: runtime response validation (replace blind `as`)
-- [ ] red-frontend-api
+- [~] red-frontend-api
 - [ ] green-frontend-api
 
 ### Step 3: design tokens (remove hex, unify palette, extract logo)
