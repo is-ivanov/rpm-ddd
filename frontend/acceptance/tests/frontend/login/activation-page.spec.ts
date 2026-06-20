@@ -102,10 +102,6 @@ test.describe('Activation Page', () => {
       'And a server error message with the backend detail is displayed instead',
     async () => {
       await issue('188');
-      // RED — ActivationPage shows the success screen on a 4xx POST and renders no
-      // server-error element (activateAccount discards the Response, activated=true is
-      // set unconditionally). assertServerErrorIsDisplayed fails: element not found.
-      test.fail();
       await activationBackend.givenValidTokenButActivationRejectsWeakPassword({
         login: 'ivan',
         email: 'ivan@example.com',
