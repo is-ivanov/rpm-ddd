@@ -52,9 +52,7 @@ describe('Activation API Client', () => {
     expect(requestUrl.searchParams.get('token')).toBe('valid-jwt-token');
   });
 
-  // RED — validateActivationToken does a blind `as` cast (no zod parse), so a malformed
-  // 200 body resolves instead of rejecting. Green wires schema.parse to reject it.
-  it.fails('rejects when a 200 response body does not conform to the activation contract', async () => {
+  it('rejects when a 200 response body does not conform to the activation contract', async () => {
     stubActivateMalformedSuccess();
 
     const error = await captureRejection(validateActivationToken('valid-jwt-token'));
