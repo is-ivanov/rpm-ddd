@@ -8,13 +8,21 @@ Type: refactoring
 ## Fix
 
 ### Step 1: Decision — adopt a validation library or keep custom
-- [ ] design (write-up our approach + .claude constraints + senior remark + pros/cons → decide; ADR if adopted)
+- [x] design (decision: **adopt zod**; ADR `decisions/client-validation-library-decision.md`)
 
-### Step 2: Implementation (only if adopted)
-- [S] (steps defined after the Step 1 decision)
-> **Folds in Task 190 Step 2** — when a library is chosen, the same schemas validate the network
-> boundary (`login.api.ts` / `activation.api.ts`), replacing the blind `as ProblemDetail` /
-> `as ActivationTokenResponse` casts. Add an explicit `red-frontend-api` / `green-frontend-api`
-> cycle for that here (the work originally scoped as #190 Step 2). Also underpins #189's
-> password-rules + confirm-password validation. If Step 1 decides to **keep custom**, the #190
-> Step 2 type-guard work goes back to Task 190 instead.
+### Step 2: Implementation — adopt zod + validate the network boundary
+> **Folds in Task 190 Step 2**: the schemas validate the network boundary
+> (`login.api.ts` / `activation.api.ts`), replacing the blind `as ProblemDetail` /
+> `as ActivationTokenResponse` casts. #189's password-rules + confirm-password validation builds on
+> this convention but lands in Task #189, not here.
+
+- [~] setup — `npm install zod`; add the schema-storage convention to `frontend-rules.md`
+  (`src/app/schemas/` cross-feature, `src/features/{feature}/schemas/` per-feature, types via
+  `z.infer`); add `src/app/schemas/problem-detail.schema.ts` (RFC 9457 shape) → commit
+- [ ] red-frontend-api (runtime response validation) — `activation.api.ts` + `login.api.ts` parse
+  server payloads through zod schemas (`ProblemDetail`, `ActivationTokenResponse`) instead of `as`
+  casts; test asserts a schema-rejecting payload surfaces the feature error, not a fake success
+- [ ] green-frontend-api — introduce the schemas + `.parse` calls; derive types via `z.infer`,
+  migrating the touched `types.ts` interfaces
+- [ ] refactor login-form validation — replace `isLoginFormValid` with a zod-backed validator only
+  if it improves clarity; otherwise `[S]` (trivial non-empty check, no behavior change)

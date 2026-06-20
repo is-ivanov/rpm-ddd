@@ -56,8 +56,16 @@ duplication.
 
 ## Decision
 
-_To be filled in Step 1._ If adopted: pick the library, define where schemas live, and add
-implementation steps (and likely fold #190 step 2 into it).
+**Adopt zod** (2026-06-20). One schema yields runtime validation + the compile-time type, replacing
+the blind `as ProblemDetail` / `as ActivationTokenResponse` casts at the network boundary and
+underpinning #189's password rules. valibot rejected (smaller ecosystem; bundle saving not worth it);
+vee-validate rejected (form-state + component coupling conflicts with the Humble Object rule);
+keep-custom rejected (no runtime contract for network data).
+
+Schema-storage convention: cross-feature schemas in `src/app/schemas/`, feature schemas in
+`src/features/{feature}/schemas/*.schema.ts`; types derived via `z.infer`. Full rationale, model, and
+edge cases in `decisions/client-validation-library-decision.md`. #190 Step 2 (runtime response
+validation) is folded into Step 2 below.
 
 ## Key Files
 
