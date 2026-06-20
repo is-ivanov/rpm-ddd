@@ -1,3 +1,4 @@
+import { GENERIC_SUBMIT_ERROR_MESSAGE } from './error-copy';
 import { LoginError, type LoginFieldError } from './types';
 
 export interface LoginFieldErrors {
@@ -38,7 +39,7 @@ export function mapLoginErrorToView(error: unknown): LoginErrorView {
     return viewFromLoginError(error);
   }
   return {
-    errorMessage: 'Something went wrong. Please try again.',
+    errorMessage: GENERIC_SUBMIT_ERROR_MESSAGE,
     requiresActivation: false,
     fieldErrors: {},
   };

@@ -1,3 +1,4 @@
+import { GENERIC_SUBMIT_ERROR_MESSAGE } from './error-copy';
 import { ActivationError } from './types';
 
 export interface ActivationSubmitErrorView {
@@ -5,7 +6,8 @@ export interface ActivationSubmitErrorView {
 }
 
 export function mapActivationSubmitErrorToView(error: unknown): ActivationSubmitErrorView {
-  void error;
-  void ActivationError;
-  throw new Error('Not implemented');
+  if (error instanceof ActivationError) {
+    return { errorMessage: error.message };
+  }
+  return { errorMessage: GENERIC_SUBMIT_ERROR_MESSAGE };
 }

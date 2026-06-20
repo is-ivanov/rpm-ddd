@@ -4,8 +4,7 @@ import { mapActivationSubmitErrorToView } from '../logic/activation-error-view.l
 import { ActivationError } from '../logic/types';
 
 describe('Activation Submit Error View Mapping', () => {
-  // RED — mapActivationSubmitErrorToView is a stub (throws 'Not implemented') until GREEN
-  it.fails('passes an ActivationError message through to the error view', async () => {
+  it('passes an ActivationError message through to the error view', async () => {
     await issue('188');
 
     const view = mapActivationSubmitErrorToView(
@@ -17,8 +16,7 @@ describe('Activation Submit Error View Mapping', () => {
     });
   });
 
-  // RED — mapActivationSubmitErrorToView is a stub (throws 'Not implemented') until GREEN
-  it.fails('maps an unexpected (non-ActivationError) failure to the generic error view', async () => {
+  it('maps an unexpected (non-ActivationError) failure to the generic error view', async () => {
     await issue('188');
 
     const view = mapActivationSubmitErrorToView(new TypeError('fetch failed'));
