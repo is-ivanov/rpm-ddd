@@ -207,8 +207,8 @@
 > tracked separately in improvements.md I5.
 
 ### Scenario 2.2: Login page shows loading state during submission
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (login-loading.spec.ts §2.2 — test.fail() RED marker; new spec split from login-page.spec.ts to stay ≤200L. Backend mock givenSlowLoginRequest holds POST /api/auth/login via a deferred promise so the in-flight loading state is observable — no sleeps; whileSlowLoginIsHeld(action) owns the held-route lifecycle + guaranteed release. LoginLoadingStatements asserts all 3 DSL consequences: submit-loading indicator visible + login/password inputs disabled. RED genuine: LoginPage.vue has no `submitting` state, no submit-loading testid, no :disabled bindings. PREDICT toBeVisible timeout on submit-loading — matched (Type/Message/Status all YES). New testid for align-design: submit-loading. test-review: wrapped release in try/finally (clean otherwise). refactor: Extract Method assertLoadingStateIsActive() + encapsulate held-route in whileSlowLoginIsHeld(). CLI lint clean (eslint/oxlint/prettier/vue-tsc EXIT=0); IDE clean except SonarLint S2068 FP on the password-input testid — already suppressed via // noinspection HardcodedPasswordInspection mirroring login-page.statements.ts, IDE-only not a CI gate)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
