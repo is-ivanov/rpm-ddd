@@ -21,9 +21,7 @@ export default defineConfig(
       globals: { ...globals.browser },
       parserOptions: {
         parser: tseslint.parser,
-        projectService: {
-          allowDefaultProject: ['eslint.config.ts'],
-        },
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
         extraFileExtensions: ['.vue'],
       },

@@ -21,5 +21,13 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts", "env.d.ts", "playwright.config.ts", "acceptance/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "eslint.config.ts",
+    "vite.config.ts",
+    "env.d.ts",
+    "playwright.config.ts",
+    "acceptance/**/*.ts"
+  ]
 }
