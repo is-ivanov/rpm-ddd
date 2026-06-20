@@ -9,8 +9,8 @@ Type: bug
 
 ### Fix: activation shows server error on 4xx instead of fake success
 - [x] red-playwright
-- [~] red-frontend
-- [ ] green-frontend
+- [x] red-frontend
+- [~] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
