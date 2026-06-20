@@ -11,16 +11,17 @@ Type: refactoring
 - [x] refactor (eslint config + fix surfaced violations)
 
 ### Step 2: runtime response validation (replace blind `as`)
-> **Deferred — depends on #191** (validation-library decision is still open). The library choice
-> determines how we validate the network boundary, so this step is folded into Task 191's
-> implementation (see `191/progress.md` Step 2). Revisit here only if #191 decides to keep custom
-> validation, in which case hand-written type guards land in this task.
-- [S] red-frontend-api (deferred → done under #191 once the library is chosen)
-- [S] green-frontend-api (deferred → done under #191 once the library is chosen)
+> **Done under #191 — zod adopted.** #191 chose zod and validated the network boundary as part of
+> its Step 2 (explicitly "folds in Task 190 Step 2"): the blind `as ProblemDetail` /
+> `as ActivationTokenResponse` casts in `login.api.ts` / `activation.api.ts` were replaced with
+> `problemDetailSchema` / `activationTokenResponseSchema`. The "keep custom validation" branch did
+> not occur, so nothing lands here.
+- [S] red-frontend-api (done under #191 — zod network-boundary validation)
+- [S] green-frontend-api (done under #191 — zod network-boundary validation)
 
 ### Step 3: design tokens (remove hex, unify palette, extract logo)
-- [ ] align-design
-- [ ] refactor (cleanup)
+- [x] align-design
+- [~] refactor (cleanup)
 
 ### Step 4: dedup (PasswordField, types, routes, fonts)
 - [ ] refactor (cleanup)

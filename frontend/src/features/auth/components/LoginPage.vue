@@ -5,6 +5,7 @@ import { login } from '../logic/login.api';
 import { mapLoginErrorToView, type LoginFieldErrors } from '../logic/login-error-view.logic';
 import { isLoginFormValid } from '../logic/login-form.logic';
 import LoginErrorBanner from './LoginErrorBanner.vue';
+import AppLogo from '@/app/components/AppLogo.vue';
 
 const loginName = ref('');
 const password = ref('');
@@ -34,16 +35,16 @@ function showLoginError(error: unknown): void {
 </script>
 
 <template>
-  <main class="flex min-h-screen items-center justify-center bg-[#f8f9fa] font-sans">
+  <main class="flex min-h-screen items-center justify-center bg-surface font-sans">
     <div class="auth-card">
-      <div class="mb-6 text-center text-2xl font-bold text-[#228be6]">RPM</div>
-      <div class="mb-6 text-center text-lg font-semibold text-[#212529]">Sign In</div>
+      <AppLogo class="mb-6 text-center" />
+      <div class="mb-6 text-center text-lg font-semibold text-ink">Sign In</div>
 
       <LoginErrorBanner v-if="errorMessage" :message="errorMessage" :requires-activation="requiresActivation" />
 
       <form @submit.prevent="submitLogin">
         <div class="mb-4">
-          <label for="login" class="mb-1.5 block text-sm font-medium text-[#212529]">Username</label>
+          <label for="login" class="mb-1.5 block text-sm font-medium text-ink">Username</label>
           <input
             id="login"
             v-model="loginName"
@@ -57,7 +58,7 @@ function showLoginError(error: unknown): void {
         </div>
 
         <div class="mb-4">
-          <label for="password" class="mb-1.5 block text-sm font-medium text-[#212529]">Password</label>
+          <label for="password" class="mb-1.5 block text-sm font-medium text-ink">Password</label>
           <div class="relative">
             <input
               id="password"
@@ -72,7 +73,7 @@ function showLoginError(error: unknown): void {
               type="button"
               data-testid="password-toggle"
               :aria-label="showPassword ? 'Hide password' : 'Show password'"
-              class="absolute right-2.5 top-1/2 flex -translate-y-1/2 cursor-pointer items-center border-none bg-transparent p-0 text-[#6c757d] hover:text-[#212529]"
+              class="absolute right-2.5 top-1/2 flex -translate-y-1/2 cursor-pointer items-center border-none bg-transparent p-0 text-muted hover:text-ink"
               @click="showPassword = !showPassword"
             >
               <EyeOff v-if="showPassword" :size="18" />

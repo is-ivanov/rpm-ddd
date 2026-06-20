@@ -14,7 +14,7 @@ function goToSignIn(): void {
   <ActivationResultCard
     test-id="activation-success"
     :icon="CheckCircle2"
-    icon-color-class="text-[#40c057]"
+    icon-color-class="text-success"
     title="Account Activated!"
     description="Your password has been set. You can now sign in."
     button-test-id="go-to-sign-in-button"

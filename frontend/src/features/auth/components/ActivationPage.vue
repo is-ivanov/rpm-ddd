@@ -6,6 +6,7 @@ import { activateAccount, validateActivationToken } from '../logic/activation.ap
 import { mapActivationSubmitErrorToView } from '../logic/activation-error-view.logic';
 import { ActivationError, type ActivationTokenResponse } from '../logic/types';
 import PasswordField from './PasswordField.vue';
+import AppLogo from '@/app/components/AppLogo.vue';
 import ActivationSuccess from './ActivationSuccess.vue';
 import ActivationExpired from './ActivationExpired.vue';
 import ActivationErrorBanner from './ActivationErrorBanner.vue';
@@ -56,21 +57,19 @@ function tokenFromRoute(): string {
 </script>
 
 <template>
-  <main class="flex min-h-screen items-center justify-center bg-[#f8f9fa] font-sans">
+  <main class="flex min-h-screen items-center justify-center bg-surface font-sans">
     <ActivationSuccess v-if="activated" />
     <ActivationExpired v-else-if="tokenInvalid" />
     <div v-else class="auth-card">
-      <div class="mb-6 text-center text-2xl font-bold text-[#228be6]">RPM</div>
-      <div class="mb-1 text-lg font-semibold text-[#212529]">Set Password</div>
-      <div v-if="account" class="mb-5 text-sm text-[#6c757d]">
-        For account {{ account.login }} ({{ account.email }})
-      </div>
+      <AppLogo class="mb-6 text-center" />
+      <div class="mb-1 text-lg font-semibold text-ink">Set Password</div>
+      <div v-if="account" class="mb-5 text-sm text-muted">For account {{ account.login }} ({{ account.email }})</div>
 
       <ActivationErrorBanner v-if="submitError" :message="submitError" />
 
       <form @submit.prevent="submitActivation">
         <div class="mb-4">
-          <label for="activation-password" class="mb-1.5 block text-sm font-medium text-[#212529]">New password</label>
+          <label for="activation-password" class="mb-1.5 block text-sm font-medium text-ink">New password</label>
           <PasswordField
             v-model="password"
             input-id="activation-password"
@@ -85,7 +84,7 @@ function tokenFromRoute(): string {
             v-for="rule in PASSWORD_RULES"
             :key="rule"
             data-testid="password-complexity-rule"
-            class="mb-1 flex items-center gap-2 text-[13px] text-[#6c757d]"
+            class="mb-1 flex items-center gap-2 text-[13px] text-muted"
           >
             <Check class="shrink-0" :size="16" />
             {{ rule }}
@@ -93,9 +92,7 @@ function tokenFromRoute(): string {
         </div>
 
         <div class="mb-4">
-          <label for="activation-confirm" class="mb-1.5 block text-sm font-medium text-[#212529]"
-            >Confirm password</label
-          >
+          <label for="activation-confirm" class="mb-1.5 block text-sm font-medium text-ink">Confirm password</label>
           <PasswordField
             v-model="confirmPassword"
             input-id="activation-confirm"

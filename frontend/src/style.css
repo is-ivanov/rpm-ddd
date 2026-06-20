@@ -3,6 +3,20 @@
 
 @theme {
   --font-sans: 'Inter', sans-serif;
+
+  --color-accent: #228be6;
+  --color-accent-hover: #1c7ed6;
+  --color-accent-focus: #4dabf7;
+
+  --color-surface: #f8f9fa;
+  --color-ink: #212529;
+  --color-muted: #6c757d;
+  --color-placeholder: #adb5bd;
+  --color-line: #dee2e6;
+
+  --color-danger: #fa5252;
+  --color-danger-surface: #fff5f5;
+  --color-success: #40c057;
 }
 
 @layer components {
@@ -12,14 +26,14 @@
 
   .btn-primary {
     @apply h-10 w-full rounded-md text-sm font-medium transition-colors;
-    @apply bg-[#228be6] text-white hover:bg-[#1c7ed6];
-    @apply disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#228be6];
+    @apply bg-accent text-white hover:bg-accent-hover;
+    @apply disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-accent;
   }
 
   .form-input {
-    @apply h-10 w-full rounded-md border border-[#dee2e6] px-3;
-    @apply text-sm text-[#212529] outline-none;
-    @apply placeholder:text-[#adb5bd] focus:border-[#4dabf7];
+    @apply h-10 w-full rounded-md border border-line px-3;
+    @apply text-sm text-ink outline-none;
+    @apply placeholder:text-placeholder focus:border-accent-focus;
   }
 
   .form-input::-ms-reveal,
@@ -28,10 +42,15 @@
   }
 
   .field-error {
-    @apply mt-1.5 text-[13px] text-[#fa5252];
+    @apply mt-1.5 text-[13px] text-danger;
+  }
+
+  .error-banner {
+    @apply mb-4 flex items-start gap-2 rounded-md bg-danger-surface px-3 py-2.5;
+    @apply text-[13px] leading-[1.4] text-danger;
   }
 
   .link-primary {
-    @apply text-[#228be6] hover:underline;
+    @apply text-accent hover:underline;
   }
 }

@@ -14,7 +14,7 @@ function requestNewLink(): void {
   <ActivationResultCard
     test-id="activation-error"
     :icon="XCircle"
-    icon-color-class="text-[#fa5252]"
+    icon-color-class="text-danger"
     title="Link Expired"
     description="The activation link is invalid or has expired. Please request a new one."
     button-test-id="request-new-link-button"
