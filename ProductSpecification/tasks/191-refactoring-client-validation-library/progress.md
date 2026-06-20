@@ -19,10 +19,10 @@ Type: refactoring
 - [x] setup — `npm install zod` (4.4.3); schema-storage convention added to the vue-ts tech binding
   (`.claude/tech/vue-ts/coding.md` → "Schema Validation (zod)"); added
   `src/app/schemas/problem-detail.schema.ts` (RFC 9457 shape)
-- [~] red-frontend-api (runtime response validation) — `activation.api.ts` + `login.api.ts` parse
-  server payloads through zod schemas (`ProblemDetail`, `ActivationTokenResponse`) instead of `as`
-  casts; test asserts a schema-rejecting payload surfaces the feature error, not a fake success
-- [ ] green-frontend-api — introduce the schemas + `.parse` calls; derive types via `z.infer`,
+- [x] red-frontend-api (runtime response validation) — `it.fails` test in `activation.api.test.ts`:
+  a 200 with a schema-violating body (`{ login }`, no `email`) must reject; today the blind `as`
+  cast resolves it. Prediction matched 3/3. (`login.api.ts` boundary follows in green.)
+- [~] green-frontend-api — introduce the schemas + `.parse` calls; derive types via `z.infer`,
   migrating the touched `types.ts` interfaces
 - [ ] refactor login-form validation — replace `isLoginFormValid` with a zod-backed validator only
   if it improves clarity; otherwise `[S]` (trivial non-empty check, no behavior change)
