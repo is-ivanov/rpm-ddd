@@ -22,11 +22,19 @@ export class ActivationBackendStatements {
   constructor(private readonly page: Page) {}
 
   async givenPendingAccountForToken(account: Account): Promise<void> {
-    await this.installActivationRoutes((route) => this.handleActivate(route, account));
+    await this.installActivationRoutes((route) =>
+      this.handleValidToken(route, account, (post) => this.fulfillActivationSuccess(post)),
+    );
   }
 
   async givenExpiredToken(): Promise<void> {
     await this.installActivationRoutes((route) => this.handleExpiredToken(route));
+  }
+
+  async givenValidTokenButActivationRejectsWeakPassword(account: Account): Promise<void> {
+    await this.installActivationRoutes((route) =>
+      this.handleValidToken(route, account, (post) => this.fulfillWeakPasswordRejection(post)),
+    );
   }
 
   async givenSessionExpired(): Promise<void> {
@@ -78,12 +86,26 @@ export class ActivationBackendStatements {
     });
   }
 
-  private async handleActivate(route: Route, account: Account): Promise<void> {
+  private async handleValidToken(
+    route: Route,
+    account: Account,
+    fulfillPost: (route: Route) => Promise<void>,
+  ): Promise<void> {
     if (route.request().method() === 'POST') {
-      await this.fulfillActivationSuccess(route);
+      await fulfillPost(route);
       return;
     }
     await this.fulfillTokenValidation(route, account);
+  }
+
+  private async fulfillWeakPasswordRejection(route: Route): Promise<void> {
+    await this.fulfillProblem(route, {
+      type: 'about:blank',
+      title: 'Unprocessable Entity',
+      status: 422,
+      detail: 'Password does not meet the complexity requirements.',
+      instance: '/api/auth/activate',
+    });
   }
 
   private async fulfillTokenValidation(route: Route, account: Account): Promise<void> {

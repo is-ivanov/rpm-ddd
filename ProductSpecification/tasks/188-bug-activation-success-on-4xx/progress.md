@@ -8,8 +8,8 @@ Type: bug
 ## Frontend
 
 ### Fix: activation shows server error on 4xx instead of fake success
-- [ ] red-playwright
-- [ ] red-frontend
+- [x] red-playwright
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
