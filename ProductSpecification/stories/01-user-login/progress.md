@@ -198,6 +198,54 @@
 - [x] green-playwright (skip marker removed — navigation E2E-verified; backend mocked in-browser via page.route, frontend auto-started via Playwright webServer. activation-page.spec.ts 4/4 pass (§4.1/§5.1/§5.2/§6.1), no regressions. Remove-marker-only: no production/Statements changes)
 - [x] demo (ran activation-page.spec.ts §6.1 headed + slowMo 1200ms maximized; 1 passed; config reverted. Note: demo config needs deviceScaleFactor:undefined alongside viewport:null in the chromium project — Desktop Chrome device sets deviceScaleFactor which conflicts with null viewport)
 
+> **Promoted 2026-06-20 (issue #189) from `tests/extended/02_UI_Tests_Extended.md`.** These four
+> extended UI cases were deferred-by-design and never tracked (FE audit `audits/2026-06-20-frontend-audit.md`,
+> improvements.md I4). Now first-class core scenarios 2.2/3.3/4.2/4.3 (see `tests/02_UI_Tests.md`).
+> Dependency note: #191 (client validation library — zod) is MERGED, so the real-time strength (4.2)
+> and password-mismatch (4.3) scenarios are unblocked. The dead "Request a new activation email"
+> link (href="#") is NOT in scope here — it needs a resend-activation feature that does not exist;
+> tracked separately in improvements.md I5.
+
+### Scenario 2.2: Login page shows loading state during submission
+- [~] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 3.3: Error banner dismiss button closes the banner
+- [ ] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 4.2: Activation page shows password strength indicator updating in real-time
+- [ ] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 4.3: Activation page shows error when passwords do not match
+- [ ] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
 ## Security Scenarios
 
 ### Scenario 5.1: SQL injection in login field does not bypass authentication

@@ -1,4 +1,13 @@
 > These are additional edge case tests. Implement after core tests pass.
+>
+> **PROMOTED 2026-06-20 (issue #189):** all four cases below are now first-class Story 1 UI
+> scenarios in the core spec `../02_UI_Tests.md` and tracked in `../../progress.md`:
+> - "Login page shows loading state during submission" → core **2.2**
+> - "Activation page shows password strength indicator updating in real-time" → core **4.2**
+> - "Activation page shows error when passwords do not match" → core **4.3**
+> - "Error banner dismiss button closes the banner" → core **3.3**
+>
+> The gherkin below is retained as history; the core spec is now authoritative.
 
 # UI Tests — Extended Edge Cases
 

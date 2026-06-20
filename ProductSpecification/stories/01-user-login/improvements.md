@@ -80,31 +80,41 @@ pause/resume or a failing DataSource proxy) and assert graceful 500 + RFC 9457 P
 fold into a "Login hardening / resilience" story. Marked `[S] deferred` in `progress.md`
 (Infrastructure Scenarios).
 
-### I4 — Deferred extended UI cases never promoted (found 2026-06-20, FE audit)
+### I5 — Dead "Request a new activation email" link needs a resend-activation feature (found 2026-06-20)
 
-**Observed:** the senior FE audit (`ProductSpecification/audits/2026-06-20-frontend-audit.md`) flagged
-several auth-form gaps that turned out to be
-**already specified** in `tests/extended/02_UI_Tests_Extended.md` (header *"Implement after core tests
-pass"*) but never tracked in `progress.md` and never promoted:
+**Observed:** the inactive-account error banner (`LoginErrorBanner.vue`, rendered in Scenario 3.2)
+contains a "Request a new activation email" link with `href="#"` — it goes nowhere.
 
-- **passwords do not match** — `confirmPassword` is decorative: `submitActivation` sends only
-  `password`, no comparison (`ActivationPage.vue`).
-- **password strength indicator updating in real-time** — `PASSWORD_RULES` always render a green
-  `Check`; no client validation.
-- **login loading state during submission** — no submitting state → double-submit possible.
-- **error banner dismiss button** — plus the dead "Request a new activation email" link
-  (`href="#"`) in `LoginErrorBanner.vue`.
+**Spec context:** Scenario 3.2 *requires* the link to be present ("the error banner contains a link to
+request a new activation email"), so the link must NOT be removed. Making it functional requires a
+**resend-activation** capability (a backend endpoint to re-issue an activation email + a frontend
+flow) that does not exist in Story 1. This is therefore a missing-by-design enhancement, not a UI
+dismiss-button concern — it was split out of I4 when the four extended UI cases were promoted.
 
-**Spec context:** all four exist in the Story 1 extended UI test file; deferred by design, orphaned
-by the process gap now tracked as #187 (extended cases never enter the pipeline).
+**Current state of the code:** link rendered with `href="#"`; no resend endpoint, no resend flow.
 
-**Current state of the code:** built only to the core happy-path (confirm field visible but unused,
-rules always green, no loading state). Backend rejects bad passwords correctly; the gap is FE-only.
-
-**Scope options to decide at design time:** promote into Story 1 UI scenarios (red-playwright /
-red-frontend cycle) or keep deferred here. Tracked as enhancement **#189**. The fake-success-on-4xx
-half of the activation finding is a **real bug** (never specified) — split out to Task #188.
+**Scope options to decide at design time:** add a resend-activation backend endpoint + wire the link
+to a real flow (likely its own small story or a Story 1 follow-up), or convert the link to a
+router/action target once such a flow exists.
 
 ## Done
 
-_(none yet)_
+### I4 — Deferred extended UI cases never promoted (found 2026-06-20, FE audit) — DONE 2026-06-20
+
+**Resolved by:** promoted into Story 1 core UI scenarios (issue **#189**) — `tests/02_UI_Tests.md`
+gained scenarios **2.2** (login loading state), **3.3** (error banner dismiss), **4.2** (real-time
+password strength), **4.3** (passwords do not match), each tracked with the full red-playwright /
+red-frontend TDD cycle in `progress.md`. #191 (zod client validation) being merged unblocked 4.2/4.3.
+
+The original finding: the senior FE audit (`ProductSpecification/audits/2026-06-20-frontend-audit.md`)
+flagged auth-form gaps already specified in `tests/extended/02_UI_Tests_Extended.md` (*"Implement
+after core tests pass"*) but never tracked in `progress.md`:
+
+- **passwords do not match** — `confirmPassword` decorative; `submitActivation` sends only `password`.
+- **password strength indicator updating in real-time** — `PASSWORD_RULES` always render green `Check`.
+- **login loading state during submission** — no submitting state → double-submit possible.
+- **error banner dismiss button** — dismiss not wired (the dead resend link split out to **I5**).
+
+Orphaned by the process gap tracked as #187 (extended cases never enter the pipeline). The
+fake-success-on-4xx half of the activation finding was a **real bug** (never specified) — handled in
+Task #188.
