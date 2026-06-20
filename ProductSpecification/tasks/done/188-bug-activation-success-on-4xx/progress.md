@@ -15,4 +15,4 @@ Type: bug
 - [x] green-frontend-api
 - [x] align-design
 - [x] green-playwright
-- [~] demo
+- [x] demo
