@@ -26,5 +26,7 @@ Type: refactoring
   `safeParse`s the success body (malformed → `ActivationError`), and both `activation.api.ts` +
   `login.api.ts` parse the error body via `problemDetailSchema` (retiring the blind `as` casts and
   the dead setup schema); `types.ts` migrated to `z.infer` re-exports. Auth suite: 20 passed.
-- [~] refactor login-form validation — replace `isLoginFormValid` with a zod-backed validator only
-  if it improves clarity; otherwise `[S]` (trivial non-empty check, no behavior change)
+- [S] refactor login-form validation — kept `isLoginFormValid` as-is. A zod schema over a pure
+  non-empty/trim boolean gate adds indirection with no behavior change (less readable, not more).
+  The meaningful login/auth schema with real rules lands in #189 (password-rules +
+  confirm-password); a `min(1)`-only schema now would just be rewritten there. Matches the ADR note.
