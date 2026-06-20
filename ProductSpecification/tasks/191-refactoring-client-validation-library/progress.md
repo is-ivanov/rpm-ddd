@@ -16,10 +16,10 @@ Type: refactoring
 > `as ActivationTokenResponse` casts. #189's password-rules + confirm-password validation builds on
 > this convention but lands in Task #189, not here.
 
-- [~] setup — `npm install zod`; add the schema-storage convention to `frontend-rules.md`
-  (`src/app/schemas/` cross-feature, `src/features/{feature}/schemas/` per-feature, types via
-  `z.infer`); add `src/app/schemas/problem-detail.schema.ts` (RFC 9457 shape) → commit
-- [ ] red-frontend-api (runtime response validation) — `activation.api.ts` + `login.api.ts` parse
+- [x] setup — `npm install zod` (4.4.3); schema-storage convention added to the vue-ts tech binding
+  (`.claude/tech/vue-ts/coding.md` → "Schema Validation (zod)"); added
+  `src/app/schemas/problem-detail.schema.ts` (RFC 9457 shape)
+- [~] red-frontend-api (runtime response validation) — `activation.api.ts` + `login.api.ts` parse
   server payloads through zod schemas (`ProblemDetail`, `ActivationTokenResponse`) instead of `as`
   casts; test asserts a schema-rejecting payload surfaces the feature error, not a fake success
 - [ ] green-frontend-api — introduce the schemas + `.parse` calls; derive types via `z.infer`,
