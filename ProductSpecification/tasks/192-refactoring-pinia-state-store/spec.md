@@ -7,6 +7,15 @@ Issue: #192
 > decision (and an ADR if adopted). Linked to `stories/01-user-login/improvements.md` **I1** and
 > Story 3 (home page).
 
+## Dependencies
+
+- **Linked to improvements `I1`** (no post-login / logged-in state) and **Story 3** (home page) —
+  the first real shared/session state is the trigger; coordinate the decision with whoever picks up
+  I1 / Story 3.
+- **Touches #162/Task 8 output** (done): the 401→login redirect in `fetch.api.ts` would move from
+  the transport into a reactive router guard if Pinia is adopted.
+- No hard blocker; independent of #190/#191/#193. Best decided alongside Story 3 planning.
+
 ## Problem
 
 The FE audit notes there is no state layer: all state is local `ref`s, cross-component coupling is

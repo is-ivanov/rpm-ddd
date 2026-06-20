@@ -3,6 +3,14 @@
 Type: refactoring
 Issue: #187
 
+## Dependencies
+
+- **Process fix for the root cause of #189** — #189 (Story 1 extended UI cases) is exactly the work
+  that this gate would have surfaced instead of orphaning. #189 can be promoted independently, but
+  this gate prevents the same silent drop in future stories. No code dependency between them.
+- **Independent** of the other FE-audit decisions (#190–#193); touches only `.claude`/`.opencode`
+  process docs.
+
 ## Problem
 
 `/test-spec` generates `tests/extended/*_Extended.md` with the header *"Implement after core

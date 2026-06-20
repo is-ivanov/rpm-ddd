@@ -6,6 +6,13 @@ Issue: #193
 > **Discussion task.** Decide *whether* to apply before writing any code. Step 1 produces the
 > decision; implementation steps are added only if adopted.
 
+## Dependencies
+
+- **Independent** — no upstream or downstream blocker within the FE-audit family. Pure naming
+  convention + `name` decision; can be done at any time.
+- Mild overlap with #190 Step 4 (dedup touches the same auth components) — sequence the two to avoid
+  edit churn, but neither blocks the other.
+
 ## Problem
 
 The FE audit notes inconsistent component naming (two card components carry a `Card` suffix, one does
