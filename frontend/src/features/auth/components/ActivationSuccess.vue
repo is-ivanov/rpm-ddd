@@ -2,11 +2,12 @@
 import { useRouter } from 'vue-router';
 import { CheckCircle2 } from '@lucide/vue';
 import ActivationResultCard from './ActivationResultCard.vue';
+import { LOGIN_PATH } from '@/app/logic/unauthorized-redirect.logic';
 
 const router = useRouter();
 
 function goToSignIn(): void {
-  void router.push('/login');
+  void router.push(LOGIN_PATH);
 }
 </script>
 

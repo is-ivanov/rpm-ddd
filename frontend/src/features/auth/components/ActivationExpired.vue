@@ -2,11 +2,12 @@
 import { useRouter } from 'vue-router';
 import { XCircle } from '@lucide/vue';
 import ActivationResultCard from './ActivationResultCard.vue';
+import { LOGIN_PATH } from '@/app/logic/unauthorized-redirect.logic';
 
 const router = useRouter();
 
 function requestNewLink(): void {
-  void router.push('/login');
+  void router.push(LOGIN_PATH);
 }
 </script>
 

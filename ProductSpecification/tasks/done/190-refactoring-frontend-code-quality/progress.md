@@ -24,4 +24,12 @@ Type: refactoring
 - [x] refactor (cleanup)
 
 ### Step 4: dedup (PasswordField, types, routes, fonts)
-- [~] refactor (cleanup)
+- [x] refactor (cleanup)
+  - PasswordField: LoginPage now reuses `<PasswordField>` instead of inlining its own
+    input+toggle (login toggle icon 18→16 to converge on the canonical component — the
+    diverging mockup sizes were accidental). testids `password-input`/`password-toggle` preserved.
+  - Types: removed duplicate `LoginFieldError` (≡ `ProblemFieldError`) and the identity
+    `toLoginFieldError`; `LoginError`/`login-error-view` use `ProblemFieldError` directly.
+  - Routes: `ActivationSuccess`/`ActivationExpired` use `LOGIN_PATH` instead of the `'/login'` literal.
+  - Fonts: Google Fonts moved from `style.css` `@import` (render-blocking) to `<link rel=preconnect>`
+    + stylesheet in `index.html`.
