@@ -1,11 +1,13 @@
-import type { ActivationTokenResponse, ProblemDetail } from './types';
+import type { ActivationTokenResponse } from './types';
 import { ActivationError } from './types';
 import { postJsonWithCsrf } from './csrf';
 import { apiFetch } from '@/app/logic/fetch.api';
+import { problemDetailSchema } from '@/app/schemas/problem-detail.schema';
+import { activationTokenResponseSchema } from '../schemas/activation-token.schema';
 
 async function throwIfProblem(response: Response): Promise<void> {
   if (!response.ok) {
-    const problem = (await response.json()) as ProblemDetail;
+    const problem = problemDetailSchema.parse(await response.json());
     throw new ActivationError(problem.detail);
   }
 }
@@ -18,7 +20,12 @@ export async function validateActivationToken(token: string): Promise<Activation
 
   await throwIfProblem(response);
 
-  return (await response.json()) as ActivationTokenResponse;
+  const body = await response.json();
+  const parsed = activationTokenResponseSchema.safeParse(body);
+  if (!parsed.success) {
+    throw new ActivationError('Malformed activation response.');
+  }
+  return parsed.data;
 }
 
 export async function activateAccount(token: string, password: string): Promise<void> {

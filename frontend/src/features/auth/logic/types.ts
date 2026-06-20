@@ -1,22 +1,9 @@
-export interface ProblemFieldError {
-  readonly property: string;
-  readonly message: string;
-}
-
-export interface ProblemDetail {
-  readonly type?: string;
-  readonly detail?: string;
-  readonly fieldErrors?: ReadonlyArray<ProblemFieldError>;
-}
+export type { ProblemDetail, ProblemFieldError } from '@/app/schemas/problem-detail.schema';
+export type { ActivationTokenResponse } from '../schemas/activation-token.schema';
 
 export interface LoginRequest {
   readonly login: string;
   readonly password: string;
-}
-
-export interface ActivationTokenResponse {
-  readonly login: string;
-  readonly email: string;
 }
 
 export class ActivationError extends Error {}

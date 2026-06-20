@@ -17,6 +17,10 @@ function stubActivateSuccess(captured: { url?: string }): void {
   );
 }
 
+function stubActivateMalformedSuccess(): void {
+  server.use(http.get(`${BASE}/api/auth/activate`, () => HttpResponse.json({ login: 'iivanov' }, { status: 200 })));
+}
+
 function stubActivateExpired(): void {
   server.use(
     http.get(`${BASE}/api/auth/activate`, () =>
@@ -46,6 +50,14 @@ describe('Activation API Client', () => {
     const requestUrl = new URL(captured.url ?? '');
     expect(requestUrl.pathname).toBe('/api/auth/activate');
     expect(requestUrl.searchParams.get('token')).toBe('valid-jwt-token');
+  });
+
+  it('rejects when a 200 response body does not conform to the activation contract', async () => {
+    stubActivateMalformedSuccess();
+
+    const error = await captureRejection(validateActivationToken('valid-jwt-token'));
+
+    expect(error).toBeInstanceOf(Error);
   });
 
   it('rejects with an ActivationError when the token is expired (422)', async () => {
