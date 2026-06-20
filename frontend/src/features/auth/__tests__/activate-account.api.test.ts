@@ -72,10 +72,7 @@ describe('Activate Account API Client', () => {
     expect(captured.body).toEqual({ token: 'valid-jwt-token', password: 'Str0ng-P@ssw0rd!' });
   });
 
-  // RED (#188) — activateAccount discards the Response and never checks response.ok, so it
-  // resolves on a 422 instead of throwing. captureRejection then throws
-  // Error('call resolved but should have rejected on an error status') before the assertions.
-  it.fails('rejects with an ActivationError carrying the problem detail when the POST returns 422', async () => {
+  it('rejects with an ActivationError carrying the problem detail when the POST returns 422', async () => {
     await issue('188');
     stubCsrfSetsCookie();
     stubActivateRejectsWeakPassword();
