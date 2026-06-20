@@ -3,10 +3,12 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { Check } from '@lucide/vue';
 import { activateAccount, validateActivationToken } from '../logic/activation.api';
+import { mapActivationSubmitErrorToView } from '../logic/activation-error-view.logic';
 import { ActivationError, type ActivationTokenResponse } from '../logic/types';
 import PasswordField from './PasswordField.vue';
 import ActivationSuccess from './ActivationSuccess.vue';
 import ActivationExpired from './ActivationExpired.vue';
+import ActivationErrorBanner from './ActivationErrorBanner.vue';
 
 const PASSWORD_RULES = [
   'At least 12 characters',
@@ -23,6 +25,7 @@ const password = ref('');
 const confirmPassword = ref('');
 const activated = ref(false);
 const tokenInvalid = ref(false);
+const submitError = ref('');
 
 onMounted(loadAccount);
 
@@ -37,8 +40,13 @@ async function loadAccount(): Promise<void> {
 }
 
 async function submitActivation(): Promise<void> {
-  await activateAccount(tokenFromRoute(), password.value);
-  activated.value = true;
+  submitError.value = '';
+  try {
+    await activateAccount(tokenFromRoute(), password.value);
+    activated.value = true;
+  } catch (error) {
+    submitError.value = mapActivationSubmitErrorToView(error).errorMessage;
+  }
 }
 
 function tokenFromRoute(): string {
@@ -57,6 +65,8 @@ function tokenFromRoute(): string {
       <div v-if="account" class="mb-5 text-sm text-[#6c757d]">
         For account {{ account.login }} ({{ account.email }})
       </div>
+
+      <ActivationErrorBanner v-if="submitError" :message="submitError" />
 
       <form @submit.prevent="submitActivation">
         <div class="mb-4">
