@@ -1,15 +1,19 @@
 import { test } from '@playwright/test';
+import { issue } from 'allure-js-commons';
 import { ActivationPageStatements } from '../../statements/frontend/activation-page.statements';
+import { ActivationFailureStatements } from '../../statements/frontend/activation-failure.statements';
 import { ActivationBackendStatements } from '../../statements/backend/activation-backend.statements';
 import { LoginPageStatements } from '../../statements/frontend/login-page.statements';
 
 test.describe('Activation Page', () => {
   let activationPage: ActivationPageStatements;
+  let activationFailure: ActivationFailureStatements;
   let activationBackend: ActivationBackendStatements;
   let loginPage: LoginPageStatements;
 
   test.beforeEach(({ page, baseURL }) => {
     activationPage = new ActivationPageStatements(page, baseURL!);
+    activationFailure = new ActivationFailureStatements(page);
     activationBackend = new ActivationBackendStatements(page);
     loginPage = new LoginPageStatements(page, baseURL!);
   });
@@ -87,6 +91,29 @@ test.describe('Activation Page', () => {
       await loginPage.assertPasswordFieldIsVisible();
       await loginPage.assertPasswordFieldMasksText();
       await loginPage.assertSubmitButtonIsVisible();
+    },
+  );
+
+  test(
+    'UI Bug #188: Activation page must not show success when the backend rejects the submitted password - ' +
+      'Given the user is on the activation page with a valid token, ' +
+      'When the user submits a password that the backend rejects with a 422 ProblemDetail, ' +
+      'Then the "Account Activated!" success screen is NOT shown, ' +
+      'And a server error message with the backend detail is displayed instead',
+    async () => {
+      await issue('188');
+      await activationBackend.givenValidTokenButActivationRejectsWeakPassword({
+        login: 'ivan',
+        email: 'ivan@example.com',
+      });
+      await activationPage.navigateToActivationPageWithToken('valid-activation-token');
+
+      await activationPage.enterPassword('weak');
+      await activationPage.enterConfirmPassword('weak');
+      await activationPage.clickActivateButton();
+
+      await activationFailure.assertServerErrorIsDisplayed('Password does not meet the complexity requirements.');
+      await activationFailure.assertSuccessScreenIsNotVisible();
     },
   );
 });
