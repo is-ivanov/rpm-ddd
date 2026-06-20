@@ -2,11 +2,12 @@
 import { useRouter } from 'vue-router';
 import { XCircle } from '@lucide/vue';
 import ActivationResultCard from './ActivationResultCard.vue';
+import { LOGIN_PATH } from '@/app/logic/unauthorized-redirect.logic';
 
 const router = useRouter();
 
 function requestNewLink(): void {
-  router.push('/login');
+  void router.push(LOGIN_PATH);
 }
 </script>
 
@@ -14,7 +15,7 @@ function requestNewLink(): void {
   <ActivationResultCard
     test-id="activation-error"
     :icon="XCircle"
-    icon-color-class="text-[#fa5252]"
+    icon-color-class="text-danger"
     title="Link Expired"
     description="The activation link is invalid or has expired. Please request a new one."
     button-test-id="request-new-link-button"

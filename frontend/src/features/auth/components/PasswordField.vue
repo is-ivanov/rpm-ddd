@@ -29,7 +29,7 @@ const showPassword = ref(false);
       type="button"
       :data-testid="toggleTestId"
       :aria-label="showPassword ? 'Hide password' : 'Show password'"
-      class="absolute right-2 top-1/2 flex -translate-y-1/2 cursor-pointer items-center border-none bg-transparent p-1 text-[#6c757d] hover:text-[#212529]"
+      class="absolute right-2 top-1/2 flex -translate-y-1/2 cursor-pointer items-center border-none bg-transparent p-1 text-muted hover:text-ink"
       @click="showPassword = !showPassword"
     >
       <EyeOff v-if="showPassword" :size="16" />

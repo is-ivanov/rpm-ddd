@@ -3,6 +3,14 @@
 Type: refactoring
 Issue: #190
 
+## Dependencies
+
+- **Step 2 (runtime response validation) is blocked by #191** — the validation-library decision
+  (zod/valibot/vee-validate vs custom) determines how the network boundary is validated. Step 2 is
+  deferred and folded into Task 191's implementation. Steps 1, 3, 4 have no dependency and proceed
+  independently.
+- Step 1 (type-checked ESLint) is **done**.
+
 ## Problem
 
 Findings from the senior FE audit (`ProductSpecification/audits/2026-06-20-frontend-audit.md`) that

@@ -20,7 +20,7 @@ export async function validateActivationToken(token: string): Promise<Activation
 
   await throwIfProblem(response);
 
-  const body = await response.json();
+  const body: unknown = await response.json();
   const parsed = activationTokenResponseSchema.safeParse(body);
   if (!parsed.success) {
     throw new ActivationError('Malformed activation response.');

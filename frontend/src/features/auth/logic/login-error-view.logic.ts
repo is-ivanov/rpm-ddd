@@ -1,5 +1,5 @@
 import { GENERIC_SUBMIT_ERROR_MESSAGE } from './error-copy';
-import { LoginError, type LoginFieldError } from './types';
+import { LoginError, type ProblemFieldError } from './types';
 
 export interface LoginFieldErrors {
   readonly login?: string;
@@ -18,7 +18,7 @@ function isFieldControl(property: string): property is keyof LoginFieldErrors {
   return FIELD_CONTROLS.has(property);
 }
 
-function toFieldErrorsMap(fieldErrors: ReadonlyArray<LoginFieldError>): LoginFieldErrors {
+function toFieldErrorsMap(fieldErrors: ReadonlyArray<ProblemFieldError>): LoginFieldErrors {
   return fieldErrors.reduce<LoginFieldErrors>(
     (map, { property, message }) => (isFieldControl(property) ? { ...map, [property]: message } : map),
     {},

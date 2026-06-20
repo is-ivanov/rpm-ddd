@@ -1,5 +1,7 @@
-export type { ProblemDetail, ProblemFieldError } from '@/app/schemas/problem-detail.schema';
-export type { ActivationTokenResponse } from '../schemas/activation-token.schema';
+import type { ProblemDetail, ProblemFieldError } from '@/app/schemas/problem-detail.schema';
+import type { ActivationTokenResponse } from '../schemas/activation-token.schema';
+
+export type { ProblemDetail, ProblemFieldError, ActivationTokenResponse };
 
 export interface LoginRequest {
   readonly login: string;
@@ -8,19 +10,14 @@ export interface LoginRequest {
 
 export class ActivationError extends Error {}
 
-export interface LoginFieldError {
-  readonly property: string;
-  readonly message: string;
-}
-
 export class LoginError extends Error {
   readonly requiresActivation: boolean;
-  readonly fieldErrors: ReadonlyArray<LoginFieldError>;
+  readonly fieldErrors: ReadonlyArray<ProblemFieldError>;
 
   constructor(
     message: string | undefined,
     requiresActivation: boolean,
-    fieldErrors: ReadonlyArray<LoginFieldError> = [],
+    fieldErrors: ReadonlyArray<ProblemFieldError> = [],
   ) {
     super(message);
     this.requiresActivation = requiresActivation;
