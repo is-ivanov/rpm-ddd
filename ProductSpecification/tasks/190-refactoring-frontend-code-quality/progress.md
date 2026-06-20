@@ -21,7 +21,7 @@ Type: refactoring
 
 ### Step 3: design tokens (remove hex, unify palette, extract logo)
 - [x] align-design
-- [~] refactor (cleanup)
+- [x] refactor (cleanup)
 
 ### Step 4: dedup (PasswordField, types, routes, fonts)
-- [ ] refactor (cleanup)
+- [~] refactor (cleanup)
