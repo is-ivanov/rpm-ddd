@@ -218,9 +218,9 @@
 
 ### Scenario 3.3: Error banner dismiss button closes the banner
 - [x] red-playwright (login-error-dismiss.spec.ts §3.3 — test.fail() RED marker; new spec (login-page.spec.ts already 177L). Given: givenErrorBannerIsVisible reuses authBackend.givenRegisteredUser + submits wrong-pass → 401 → error-banner visible (precondition asserted). When: clickDismissButton clicks new error-banner-dismiss testid. Then: error-banner toHaveCount(0). RED genuine: LoginErrorBanner.vue has no dismiss button. PREDICT toBeVisible on missing error-banner-dismiss → matched (Type/Message/Status all YES). First run used bare .click() → 30s action timeout (hard fail under test.fail); fixed to pin RED via toBeVisible() expect (5s), mirroring §2.2. New testid for align-design: error-banner-dismiss (button emits dismiss → parent clears errorMessage). test-review CLEAN. refactor: Extract givenErrorBannerIsVisible precondition (matches Gherkin abstraction, removes impl constants from test class); added noinspection HardcodedPasswordInspection for new password-input testid. CLI lint EXIT=0; IDE clean. spec 32L / statements 54L.)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
+- [S] red-frontend (trivial-logic gate: no input-varying .logic.ts logic. Dismissing the error banner is presentational reactive state-clearing — the banner shows via `v-if="errorMessage"` in LoginPage.vue (line 47); the dismiss handler just resets errorMessage/requiresActivation/fieldErrors refs to ''/false/{} so the v-if hides it. No branching, computation, validation, or transformation. A hypothetical "clear error" logic fn would return constants {errorMessage:'',requiresActivation:false,fieldErrors:{}} → forbidden by the post-impl trivial-test gate. Existence check: no clear/dismiss logic file exists in auth/logic/; the error→view mapping (mapLoginErrorToView) already exists/tested in login-error-view.logic.test.ts and transforms nothing here. Mechanism: LoginErrorBanner.vue gains a dismiss button (error-banner-dismiss testid) emitting `dismiss`; LoginPage.vue @dismiss clears the refs — built in align-design. Zero logic-layer production files change. Observable behavior covered by red-playwright E2E §3.3 (login-error-dismiss.spec.ts). Mirrors scenarios 1.1/2.1/3.1/3.2/5.1/2.2 red-frontend [S])
+- [S] green-frontend (no logic produced in red-frontend — see [S] above; dismiss button emit + parent ref-clearing built in align-design on LoginErrorBanner.vue + LoginPage.vue)
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
