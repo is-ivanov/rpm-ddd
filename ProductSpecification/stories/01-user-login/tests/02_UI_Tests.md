@@ -87,10 +87,11 @@ And the page displays a submit button with text "Activate Account"
 
 ```gherkin
 Given the activation page is displayed
-When the user types a weak password
-Then the password strength indicator shows weak
-When the user updates the password to a strong value
-Then the password strength indicator updates to strong in real-time
+When the user types a password that satisfies only some complexity rules
+Then only the satisfied complexity rules are marked as met
+And the unsatisfied complexity rules remain unmet
+When the user updates the password to satisfy all complexity rules
+Then all complexity rules update to met in real-time
 ```
 
 ### 4.3 Activation page shows error when passwords do not match
@@ -157,7 +158,7 @@ Then the user is navigated to the login page
 | 3.2 | Login | login input, password input, "Sign In" button, error banner | error banner visible with activation message, activation link present |
 | 3.3 | Login | error banner, banner dismiss button | clicking dismiss hides the error banner (banner no longer visible) |
 | 4.1 | Activation | password input, confirm password input, complexity rules list, "Activate Account" button | all fields visible, complexity rules displayed |
-| 4.2 | Activation | password input, password strength indicator | indicator reflects strength of typed password and updates in real-time (weak → strong) as the value changes |
+| 4.2 | Activation | password input, per-rule complexity list (each rule marked met/unmet) | each complexity rule the typed password satisfies is marked as met (highlighted), unsatisfied rules remain unmet, updating in real-time as the value changes |
 | 4.3 | Activation | password input, confirm password input, mismatch error message | when password ≠ confirm password, a "passwords do not match" error message is displayed |
 | 4.4 | Activation | "Activate Account" button, password + confirm password inputs | on submit: button shows a loading indicator, password + confirm-password fields disabled during the in-flight activate request |
 | 5.1 | Activation | password input, confirm password input, "Activate Account" button, success icon, success text, "Go to Sign In" button | green check icon visible, text "Account Activated!", button "Go to Sign In" visible |
