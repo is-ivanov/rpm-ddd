@@ -19,12 +19,37 @@ interface ProblemDetail {
 }
 
 export class ActivationBackendStatements {
+  private heldActivation: Promise<void> = Promise.resolve();
+  private releaseHeldActivation: () => void = () => {};
+
   constructor(private readonly page: Page) {}
 
   async givenPendingAccountForToken(account: Account): Promise<void> {
     await this.installActivationRoutes((route) =>
       this.handleValidToken(route, account, (post) => this.fulfillActivationSuccess(post)),
     );
+  }
+
+  async givenSlowActivationRequest(account: Account): Promise<void> {
+    this.heldActivation = new Promise<void>((resolve) => {
+      this.releaseHeldActivation = resolve;
+    });
+    await this.installActivationRoutes((route) =>
+      this.handleValidToken(route, account, (post) => this.handleHeldActivation(post)),
+    );
+  }
+
+  async whileSlowActivationIsHeld(action: () => Promise<void>): Promise<void> {
+    try {
+      await action();
+    } finally {
+      this.releaseHeldActivation();
+    }
+  }
+
+  private async handleHeldActivation(route: Route): Promise<void> {
+    await this.heldActivation;
+    await this.fulfillActivationSuccess(route);
   }
 
   async givenExpiredToken(): Promise<void> {
