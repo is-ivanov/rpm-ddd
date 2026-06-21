@@ -256,7 +256,7 @@
 - [S] green-frontend-api (no API client produced in red-frontend-api — see [S] above; the password-mismatch check reuses no HTTP, the evaluatePasswordMatch comparison + password-mismatch-error rendering are built in align-design)
 - [x] align-design (ActivationPage.vue wired the password-mismatch error: `passwordMatch` computed = evaluatePasswordMatch(password, confirmPassword) consuming the §4.3 logic fn, `showMismatchError` computed = confirmPassword.length>0 && !passwordMatch.matched (presentational gating so the error appears only once the confirm field has input, not on the first password keystroke). New element below the confirm field: `<p v-if="showMismatchError" data-testid="password-mismatch-error" class="field-error">{{ passwordMatch.error }}</p>` — error text sourced from the logic fn, not hardcoded. No CSS added — reused the existing `.field-error` token (text-[13px] text-danger #fa5252), which matches mockup 04-activation-form.html's `--danger: #fa5252` + 13px small-text language. No dedicated mismatch mockup exists (04 has no mismatch state); the rest of the form is unchanged and still matches §4.1/§4.2 alignment. design-review PASS — only new literals are the static testid + CSS class; account subtitle stays dynamic from API, mockup's "MyStr0ng"/pre-met-rules not copied. refactor CLEAN — component 110L (≤200), comparison logic correctly in password-match.logic.ts (Humble Object), no duplicated conditional class, no inline arbitrary-value CSS. test-coverage frontend --focus CLEAN — password-match.logic.ts 100% (2/2 branch), component E2E-covered by activation-mismatch.spec.ts §4.3, showMismatchError gating is presentational (not a .logic.ts branch, appropriately E2E-covered), no new steps. CLI lint EXIT=0 (oxlint/eslint/prettier/vue-tsc); IDE inspections clean on ActivationPage.vue; vitest 39/39. NB: a separate prior commit (7dba0a5) prettier-fixed unspaced import braces in the §4.2/§4.3 logic test files left dirty by 0c2097b — restored the branch's CI lint to green.)
 - [x] green-playwright (activation-mismatch.spec.ts §4.3 passes — test.fail() marker + stale RED comment removed; mismatch error built in align-design. Frontend auto-started via Playwright webServer, backend mocked in-browser via page.route (no real backend; the Vite ECONNREFUSED proxy noise is the absent backend, harmless — page.route intercepts the validate-on-load GET). Remove-marker-only: no production/Statements changes. 1/1 spec; full login/activation dir 18/18 pass (§4.1/§4.2/§4.3/§5.1/§5.2/§6.1 + login §1.1/2.1/2.2/3.1/3.2/3.3 + Bugs #127/#131/#162/#188), no regressions. CLI lint EXIT=0 (oxlint/eslint/prettier/vue-tsc); IDE clean on the spec.)
-- [~] demo
+- [x] demo (ran activation-mismatch.spec.ts §4.3 headless + slowMo 2000ms + video; 1 passed; recording frontend/test-results/demo-activation-mismatch-4-3.webm shows the inline "Passwords do not match" error appearing under the confirm field once the two passwords differ; config reverted, tree clean)
 
 > **Scenario 4.4 promoted 2026-06-21 from improvements.md I6 (user request).** The activation activate
 > button is the only backend-calling auth control still without a loading state — the activation half
@@ -267,7 +267,7 @@
 > and the activate button onto it (§2.2 login tests must stay green through that refactor).
 
 ### Scenario 4.4: Activation page shows loading state during submission
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
