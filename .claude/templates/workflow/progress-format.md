@@ -58,6 +58,11 @@
 - [ ] green-playwright
 - [ ] demo
 
+## Extended (deferred — decide at Story Completion Gate)
+
+- [S] Password mismatch inline error (deferred — review at Story Completion Gate)
+- [S] Real-time password-strength indicator (deferred — review at Story Completion Gate)
+
 ## Security Scenarios (05_Security_Tests.md)
 
 ### Scenario title

@@ -9,7 +9,7 @@ description: Continue working on a story or task by reading progress.md, executi
 
 1. **Identify work item** from argument
 2. **Backlog promotion** -- if the story row is in the **Backlog** table in `ProductSpecification/stories.md`, move it to **In Progress** before proceeding
-3. **Read progress** file, bootstrap if missing (stories only)
+3. **Read progress** file, bootstrap if missing (stories only) — bootstrapping also surfaces any `tests/extended/*_Extended.md` cases as `[S]` entries (see `workflow.md` → Bootstrapping, step 7); `/continue` never executes them
 4. **Find next step** -- first `[~]` or `[ ]` entry
 5. **Read journey context** -- read `carryover.md` (story root, if it exists) and the current scenario's summary file (`summaries/{scenario-slug}.md`, if it exists). Treat both as additional context for the work unit -- they preserve predictions, decisions, surprises, and quirks from prior conversations. `/continue` only READS these files; it never writes them (the `/handoff` skill is the sole writer).
 6. **Load ADR context** -- check for `decisions/*-decision.md` files in the story directory. If any exist AND the current step references the ADR (via "see ADR" annotation or matching scenario), read it. ADRs contain architectural decisions, schema changes, edge cases, and implementation guidance that the work unit needs.
@@ -17,6 +17,7 @@ description: Continue working on a story or task by reading progress.md, executi
 8. **Adapter discovery** -- when the next step is `[ ] adapters-discovery`, read usecase constructor to identify ports and map to adapters (see `workflow.md`). Mark `[x] adapters-discovery`, insert concrete steps below it, commit progress.md.
 9. **Update progress** -- mark completed, advance next, commit
 10. **Update stories.md** -- for stories only, update the phase columns in `ProductSpecification/stories.md` (see below)
+10a. **Story Completion Gate** -- for stories only, when the work unit just completed was the story's **final** scenario (every other checkbox is `[x]`/`[S]`), do NOT move the row to Done yet. **STOP** and run the Story Completion Gate (see `workflow.md` → "Story Completion Gate"): surface every `tests/extended/*_Extended.md` case and every `Open` item in the story's `improvements.md`, each with a one-line promote/defer recommendation, and **ask the user to decide per item**. The agent never auto-promotes or auto-closes — it moves the row to Done only after the user has decided every item and any promoted scenarios are appended to `progress.md`. This is a deliberate exception to the "never pause within a work unit" rule.
 11. **Task completion** -- after updating progress, if ALL checkboxes are `[x]` or `[S]` (no `[ ]` or `[~]` remaining), move the task folder to `ProductSpecification/tasks/done/` and include the move in the commit
 
 All workflow sequences, progress tracking rules, adapter discovery procedure, and task types are defined in `.claude/rules/workflow.md`. Progress file format examples are in `.claude/templates/workflow/progress-format.md`.
