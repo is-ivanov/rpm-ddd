@@ -17,10 +17,6 @@ test.describe('Login Error Banner Dismiss', () => {
       'When the user clicks the dismiss button on the banner, ' +
       'Then the error banner is no longer visible',
     async () => {
-      // RED: LoginErrorBanner.vue has no dismiss button yet (data-testid="error-banner-dismiss"
-      // does not exist) -> clickDismissButton() times out on a missing locator. Pinned by the
-      // not-visible assertion that proves the dismiss actually hides the banner.
-      test.fail();
       await authBackend.givenRegisteredUser('ivan', 'correct-pass');
       await errorDismiss.givenErrorBannerIsVisible('ivan', 'wrong-pass');
 
