@@ -32,7 +32,7 @@ const showPassword = ref(false);
       :data-testid="toggleTestId"
       :aria-label="showPassword ? 'Hide password' : 'Show password'"
       :disabled="disabled"
-      class="absolute right-2 top-1/2 flex -translate-y-1/2 cursor-pointer items-center border-none bg-transparent p-1 text-muted hover:text-ink disabled:cursor-not-allowed disabled:opacity-60"
+      class="icon-button absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-ink disabled:cursor-not-allowed disabled:opacity-60"
       @click="showPassword = !showPassword"
     >
       <EyeOff v-if="showPassword" :size="16" />

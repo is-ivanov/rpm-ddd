@@ -53,4 +53,8 @@
   .link-primary {
     @apply text-accent hover:underline;
   }
+
+  .icon-button {
+    @apply flex cursor-pointer items-center border-none bg-transparent;
+  }
 }

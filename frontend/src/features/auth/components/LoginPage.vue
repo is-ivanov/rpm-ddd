@@ -36,6 +36,12 @@ function showLoginError(error: unknown): void {
   loginName.value = '';
   password.value = '';
 }
+
+function dismissError(): void {
+  errorMessage.value = '';
+  requiresActivation.value = false;
+  fieldErrors.value = {};
+}
 </script>
 
 <template>
@@ -44,7 +50,12 @@ function showLoginError(error: unknown): void {
       <AppLogo class="mb-6 text-center" />
       <div class="mb-6 text-center text-lg font-semibold text-ink">Sign In</div>
 
-      <LoginErrorBanner v-if="errorMessage" :message="errorMessage" :requires-activation="requiresActivation" />
+      <LoginErrorBanner
+        v-if="errorMessage"
+        :message="errorMessage"
+        :requires-activation="requiresActivation"
+        @dismiss="dismissError"
+      />
 
       <form @submit.prevent="submitLogin">
         <div class="mb-4">
