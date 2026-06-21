@@ -9,7 +9,7 @@ description: Continue working on a story or task by reading progress.md, executi
 
 1. **Identify work item** from argument
 2. **Backlog promotion** -- if the story row is in the **Backlog** table in `ProductSpecification/stories.md`, move it to **In Progress** before proceeding
-3. **Read progress** file, bootstrap if missing (stories only)
+3. **Read progress** file, bootstrap if missing (stories only) — bootstrapping also surfaces any `tests/extended/*_Extended.md` cases as `[S]` entries (see `workflow.md` → Bootstrapping, step 7); `/continue` never executes them
 4. **Find next step** -- first `[~]` or `[ ]` entry
 5. **Read journey context** -- read `carryover.md` (story root, if it exists) and the current scenario's summary file (`summaries/{scenario-slug}.md`, if it exists). Treat both as additional context for the work unit -- they preserve predictions, decisions, surprises, and quirks from prior conversations. `/continue` only READS these files; it never writes them (the `/handoff` skill is the sole writer).
 6. **Load ADR context** -- check for `decisions/*-decision.md` files in the story directory. If any exist AND the current step references the ADR (via "see ADR" annotation or matching scenario), read it. ADRs contain architectural decisions, schema changes, edge cases, and implementation guidance that the work unit needs.

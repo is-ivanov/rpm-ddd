@@ -118,11 +118,12 @@ If no `progress.md` exists, create one by:
    - `api-spec`: check if `endpoints.md` exists
    - `test-spec`: check if `tests/01_API_Tests.md` exists
    - **Edge case**: if all spec items exist EXCEPT `interview.md`, mark `[S] interview (spec completed without interview)` — don't force retroactive interviews on old stories
-2. Reading the story's test specs (`tests/01_API_Tests.md`, `tests/06_Integration_Tests.md` if exists, `tests/02_UI_Tests.md`, `tests/05_Security_Tests.md` if exists, `tests/03_Load_Tests.md` if exists, `tests/04_Infrastructure_Tests.md` if exists)
+2. Reading the story's test specs (`tests/01_API_Tests.md`, `tests/06_Integration_Tests.md` if exists, `tests/02_UI_Tests.md`, `tests/05_Security_Tests.md` if exists, `tests/03_Load_Tests.md` if exists, `tests/04_Infrastructure_Tests.md` if exists) and the extended cases (`tests/extended/*_Extended.md` if the folder exists)
 3. Scanning existing test classes and production code for completed steps
 4. Marking completed steps as `[x]`, next step as `[~]`, rest as `[ ]`
 5. For backend/integration/security scenarios, **always include `design` after `red-acceptance`** — it is mandatory for every scenario that needs new implementation. Only omit it when the entire scenario is `[S]` (existing implementation covers everything). Include `[ ] adapters-discovery` after `green-usecase` — adapter discovery runs when this step is reached. Include `[ ] red-domain` / `[ ] green-domain` after `green-usecase` as `[S]` by default — they are activated only when coverage-agent or design-preview identifies need.
 6. For frontend scenarios, include `demo` as the final step per scenario
+7. **Surface extended cases as `[S]`.** If `tests/extended/*_Extended.md` exists, add an `### Extended (deferred — decide at Story Completion Gate)` block at the end of the matching scenarios section, listing each extended case as `[S] {case name} (deferred — review at Story Completion Gate)`. These are **never executed by `/continue`** (they stay `[S]`); the block exists only so the cases are visible in `progress.md` instead of silently omitted, and so the **Story Completion Gate** can review them before the story closes. Do not add TDD sub-steps for them — promotion happens at the gate, under user decision.
 
 ## Atomic Work Units
 
