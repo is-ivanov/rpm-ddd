@@ -23,7 +23,7 @@ describe('Activation Password Complexity Rules', () => {
   // is reported as met/unmet for the typed value. Cases cover both states of every predicate plus
   // the length 11/12 boundary; the [met=false for no-spaces] case (a value containing a space) is
   // the gap a single representative password would miss.
-  it.fails.each([
+  it.each([
     { name: 'empty value → only no-spaces met', password: '', met: [false, false, false, false, false, true] },
     {
       name: 'short lowercase value → lowercase + no-spaces met',
