@@ -5,6 +5,7 @@ import { Check } from '@lucide/vue';
 import { activateAccount, validateActivationToken } from '../logic/activation.api';
 import { mapActivationSubmitErrorToView } from '../logic/activation-error-view.logic';
 import { evaluateComplexityRules } from '../logic/password-strength.logic';
+import { evaluatePasswordMatch } from '../logic/password-match.logic';
 import { ActivationError, type ActivationTokenResponse } from '../logic/types';
 import PasswordField from './PasswordField.vue';
 import AppLogo from '@/app/components/AppLogo.vue';
@@ -17,6 +18,8 @@ const account = ref<ActivationTokenResponse | null>(null);
 const password = ref('');
 const complexityRules = computed(() => evaluateComplexityRules(password.value));
 const confirmPassword = ref('');
+const passwordMatch = computed(() => evaluatePasswordMatch(password.value, confirmPassword.value));
+const showMismatchError = computed(() => confirmPassword.value.length > 0 && !passwordMatch.value.matched);
 const activated = ref(false);
 const tokenInvalid = ref(false);
 const submitError = ref('');
@@ -95,6 +98,9 @@ function tokenFromRoute(): string {
             toggle-test-id="activation-confirm-password-toggle"
             placeholder="Re-enter password"
           />
+          <p v-if="showMismatchError" data-testid="password-mismatch-error" class="field-error">
+            {{ passwordMatch.error }}
+          </p>
         </div>
 
         <button type="submit" data-testid="activate-button" class="btn-primary mt-5">Activate Account</button>
