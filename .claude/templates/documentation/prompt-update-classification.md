@@ -10,6 +10,19 @@ Writing style by layer:
 - **Templates**: Fenced code blocks with BAD/GOOD labels, numbered rules, tables
 - **Skills**: Only layer-specific context unique to one adapter/layer
 
+## Classification Output Format
+
+Before writing, show the classification — walk all 4 decision questions explicitly, e.g.:
+
+```
+1. Principle? → frontend-rules.md (new section)
+2. Detection? → refactor-agent.md (smell table) + scan-checklist.md (A-check)
+3. Template?  → new templates/refactoring/extract-tailwind-class.md
+4. Layer-specific? → n/a
+```
+
+Most updates touch 2+ files. If only one target is identified, double-check — a rule without detection won't be enforced, a detection without a template won't guide the fix.
+
 ## Decision Process
 
 For each piece of content, ask:

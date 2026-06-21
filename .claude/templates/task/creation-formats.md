@@ -14,7 +14,7 @@
 # Task {N}: {Title}
 
 Type: {bug|refactoring}
-Issue: #{N}  <- every task (the task number IS the issue number); bug tests are tagged with it, refactoring records it for traceability
+Issue: #{N}  <- every task (the task number IS the issue number; number matches the folder); bug tests are tagged with it (per tech binding `tdd.md`), refactoring records it for traceability but does not tag tests
 
 ## Problem
 
@@ -32,6 +32,12 @@ Issue: #{N}  <- every task (the task number IS the issue number); bug tests are 
 
 {steps}
 ```
+
+## Task Number = GitHub Issue Number (rationale)
+
+**The task number IS the GitHub issue number.** Issue numbers are allocated atomically and globally by GitHub, so parallel task creation across worktrees/branches can never collide. (The old "max existing folder + 1" scheme raced: each branch only sees its own committed folders, so two parallel branches both pick the same next number — exactly the `14`/`14` clash that motivated this change, #141.) Every task — `bug` AND `refactoring` — gets an issue.
+
+> Legacy tasks 1–14 used the old sequential scheme and keep their numbers. Issue numbers are already far above that range (140s+), so a new issue-numbered folder never clashes with a legacy one.
 
 ## progress.md Formats
 
