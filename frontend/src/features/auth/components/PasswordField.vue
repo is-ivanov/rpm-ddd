@@ -8,6 +8,7 @@ defineProps<{
   inputTestId: string;
   toggleTestId: string;
   placeholder?: string;
+  disabled?: boolean;
 }>();
 
 const model = defineModel<string>({ required: true });
@@ -23,13 +24,15 @@ const showPassword = ref(false);
       :type="showPassword ? 'text' : 'password'"
       :data-testid="inputTestId"
       :placeholder="placeholder"
+      :disabled="disabled"
       class="form-input pr-10"
     />
     <button
       type="button"
       :data-testid="toggleTestId"
       :aria-label="showPassword ? 'Hide password' : 'Show password'"
-      class="absolute right-2 top-1/2 flex -translate-y-1/2 cursor-pointer items-center border-none bg-transparent p-1 text-muted hover:text-ink"
+      :disabled="disabled"
+      class="absolute right-2 top-1/2 flex -translate-y-1/2 cursor-pointer items-center border-none bg-transparent p-1 text-muted hover:text-ink disabled:cursor-not-allowed disabled:opacity-60"
       @click="showPassword = !showPassword"
     >
       <EyeOff v-if="showPassword" :size="16" />

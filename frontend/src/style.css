@@ -33,6 +33,7 @@
     @apply h-10 w-full rounded-md border border-line px-3;
     @apply text-sm text-ink outline-none;
     @apply placeholder:text-placeholder focus:border-accent-focus;
+    @apply disabled:cursor-not-allowed disabled:bg-surface disabled:opacity-60;
   }
 
   .form-input::-ms-reveal,
