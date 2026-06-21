@@ -1,5 +1,5 @@
-import {describe, expect, it} from 'vitest';
-import {type ComplexityRule, evaluateComplexityRules} from '../logic/password-strength.logic';
+import { describe, expect, it } from 'vitest';
+import { type ComplexityRule, evaluateComplexityRules } from '../logic/password-strength.logic';
 
 const RULES: ReadonlyArray<Omit<ComplexityRule, 'met'>> = [
   { key: 'length', label: 'At least 12 characters' },

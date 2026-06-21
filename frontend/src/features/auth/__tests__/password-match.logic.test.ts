@@ -1,5 +1,5 @@
-import {describe, expect, it} from 'vitest';
-import {evaluatePasswordMatch, type PasswordMatch} from '../logic/password-match.logic';
+import { describe, expect, it } from 'vitest';
+import { evaluatePasswordMatch, type PasswordMatch } from '../logic/password-match.logic';
 
 const MISMATCH_MESSAGE = 'Passwords do not match';
 
