@@ -214,10 +214,10 @@
 - [S] green-frontend-api (no API client produced in red-frontend-api — see [S] above; the loading state reuses the existing login() client, the submitting ref + button spinner + :disabled bindings are built in align-design)
 - [x] align-design (LoginPage.vue: added `submitting` ref toggled true→finally-false around `await login(...)`; submit button shows a LoaderCircle spinner (data-testid submit-loading, animate-spin, aria-hidden) + "Signing In…" label while submitting, disabled via `!isFormValid || submitting` + aria-busy; login input + PasswordField bound `:disabled="submitting"`. PasswordField.vue gained an optional `disabled` prop wired to the input + toggle button. style.css `.form-input` gained `disabled:` utilities (cursor-not-allowed + bg-surface + opacity-60), consistent with the existing `.btn-primary` disabled tokens. No loading-state mockup exists — idle login state is visually unchanged (spinner v-if-hidden, flex centering layout-neutral for the single text node) and still matches mockup 01-login.html (aligned in §1.1/§3.x). design-review PASS — only new literals are static UI labels + submit-loading testid, no placeholder/user data. refactor CLEAN — files ≤98L, idiomatic, LoaderCircle via @lucide/vue (no inline SVG); noted a future shared LoadingButton if ActivationPage gets a loading state (out of scope). test-coverage frontend --focus: components E2E-covered by login-loading.spec.ts §2.2, no logic/api gaps, no new steps (27 vitest passed). CLI lint EXIT=0 (oxlint/eslint/prettier/vue-tsc); IDE inspections clean on all 3 files.)
 - [x] green-playwright (login-loading.spec.ts §2.2 passes — test.fail() marker + stale RED comment removed; feature in place from align-design. Frontend auto-started via Playwright webServer, login page.route-mocked (no backend). 1/1 spec; full login dir 15/15, no regressions. Remove-marker-only: no production/Statements changes. CLI lint + IDE clean.)
-- [~] demo
+- [x] demo (ran login-loading.spec.ts §2.2 headless + slowMo 2000ms + video; 1 passed; recording test-results/demo-login-loading-2-2.webm; config reverted, tree clean)
 
 ### Scenario 3.3: Error banner dismiss button closes the banner
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
