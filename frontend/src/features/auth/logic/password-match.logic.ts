@@ -3,6 +3,9 @@ export interface PasswordMatch {
   readonly error: string;
 }
 
-export function evaluatePasswordMatch(_password: string, _confirmPassword: string): PasswordMatch {
-  throw new Error('not implemented');
+export function evaluatePasswordMatch(password: string, confirmPassword: string): PasswordMatch {
+  if (password === confirmPassword) {
+    return { matched: true, error: '' };
+  }
+  return { matched: false, error: 'Passwords do not match' };
 }

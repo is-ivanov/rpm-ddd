@@ -12,10 +12,7 @@ describe('Activation Password Match', () => {
   // Story 1 §4.3: the activation form shows an error when password !== confirm. The check is a pure
   // client-side comparison producing matched (no error) vs mismatched (the literal message). Cases
   // cover identical values, differing values, and the empty-field edge states.
-  // RED reason pinned below: evaluatePasswordMatch is an unimplemented stub that throws — each
-  // assertion compares against the exact expected PasswordMatch, so an incidental failure is not
-  // absorbed by it.fails().
-  it.fails.each([
+  it.each([
     {
       name: 'identical values → matched, no error',
       password: 'Str0ng-P@ssw0rd!',
