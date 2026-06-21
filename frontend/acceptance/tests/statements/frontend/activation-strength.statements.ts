@@ -32,15 +32,7 @@ const PARTIAL_MET_KEYS = [RULE_KEY.lowercase, RULE_KEY.noSpaces] as const;
 const PARTIAL_UNMET_KEYS = [RULE_KEY.length, RULE_KEY.uppercase, RULE_KEY.digit, RULE_KEY.special] as const;
 
 export class ActivationStrengthStatements {
-  constructor(
-    private readonly page: Page,
-    private readonly appUrl: string,
-  ) {}
-
-  async navigateToActivationPageWithToken(token: string): Promise<void> {
-    await this.page.goto(`${this.appUrl}/activate?token=${token}`);
-    await expect(this.passwordInput(), 'activation password input is visible on page load').toBeVisible();
-  }
+  constructor(private readonly page: Page) {}
 
   async typePartiallySatisfyingPassword(): Promise<void> {
     await this.passwordInput().fill(PARTIAL_PASSWORD);

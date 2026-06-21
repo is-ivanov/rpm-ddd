@@ -1,13 +1,16 @@
 import { test } from '@playwright/test';
+import { ActivationPageStatements } from '../../statements/frontend/activation-page.statements';
 import { ActivationMismatchStatements } from '../../statements/frontend/activation-mismatch.statements';
 import { ActivationBackendStatements } from '../../statements/backend/activation-backend.statements';
 
 test.describe('Activation Page Password Mismatch', () => {
+  let activationPage: ActivationPageStatements;
   let activationMismatch: ActivationMismatchStatements;
   let activationBackend: ActivationBackendStatements;
 
   test.beforeEach(({ page, baseURL }) => {
-    activationMismatch = new ActivationMismatchStatements(page, baseURL!);
+    activationPage = new ActivationPageStatements(page, baseURL!);
+    activationMismatch = new ActivationMismatchStatements(page);
     activationBackend = new ActivationBackendStatements(page);
   });
 
@@ -23,7 +26,8 @@ test.describe('Activation Page Password Mismatch', () => {
       // "Passwords do not match" message appears when password !== confirm.
       test.fail();
       await activationBackend.givenPendingAccountForToken({ login: 'ivan', email: 'ivan@example.com' });
-      await activationMismatch.navigateToActivationPageWithToken('valid-activation-token');
+      await activationPage.navigateToActivationPageWithToken('valid-activation-token');
+      await activationPage.assertPasswordFieldIsVisible();
 
       await activationMismatch.enterMismatchedPasswords();
 

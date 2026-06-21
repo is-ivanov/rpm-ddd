@@ -1,13 +1,16 @@
 import { test } from '@playwright/test';
+import { LoginPageStatements } from '../../statements/frontend/login-page.statements';
 import { LoginErrorDismissStatements } from '../../statements/frontend/login-error-dismiss.statements';
 import { AuthBackendStatements } from '../../statements/backend/auth-backend.statements';
 
 test.describe('Login Error Banner Dismiss', () => {
+  let loginPage: LoginPageStatements;
   let errorDismiss: LoginErrorDismissStatements;
   let authBackend: AuthBackendStatements;
 
   test.beforeEach(({ page, baseURL }) => {
-    errorDismiss = new LoginErrorDismissStatements(page, baseURL!);
+    loginPage = new LoginPageStatements(page, baseURL!);
+    errorDismiss = new LoginErrorDismissStatements(page);
     authBackend = new AuthBackendStatements(page);
   });
 
@@ -18,7 +21,8 @@ test.describe('Login Error Banner Dismiss', () => {
       'Then the error banner is no longer visible',
     async () => {
       await authBackend.givenRegisteredUser('ivan', 'correct-pass');
-      await errorDismiss.givenErrorBannerIsVisible('ivan', 'wrong-pass');
+      await loginPage.navigateToLoginPage();
+      await errorDismiss.submitWrongCredentialsAndSeeErrorBanner('ivan', 'wrong-pass');
 
       await errorDismiss.clickDismissButton();
 

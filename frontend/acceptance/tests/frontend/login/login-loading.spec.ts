@@ -1,13 +1,16 @@
 import { test } from '@playwright/test';
+import { LoginPageStatements } from '../../statements/frontend/login-page.statements';
 import { LoginLoadingStatements } from '../../statements/frontend/login-loading.statements';
 import { AuthBackendStatements } from '../../statements/backend/auth-backend.statements';
 
 test.describe('Login Page Loading State', () => {
+  let loginPage: LoginPageStatements;
   let loginLoading: LoginLoadingStatements;
   let authBackend: AuthBackendStatements;
 
   test.beforeEach(({ page, baseURL }) => {
-    loginLoading = new LoginLoadingStatements(page, baseURL!);
+    loginPage = new LoginPageStatements(page, baseURL!);
+    loginLoading = new LoginLoadingStatements(page);
     authBackend = new AuthBackendStatements(page);
   });
 
@@ -19,7 +22,7 @@ test.describe('Login Page Loading State', () => {
       'And the form fields become disabled during submission',
     async () => {
       await authBackend.givenSlowLoginRequest('ivan', 'correct-pass');
-      await loginLoading.navigateToLoginPage();
+      await loginPage.navigateToLoginPage();
 
       await loginLoading.submitValidCredentials('ivan', 'correct-pass');
 

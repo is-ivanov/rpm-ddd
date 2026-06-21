@@ -9,14 +9,7 @@ const TEST_ID = {
 } as const;
 
 export class LoginLoadingStatements {
-  constructor(
-    private readonly page: Page,
-    private readonly appUrl: string,
-  ) {}
-
-  async navigateToLoginPage(): Promise<void> {
-    await this.page.goto(`${this.appUrl}/login`);
-  }
+  constructor(private readonly page: Page) {}
 
   async submitValidCredentials(login: string, password: string): Promise<void> {
     await this.loginInput().fill(login);

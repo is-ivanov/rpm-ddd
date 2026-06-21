@@ -10,13 +10,9 @@ const TEST_ID = {
 } as const;
 
 export class LoginErrorDismissStatements {
-  constructor(
-    private readonly page: Page,
-    private readonly appUrl: string,
-  ) {}
+  constructor(private readonly page: Page) {}
 
-  async givenErrorBannerIsVisible(login: string, wrongPassword: string): Promise<void> {
-    await this.page.goto(`${this.appUrl}/login`);
+  async submitWrongCredentialsAndSeeErrorBanner(login: string, wrongPassword: string): Promise<void> {
     await this.loginInput().fill(login);
     await this.passwordInput().fill(wrongPassword);
     await this.submitButton().click();

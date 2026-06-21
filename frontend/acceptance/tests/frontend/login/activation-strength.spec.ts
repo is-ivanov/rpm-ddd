@@ -1,13 +1,16 @@
 import { test } from '@playwright/test';
+import { ActivationPageStatements } from '../../statements/frontend/activation-page.statements';
 import { ActivationStrengthStatements } from '../../statements/frontend/activation-strength.statements';
 import { ActivationBackendStatements } from '../../statements/backend/activation-backend.statements';
 
 test.describe('Activation Page Password Complexity Rules', () => {
+  let activationPage: ActivationPageStatements;
   let activationStrength: ActivationStrengthStatements;
   let activationBackend: ActivationBackendStatements;
 
   test.beforeEach(({ page, baseURL }) => {
-    activationStrength = new ActivationStrengthStatements(page, baseURL!);
+    activationPage = new ActivationPageStatements(page, baseURL!);
+    activationStrength = new ActivationStrengthStatements(page);
     activationBackend = new ActivationBackendStatements(page);
   });
 
@@ -20,7 +23,8 @@ test.describe('Activation Page Password Complexity Rules', () => {
       'Then all complexity rules update to met in real-time',
     async () => {
       await activationBackend.givenPendingAccountForToken({ login: 'ivan', email: 'ivan@example.com' });
-      await activationStrength.navigateToActivationPageWithToken('valid-activation-token');
+      await activationPage.navigateToActivationPageWithToken('valid-activation-token');
+      await activationPage.assertPasswordFieldIsVisible();
 
       await activationStrength.typePartiallySatisfyingPassword();
       await activationStrength.assertOnlySatisfiedRulesAreMet();

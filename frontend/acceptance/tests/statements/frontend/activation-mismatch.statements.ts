@@ -13,15 +13,7 @@ const PASSWORD = 'Str0ng-P@ssw0rd!';
 const DIFFERENT_PASSWORD = 'Different-P@ssw0rd!';
 
 export class ActivationMismatchStatements {
-  constructor(
-    private readonly page: Page,
-    private readonly appUrl: string,
-  ) {}
-
-  async navigateToActivationPageWithToken(token: string): Promise<void> {
-    await this.page.goto(`${this.appUrl}/activate?token=${token}`);
-    await expect(this.passwordInput(), 'activation password input is visible on page load').toBeVisible();
-  }
+  constructor(private readonly page: Page) {}
 
   async enterMismatchedPasswords(): Promise<void> {
     await this.passwordInput().fill(PASSWORD);
