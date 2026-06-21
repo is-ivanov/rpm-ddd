@@ -246,6 +246,24 @@
 - [ ] green-playwright
 - [ ] demo
 
+> **Scenario 4.4 promoted 2026-06-21 from improvements.md I6 (user request).** The activation activate
+> button is the only backend-calling auth control still without a loading state — the activation half
+> of the #189 double-submit finding (login half closed by §2.2). NOT in the extended UI spec (under-
+> specified by design); promoted as a new core scenario so it is tracked, scheduled LAST after the
+> other promoted scenarios. align-design should **extract a shared LoadingButton** (per the new
+> `.claude/rules/frontend-rules.md` "Async Action Buttons" rule) and migrate BOTH the §2.2 login button
+> and the activate button onto it (§2.2 login tests must stay green through that refactor).
+
+### Scenario 4.4: Activation page shows loading state during submission
+- [ ] red-playwright
+- [ ] red-frontend
+- [ ] green-frontend
+- [ ] red-frontend-api
+- [ ] green-frontend-api
+- [ ] align-design
+- [ ] green-playwright
+- [ ] demo
+
 ## Security Scenarios
 
 ### Scenario 5.1: SQL injection in login field does not bypass authentication

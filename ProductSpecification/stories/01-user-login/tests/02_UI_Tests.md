@@ -101,6 +101,15 @@ When the user enters different values in the password and confirm password field
 Then an error message is displayed indicating the passwords do not match
 ```
 
+### 4.4 Activation page shows loading state during submission
+
+```gherkin
+Given the activation page is displayed with a valid token
+When the user submits a valid matching password
+Then the activate button shows a loading indicator
+And the form fields become disabled during submission
+```
+
 ## 5. Activation Result Display
 
 ### 5.1 Successful activation shows success message and "Go to Sign In" button
@@ -150,6 +159,7 @@ Then the user is navigated to the login page
 | 4.1 | Activation | password input, confirm password input, complexity rules list, "Activate Account" button | all fields visible, complexity rules displayed |
 | 4.2 | Activation | password input, password strength indicator | indicator reflects strength of typed password and updates in real-time (weak → strong) as the value changes |
 | 4.3 | Activation | password input, confirm password input, mismatch error message | when password ≠ confirm password, a "passwords do not match" error message is displayed |
+| 4.4 | Activation | "Activate Account" button, password + confirm password inputs | on submit: button shows a loading indicator, password + confirm-password fields disabled during the in-flight activate request |
 | 5.1 | Activation | password input, confirm password input, "Activate Account" button, success icon, success text, "Go to Sign In" button | green check icon visible, text "Account Activated!", button "Go to Sign In" visible |
 | 5.2 | Activation | error icon, error text, "Request New Link" button | red X icon visible, text "Link Expired", button "Request New Link" visible |
 | 6.1 | Activation → Login | "Go to Sign In" button | navigation to login page URL, login page elements visible |
