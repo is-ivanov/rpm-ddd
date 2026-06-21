@@ -1,17 +1,12 @@
-import { describe, expect, it } from 'vitest';
-import { type PasswordMatch, evaluatePasswordMatch } from '../logic/password-match.logic';
+import {describe, expect, it} from 'vitest';
+import {evaluatePasswordMatch, type PasswordMatch} from '../logic/password-match.logic';
 
-// Exact text the activation form must show when the two fields differ — the single source of truth
-// the component renders into data-testid="password-mismatch-error" (E2E contract, Story 1 §4.3).
 const MISMATCH_MESSAGE = 'Passwords do not match';
 
 const MATCHED: PasswordMatch = { matched: true, error: '' };
 const MISMATCHED: PasswordMatch = { matched: false, error: MISMATCH_MESSAGE };
 
 describe('Activation Password Match', () => {
-  // Story 1 §4.3: the activation form shows an error when password !== confirm. The check is a pure
-  // client-side comparison producing matched (no error) vs mismatched (the literal message). Cases
-  // cover identical values, differing values, and the empty-field edge states.
   it.each([
     {
       name: 'identical values → matched, no error',
