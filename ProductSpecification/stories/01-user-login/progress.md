@@ -217,8 +217,8 @@
 - [x] demo (ran login-loading.spec.ts §2.2 headless + slowMo 2000ms + video; 1 passed; recording test-results/demo-login-loading-2-2.webm; config reverted, tree clean)
 
 ### Scenario 3.3: Error banner dismiss button closes the banner
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (login-error-dismiss.spec.ts §3.3 — test.fail() RED marker; new spec (login-page.spec.ts already 177L). Given: givenErrorBannerIsVisible reuses authBackend.givenRegisteredUser + submits wrong-pass → 401 → error-banner visible (precondition asserted). When: clickDismissButton clicks new error-banner-dismiss testid. Then: error-banner toHaveCount(0). RED genuine: LoginErrorBanner.vue has no dismiss button. PREDICT toBeVisible on missing error-banner-dismiss → matched (Type/Message/Status all YES). First run used bare .click() → 30s action timeout (hard fail under test.fail); fixed to pin RED via toBeVisible() expect (5s), mirroring §2.2. New testid for align-design: error-banner-dismiss (button emits dismiss → parent clears errorMessage). test-review CLEAN. refactor: Extract givenErrorBannerIsVisible precondition (matches Gherkin abstraction, removes impl constants from test class); added noinspection HardcodedPasswordInspection for new password-input testid. CLI lint EXIT=0; IDE clean. spec 32L / statements 54L.)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
