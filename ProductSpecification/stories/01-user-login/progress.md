@@ -224,10 +224,10 @@
 - [S] green-frontend-api (no API client produced in red-frontend-api — see [S] above; dismissing reuses no HTTP, the dismiss button emit + parent ref-clearing are built in align-design on LoginErrorBanner.vue + LoginPage.vue)
 - [x] align-design (LoginErrorBanner.vue: added a dismiss button — Lucide X icon, data-testid error-banner-dismiss, aria-label "Dismiss error", ml-auto on the right of the banner — emitting `dismiss` via defineEmits. LoginPage.vue: `@dismiss="dismissError"` on LoginErrorBanner + dismissError() clearing errorMessage/requiresActivation/fieldErrors so the v-if=errorMessage banner hides. No dismiss button in the error mockups (02/03 show only the leading x-circle icon) — net-new presentational element using existing danger tokens; the rest of the banner (icon/message/activation link) unchanged vs mockups. design-review PASS — only new literals are the static aria-label + testid, message stays a dynamic prop. refactor extracted a shared `.icon-button` semantic class in style.css (deduped the bare-icon-button reset shared with PasswordField.vue's toggle). test-coverage frontend --focus: components E2E-covered by login-error-dismiss.spec.ts §3.3, logic/ 100% lines, no logic/api gaps, no new steps (27 vitest passed). CLI lint EXIT=0; IDE inspections clean on all 4 files.)
 - [x] green-playwright (login-error-dismiss.spec.ts §3.3 passes — test.fail() marker + stale RED comment removed; dismiss button built in align-design. Frontend auto-started via Playwright webServer, backend mocked in-browser via page.route (no real backend). 1/1 spec; full login dir 16/16, no regressions. Remove-marker-only: no production/Statements changes. CLI lint EXIT=0; IDE clean.)
-- [~] demo
+- [x] demo (ran login-error-dismiss.spec.ts §3.3 headless + slowMo 2000ms + video; 1 passed; recording test-results/demo-login-error-dismiss-3-3.webm; config reverted, tree clean)
 
 ### Scenario 4.2: Activation page shows password strength indicator updating in real-time
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
