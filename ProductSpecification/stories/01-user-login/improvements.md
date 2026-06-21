@@ -82,6 +82,8 @@ fold into a "Login hardening / resilience" story. Marked `[S] deferred` in `prog
 
 ### I5 — Dead "Request a new activation email" link needs a resend-activation feature (found 2026-06-20)
 
+**Issue:** #199 (opened 2026-06-21, split out of #189 on closure).
+
 **Observed:** the inactive-account error banner (`LoginErrorBanner.vue`, rendered in Scenario 3.2)
 contains a "Request a new activation email" link with `href="#"` — it goes nowhere.
 
