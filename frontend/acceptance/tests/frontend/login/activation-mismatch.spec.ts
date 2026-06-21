@@ -20,11 +20,6 @@ test.describe('Activation Page Password Mismatch', () => {
       'When the user enters different values in the password and confirm password fields, ' +
       'Then an error message is displayed indicating the passwords do not match',
     async () => {
-      // RED: ActivationPage.vue has no password/confirm mismatch check yet
-      // (data-testid="password-mismatch-error" does not exist) -> the mismatch
-      // error never renders. Pinned by the exact-text assertion proving the
-      // "Passwords do not match" message appears when password !== confirm.
-      test.fail();
       await activationBackend.givenPendingAccountForToken({ login: 'ivan', email: 'ivan@example.com' });
       await activationPage.navigateToActivationPageWithToken('valid-activation-token');
       await activationPage.assertPasswordFieldIsVisible();
