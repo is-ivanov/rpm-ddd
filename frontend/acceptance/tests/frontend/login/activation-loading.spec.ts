@@ -21,13 +21,6 @@ test.describe('Activation Page Loading State', () => {
       'Then the activate button shows a loading indicator, ' +
       'And the form fields become disabled during submission',
     async () => {
-      // RED: ActivationPage.vue has no in-flight loading state for the activate
-      // button yet (data-testid="activate-loading" does not exist, and the
-      // password/confirm fields are not disabled while the activate POST is in
-      // flight) -> the loading indicator never renders. Pinned by the exact
-      // activate-loading visibility assertion proving the loading state appears
-      // while the activate request is held in flight.
-      test.fail();
       await activationBackend.givenSlowActivationRequest({ login: 'ivan', email: 'ivan@example.com' });
       await activationPage.navigateToActivationPageWithToken('valid-activation-token');
       await activationPage.assertPasswordFieldIsVisible();
