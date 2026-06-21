@@ -18,11 +18,6 @@ test.describe('Login Page Loading State', () => {
       'Then the login button shows a loading indicator, ' +
       'And the form fields become disabled during submission',
     async () => {
-      // RED: LoginPage.vue has no `submitting` state — the button shows no loading
-      // indicator (no `submit-loading` testid) and the login/password inputs are not
-      // disabled during the in-flight request. The held login response below keeps the
-      // request in flight so the loading state would be observable once implemented.
-      test.fail();
       await authBackend.givenSlowLoginRequest('ivan', 'correct-pass');
       await loginLoading.navigateToLoginPage();
 
