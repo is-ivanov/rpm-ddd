@@ -38,37 +38,19 @@ Mark one option as **Recommended** with a one-line rationale ("why this over the
 
 ### 3. Present Options
 
-Show each option as a labelled block: title, summary, pros, cons. Include the recommendation rationale below the recommended option.
-
-**Simple scenarios**: each option in 3-5 lines.
-**Complex scenarios**: each option with method signatures/pseudocode, domain model changes, pipeline/sequence diagrams, port changes.
+Show each option as a labelled block (title, summary, pros, cons) with the recommendation rationale below the recommended one. Depth scales with complexity — see `.claude/templates/workflow/design-preview-formats.md`.
 
 ### 4. Get Option Choice
 
-Ask with `AskUserQuestion`:
-- First answer = the recommended option, label suffixed with "(Recommended)"
-- Other answers = alternative options (one per non-recommended option, up to 3 alternatives)
-- Last answer = "Reject all — escalate to `/architecture`"
-
-Option labels must fit in a chip (12 chars). Keep answer descriptions to one short line.
-
-If user rejects all → invoke `/architecture` and STOP. Do not proceed to the ADR question.
+Ask with `AskUserQuestion`: recommended option first (suffixed "(Recommended)"), then alternatives, last answer "Reject all — escalate to `/architecture`". If user rejects all → invoke `/architecture` and STOP (do not proceed to the ADR question). Answer-layout details: see `.claude/templates/workflow/design-preview-formats.md`.
 
 ### 5. Get ADR Decision
 
-After an option is chosen, ask separately with `AskUserQuestion` whether to capture the decision as an ADR:
-- "Write ADR" — recommended when the user picked a non-recommended option, when the trade-offs are non-obvious, or when downstream scenarios will likely revisit the choice
-- "Skip ADR" — recommended for trivial scenarios (single-option flow) or mechanical choices with no real trade-off
-
-Pick which option to mark "(Recommended)" based on the choice the user just made in step 4.
+After an option is chosen, ask separately with `AskUserQuestion` whether to capture the decision as an ADR ("Write ADR" vs "Skip ADR"). Mark "(Recommended)" based on the choice the user just made in step 4. Recommendation criteria: see `.claude/templates/workflow/design-preview-formats.md`.
 
 ### 6. Completion
 
-| Outcome | Action |
-|---------|--------|
-| Option chosen, no ADR | Mark `design` step as `[x]`. No files created. |
-| Option chosen, write ADR | Mark `design` step as `[x]`, then write an ADR using `.claude/templates/spec/adr-format.md` to the story's `decisions/` subfolder. Pre-populate the ADR's "Rejected" table with the un-chosen options from step 3. Commit includes the ADR file. |
-| Rejected all → `/architecture` | Do NOT mark `design`. `/architecture` runs and decides the ADR. Mark `design` only after the ADR lands. |
+Mark the `design` step per the outcome (no ADR / write ADR / rejected → `/architecture`). See the completion-outcome table in `.claude/templates/workflow/design-preview-formats.md`.
 
 ## Rules
 

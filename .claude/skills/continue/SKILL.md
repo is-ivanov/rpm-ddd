@@ -5,22 +5,25 @@ description: Continue working on a story or task by reading progress.md, executi
 
 # /continue - Resume Development
 
-## Workflow
+Central dispatcher: read `progress.md`, execute the next single work unit, update progress, commit, then STOP. All workflow sequences, progress tracking rules, adapter discovery, and task types are defined in `.claude/rules/workflow.md`. Progress file format examples are in `.claude/templates/workflow/progress-format.md`.
 
-1. **Identify work item** from argument
-2. **Backlog promotion** -- if the story row is in the **Backlog** table in `ProductSpecification/stories.md`, move it to **In Progress** before proceeding
-3. **Read progress** file, bootstrap if missing (stories only) — bootstrapping also surfaces any `tests/extended/*_Extended.md` cases as `[S]` entries (see `workflow.md` → Bootstrapping, step 7); `/continue` never executes them
-4. **Find next step** -- first `[~]` or `[ ]` entry
-5. **Read journey context** -- read `carryover.md` (story root, if it exists) and the current scenario's summary file (`summaries/{scenario-slug}.md`, if it exists). Treat both as additional context for the work unit -- they preserve predictions, decisions, surprises, and quirks from prior conversations. `/continue` only READS these files; it never writes them (the `/handoff` skill is the sole writer).
-6. **Load ADR context** -- check for `decisions/*-decision.md` files in the story directory. If any exist AND the current step references the ADR (via "see ADR" annotation or matching scenario), read it. ADRs contain architectural decisions, schema changes, edge cases, and implementation guidance that the work unit needs.
-7. **Execute one work unit** -- dispatch sub-skills per tables below
-8. **Adapter discovery** -- when the next step is `[ ] adapters-discovery`, read usecase constructor to identify ports and map to adapters (see `workflow.md`). Mark `[x] adapters-discovery`, insert concrete steps below it, commit progress.md.
-9. **Update progress** -- mark completed, advance next, commit
-10. **Update stories.md** -- for stories only, update the phase columns in `ProductSpecification/stories.md` (see below)
+See `.claude/templates/workflow/continue-dispatch.md` for the dispatch tables, pre-commit checklist, and stories.md update rules.
+
+## Algorithm
+
+1. **Identify work item** from argument (see Resolving the Argument).
+2. **Backlog promotion** -- if the story row is in the **Backlog** table in `ProductSpecification/stories.md`, move it to **In Progress** before proceeding.
+3. **Read progress** file, bootstrap if missing (stories only) — bootstrapping also surfaces any `tests/extended/*_Extended.md` cases as `[S]` entries (see `workflow.md` → Bootstrapping, step 7); `/continue` never executes them.
+4. **Find next step** -- first `[~]` or `[ ]` entry.
+5. **Read journey context** -- read `carryover.md` (story root, if it exists) and the current scenario's summary file (`summaries/{scenario-slug}.md`, if it exists) as additional context. `/continue` only READS these files (the `/handoff` skill is the sole writer).
+6. **Load ADR context** -- check for `decisions/*-decision.md` in the story directory; if any exist AND the current step references the ADR, read it for schema changes, edge cases, and implementation guidance.
+7. **Execute one work unit** -- dispatch sub-skills per the dispatch tables in the reference template. Within the work unit, never pause between sub-skills.
+8. **Adapter discovery** -- when the next step is `[ ] adapters-discovery`, read the usecase constructor to identify ports and map to adapters (see `workflow.md`). Mark `[x] adapters-discovery`, insert concrete steps below it, commit progress.md.
+9. **Update progress** -- mark completed, advance next.
+10. **Update stories.md** -- for stories only, update the phase columns in `ProductSpecification/stories.md` (per the reference template) and include it in the same commit.
 10a. **Story Completion Gate** -- for stories only, when the work unit just completed was the story's **final** scenario (every other checkbox is `[x]`/`[S]`), do NOT move the row to Done yet. **STOP** and run the Story Completion Gate (see `workflow.md` → "Story Completion Gate"): surface every `tests/extended/*_Extended.md` case and every `Open` item in the story's `improvements.md`, each with a one-line promote/defer recommendation, and **ask the user to decide per item**. The agent never auto-promotes or auto-closes — it moves the row to Done only after the user has decided every item and any promoted scenarios are appended to `progress.md`. This is a deliberate exception to the "never pause within a work unit" rule.
-11. **Task completion** -- after updating progress, if ALL checkboxes are `[x]` or `[S]` (no `[ ]` or `[~]` remaining), move the task folder to `ProductSpecification/tasks/done/` and include the move in the commit
-
-All workflow sequences, progress tracking rules, adapter discovery procedure, and task types are defined in `.claude/rules/workflow.md`. Progress file format examples are in `.claude/templates/workflow/progress-format.md`.
+11. **Task completion** -- after updating progress, if ALL checkboxes are `[x]` or `[S]`, move the task folder to `ProductSpecification/tasks/done/` and include the move in the commit.
+12. **Commit, then STOP.** Always commit after a work unit (include progress.md). A single `/continue` invocation executes exactly ONE work unit — once the commit lands, stop and report (below). Do NOT read the next `[ ]` step and keep going. If a sub-skill fails, stop immediately and do NOT mark the step complete.
 
 ## Resolving the Argument
 
@@ -36,102 +39,14 @@ All workflow sequences, progress tracking rules, adapter discovery procedure, an
 
 1. **Search branches**: `git branch -a --list "*N*"` (or `git branch -a | grep N`) — look for a `task/N-*` branch, local or remote (run `git fetch` first if remote branches may be stale).
 2. **Search history**: `git log --all --oneline --grep "Task N"` and `git log --all -- "ProductSpecification/tasks/N-*"` — the folder may exist on an unmerged branch.
-3. **If a task branch exists**: report it to the user and switch to it (after confirming the working tree is clean), then resume the normal workflow — read its `progress.md` and execute the next work unit.
+3. **If a task branch exists**: report it to the user and switch to it (after confirming the working tree is clean), then resume the normal workflow.
 4. **Only if neither a folder nor a branch nor history mentions task N**: check the GitHub issue #N; if it exists, offer to bootstrap the task from it via `/task` (reusing the issue, never opening a duplicate). Do not silently create a new task without this git search first.
-
-## Work Unit Dispatch
-
-Each progress.md checkbox maps to sub-skills. Dispatch per `workflow.md` sequences. **This table applies equally to stories AND tasks — never skip `/test-review` or `/refactor` for task steps.**
-
-| Checkbox | Sub-skills |
-|----------|-----------|
-| Spec items (`interview`, `story`, `mockups`, `api-spec`, `test-spec`) | `/{item}` then commit |
-| `design` | `/design-preview` → user approves (optionally with ADR) or `/architecture` → commit (if ADR produced) |
-| `red-*` (acceptance, usecase, domain, adapter, playwright, frontend, frontend-api) | `red-agent.md` → `/test-review` → `/refactor` → commit |
-| `green-usecase`, `green-domain`, `green-adapter X` | `green-agent.md` → `/refactor` → `/test-coverage {module} --focus` → commit |
-| `adapters-discovery` | Load `.claude/templates/workflow/adapter-discovery-checklist.md`, run all 3 checks (ports, exceptions, response shape), mark `[x] adapters-discovery`, insert concrete `red-adapter X` / `green-adapter X` steps (or `[S]`) → commit progress.md |
-| `green-acceptance` | Run inline (no subagent): ensure the shared test DB is up (see `.claude/tech/java-spring/infrastructure.md` → "Test Database"), read `green-agent.md` workflow, load acceptance implementation template, enable the disabled test (remove disable marker — only allowed test change), run acceptance tests, verify GREEN → commit |
-| `green-frontend`, `green-frontend-api` | `green-agent.md` → `/refactor` → commit |
-| `green-playwright` | `/run-backend` → `/run-frontend` → `green-agent.md` (remove-marker-only: no production code, no Statements changes, no backend changes — if test fails, STOP and report) → commit |
-| `align-design` | Build component → `/align-design` → `/design-review` (MANDATORY) → `/refactor` → `/align-design` verify-only → `/test-coverage frontend --focus` → commit |
-| `demo` | `/demo {scenario_test_class}` then progress-only commit |
-| `refactor usecase` / `refactor (...)` | Apply change then run affected tests then commit |
 
 ## Stop and Report
 
-STOP after every commit. A single `/continue` invocation executes exactly ONE work unit. Within that work unit, don't pause between sub-skills. But once the commit lands, stop immediately and report: completed step, test results (pass/fail counts from every test run in the work unit), next step, progress fraction, how to continue. Do NOT read the next `[ ]` step and keep going.
-
-**Test results:** Collect pass/fail counts from every sub-skill that runs tests (red-agent, green-agent, test-coverage, refactor). Include them in the final report as a summary line, e.g., `Tests: 15 passed, 0 failed` or `Tests: 14 passed, 1 failed`. When multiple test suites ran, report each separately.
-
-## Pre-Commit Checklist
-
-Before committing, verify: (1) primary skill ran, (2) `/test-review` ran (red phases), (3) `/refactor` ran (all phases except `green-acceptance`/`green-playwright`/`demo`/spec items), (4) static analysis passes, (5) IDE inspections pass on changed files. If `/refactor` was skipped -- run it before committing.
-
-**Static analysis** (step 4): run the checker for each stack the work unit touched — do NOT skip this step, it catches issues the agents don't check.
-- **Backend files changed** (`.java`): `./mvnw checkstyle:check -pl . -q && ./mvnw pmd:check -pl . -q` — catches missing Javadoc, PMD violations.
-- **Frontend files changed** (`frontend/**`): `npm run lint` from `frontend/` (`eslint . && prettier --check .`) — the same gate as the CI "Frontend Lint" job. Auto-fix with `npm run lint:fix`, then re-run `npm run lint` to confirm clean. See `.claude/tech/vue-ts/infrastructure.md` → "Static Analysis (Pre-Commit)".
-
-Run whichever apply to the files in this work unit; run both when it touched both stacks. If violations are found, fix them before committing.
-
-**IDE inspections** (step 5): for each non-spec file created or modified in this work unit, call the IntelliJ MCP tool `mcp__idea__get_file_problems` (`errorsOnly: false`, pass `projectPath`). It catches issues the static analyzers miss (e.g. `AutoCloseable` used without try-with-resources, redundant code). Fix real findings; for an intentional false positive add a narrowly-scoped `@SuppressWarnings("<id>")` with a comment explaining why. Skip only when the IDEA MCP server is unavailable (e.g. headless/cron runs) — then note it was skipped. Applies to code files only, not markdown/spec.
-
-## Sub-Skill Dispatch
-
-ALL sub-skills dispatch via Agent tool for context isolation:
-
-| Sub-skill | Dispatch method |
-|-----------|----------------|
-| `red-*` | `Agent tool` (subagent_type: `red-agent`) — pass layer, story folder path, scenario name, and ADR content (if loaded) |
-| `green-*` (except `green-acceptance`) | `Agent tool` (subagent_type: `green-agent`) — pass layer, story folder path, scenario name, and ADR content (if loaded) |
-| `green-acceptance` | **Inline** — no subagent. Main agent ensures the shared test DB is up (tech binding → "Test Database"), reads `green-agent.md`, loads acceptance template, enables the test, runs it. Full visibility for user. |
-| `/refactor` | `Agent tool` (subagent_type: `refactor-agent`) |
-| `/test-review` | `Agent tool` (subagent_type: `test-review-agent`) |
-| `/test-coverage` | `Agent tool` (subagent_type: `coverage-agent`) |
-
-Derive the layer from the checkbox (e.g., `red-adapter db` → layer `db`, `green-usecase` → layer `usecase`). Both red-agent and green-agent receive: layer, story folder path, scenario name, and ADR content (if loaded in step 6). The agent resolves test files and templates from its own workflow.
-
-**CHAINING: After each sub-step completes (Agent tool return), echo a 1-2 line status summary (agent name, outcome, pass/fail counts) to the user, then immediately dispatch the next sub-step. Do NOT wait for user input between sub-steps — the echo is informational only.**
-
-**AGENT LOG: Before the first agent dispatch, clear the log: `> infrastructure/agent-progress.log`. After the final commit, include the log contents in the stop-and-report summary.**
-
-**LOG REMINDER: Every time you dispatch a sub-agent (Agent tool call), output this line immediately before the call:**
-```
-> Dispatching {agent-name}. Live progress: tail -f infrastructure/agent-progress.log
-```
-**This reminds the user where to watch. The line appears in conversation output before the agent starts, so the user can open a terminal and tail the log while the agent works.**
-
-## Rules
-
-- Execute exactly ONE work unit per invocation — a work unit includes ALL sub-skills through the commit. Never stop between sub-skills.
-- Always commit after a work unit (include progress.md in the commit)
-- Task commit prefix: `task:` (e.g., `task: red-adapter db (Task 1, Step 1)`)
-- If a sub-skill fails, stop immediately -- do NOT mark the step complete
-- Mandatory sub-skills per phase: see `workflow.md` sequences
-
-## Updating stories.md
-
-After updating `progress.md` for a **story** (not tasks), update the story's row in `ProductSpecification/stories.md` to reflect current phase status. The file has columns: `Spec | Backend | Integration | Frontend | Security | Load | Infra | Status`.
-
-**Phase column values** — derive from `progress.md` sections:
-- `✅` — all checkboxes in that section are `[x]` or `[S]`
-- `🔧` — section has at least one `[~]` or `[ ]` checkbox (work in progress or next up within the current active lifecycle phase)
-- `—` — section exists but no work started yet (all `[ ]`)
-- `n/a` — phase not applicable (test spec file says "No tests" or story has no scenarios for that phase)
-- `·` — no story folder or no progress file exists
-
-**Tests and % columns** — recount after every progress.md update:
-- **Total** = number of `### ` scenario headings in progress.md (not `## ` section headers)
-- **Done** = scenarios where ALL checkboxes are `[x]` or `[S]` (no `[ ]` or `[~]` remaining)
-- **%** = `round(done / total * 100)`
-- Format: `done/total` in Tests column, `N%` in % column
-- Do NOT add a Total row — it causes merge conflicts
-
-**Story completion** — when all scenarios reach 100% (Tests column = `total/total`, % = `100%`), move the story row from the **In Progress** table to the **Done** table in `ProductSpecification/stories.md`. Keep all column values intact.
-
-**When to update**: after every progress.md commit for a story. Include `ProductSpecification/stories.md` in the same commit.
-
-**Lifecycle ordering**: Spec → Backend → Integration → Frontend → Security → Load → Infra. A phase becomes `🔧` when it is the current active phase (has `[~]` items) OR when it still has `[ ]` items and all prior phases are `✅`.
+STOP after every commit. Report: completed step, test results (pass/fail counts from every test run in the work unit — collect from red-agent, green-agent, test-coverage, refactor, e.g. `Tests: 15 passed, 0 failed`; report each suite separately), next step, progress fraction, how to continue. Task commit prefix: `task:` (e.g., `task: red-adapter db (Task 1, Step 1)`). Mandatory sub-skills per phase: see `workflow.md` sequences.
 
 ## Available Templates
 
+- `.claude/templates/workflow/continue-dispatch.md` -- dispatch tables, pre-commit checklist, stories.md update rules
 - `.claude/templates/workflow/progress-format.md` -- progress file format for stories, bug tasks, and refactoring tasks
