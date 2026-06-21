@@ -1,32 +1,45 @@
 import { describe, expect, it } from 'vitest';
-import { computePasswordStrength } from '../logic/password-strength.logic';
+import { type ComplexityRule, evaluateComplexityRules } from '../logic/password-strength.logic';
 
-describe('Activation Password Strength Classification', () => {
-  // Story 1 §4.2: classification is based on how many of the 6 activation complexity rules
-  // the value satisfies (>=12 chars, upper, lower, digit, special, no spaces) -> weak (<=3),
-  // medium (4-5), strong (6). The E2E-pinned inputs ('weak' -> weak, 'Str0ng-P@ssw0rd!' ->
-  // strong) and the band boundaries are asserted here.
-  it('classifies a short lowercase-only password as weak (E2E-pinned input)', () => {
-    expect(computePasswordStrength('weak')).toBe('weak');
+function rule(key: string, label: string, met: boolean): ComplexityRule {
+  return { key, label, met };
+}
+
+describe('Activation Password Complexity Rules', () => {
+  // Story 1 §4.2: the activation form indicates password complexity PER RULE — each of the 6
+  // rules is highlighted as met/unmet (E2E testid suffixes: length, uppercase, lowercase, digit,
+  // special, no-spaces). evaluateComplexityRules returns the 6 rules in mockup/PASSWORD_RULES
+  // order with stable key, human label, and a met flag for the given password.
+  it.fails('marks only lowercase + no-spaces as met for a short lowercase value', () => {
+    expect(evaluateComplexityRules('weak')).toEqual([
+      rule('length', 'At least 12 characters', false),
+      rule('uppercase', 'At least one uppercase letter', false),
+      rule('lowercase', 'At least one lowercase letter', true),
+      rule('digit', 'At least one digit', false),
+      rule('special', 'At least one special character', false),
+      rule('no-spaces', 'No spaces', true),
+    ]);
   });
 
-  it('classifies a value satisfying all six complexity rules as strong (E2E-pinned input)', () => {
-    expect(computePasswordStrength('Str0ng-P@ssw0rd!')).toBe('strong');
+  it.fails('marks all six rules as met for a value satisfying every rule', () => {
+    expect(evaluateComplexityRules('Str0ng-P@ssw0rd!')).toEqual([
+      rule('length', 'At least 12 characters', true),
+      rule('uppercase', 'At least one uppercase letter', true),
+      rule('lowercase', 'At least one lowercase letter', true),
+      rule('digit', 'At least one digit', true),
+      rule('special', 'At least one special character', true),
+      rule('no-spaces', 'No spaces', true),
+    ]);
   });
 
-  it('treats a value satisfying three or fewer rules as weak', () => {
-    expect(computePasswordStrength('abcABC')).toBe('weak');
-  });
-
-  it('treats a value satisfying four rules as medium (lower band boundary)', () => {
-    expect(computePasswordStrength('abcdef1!')).toBe('medium');
-  });
-
-  it('treats a value satisfying five rules as medium (upper band boundary)', () => {
-    expect(computePasswordStrength('Abcdefghijk1')).toBe('medium');
-  });
-
-  it('classifies an empty value as weak', () => {
-    expect(computePasswordStrength('')).toBe('weak');
+  it.fails('marks only no-spaces as met for an empty value', () => {
+    expect(evaluateComplexityRules('')).toEqual([
+      rule('length', 'At least 12 characters', false),
+      rule('uppercase', 'At least one uppercase letter', false),
+      rule('lowercase', 'At least one lowercase letter', false),
+      rule('digit', 'At least one digit', false),
+      rule('special', 'At least one special character', false),
+      rule('no-spaces', 'No spaces', true),
+    ]);
   });
 });
