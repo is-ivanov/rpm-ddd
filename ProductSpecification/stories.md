@@ -2,7 +2,6 @@
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |---|-------|------|------|------|-------|-----|------|-------|-------|----|
-| 1 | User login | ✅ | ✅ | n/a | 🔧 | ✅ | ✅ | ✅ | 34/35 | 97% |
 
 # Backlog
 
@@ -21,4 +20,5 @@
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |---|-------|------|------|------|-------|-----|------|-------|-------|----|
+| 1 | User login | ✅ | ✅ | n/a | ✅ | ✅ | ✅ | ✅ | 35/35 | 100% |
 | 2 | Email integration: send email on user registration | ✅ | ✅ | ✅ | n/a | ✅ | n/a | ✅ | 8/8 | 100% |
