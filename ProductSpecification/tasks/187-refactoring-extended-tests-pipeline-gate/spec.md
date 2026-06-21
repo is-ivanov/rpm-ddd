@@ -45,4 +45,6 @@ has no owner and no trigger in the process.
 - `.claude/skills/continue/SKILL.md` (bootstrap reads)
 - `.claude/skills/test-spec/SKILL.md` (extended header generation)
 - `.claude/skills/handoff/SKILL.md` (optional reminder)
-- `.opencode/` mirrors of the above (keep both frameworks in sync)
+- ~~`.opencode/` mirrors~~ — **out of scope**: per the user, `.opencode/` is an old, no-longer-maintained
+  folder (already heavily diverged from `.claude/`, e.g. `selenium` vs `playwright`). Do NOT edit it in
+  this task.

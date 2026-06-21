@@ -4,11 +4,32 @@
 
 Every story follows: **interview → spec → backend scenarios → integration scenarios → frontend scenarios → security scenarios → load scenarios → infrastructure scenarios**.
 
-**High-level progress** is tracked in `ProductSpecification/stories.md` — three tables: **In Progress**, **Backlog**, and **Done**. Phase columns (Spec, Backend, Integration, Frontend, Security, Load, Infra) per story. The `/continue` skill updates it after each work unit commit. Phase values: ✅ done, 🔧 in progress, — not started, · no story folder yet. When a story reaches 100% (all scenarios done), move its row from the **In Progress** table to the **Done** table.
+**High-level progress** is tracked in `ProductSpecification/stories.md` — three tables: **In Progress**, **Backlog**, and **Done**. Phase columns (Spec, Backend, Integration, Frontend, Security, Load, Infra) per story. The `/continue` skill updates it after each work unit commit. Phase values: ✅ done, 🔧 in progress, — not started, · no story folder yet. When a story reaches 100% (all scenarios done), run the **Story Completion Gate** (below) and then move its row from the **In Progress** table to the **Done** table.
 
 **Backlog** stories have all `·` columns (no folder yet). When `/continue N` targets a Backlog story, auto-promote it: move the row from **Backlog** to **In Progress** in `ProductSpecification/stories.md` before starting work.
 
 Spec phase: `/interview` → `/story` → `/mockups` → `/api-spec` → `/test-spec` (one at a time, review each before proceeding).
+
+## Story Completion Gate
+
+**A story may NOT move to the Done table until its extended test cases and improvements backlog have been reviewed — and the promote/defer decision is the user's, not the agent's.** `/test-spec` generates `tests/extended/*_Extended.md` files (header: *"Implement after core tests pass"*) and QA fills `improvements.md` during the story — both are deferred work that has no per-scenario checkbox, so without a gate they are silently orphaned when the story closes (this is the root cause of issue #189).
+
+**The agent only surfaces and recommends; the user decides.** When the work unit it just completed was a story's final scenario, `/continue` MUST **STOP** before moving the row to Done (this is a deliberate exception to "Atomic Work Units: never pause") and present, for the user to decide:
+
+- every case in `tests/extended/*_Extended.md`, and
+- every `Open` item in the story's `improvements.md`,
+
+each annotated with a one-line agent recommendation (promote / defer + why). **The agent never auto-promotes a case, never auto-closes the story, and never moves the row to Done on its own** — it waits for the user's per-item decision.
+
+After the user decides, the agent executes the decisions:
+
+1. **Promote** — append the case as a new scenario block in `progress.md` (with full TDD steps per the relevant scenario sequence). The story is NOT done while a promoted scenario has open checkboxes — work continues normally.
+2. **Defer** — log the case to the story's `improvements.md` backlog as an `Open` item (id `I{n}`), recording why it is deferred, and mark the corresponding entry in the `### Extended` block of `progress.md` (see Bootstrapping) as reviewed.
+3. **Improvements** — for each `Open` item the user chose to defer rather than promote, leave it `Open` with an owner/rationale, or (real regression) raise it as a bug task + issue. The story closes with a reviewed backlog, not an unexamined one.
+
+Only once every extended case and `Open` item has a user decision does the agent move the row to Done. The completion commit message records what the user chose to promote vs defer; if `tests/extended/` is empty and `improvements.md` has no `Open` items, it states "no extended/backlog items to review."
+
+This gate is the owner and trigger for the *"implement after core"* instruction. `/continue` enforces it (the STOP above) when it detects that the work unit it just completed was a story's final scenario.
 
 ## Backend Scenario Sequence
 
