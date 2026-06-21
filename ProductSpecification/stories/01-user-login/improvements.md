@@ -97,6 +97,37 @@ dismiss-button concern — it was split out of I4 when the four extended UI case
 to a real flow (likely its own small story or a Story 1 follow-up), or convert the link to a
 router/action target once such a flow exists.
 
+### I6 — Activation submit button has no loading state; extract a shared LoadingButton (found 2026-06-21)
+
+**Observed:** loading state is a cross-cutting UX requirement for *every* button that fires a network
+request, not a one-off login feature. Among the auth controls that call the backend, only
+`ActivationPage.vue`'s activate button (`activate-button`, calling `activateAccount()` POST) still has
+NO loading state → double-submit is possible. `LoginPage.vue`'s submit button got its loading state in
+Story 1 Scenario 2.2 (the login half of the #189 finding); this is the **activation half** of that
+same observation ("no submitting state → double-submit possible (`LoginPage`, `ActivationPage`)").
+
+**Spec context:** the extended UI spec (`tests/extended/02_UI_Tests_Extended.md`) specified a loading
+scenario only for the **login** page (→ promoted as Scenario 2.2). There is no "Activation page
+loading state" UI scenario — under-specified by design, so it is an improvement, not a bug. No
+loading-state mockup exists for either page.
+
+**Current state of the code:** `LoginPage.vue` submit button: `submitting` ref + `LoaderCircle`
+spinner (`submit-loading`) + `:disabled` on the button and the login/password inputs (Scenario 2.2).
+`ActivationPage.vue` activate button: plain `btn-primary` submit, no `submitting` state, no spinner,
+inputs stay enabled during the in-flight `activateAccount()` POST.
+
+**Scope options to decide at design time:**
+- Add an "Activation page loading state" UI scenario (red-playwright / red-frontend cycle) mirroring
+  2.2 (spinner + disabled button + disabled inputs while the activate POST is in flight).
+- **Extract a shared `LoadingButton`** component (props: label, loading label, loading flag, disabled,
+  test-ids) into the shared UI directory and migrate BOTH the login and activate buttons onto it —
+  per the new `frontend-rules.md` "Async Action Buttons (Loading State)" rule (extract when 2+ controls
+  need the same spinner/disabled/label treatment). The Story 1 §2.2 login button is the first consumer;
+  this improvement adds the second and deduplicates.
+- The generalized rule now lives in `.claude/rules/frontend-rules.md` → "Async Action Buttons (Loading
+  State)": every backend-calling control must reflect in-flight state, and adding one without a loading
+  state requires user confirmation.
+
 ## Done
 
 ### I4 — Deferred extended UI cases never promoted (found 2026-06-20, FE audit) — DONE 2026-06-20

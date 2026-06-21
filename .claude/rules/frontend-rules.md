@@ -7,6 +7,12 @@
 - Component files are thin wrappers: call logic + API, translate UI state from logic files, render markup.
 - FORBIDDEN in component files: business logic, validation regex, direct fetch calls, request building.
 
+## Async Action Buttons (Loading State)
+
+- **Any control that triggers a network request (or any async operation) MUST reflect its in-flight state.** While the request is pending: show a loading indicator on the control AND disable the control so it cannot be re-triggered (prevents double-submit). For form submissions, also disable the form's input fields during the in-flight request. Drive this from a reactive `submitting`/`pending` state set true before the call and reset in a `finally` block (presentational component state — not `.logic.ts`).
+- **Verification gate — confirm with the user.** Whenever you add or modify a control that calls the backend (or any async action) and it has NO loading state, STOP and confirm with the user whether one is needed before leaving it without. Loading state is the default expectation; the exceptions (instant/optimistic UI, fire-and-forget) are deliberate choices the user makes, not omissions you decide silently.
+- **Extract a shared loading-button when 2+ controls need it.** When two or more components have async-action buttons with the same spinner/disabled/label treatment, extract a shared component (props: label, loading label, loading flag, disabled, test-ids) into the shared UI directory instead of duplicating the pattern per page.
+
 ## Mockup Placeholder Data
 
 Mockups contain placeholder values (`user@example.com`, fake dates, sample prices). NEVER copy these into components as hardcoded strings. User-specific data (email, name, company) must come from auth context or API responses. If a value is different per user or per session, it must be dynamic.
