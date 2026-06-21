@@ -4,7 +4,6 @@ const TEST_ID = {
   passwordInput: 'activation-password-input',
   confirmPasswordInput: 'activation-confirm-password-input',
   complexityRules: 'password-complexity-rules',
-  complexityRuleItem: 'password-complexity-rule',
   submitButton: 'activate-button',
   successScreen: 'activation-success',
   successIcon: 'activation-success-icon',
@@ -17,12 +16,12 @@ const TEST_ID = {
 } as const;
 
 const COMPLEXITY_RULES = [
-  'At least 12 characters',
-  'At least one uppercase letter',
-  'At least one lowercase letter',
-  'At least one digit',
-  'At least one special character',
-  'No spaces',
+  { key: 'length', label: 'At least 12 characters' },
+  { key: 'uppercase', label: 'At least one uppercase letter' },
+  { key: 'lowercase', label: 'At least one lowercase letter' },
+  { key: 'digit', label: 'At least one digit' },
+  { key: 'special', label: 'At least one special character' },
+  { key: 'no-spaces', label: 'No spaces' },
 ] as const;
 
 interface IconAssertionMessages {
@@ -57,10 +56,9 @@ export class ActivationPageStatements {
 
   async assertComplexityRulesAreDisplayed(): Promise<void> {
     await expect(this.complexityRules(), 'password complexity rules list is visible').toBeVisible();
-    await expect(this.complexityRuleItems(), 'all complexity rules are displayed').toHaveCount(COMPLEXITY_RULES.length);
-    await expect(this.complexityRuleItems(), 'complexity rules show the exact required criteria').toHaveText([
-      ...COMPLEXITY_RULES,
-    ]);
+    for (const { key, label } of COMPLEXITY_RULES) {
+      await expect(this.rule(key), `complexity rule "${key}" shows the exact required criteria`).toHaveText(label);
+    }
   }
 
   async assertSubmitButtonIsVisible(): Promise<void> {
@@ -157,8 +155,8 @@ export class ActivationPageStatements {
     return this.page.getByTestId(TEST_ID.complexityRules);
   }
 
-  private complexityRuleItems(): Locator {
-    return this.complexityRules().getByTestId(TEST_ID.complexityRuleItem);
+  private rule(key: string): Locator {
+    return this.page.getByTestId(`complexity-rule-${key}`);
   }
 
   private submitButton(): Locator {

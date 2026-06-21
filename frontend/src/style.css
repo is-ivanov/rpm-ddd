@@ -33,6 +33,7 @@
     @apply h-10 w-full rounded-md border border-line px-3;
     @apply text-sm text-ink outline-none;
     @apply placeholder:text-placeholder focus:border-accent-focus;
+    @apply disabled:cursor-not-allowed disabled:bg-surface disabled:opacity-60;
   }
 
   .form-input::-ms-reveal,
@@ -51,5 +52,21 @@
 
   .link-primary {
     @apply text-accent hover:underline;
+  }
+
+  .icon-button {
+    @apply flex cursor-pointer items-center border-none bg-transparent;
+  }
+
+  .complexity-rule {
+    @apply mb-1 flex items-center gap-2 text-[13px];
+  }
+
+  .complexity-rule[data-met='false'] {
+    @apply text-muted;
+  }
+
+  .complexity-rule[data-met='true'] {
+    @apply text-success;
   }
 }

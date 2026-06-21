@@ -6,20 +6,25 @@ import { isLoginFormValid } from '../logic/login-form.logic';
 import LoginErrorBanner from './LoginErrorBanner.vue';
 import PasswordField from './PasswordField.vue';
 import AppLogo from '@/app/components/AppLogo.vue';
+import LoadingButton from '@/app/components/LoadingButton.vue';
 
 const loginName = ref('');
 const password = ref('');
 const errorMessage = ref('');
 const requiresActivation = ref(false);
 const fieldErrors = ref<LoginFieldErrors>({});
+const submitting = ref(false);
 
 const isFormValid = computed(() => isLoginFormValid(loginName.value, password.value));
 
 async function submitLogin(): Promise<void> {
+  submitting.value = true;
   try {
     await login({ login: loginName.value, password: password.value });
   } catch (error) {
     showLoginError(error);
+  } finally {
+    submitting.value = false;
   }
 }
 
@@ -31,6 +36,12 @@ function showLoginError(error: unknown): void {
   loginName.value = '';
   password.value = '';
 }
+
+function dismissError(): void {
+  errorMessage.value = '';
+  requiresActivation.value = false;
+  fieldErrors.value = {};
+}
 </script>
 
 <template>
@@ -39,7 +50,12 @@ function showLoginError(error: unknown): void {
       <AppLogo class="mb-6 text-center" />
       <div class="mb-6 text-center text-lg font-semibold text-ink">Sign In</div>
 
-      <LoginErrorBanner v-if="errorMessage" :message="errorMessage" :requires-activation="requiresActivation" />
+      <LoginErrorBanner
+        v-if="errorMessage"
+        :message="errorMessage"
+        :requires-activation="requiresActivation"
+        @dismiss="dismissError"
+      />
 
       <form @submit.prevent="submitLogin">
         <div class="mb-4">
@@ -51,6 +67,7 @@ function showLoginError(error: unknown): void {
             type="text"
             data-testid="login-input"
             placeholder="Enter username"
+            :disabled="submitting"
             class="form-input"
           />
           <p v-if="fieldErrors.login" data-testid="login-error" class="field-error">{{ fieldErrors.login }}</p>
@@ -65,13 +82,20 @@ function showLoginError(error: unknown): void {
             input-test-id="password-input"
             toggle-test-id="password-toggle"
             placeholder="Enter password"
+            :disabled="submitting"
           />
           <p v-if="fieldErrors.password" data-testid="password-error" class="field-error">{{ fieldErrors.password }}</p>
         </div>
 
-        <button type="submit" data-testid="submit-button" class="btn-primary mt-2" :disabled="!isFormValid">
-          Sign In
-        </button>
+        <LoadingButton
+          class="mt-2"
+          test-id="submit-button"
+          loading-test-id="submit-loading"
+          label="Sign In"
+          loading-label="Signing In…"
+          :loading="submitting"
+          :disabled="!isFormValid"
+        />
       </form>
     </div>
   </main>

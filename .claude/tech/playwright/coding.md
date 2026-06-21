@@ -20,6 +20,21 @@ Tech binding for `frontend-rules.md` Playwright section. Shared section structur
 - Page Statements own browser interactions only.
 - `page.goto()` only for app root (`appUrl`) and external entry points.
 
+## Page Object (shared navigation) -- no duplicated `page.goto`
+
+Universal rule: `frontend-rules.md` Playwright section, "One page object per page". A page's navigation/URL is defined ONCE, not copied across per-scenario Statements.
+
+- One `{Page}PageStatements` class per page (e.g. `LoginPageStatements`, `ActivationPageStatements`) owns the page's `navigate*` methods, the `page.goto(\`${appUrl}/path\`)` call, and any locators/actions shared by more than one scenario on that page.
+- Per-scenario Statements (`ActivationMismatchStatements`, `ActivationStrengthStatements`, ...) hold only that scenario's distinct actions/assertions. They do NOT define their own `navigate*` or repeat the `page.goto` path.
+- Tests inject BOTH the page object and the scenario Statements via the fixture and call each directly:
+  ```ts
+  await activationPage.navigateToActivationPageWithToken('valid-activation-token'); // shared page object
+  await activationMismatch.enterMismatchedPasswords();                              // scenario Statements
+  await activationMismatch.assertMismatchErrorIsDisplayed();
+  ```
+- Do NOT add a `navigate*` to a scenario Statements that just calls the page object's `navigate*` -- that is a forbidden middleman delegator (`tdd-rules.md`). Inject the page object directly instead.
+- Construct page objects in the same test fixture that builds the scenario Statements (both receive `page` + `appUrl`); a page object never wraps or forwards to another Statements class.
+
 ## Element Locators
 
 - Primary: `page.getByTestId('...')`.

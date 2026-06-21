@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { AlertTriangle, XCircle } from '@lucide/vue';
+import { AlertTriangle, X, XCircle } from '@lucide/vue';
 
 defineProps<{
   message: string;
   requiresActivation: boolean;
+}>();
+
+defineEmits<{
+  dismiss: [];
 }>();
 </script>
 
@@ -17,5 +21,14 @@ defineProps<{
         Request a new activation email
       </a>
     </span>
+    <button
+      type="button"
+      data-testid="error-banner-dismiss"
+      aria-label="Dismiss error"
+      class="icon-button ml-auto shrink-0 p-0.5 text-danger hover:opacity-70"
+      @click="$emit('dismiss')"
+    >
+      <X :size="16" />
+    </button>
   </div>
 </template>

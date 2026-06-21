@@ -14,6 +14,8 @@ interface Credential {
 export class AuthBackendStatements {
   private readonly validCredentials: Credential[] = [];
   private readonly inactiveCredentials: Credential[] = [];
+  private heldLogin: Promise<void> = Promise.resolve();
+  private releaseHeldLogin: () => void = () => {};
 
   constructor(private readonly page: Page) {}
 
@@ -32,6 +34,28 @@ export class AuthBackendStatements {
   async givenLoginRequestFails(): Promise<void> {
     await this.installCsrfRoute();
     await this.page.route(LOGIN_URL_PATTERN, (route) => route.abort('failed'));
+  }
+
+  async givenSlowLoginRequest(login: string, password: string): Promise<void> {
+    this.validCredentials.push({ login, password });
+    this.heldLogin = new Promise<void>((resolve) => {
+      this.releaseHeldLogin = resolve;
+    });
+    await this.installCsrfRoute();
+    await this.page.route(LOGIN_URL_PATTERN, (route) => this.handleHeldLogin(route));
+  }
+
+  async whileSlowLoginIsHeld(action: () => Promise<void>): Promise<void> {
+    try {
+      await action();
+    } finally {
+      this.releaseHeldLogin();
+    }
+  }
+
+  private async handleHeldLogin(route: Route): Promise<void> {
+    await this.heldLogin;
+    await this.handleLogin(route);
   }
 
   async givenLoginReturnsFieldValidationErrors(): Promise<void> {

@@ -28,6 +28,15 @@ When the user clicks the password visibility toggle again
 Then the password field masks the entered text again
 ```
 
+### 2.2 Login page shows loading state during submission
+
+```gherkin
+Given the login page is displayed
+When the user submits valid credentials
+Then the login button shows a loading indicator
+And the form fields become disabled during submission
+```
+
 ## 3. Login Error Display
 
 ### 3.1 Wrong credentials show error banner with "Invalid username or password"
@@ -54,6 +63,14 @@ Then an error banner appears with text indicating the account requires activatio
 And the error banner contains a link to request a new activation email
 ```
 
+### 3.3 Error banner dismiss button closes the banner
+
+```gherkin
+Given an error banner is visible on the page
+When the user clicks the dismiss button on the banner
+Then the error banner is no longer visible
+```
+
 ## 4. Activation Page Display
 
 ### 4.1 Activation page shows password fields and complexity rules
@@ -64,6 +81,34 @@ Then the page displays a password input field
 And the page displays a confirm password input field
 And the page displays password complexity rules
 And the page displays a submit button with text "Activate Account"
+```
+
+### 4.2 Activation page shows password strength indicator updating in real-time
+
+```gherkin
+Given the activation page is displayed
+When the user types a password that satisfies only some complexity rules
+Then only the satisfied complexity rules are marked as met
+And the unsatisfied complexity rules remain unmet
+When the user updates the password to satisfy all complexity rules
+Then all complexity rules update to met in real-time
+```
+
+### 4.3 Activation page shows error when passwords do not match
+
+```gherkin
+Given the activation page is displayed
+When the user enters different values in the password and confirm password fields
+Then an error message is displayed indicating the passwords do not match
+```
+
+### 4.4 Activation page shows loading state during submission
+
+```gherkin
+Given the activation page is displayed with a valid token
+When the user submits a valid matching password
+Then the activate button shows a loading indicator
+And the form fields become disabled during submission
 ```
 
 ## 5. Activation Result Display
@@ -108,9 +153,14 @@ Then the user is navigated to the login page
 |----------|------|-------------|------------|
 | 1.1 | Login | login input, password input (type password), "Sign In" button | visible, input type=password for password field |
 | 2.1 | Login | password field, visibility toggle icon/button | toggles input type between password and text |
+| 2.2 | Login | "Sign In" button, login input, password input | on submit: button shows loading indicator, login + password fields disabled during the in-flight request |
 | 3.1 | Login | login input, password input, "Sign In" button, error banner | error banner visible with exact text "Invalid username or password", fields cleared |
 | 3.2 | Login | login input, password input, "Sign In" button, error banner | error banner visible with activation message, activation link present |
+| 3.3 | Login | error banner, banner dismiss button | clicking dismiss hides the error banner (banner no longer visible) |
 | 4.1 | Activation | password input, confirm password input, complexity rules list, "Activate Account" button | all fields visible, complexity rules displayed |
+| 4.2 | Activation | password input, per-rule complexity list (each rule marked met/unmet) | each complexity rule the typed password satisfies is marked as met (highlighted), unsatisfied rules remain unmet, updating in real-time as the value changes |
+| 4.3 | Activation | password input, confirm password input, mismatch error message | when password ≠ confirm password, a "passwords do not match" error message is displayed |
+| 4.4 | Activation | "Activate Account" button, password + confirm password inputs | on submit: button shows a loading indicator, password + confirm-password fields disabled during the in-flight activate request |
 | 5.1 | Activation | password input, confirm password input, "Activate Account" button, success icon, success text, "Go to Sign In" button | green check icon visible, text "Account Activated!", button "Go to Sign In" visible |
 | 5.2 | Activation | error icon, error text, "Request New Link" button | red X icon visible, text "Link Expired", button "Request New Link" visible |
 | 6.1 | Activation → Login | "Go to Sign In" button | navigation to login page URL, login page elements visible |
