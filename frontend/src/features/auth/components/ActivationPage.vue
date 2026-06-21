@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { Check } from '@lucide/vue';
 import { activateAccount, validateActivationToken } from '../logic/activation.api';
 import { mapActivationSubmitErrorToView } from '../logic/activation-error-view.logic';
+import { evaluateComplexityRules } from '../logic/password-strength.logic';
 import { ActivationError, type ActivationTokenResponse } from '../logic/types';
 import PasswordField from './PasswordField.vue';
 import AppLogo from '@/app/components/AppLogo.vue';
@@ -11,18 +12,10 @@ import ActivationSuccess from './ActivationSuccess.vue';
 import ActivationExpired from './ActivationExpired.vue';
 import ActivationErrorBanner from './ActivationErrorBanner.vue';
 
-const PASSWORD_RULES = [
-  'At least 12 characters',
-  'At least one uppercase letter',
-  'At least one lowercase letter',
-  'At least one digit',
-  'At least one special character',
-  'No spaces',
-] as const;
-
 const route = useRoute();
 const account = ref<ActivationTokenResponse | null>(null);
 const password = ref('');
+const complexityRules = computed(() => evaluateComplexityRules(password.value));
 const confirmPassword = ref('');
 const activated = ref(false);
 const tokenInvalid = ref(false);
@@ -81,13 +74,14 @@ function tokenFromRoute(): string {
 
         <div data-testid="password-complexity-rules" class="mt-2 mb-4">
           <div
-            v-for="rule in PASSWORD_RULES"
-            :key="rule"
-            data-testid="password-complexity-rule"
-            class="mb-1 flex items-center gap-2 text-[13px] text-muted"
+            v-for="rule in complexityRules"
+            :key="rule.key"
+            :data-testid="`complexity-rule-${rule.key}`"
+            :data-met="rule.met"
+            class="complexity-rule"
           >
             <Check class="shrink-0" :size="16" />
-            {{ rule }}
+            {{ rule.label }}
           </div>
         </div>
 

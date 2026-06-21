@@ -57,4 +57,16 @@
   .icon-button {
     @apply flex cursor-pointer items-center border-none bg-transparent;
   }
+
+  .complexity-rule {
+    @apply mb-1 flex items-center gap-2 text-[13px];
+  }
+
+  .complexity-rule[data-met='false'] {
+    @apply text-muted;
+  }
+
+  .complexity-rule[data-met='true'] {
+    @apply text-success;
+  }
 }
