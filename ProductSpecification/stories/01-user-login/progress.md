@@ -227,8 +227,8 @@
 - [x] demo (ran login-error-dismiss.spec.ts §3.3 headless + slowMo 2000ms + video; 1 passed; recording test-results/demo-login-error-dismiss-3-3.webm; config reverted, tree clean)
 
 ### Scenario 4.2: Activation page shows password strength indicator updating in real-time
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (activation-strength.spec.ts §4.2 — test.fail() RED marker; new spec (36L) + focused activation-strength.statements.ts (48L), split out to keep activation-page.statements.ts ≤200L (already 199L). Pure client-side scenario — backend mocked in-browser via existing ActivationBackendStatements validate-on-load GET so the form renders; strength computed from typed value, no network/reload/submit. NEW testid contract for align-design: `password-strength` indicator exposes its level via a `data-strength` attribute = "weak"/"strong" (attribute, not label text → refactor-stable). Test types weak pw → asserts data-strength="weak", updates to strong pw → asserts data-strength="strong" in real-time (exact toHaveAttribute, no sleeps). Existence check: no strength indicator anywhere in frontend/src (net-new). PREDICT toBeVisible/toHaveAttribute on missing password-strength → matched (Type/Message/Status all YES, fails at assertStrengthIndicatorShowsWeak). test-review CLEAN (strict exact-value asserts, 2-tier DSL pure, data-testid only). refactor CLEAN (idiomatic, TEST_ID/STRENGTH_ATTRIBUTE consts, parallel asserts kept for distinct spec descriptions). CLI lint EXIT=0; IDE clean on both files.)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
