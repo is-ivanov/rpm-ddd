@@ -9,6 +9,7 @@ import { evaluatePasswordMatch } from '../logic/password-match.logic';
 import { ActivationError, type ActivationTokenResponse } from '../logic/types';
 import PasswordField from './PasswordField.vue';
 import AppLogo from '@/app/components/AppLogo.vue';
+import LoadingButton from '@/app/components/LoadingButton.vue';
 import ActivationSuccess from './ActivationSuccess.vue';
 import ActivationExpired from './ActivationExpired.vue';
 import ActivationErrorBanner from './ActivationErrorBanner.vue';
@@ -23,6 +24,7 @@ const showMismatchError = computed(() => confirmPassword.value.length > 0 && !pa
 const activated = ref(false);
 const tokenInvalid = ref(false);
 const submitError = ref('');
+const submitting = ref(false);
 
 onMounted(loadAccount);
 
@@ -38,11 +40,14 @@ async function loadAccount(): Promise<void> {
 
 async function submitActivation(): Promise<void> {
   submitError.value = '';
+  submitting.value = true;
   try {
     await activateAccount(tokenFromRoute(), password.value);
     activated.value = true;
   } catch (error) {
     submitError.value = mapActivationSubmitErrorToView(error).errorMessage;
+  } finally {
+    submitting.value = false;
   }
 }
 
@@ -72,6 +77,7 @@ function tokenFromRoute(): string {
             name="password"
             input-test-id="activation-password-input"
             toggle-test-id="activation-password-toggle"
+            :disabled="submitting"
           />
         </div>
 
@@ -97,13 +103,21 @@ function tokenFromRoute(): string {
             input-test-id="activation-confirm-password-input"
             toggle-test-id="activation-confirm-password-toggle"
             placeholder="Re-enter password"
+            :disabled="submitting"
           />
           <p v-if="showMismatchError" data-testid="password-mismatch-error" class="field-error">
             {{ passwordMatch.error }}
           </p>
         </div>
 
-        <button type="submit" data-testid="activate-button" class="btn-primary mt-5">Activate Account</button>
+        <LoadingButton
+          class="mt-5"
+          test-id="activate-button"
+          loading-test-id="activate-loading"
+          label="Activate Account"
+          loading-label="Activating…"
+          :loading="submitting"
+        />
       </form>
     </div>
   </main>

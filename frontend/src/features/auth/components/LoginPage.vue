@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { LoaderCircle } from '@lucide/vue';
 import { login } from '../logic/login.api';
 import { mapLoginErrorToView, type LoginFieldErrors } from '../logic/login-error-view.logic';
 import { isLoginFormValid } from '../logic/login-form.logic';
 import LoginErrorBanner from './LoginErrorBanner.vue';
 import PasswordField from './PasswordField.vue';
 import AppLogo from '@/app/components/AppLogo.vue';
+import LoadingButton from '@/app/components/LoadingButton.vue';
 
 const loginName = ref('');
 const password = ref('');
@@ -87,22 +87,15 @@ function dismissError(): void {
           <p v-if="fieldErrors.password" data-testid="password-error" class="field-error">{{ fieldErrors.password }}</p>
         </div>
 
-        <button
-          type="submit"
-          data-testid="submit-button"
-          class="btn-primary mt-2 flex items-center justify-center gap-2"
-          :disabled="!isFormValid || submitting"
-          :aria-busy="submitting"
-        >
-          <LoaderCircle
-            v-if="submitting"
-            data-testid="submit-loading"
-            :size="16"
-            class="animate-spin"
-            aria-hidden="true"
-          />
-          {{ submitting ? 'Signing In…' : 'Sign In' }}
-        </button>
+        <LoadingButton
+          class="mt-2"
+          test-id="submit-button"
+          loading-test-id="submit-loading"
+          label="Sign In"
+          loading-label="Signing In…"
+          :loading="submitting"
+          :disabled="!isFormValid"
+        />
       </form>
     </div>
   </main>
