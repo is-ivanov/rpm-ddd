@@ -11,4 +11,4 @@ Type: refactoring
 - [x] design (decision: doc-only adoption — see spec.md Decision. Vue 3.5 auto-infers `name` from filename, so no explicit `name`; suffixes already consistent post-#190 dedup, so no renames)
 
 ### Step 2: Implementation (doc-only)
-- [x] docs (pin component role-suffix convention in `.claude/rules/frontend-rules.md` Naming section; no explicit `name`, no renames)
+- [x] docs (role-suffix convention → `.claude/rules/frontend-rules.md` Naming, tech-agnostic; Vue `name`-inference mechanism → `.claude/tech/vue-ts/coding.md` Component Conventions; no explicit `name`, no renames)

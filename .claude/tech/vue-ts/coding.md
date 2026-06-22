@@ -27,6 +27,7 @@ Tech binding for `frontend-rules.md`. Shared section structure: `.claude/templat
 - Props via `defineProps<T>()`, emits via `defineEmits<T>()`.
 - Reactive state via `ref()` and `reactive()` from `vue`.
 - Template expressions use Vue directives: `v-if`, `v-for`, `v-model`, `v-bind`, `v-on` (shorthand `:` and `@`).
+- Component display name: do **not** add an explicit `name` option. A `<script setup>` SFC built with `@vitejs/plugin-vue` (Vue ≥ 3.2.34) infers the name from the filename for devtools inspection, warning traces, and `<KeepAlive>` include/exclude — declaring it would force a redundant second `<script>` block. The `vue/multi-word-component-names` ESLint rule (`error` in `eslint.config.ts`) enforces meaningful multi-word names. This is the framework mechanism behind the role-suffix naming rule in `frontend-rules.md`.
 
 ## Icon Library
 
