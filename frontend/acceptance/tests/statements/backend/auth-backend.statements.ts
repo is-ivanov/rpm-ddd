@@ -3,7 +3,6 @@ import { LOGIN_FIELD_ERROR_MESSAGE, PASSWORD_FIELD_ERROR_MESSAGE } from '../supp
 
 const LOGIN_URL_PATTERN = '**/api/auth/login';
 const CSRF_URL_PATTERN = '**/api/auth/csrf';
-const ME_URL_PATTERN = '**/api/auth/me';
 
 const XSRF_TOKEN = 'test-xsrf-token';
 
@@ -30,24 +29,6 @@ export class AuthBackendStatements {
     this.inactiveCredentials.push({ login, password });
     await this.installCsrfRoute();
     await this.installLoginRoute();
-  }
-
-  async givenUnauthenticated(): Promise<void> {
-    await this.page.route(ME_URL_PATTERN, (route) => this.fulfillUnauthenticatedCurrentUser(route));
-  }
-
-  private async fulfillUnauthenticatedCurrentUser(route: Route): Promise<void> {
-    await route.fulfill({
-      status: 401,
-      contentType: 'application/problem+json',
-      body: JSON.stringify({
-        type: 'https://www.rpm-ddd.my/problem/unauthorized',
-        title: 'Unauthorized',
-        status: 401,
-        detail: 'Full authentication is required to access this resource',
-        instance: '/api/auth/me',
-      }),
-    });
   }
 
   async givenLoginRequestFails(): Promise<void> {

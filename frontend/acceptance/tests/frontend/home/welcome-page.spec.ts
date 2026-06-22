@@ -1,14 +1,14 @@
 import { test } from '@playwright/test';
 import { HomePageStatements } from '../../statements/frontend/home-page.statements';
-import { AuthBackendStatements } from '../../statements/backend/auth-backend.statements';
+import { CurrentUserBackendStatements } from '../../statements/backend/current-user-backend.statements';
 
 test.describe('Welcome Page', () => {
   let homePage: HomePageStatements;
-  let authBackend: AuthBackendStatements;
+  let currentUserBackend: CurrentUserBackendStatements;
 
   test.beforeEach(({ page, baseURL }) => {
     homePage = new HomePageStatements(page, baseURL);
-    authBackend = new AuthBackendStatements(page);
+    currentUserBackend = new CurrentUserBackendStatements(page);
   });
 
   test(
@@ -20,7 +20,7 @@ test.describe('Welcome Page', () => {
       'And the page displays a button with text "Войти", ' +
       'And the dashboard shell is not displayed',
     async () => {
-      await authBackend.givenUnauthenticated();
+      await currentUserBackend.givenUnauthenticated();
       await homePage.navigateToHomePage();
 
       await homePage.assertWelcomeLogoIsVisible();
