@@ -7,7 +7,7 @@ test.describe('Welcome Page', () => {
   let authBackend: AuthBackendStatements;
 
   test.beforeEach(({ page, baseURL }) => {
-    homePage = new HomePageStatements(page, baseURL!);
+    homePage = new HomePageStatements(page, baseURL);
     authBackend = new AuthBackendStatements(page);
   });
 
