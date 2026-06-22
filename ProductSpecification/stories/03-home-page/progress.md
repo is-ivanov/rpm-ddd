@@ -49,9 +49,9 @@
 - [x] red-playwright (spec `welcome-to-login.spec.ts` authored + reviewed + refactored; navigation already wired by Stories 1 & 3 — `RouterLink to="/login"` + `/login` route + login page — so the test passes from the start. Per the playwright tdd binding no `test.fail()` marker is added when a test cannot be made RED; green-playwright will simply verify it green.)
 - [S] red-frontend (trivial — no branching/computation/validation/transformation in `.logic.ts`. The "Войти" control is a declarative `RouterLink to="/login"` in `WelcomeView.vue`; navigation is purely presentational with no logic function to test. Mirrors Scenario 1.1's `[S]`.)
 - [S] green-frontend (counterpart of skipped red-frontend; navigation handled by the `RouterLink` in the component)
-- [~] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend-api (existence check — Scenario 4.1 is pure UI navigation (`RouterLink` welcome → `/login`) and makes no backend request of its own. The welcome page's `GET /api/auth/me` is already fetched + validated by `current-user.api.ts` + `current-user.schema.ts` with tests (Scenarios 1.1/2.1). No new endpoint, field, or API client. Mirrors Scenario 3.1's `[S]`.)
+- [S] green-frontend-api (counterpart; capability already exists)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
