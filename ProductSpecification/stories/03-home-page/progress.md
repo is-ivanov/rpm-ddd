@@ -28,8 +28,8 @@
 ### Scenario 2.1: Authenticated home shows the dashboard shell with the current user
 - [x] red-playwright
 - [x] red-frontend
-- [~] green-frontend
-- [ ] red-frontend-api
+- [x] green-frontend
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
