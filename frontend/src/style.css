@@ -62,6 +62,10 @@
     @apply flex cursor-pointer items-center border-none bg-transparent;
   }
 
+  .dropdown-panel {
+    @apply overflow-hidden rounded-lg bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)];
+  }
+
   .complexity-rule {
     @apply mb-1 flex items-center gap-2 text-[13px];
   }

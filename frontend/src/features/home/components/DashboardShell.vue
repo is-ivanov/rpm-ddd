@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
   <div data-testid="dashboard-shell" class="flex min-h-screen flex-col bg-surface font-sans">
-    <DashboardTopBar :display-name="user.displayName" :initials="user.initials" />
+    <DashboardTopBar :display-name="user.displayName" :initials="user.initials" :email="user.email" />
     <div class="flex min-h-0 flex-1">
       <aside data-testid="dashboard-sidebar" class="flex w-60 shrink-0 items-center justify-center bg-sidebar p-6">
         <div class="text-center text-[13px] leading-normal text-sidebar-muted opacity-50">

@@ -41,8 +41,8 @@
 - [S] green-frontend (counterpart of skipped red-frontend; pass-through `email` view-model field added during align-design)
 - [S] red-frontend-api (existence check — `GET /api/auth/me` is already fetched and validated by `current-user.api.ts` + `current-user.schema.ts` (includes `email`) with tests, from Scenarios 1.1/2.1. No new endpoint or field for the menu.)
 - [S] green-frontend-api (counterpart; capability already exists)
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 4.1: Clicking "Войти" on the welcome page opens the login page
