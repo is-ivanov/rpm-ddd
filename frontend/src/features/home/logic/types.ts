@@ -1,6 +1,8 @@
 export interface AuthenticatedUser {
   readonly login: string;
   readonly email: string;
+  readonly firstName: string;
+  readonly lastName: string;
 }
 
 export type CurrentUserResult =
