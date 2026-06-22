@@ -26,11 +26,7 @@ function stubMeUnauthenticated(): void {
 }
 
 describe('Current User API Client', () => {
-  // RED — fetchCurrentUser not implemented yet; must map a 401 from GET /api/auth/me
-  // to { authenticated: false }. Pinned via the toEqual below: the call must RESOLVE
-  // to the unauthenticated result (capture resolve-or-reject so the assertion always runs
-  // and fails for the predicted reason, not because the stub throws first).
-  it.fails('surfaces an unauthenticated result when GET /api/auth/me returns 401', async () => {
+  it('surfaces an unauthenticated result when GET /api/auth/me returns 401', async () => {
     stubMeUnauthenticated();
 
     const result = await fetchCurrentUser().catch((error: unknown) => error);
