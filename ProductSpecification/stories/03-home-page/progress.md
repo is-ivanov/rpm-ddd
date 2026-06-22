@@ -17,9 +17,9 @@
 
 ### Scenario 1.1: Unauthenticated home shows welcome with logo, tagline, and login button
 - [x] red-playwright
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
+- [S] red-frontend (welcome content is static/presentational — RPM logo, fixed tagline, "Войти" button; no branching/computation/transformation for `.logic.ts`. Authenticated-vs-welcome branching belongs to Scenario 2.1. Rendering verified by the RED Playwright spec + built during align-design.)
+- [S] green-frontend (counterpart of skipped red-frontend; rendering handled in the component during align-design)
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
