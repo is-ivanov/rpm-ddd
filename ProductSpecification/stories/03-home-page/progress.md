@@ -46,8 +46,8 @@
 - [x] demo
 
 ### Scenario 4.1: Clicking "Войти" on the welcome page opens the login page
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (spec `welcome-to-login.spec.ts` authored + reviewed + refactored; navigation already wired by Stories 1 & 3 — `RouterLink to="/login"` + `/login` route + login page — so the test passes from the start. Per the playwright tdd binding no `test.fail()` marker is added when a test cannot be made RED; green-playwright will simply verify it green.)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

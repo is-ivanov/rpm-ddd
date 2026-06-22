@@ -48,6 +48,10 @@ export class HomePageStatements {
     await expect(this.welcomeLoginButton(), 'login button text is exactly "Войти"').toHaveText(LOGIN_BUTTON_TEXT);
   }
 
+  async clickLoginButton(): Promise<void> {
+    await this.welcomeLoginButton().click();
+  }
+
   async assertDashboardShellIsAbsent(): Promise<void> {
     await expect(this.dashboardShell(), 'dashboard shell is not displayed for unauthenticated users').toHaveCount(0);
   }

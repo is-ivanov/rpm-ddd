@@ -23,6 +23,17 @@ export class LoginPageStatements {
     await this.page.goto(`${this.appUrl}/login`);
   }
 
+  async assertNavigatedToLoginUrl(): Promise<void> {
+    await expect(this.page, 'browser is navigated to the exact login page URL').toHaveURL(`${this.appUrl}/login`);
+  }
+
+  async assertLoginPageIsVisible(): Promise<void> {
+    await this.assertNavigatedToLoginUrl();
+    await this.assertLoginFieldIsVisible();
+    await this.assertPasswordFieldIsVisible();
+    await this.assertSubmitButtonIsVisible();
+  }
+
   async assertLoginFieldIsVisible(): Promise<void> {
     await expect(this.loginInput(), 'login input field is visible').toBeVisible();
   }
