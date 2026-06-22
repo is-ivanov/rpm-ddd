@@ -20,10 +20,6 @@ test.describe('Welcome Page', () => {
       'And the page displays a button with text "Войти", ' +
       'And the dashboard shell is not displayed',
     async () => {
-      // RED: HomePage still renders the placeholder (home-title/home-subtitle) — no welcome-logo
-      // testid yet, so assertWelcomeLogoIsVisible() below times out. Pinned by that assertion.
-      test.fail();
-
       await authBackend.givenUnauthenticated();
       await homePage.navigateToHomePage();
 
