@@ -23,10 +23,6 @@ test.describe('User Menu', () => {
       'And the menu displays the email "i.petrov@rpm.local", ' +
       'And the menu displays an action with text "Выйти"',
     async () => {
-      // RED: no user menu/dropdown exists yet — clicking the avatar reveals nothing.
-      // Pinned by assertMenuIsOpen() below (the user-menu test id is never rendered → locator timeout).
-      test.fail();
-
       await currentUserBackend.givenAuthenticatedUser({
         firstName: 'Иван',
         lastName: 'Петров',
