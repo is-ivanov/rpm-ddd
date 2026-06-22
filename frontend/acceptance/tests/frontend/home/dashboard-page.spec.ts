@@ -22,13 +22,6 @@ test.describe('Dashboard Page', () => {
       'And the main area displays the page title "Главная", ' +
       'And the main area displays placeholder dashboard content',
     async () => {
-      // RED: HomePage renders only the welcome screen; the dashboard shell and its
-      // testids (dashboard-shell, topbar-logo, user-avatar, user-name, dashboard-sidebar,
-      // page-title, dashboard-placeholder) are not rendered yet. Pinned by the first
-      // assertion below, assertDashboardShellIsVisible(), which times out because no
-      // [data-testid="dashboard-shell"] exists.
-      test.fail();
-
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'Иван', lastName: 'Петров' });
       await homePage.navigateToHomePage();
 
