@@ -43,10 +43,10 @@
 - [S] green-frontend-api (counterpart; capability already exists)
 - [x] align-design
 - [x] green-playwright
-- [~] demo
+- [x] demo
 
 ### Scenario 4.1: Clicking "Войти" on the welcome page opens the login page
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api

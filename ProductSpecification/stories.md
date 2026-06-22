@@ -2,7 +2,7 @@
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |---|-------|------|------|------|-------|-----|------|-------|-------|----|
-| 3 | Home page | ✅ | n/a | n/a | 🔧 | n/a | n/a | n/a | 2/6 | 33% |
+| 3 | Home page | ✅ | n/a | n/a | 🔧 | n/a | n/a | n/a | 3/6 | 50% |
 
 # Backlog
 
