@@ -37,11 +37,11 @@
 
 ### Scenario 3.1: Opening the user menu shows the user's name, email, and logout action
 - [x] red-playwright
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend (trivial — no branching/computation/validation/transformation in `.logic.ts`. Menu name = already-tested `displayName` (Scenario 2.1); email = pure pass-through into the view model; "Выйти" = static label; menu open/close = presentational component state. The pass-through `email` field is added when the menu component is built during align-design. Mirrors Scenario 1.1's `[S]`.)
+- [S] green-frontend (counterpart of skipped red-frontend; pass-through `email` view-model field added during align-design)
+- [S] red-frontend-api (existence check — `GET /api/auth/me` is already fetched and validated by `current-user.api.ts` + `current-user.schema.ts` (includes `email`) with tests, from Scenarios 1.1/2.1. No new endpoint or field for the menu.)
+- [S] green-frontend-api (counterpart; capability already exists)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
