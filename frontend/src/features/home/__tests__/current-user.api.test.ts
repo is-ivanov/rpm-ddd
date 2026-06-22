@@ -50,10 +50,7 @@ describe('Current User API Client', () => {
     expect(result).toEqual(expected);
   });
 
-  // RED: current-user.api throws 'Authenticated user mapping not implemented yet.'
-  // for the 200 path, so the mapped CurrentUserResult does not yet exist. Remove
-  // it.fails once green-frontend-api maps the authenticated payload.
-  it.fails('maps an authenticated result when GET /api/auth/me returns 200', async () => {
+  it('maps an authenticated result when GET /api/auth/me returns 200', async () => {
     stubMeAuthenticated();
 
     const result = await fetchCurrentUser().catch((error: unknown) => error);

@@ -1,4 +1,5 @@
 import type { CurrentUserResult } from './types';
+import { currentUserResponseSchema } from '../schemas/current-user.schema';
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? '';
 const CURRENT_USER_PATH = '/api/auth/me';
@@ -14,5 +15,6 @@ export async function fetchCurrentUser(): Promise<CurrentUserResult> {
     return { authenticated: false };
   }
 
-  throw new Error('Authenticated user mapping not implemented yet.');
+  const user = currentUserResponseSchema.parse(await response.json());
+  return { authenticated: true, user };
 }

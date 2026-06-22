@@ -30,8 +30,8 @@
 - [x] red-frontend
 - [x] green-frontend
 - [x] red-frontend-api
-- [~] green-frontend-api
-- [ ] align-design
+- [x] green-frontend-api
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
