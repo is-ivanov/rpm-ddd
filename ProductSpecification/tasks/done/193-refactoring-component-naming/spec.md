@@ -53,8 +53,37 @@ debugging.
 
 ## Decision
 
-_To be filled in Step 1._ If adopted: pin the suffix convention in `frontend-rules.md`, decide the
-`name` mechanism (e.g. lint rule / second script block), and rename the inconsistent cards.
+### Findings (Step 1 analysis)
+
+**1. The `name`-field complaint is outdated for this codebase.**
+Per the Vue docs, since v3.2.34 a `<script setup>` SFC **automatically infers its `name` option from
+the filename** — used for DevTools inspection, warning traces, and `<KeepAlive>` include/exclude. This
+project runs Vue `^3.5.13` with `@vitejs/plugin-vue@6`, well past that threshold, so the DevTools tree
+already shows real names (`ActivationResultCard`, `ActivationSuccess`, …), not "unknown". The
+"anonymous tree node" symptom the senior describes applies to pre-3.2.34 / non-`<script setup>` inline
+components, not to ours. Declaring an explicit `name` would require an awkward second plain `<script>`
+block per SFC for zero behavioural gain. `vue/multi-word-component-names` (`error`, in `eslint.config.ts`)
+already enforces meaningful multi-word names.
+
+**2. The suffix "inconsistency" largely predates the dedup.**
+`ActivationResultCard.vue` is the single shared presentational card. `ActivationSuccess.vue` and
+`ActivationExpired.vue` are thin **state-preset wrappers** that delegate to it with fixed props — they
+are not generic, reusable cards, so naming them `*Card` would be misleading. The senior's
+"3 cards, 2 with `Card`, 1 without" reflects the pre-extraction state; after the Story 1 / #190 dedup
+there is one `*Card` plus two state-named presets. The remaining components already follow consistent
+role suffixes: `*Page` (`ActivationPage`, `LoginPage`), `*Banner` (`ActivationErrorBanner`,
+`LoginErrorBanner`), `*Field` (`PasswordField`), `*Card` (`ActivationResultCard`).
+
+### Decision: documentation-only adoption (no code churn)
+
+- **Pin the existing role-suffix convention** in `frontend-rules.md` (Naming section) so it is explicit
+  going forward: presentational reusable card → `*Card`; full-page route component → `*Page`;
+  notification/alert → `*Banner`; single form control → `*Field`. State-specific preset wrappers keep
+  semantic state names (`ActivationSuccess`/`ActivationExpired`) — they describe a state, not a type.
+- **No explicit `name` mechanism** — auto-inferred by Vue 3.5; the lint rule covers naming.
+- **No renames** — current names are already correct/consistent post-dedup.
+
+_Pending user confirmation in the Story Completion / decision gate before Step 2 is finalized._
 
 ## Key Files
 

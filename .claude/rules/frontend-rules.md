@@ -35,6 +35,7 @@ Mockups contain placeholder values (`user@example.com`, fake dates, sample price
 - API functions: verb+noun matching endpoint (`registerUser`, `verifyEmail`).
 - Types: `{Feature}Request`, `{Feature}Response`, `{Feature}FormState`.
 - Test blocks: use the test runner's block and case syntax (see tech binding for specific conventions).
+- Components: name by **role suffix**, not by ad-hoc shape — `*Page` (a full-page route component), `*Card` (a reusable presentational card), `*Banner` (an alert/notification strip), `*Field` (a single form control). A component that always renders one fixed state (a thin preset wrapping a generic `*Card`/`*Banner` with hardcoded props) keeps a **semantic state name** instead of the type suffix — it describes a state, not a reusable type (e.g. `ActivationSuccess`/`ActivationExpired` wrapping `ActivationResultCard`). Do not hand-declare a component's display name when the build infers it from the filename; rely on the lint rule for meaningful names (see tech binding for the framework mechanism).
 
 ## Testing
 
