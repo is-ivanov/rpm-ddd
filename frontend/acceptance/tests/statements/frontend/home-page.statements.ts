@@ -61,6 +61,10 @@ export class HomePageStatements {
     await expect(this.topbarLogo(), 'top bar logo shows "RPM"').toHaveText(BRAND_LOGO_TEXT);
   }
 
+  async clickUserAvatar(): Promise<void> {
+    await this.userAvatar().click();
+  }
+
   async assertUserAvatarShowsInitials(initials: string): Promise<void> {
     await expect(this.userAvatar(), 'user avatar is visible').toBeVisible();
     await expect(this.userAvatar(), 'user avatar shows the derived initials').toHaveText(initials);

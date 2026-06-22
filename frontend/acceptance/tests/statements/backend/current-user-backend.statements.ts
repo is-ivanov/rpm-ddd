@@ -5,7 +5,14 @@ const ME_URL_PATTERN = '**/api/auth/me';
 interface AuthenticatedUser {
   readonly firstName: string;
   readonly lastName: string;
+  readonly email?: string;
 }
+
+const CURRENT_USER_LOGIN = 'ivan.petrov';
+const EMAIL_DOMAIN = 'rpm.local';
+// Used only when a caller omits the email (the field is not asserted by that scenario);
+// derived from the login so it stays a real, suite-consistent address, not a mockup placeholder.
+const DEFAULT_EMAIL = `${CURRENT_USER_LOGIN}@${EMAIL_DOMAIN}`;
 
 export class CurrentUserBackendStatements {
   constructor(private readonly page: Page) {}
@@ -38,8 +45,8 @@ export class CurrentUserBackendStatements {
       contentType: 'application/json',
       body: JSON.stringify({
         userId: '11111111-1111-1111-1111-111111111111',
-        login: 'ivan.petrov',
-        email: 'ivan.petrov@example.com',
+        login: CURRENT_USER_LOGIN,
+        email: user.email ?? DEFAULT_EMAIL,
         firstName: user.firstName,
         lastName: user.lastName,
         status: 'ACTIVE',
