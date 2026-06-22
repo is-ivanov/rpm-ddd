@@ -6,6 +6,10 @@
   --color-accent: #228be6;
   --color-accent-hover: #1c7ed6;
   --color-accent-focus: #4dabf7;
+  --color-accent-surface: #e7f5ff;
+
+  --color-sidebar: #1a1d23;
+  --color-sidebar-muted: #adb5bd;
 
   --color-surface: #f8f9fa;
   --color-ink: #212529;

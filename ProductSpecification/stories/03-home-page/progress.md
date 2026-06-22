@@ -31,8 +31,8 @@
 - [x] green-frontend
 - [x] red-frontend-api
 - [x] green-frontend-api
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 3.1: Opening the user menu shows the user's name, email, and logout action
