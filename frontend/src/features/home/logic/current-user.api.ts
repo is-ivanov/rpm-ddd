@@ -1,12 +1,12 @@
 import type { CurrentUserResult } from './types';
 import { currentUserResponseSchema } from '../schemas/current-user.schema';
+import { apiUrl } from '@/app/logic/fetch.api';
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? '';
 const CURRENT_USER_PATH = '/api/auth/me';
 const UNAUTHORIZED_STATUS = 401;
 
 export async function fetchCurrentUser(): Promise<CurrentUserResult> {
-  const response = await fetch(`${BASE_URL}${CURRENT_USER_PATH}`, {
+  const response = await fetch(apiUrl(CURRENT_USER_PATH), {
     method: 'GET',
     credentials: 'include',
   });

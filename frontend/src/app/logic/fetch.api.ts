@@ -1,10 +1,14 @@
 import { LOGIN_PATH, shouldRedirectToLogin } from '@/app/logic/unauthorized-redirect.logic';
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? '';
+export const API_BASE_URL = import.meta.env.VITE_API_URL ?? '';
 const NULL_BODY_STATUSES = new Set([101, 103, 204, 205, 304]);
 
+export function apiUrl(path: string): string {
+  return `${API_BASE_URL}${path}`;
+}
+
 export async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
-  const response = await fetch(`${BASE_URL}${path}`, init);
+  const response = await fetch(apiUrl(path), init);
   const buffered = await bufferResponse(response);
   await redirectToLoginWhenUnauthorized(buffered.status);
   return buffered;
