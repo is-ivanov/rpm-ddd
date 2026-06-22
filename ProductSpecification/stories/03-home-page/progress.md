@@ -29,8 +29,8 @@
 - [x] red-playwright
 - [x] red-frontend
 - [x] green-frontend
-- [~] red-frontend-api
-- [ ] green-frontend-api
+- [x] red-frontend-api
+- [~] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
 - [ ] demo
