@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, RouterLinkStub } from '@vue/test-utils';
 import HomePage from '../components/HomePage.vue';
 
 describe('HomePage', () => {
-  it('renders the application title', () => {
-    const wrapper = mount(HomePage);
+  it('renders the welcome logo', () => {
+    const wrapper = mount(HomePage, {
+      global: { stubs: { RouterLink: RouterLinkStub } },
+    });
 
-    expect(wrapper.get('[data-testid="home-title"]').text()).toBe('RPM');
+    expect(wrapper.get('[data-testid="welcome-logo"]').text()).toBe('RPM');
   });
 });

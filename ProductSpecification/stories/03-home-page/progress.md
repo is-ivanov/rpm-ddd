@@ -21,8 +21,8 @@
 - [S] green-frontend (counterpart of skipped red-frontend; rendering handled in the component during align-design)
 - [x] red-frontend-api
 - [x] green-frontend-api
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 2.1: Authenticated home shows the dashboard shell with the current user
