@@ -53,10 +53,10 @@
 - [S] green-frontend-api (counterpart; capability already exists)
 - [S] align-design (no new UI — Scenario 4.1 introduces no component or styling. The welcome "Войти" button (`RouterLink`, mockup `mockups/desktop/01-welcome.html`) was built + aligned in Scenario 1.1; the login page it navigates to was built + aligned in Story 1. Nothing to build or pixel-align here.)
 - [x] green-playwright (verified green — `npx playwright test --project=chromium welcome-to-login.spec.ts` → 1 passed. No marker to remove (test passed from RED, navigation already wired); no production/Statements changes.)
-- [~] demo
+- [x] demo (recorded `frontend/test-results/demo-welcome-to-login.webm`; spec passed 1/1 with slowMo; config reverted, tree clean)
 
 ### Scenario 4.2: Successful login redirects to the dashboard
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
