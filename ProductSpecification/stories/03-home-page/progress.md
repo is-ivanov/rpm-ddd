@@ -47,9 +47,9 @@
 
 ### Scenario 4.1: Clicking "Войти" on the welcome page opens the login page
 - [x] red-playwright (spec `welcome-to-login.spec.ts` authored + reviewed + refactored; navigation already wired by Stories 1 & 3 — `RouterLink to="/login"` + `/login` route + login page — so the test passes from the start. Per the playwright tdd binding no `test.fail()` marker is added when a test cannot be made RED; green-playwright will simply verify it green.)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
+- [S] red-frontend (trivial — no branching/computation/validation/transformation in `.logic.ts`. The "Войти" control is a declarative `RouterLink to="/login"` in `WelcomeView.vue`; navigation is purely presentational with no logic function to test. Mirrors Scenario 1.1's `[S]`.)
+- [S] green-frontend (counterpart of skipped red-frontend; navigation handled by the `RouterLink` in the component)
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
