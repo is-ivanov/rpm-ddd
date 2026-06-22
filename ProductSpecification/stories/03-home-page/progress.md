@@ -52,8 +52,8 @@
 - [S] red-frontend-api (existence check — Scenario 4.1 is pure UI navigation (`RouterLink` welcome → `/login`) and makes no backend request of its own. The welcome page's `GET /api/auth/me` is already fetched + validated by `current-user.api.ts` + `current-user.schema.ts` with tests (Scenarios 1.1/2.1). No new endpoint, field, or API client. Mirrors Scenario 3.1's `[S]`.)
 - [S] green-frontend-api (counterpart; capability already exists)
 - [S] align-design (no new UI — Scenario 4.1 introduces no component or styling. The welcome "Войти" button (`RouterLink`, mockup `mockups/desktop/01-welcome.html`) was built + aligned in Scenario 1.1; the login page it navigates to was built + aligned in Story 1. Nothing to build or pixel-align here.)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (verified green — `npx playwright test --project=chromium welcome-to-login.spec.ts` → 1 passed. No marker to remove (test passed from RED, navigation already wired); no production/Statements changes.)
+- [~] demo
 
 ### Scenario 4.2: Successful login redirects to the dashboard
 - [ ] red-playwright
