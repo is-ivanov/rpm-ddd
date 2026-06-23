@@ -62,8 +62,8 @@
 - [S] red-frontend-api (existence check — Scenario 4.2 introduces no new endpoint, field, or API client, and ZERO API-layer production files change. The login request `POST /api/auth/login` is already implemented by `login.api.ts` (Story 1) and tested in `login.api.test.ts`; the dashboard's `GET /api/auth/me` is already fetched + validated by `current-user.api.ts` + `current-user.schema.ts` (incl. all fields) and tested in `current-user.api.test.ts` (Scenarios 1.1/2.1). The redirect itself is presentational navigation, not an API call. Mirrors Scenario 3.1's `[S]`.)
 - [S] green-frontend-api (counterpart; both API clients already exist and are tested)
 - [x] align-design (Build component: wired the redirect-on-success into `LoginPage.vue` — `useRouter()` + `await router.push('/')` after a successful `login()`. No markup/styling change (login page already pixel-aligned in Story 1), so `/align-design` + `/design-review` are no-ops here: no hardcoded placeholder data, rendered output unchanged. `/refactor` clean (file 106 lines; `submitLogin` is a cohesive try/catch/finally submit handler; `'/'` used once). Verified: lint green, 44 unit tests pass, playwright 4.2 now reports "Expected to fail, but passed" (redirect works — marker removed in green-playwright). `/test-coverage frontend --focus` not meaningful — only a presentational `.vue` component changed (covered by the playwright acceptance tier, not vitest); no logic/api files touched.)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (removed the `test.fail()` marker + stale RED comment — the only allowed change. `npx playwright test --project=chromium login-to-dashboard.spec.ts` → 1 passed. No production/Statements changes. Prettier clean.)
+- [~] demo
 
 ### Scenario 4.3: Logging out from the user menu returns to the welcome page
 - [ ] red-playwright

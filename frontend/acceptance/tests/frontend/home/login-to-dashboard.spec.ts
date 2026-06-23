@@ -25,10 +25,6 @@ test.describe('Login to Dashboard Navigation', () => {
       'Then the user is navigated to the home page, ' +
       "And the dashboard shell is displayed with the user's name in the top bar",
     async () => {
-      // RED: LoginPage.submitLogin() does not redirect on success — the browser
-      // stays on /login, pinned by assertNavigatedToHomeUrl() below.
-      test.fail();
-
       await authBackend.givenRegisteredUser('ipetrov', 'correct-pass');
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'Иван', lastName: 'Петров' });
       await loginPage.navigateToLoginPage();
