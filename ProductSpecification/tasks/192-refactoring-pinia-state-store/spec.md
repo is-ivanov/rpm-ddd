@@ -58,8 +58,20 @@ becomes a real defect with the first shared/session state (logged-in user, profi
 
 ## Decision
 
-_To be filled in Step 1._ If adopted: scope = auth/session store + router guard; coordinate with I1
-and Story 3. Then move the `fetch.api.ts` redirect to the guard.
+**ADOPT Pinia — minimal auth/session store** (2026-06-23). See
+`decisions/pinia-auth-store-decision.md`.
+
+The trigger fired: Story 3 (#206) added a real logged-in state plus three symptoms of having no
+store — (1) the current user is prop-drilled 3-4 levels (`HomePage` → `DashboardShell` →
+`DashboardTopBar` → `UserMenu`), (2) logout uses `globalThis.location.reload()` for lack of a
+reactive store to clear, (3) two divergent 401 strategies coexist (transport redirect in
+`fetch.api.ts` vs. swallow-401 in `fetchCurrentUser`).
+
+Scope = ONE `app/stores/auth.store.ts` (`currentUser`/`loading`, `isAuthenticated`/`dashboardUser`
+getters, `loadMe`/`logout`/`reset` actions) → migrate the home subtree off prop-drilling → logout via
+`store.reset()` → decouple `apiFetch` 401 from the router (call `authStore.reset()` reactively; add a
+`requiresAuth` guard skeleton for the first future protected route). Broad/profile/patient state and
+persistence are out of scope until a protected data screen lands. Closes the state-layer half of I1.
 
 ## Key Files
 
