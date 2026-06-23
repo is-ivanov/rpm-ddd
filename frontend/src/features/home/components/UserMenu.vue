@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ChevronDown, ChevronUp, LogOut } from '@lucide/vue';
+import { logout } from '@/features/auth/logic/logout.api';
 
 defineProps<{
   displayName: string;
@@ -9,9 +10,20 @@ defineProps<{
 }>();
 
 const open = ref(false);
+const loggingOut = ref(false);
 
 function toggleMenu(): void {
   open.value = !open.value;
+}
+
+async function handleLogout(): Promise<void> {
+  loggingOut.value = true;
+  try {
+    await logout();
+    window.location.reload();
+  } finally {
+    loggingOut.value = false;
+  }
 }
 </script>
 
@@ -41,7 +53,9 @@ function toggleMenu(): void {
       <button
         data-testid="user-menu-logout"
         type="button"
-        class="flex h-10 w-full cursor-pointer items-center gap-3 px-3 text-sm text-ink hover:bg-surface"
+        :disabled="loggingOut"
+        class="flex h-10 w-full cursor-pointer items-center gap-3 px-3 text-sm text-ink hover:bg-surface disabled:cursor-not-allowed disabled:opacity-60"
+        @click="handleLogout"
       >
         <LogOut :size="18" class="text-muted" aria-hidden="true" />
         Выйти
