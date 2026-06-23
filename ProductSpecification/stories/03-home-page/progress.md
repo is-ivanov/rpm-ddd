@@ -57,9 +57,9 @@
 
 ### Scenario 4.2: Successful login redirects to the dashboard
 - [x] red-playwright (spec `login-to-dashboard.spec.ts` authored + reviewed + refactored. Genuine RED: `LoginPage.submitLogin()` does not redirect on success → browser stays on `/login`; pinned by `assertNavigatedToHomeUrl()` (new method on `HomePageStatements`). Prediction matched exactly: `toHaveURL` expected `.../` got `.../login`. `test.fail()` marker added.)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
+- [S] red-frontend (trivial — no branching/computation/validation/transformation in `.logic.ts`, and ZERO logic-layer production files change. The redirect on successful login is an unconditional `router.push('/')` to a fixed path (no return-URL feature exists; spec asks only for "navigated to the home page") — purely presentational navigation in `LoginPage.vue`'s submit handler. A `redirectPathAfterLogin()` helper would return the constant `'/'`, which the trivial gate classifies as "a value that never varies by input". Mirrors Scenario 4.1's `[S]`. The `router.push('/')` is added to the component during align-design.)
+- [S] green-frontend (counterpart of skipped red-frontend; the `router.push('/')` redirect is wired in `LoginPage.vue` during align-design)
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
