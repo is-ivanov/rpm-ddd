@@ -4,7 +4,7 @@ import { http, HttpResponse, type JsonBodyType } from 'msw';
 import { server } from '@/test/msw-server';
 import { CSRF_PATH, stubCsrfSetsCookie, type CsrfCapture } from '@/test/csrf-stub';
 import { useAuthStore } from '../auth.store';
-import type { AuthenticatedUser } from '@/features/home/logic/types';
+import type { AuthenticatedUser } from '@/app/logic/current-user.types';
 
 const BASE = import.meta.env.VITE_API_URL;
 

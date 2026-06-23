@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import type { AuthenticatedUser } from '@/features/home/logic/types';
-import { buildDashboardUser, type DashboardUser } from '@/features/home/logic/dashboard-user.logic';
-import { fetchCurrentUser } from '@/features/home/logic/current-user.api';
+import type { AuthenticatedUser } from '@/app/logic/current-user.types';
+import { buildDashboardUser, type DashboardUser } from '@/app/logic/dashboard-user.logic';
+import { fetchCurrentUser } from '@/app/logic/current-user.api';
 import { logout as logoutRequest } from '@/features/auth/logic/logout.api';
 
 interface AuthState {

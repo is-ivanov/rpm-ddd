@@ -1,4 +1,4 @@
-import type { AuthenticatedUser } from './types';
+import type { AuthenticatedUser } from './current-user.types';
 
 export interface DashboardUser {
   readonly displayName: string;

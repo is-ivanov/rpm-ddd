@@ -4,7 +4,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { server } from '@/test/msw-server';
 import { apiFetch } from '@/app/logic/fetch.api';
 import { useAuthStore } from '@/app/stores/auth.store';
-import type { AuthenticatedUser } from '@/features/home/logic/types';
+import type { AuthenticatedUser } from '@/app/logic/current-user.types';
 
 const BASE = import.meta.env.VITE_API_URL;
 
