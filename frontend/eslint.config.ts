@@ -8,18 +8,7 @@ import tseslint from 'typescript-eslint';
 
 export default defineConfig(
   {
-    ignores: [
-      'dist/**',
-      'coverage/**',
-      'node_modules/**',
-      'test-results/**',
-      'playwright-report/**',
-      '**/*.d.ts',
-      // Lint-rule fixtures (Task 205): intentionally contain a forbidden blind `as`
-      // cast so they would break `eslint .`. Ignored from the repo-wide run; the rule
-      // is proven to fire/pass on them via an explicit `eslint --no-ignore` check.
-      'lint-fixtures/**',
-    ],
+    ignores: ['dist/**', 'coverage/**', 'node_modules/**', 'test-results/**', 'playwright-report/**', '**/*.d.ts'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

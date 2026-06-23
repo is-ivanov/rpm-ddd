@@ -14,4 +14,4 @@ Type: refactoring
 - [x] refactor (add the chosen rule to the lint config; add a fixture that casts `response.json()` with `as` to prove the rule fires, and a `schema.parse(...)` fixture to prove it stays green) — `no-restricted-syntax` (2 selectors) in `eslint.config.ts`; fixtures in `lint-fixtures/` (eslint-ignored, verified via `--no-ignore`: invalid → 3 errors, valid → clean)
 
 ### Step 3: Verify the CI gate
-- [~] refactor (run `npm run lint`; confirm the rule fails on the blind-`as` fixture and passes on `schema.parse`; confirm the whole repo is still clean)
+- [x] refactor (run `npm run lint`; confirm the rule fails on the blind-`as` fixture and passes on `schema.parse`; confirm the whole repo is still clean) — fixtures removed after verification (not production code); guard caught a real violation in `mailpit.statements.ts` (2 casts), fixed via zod `schema.parse`; full `npm run lint` green (oxlint + eslint + prettier + type-check)
