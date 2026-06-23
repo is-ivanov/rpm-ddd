@@ -61,8 +61,7 @@ describe('Auth Store', () => {
     expect(store.dashboardUser).toBeNull();
   });
 
-  // RED — loadMe not implemented (throws 'Not implemented')
-  it.fails('loads the current user and exposes the dashboard view model on a 200 response', async () => {
+  it('loads the current user and exposes the dashboard view model on a 200 response', async () => {
     stubMeAuthenticated();
     const store = useAuthStore();
 
@@ -77,8 +76,7 @@ describe('Auth Store', () => {
     });
   });
 
-  // RED — loadMe not implemented (throws 'Not implemented')
-  it.fails('stays unauthenticated when /me returns 401', async () => {
+  it('stays unauthenticated when /me returns 401', async () => {
     stubMeUnauthenticated();
     const store = useAuthStore();
 
@@ -88,8 +86,7 @@ describe('Auth Store', () => {
     expect(store.isAuthenticated).toBe(false);
   });
 
-  // RED — reset not implemented (throws 'Not implemented')
-  it.fails('clears the current user on reset', () => {
+  it('clears the current user on reset', () => {
     const store = useAuthStore();
     store.$patch({ currentUser: IVAN_PETROV });
 

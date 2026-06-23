@@ -12,7 +12,7 @@ Type: refactoring
 
 ### Step 2: Implementation — adopt Pinia auth/session store
 - [x] red-frontend (auth store) → store unit test (Vitest + setActivePinia): initial state unauthenticated; `loadMe()` sets user on 200 / stays unauthenticated on 401; `reset()` clears → /test-review → /refactor → commit
-- [~] green-frontend (auth store) → add `pinia` dep, `createPinia()` in `main.ts`, implement `app/stores/auth.store.ts` (state `currentUser`/`loading`; getters `isAuthenticated`/`dashboardUser`; actions `loadMe`/`logout`/`reset`) → /refactor → /test-coverage frontend --focus → commit
-- [ ] refactor (migrate home subtree) → `HomePage` calls `store.loadMe()` + reads `store.dashboardUser`; drop the 4-level prop chain through `DashboardShell`/`DashboardTopBar`/`UserMenu`; keep existing component + playwright tests green → /refactor → commit
+- [x] green-frontend (auth store) → `createPinia()` in `main.ts` (pinia dep added in RED), implement `app/stores/auth.store.ts` (state `currentUser`; getters `isAuthenticated`/`dashboardUser`; actions `loadMe`/`reset`) → /refactor → /test-coverage frontend --focus (100% auth.store.ts) → commit. NOTE: `loading`/`logout` deferred to the consuming refactor steps below (minimal GREEN)
+- [~] refactor (migrate home subtree) → `HomePage` calls `store.loadMe()` + reads `store.dashboardUser`; drop the 4-level prop chain through `DashboardShell`/`DashboardTopBar`/`UserMenu`; keep existing component + playwright tests green → /refactor → commit
 - [ ] refactor (logout via store) → `UserMenu` logout → `store.logout()` + `router.push('/login')`, drop `globalThis.location.reload()`; verify/adjust existing logout tests → /refactor → commit
 - [ ] refactor (decouple transport + guard skeleton) → `apiFetch` 401 → `authStore.reset()` (drop the `@/router` import/push); add `beforeEach` guard honoring `meta.requiresAuth` (no route opts in yet); update `unauthorized-redirect` tests → /refactor → commit

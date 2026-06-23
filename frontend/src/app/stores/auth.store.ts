@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import type { AuthenticatedUser } from '@/features/home/logic/types';
 import { buildDashboardUser, type DashboardUser } from '@/features/home/logic/dashboard-user.logic';
+import { fetchCurrentUser } from '@/features/home/logic/current-user.api';
 
 interface AuthState {
   currentUser: AuthenticatedUser | null;
@@ -17,10 +18,13 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     async loadMe(): Promise<void> {
-      await Promise.reject(new Error('Not implemented'));
+      const result = await fetchCurrentUser();
+      if (result.authenticated) {
+        this.currentUser = result.user;
+      }
     },
     reset(): void {
-      throw new Error('Not implemented');
+      this.currentUser = null;
     },
   },
 });
