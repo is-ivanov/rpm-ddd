@@ -29,6 +29,10 @@ export class HomePageStatements {
     await this.page.goto(`${this.appUrl}/`);
   }
 
+  async assertNavigatedToHomeUrl(): Promise<void> {
+    await expect(this.page, 'browser is navigated to the home page URL').toHaveURL(`${this.appUrl}/`);
+  }
+
   async assertHomePageIsVisible(): Promise<void> {
     await expect(this.homePage(), 'home page is visible').toBeVisible();
   }

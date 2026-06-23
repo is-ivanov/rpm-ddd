@@ -56,8 +56,8 @@
 - [x] demo (recorded `frontend/test-results/demo-welcome-to-login.webm`; spec passed 1/1 with slowMo; config reverted, tree clean)
 
 ### Scenario 4.2: Successful login redirects to the dashboard
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (spec `login-to-dashboard.spec.ts` authored + reviewed + refactored. Genuine RED: `LoginPage.submitLogin()` does not redirect on success → browser stays on `/login`; pinned by `assertNavigatedToHomeUrl()` (new method on `HomePageStatements`). Prediction matched exactly: `toHaveURL` expected `.../` got `.../login`. `test.fail()` marker added.)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
