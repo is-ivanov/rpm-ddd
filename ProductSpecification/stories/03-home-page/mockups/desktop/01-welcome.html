@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1400">
+    <title>RPM — Добро пожаловать</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-white: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border: #dee2e6;
+            --accent: #228be6;
+            --accent-hover: #1c7ed6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .welcome {
+            text-align: center;
+            max-width: 480px;
+            padding: 0 24px;
+        }
+
+        .welcome-logo {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -1px;
+        }
+
+        .welcome-tagline {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 8px;
+        }
+
+        .welcome-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-top: 16px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 44px;
+            padding: 0 32px;
+            margin-top: 32px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #ffffff;
+            background-color: var(--accent);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.15s;
+        }
+
+        .btn-primary:hover { background-color: var(--accent-hover); }
+        .btn-primary i { width: 18px; height: 18px; }
+    </style>
+</head>
+<body>
+    <div class="welcome">
+        <div class="welcome-logo">RPM</div>
+        <div class="welcome-tagline">Удалённый мониторинг пациентов</div>
+        <p class="welcome-text">
+            Платформа непрерывного наблюдения за состоянием пациентов
+            и автоматических оповещений об отклонениях показателей.
+        </p>
+        <a href="#" class="btn-primary">
+            <i data-lucide="log-in"></i>
+            Войти
+        </a>
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

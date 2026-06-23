@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { login } from '../logic/login.api';
 import { mapLoginErrorToView, type LoginFieldErrors } from '../logic/login-error-view.logic';
 import { isLoginFormValid } from '../logic/login-form.logic';
@@ -15,12 +16,15 @@ const requiresActivation = ref(false);
 const fieldErrors = ref<LoginFieldErrors>({});
 const submitting = ref(false);
 
+const router = useRouter();
+
 const isFormValid = computed(() => isLoginFormValid(loginName.value, password.value));
 
 async function submitLogin(): Promise<void> {
   submitting.value = true;
   try {
     await login({ login: loginName.value, password: password.value });
+    await router.push('/');
   } catch (error) {
     showLoginError(error);
   } finally {

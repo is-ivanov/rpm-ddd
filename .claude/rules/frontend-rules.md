@@ -4,6 +4,7 @@
 
 - Pure logic in logic files: validation, state computation, request building, data mapping. No side effects.
 - HTTP client in API client files: fetch calls, response mapping, error handling.
+- Validate network payloads at the boundary: an API client must validate every response body it consumes (success AND error) into a typed shape before returning it — never trust-cast an unvalidated network response into a typed value. A validation failure is a contract violation (the backend drifted from the agreed shape), not a silent success — surface it as an error, never accept it. The validation mechanism is tech-specific — see the tech binding.
 - Component files are thin wrappers: call logic + API, translate UI state from logic files, render markup.
 - FORBIDDEN in component files: business logic, validation regex, direct fetch calls, request building.
 

@@ -1,8 +1,30 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { fetchCurrentUser } from '../logic/current-user.api';
+import { buildDashboardUser, type DashboardUser } from '../logic/dashboard-user.logic';
+import AppLoading from '@/app/components/AppLoading.vue';
+import WelcomeView from './WelcomeView.vue';
+import DashboardShell from './DashboardShell.vue';
+
+const loading = ref(true);
+const dashboardUser = ref<DashboardUser | null>(null);
+
+onMounted(loadCurrentUser);
+
+async function loadCurrentUser(): Promise<void> {
+  try {
+    const result = await fetchCurrentUser();
+    if (result.authenticated) {
+      dashboardUser.value = buildDashboardUser(result.user);
+    }
+  } finally {
+    loading.value = false;
+  }
+}
+</script>
 
 <template>
-  <main data-testid="home-page" class="flex min-h-screen flex-col items-center justify-center gap-4 bg-surface">
-    <h1 data-testid="home-title" class="text-3xl font-semibold text-ink">RPM</h1>
-    <p data-testid="home-subtitle" class="text-muted">Remote Patient Monitoring</p>
-  </main>
+  <AppLoading v-if="loading" />
+  <DashboardShell v-else-if="dashboardUser" :user="dashboardUser" />
+  <WelcomeView v-else />
 </template>
