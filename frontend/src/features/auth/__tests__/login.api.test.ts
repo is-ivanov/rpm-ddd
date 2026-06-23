@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { http, HttpResponse } from 'msw';
+import { createPinia, setActivePinia } from 'pinia';
 import { issue } from 'allure-js-commons';
 import { server } from '@/test/msw-server';
 import { captureRejection } from '@/test/capture-rejection';
@@ -73,6 +74,10 @@ function stubLoginValidationProblem(fieldErrors: ProblemFieldError[]): void {
 }
 
 describe('Login API Client', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   afterEach(() => {
     document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
   });

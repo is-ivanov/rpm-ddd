@@ -20,7 +20,7 @@ async function handleLogout(): Promise<void> {
   loggingOut.value = true;
   try {
     await store.logout();
-    await router.push('/login');
+    await router.push('/');
   } finally {
     loggingOut.value = false;
   }

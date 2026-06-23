@@ -50,8 +50,8 @@ user. Removes all three symptoms with a small migration surface (one subtree).
   inline `fetch` or validation). API clients and `buildDashboardUser` stay the logic layer.
 - **Consumers**: `HomePage` calls `store.loadMe()` and reads `store.dashboardUser`; `DashboardShell`
   /`DashboardTopBar`/`UserMenu` read the store (or a single prop from `HomePage`) instead of the
-  4-level prop chain. `UserMenu` logout → `store.logout()` + `router.push('/login')`, dropping
-  `location.reload()`.
+  4-level prop chain. `UserMenu` logout → `store.logout()` + `router.push('/')` (welcome page),
+  dropping `location.reload()`.
 
 ### Transport / router decoupling — corrected scope
 
@@ -72,7 +72,7 @@ route) are **different moments**, not substitutes. The clean target:
 |------|----------|
 | `/me` returns 401 (guest) | `loadMe()` leaves `currentUser` null; `HomePage` renders `WelcomeView`. No redirect — `/` is public. |
 | Session dies during an `apiFetch` call | Transport calls `authStore.reset()`; reactive state flips `HomePage` to `WelcomeView` (and the guard would redirect once a `requiresAuth` route exists). |
-| Logout | `store.logout()` → POST `/api/auth/logout` (server clears the cookie) → `reset()` → `router.push('/login')`. No full-page reload. |
+| Logout | `store.logout()` → POST `/api/auth/logout` (server clears the cookie) → `reset()` → `router.push('/')`. No full-page reload. (Corrected 2026-06-23: logout returns to the welcome page `/`, not `/login`, to match Story 3 acceptance Scenario 4.3.) |
 | `/me` returns a schema-invalid payload | `currentUserResponseSchema.parse` throws (Task #191 contract) — surfaced as an error, not a fake unauthenticated state. |
 | Multiple tabs / store not persisted | Store is in-memory per tab; truth is the server cookie + `loadMe()` on app start. No `localStorage` persistence (no requirement; avoids stale-session bugs). |
 | File-size limit | `auth.store.ts` stays well under 200 lines (focused on session only). |

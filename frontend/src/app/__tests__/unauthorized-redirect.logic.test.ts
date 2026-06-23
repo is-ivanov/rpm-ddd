@@ -1,20 +1,28 @@
 import { describe, expect, it } from 'vitest';
-import { issue } from 'allure-js-commons';
-import { shouldRedirectToLogin } from '../logic/unauthorized-redirect.logic';
+import { isUnauthorized, shouldRedirectToLogin } from '../logic/unauthorized-redirect.logic';
 
-describe('Unauthorized Redirect Decision', () => {
+describe('Unauthorized Response Decision', () => {
+  it.each([
+    { name: 'flags a 401 response as unauthorized', status: 401, expected: true },
+    { name: 'does not flag a 403 response as unauthorized', status: 403, expected: false },
+    { name: 'does not flag a 200 response as unauthorized', status: 200, expected: false },
+  ])('$name', ({ status, expected }) => {
+    expect(isUnauthorized(status)).toBe(expected);
+  });
+});
+
+describe('Protected Route Redirect Decision', () => {
   it.each([
     {
-      name: 'redirects to login when a response is 401 and the user is not on the login route',
-      status: 401,
-      path: '/activate',
+      name: 'redirects when a protected route is entered without a session',
+      requiresAuth: true,
+      authed: false,
       redirect: true,
     },
-    { name: 'does not redirect on 403', status: 403, path: '/activate', redirect: false },
-    { name: 'does not redirect on 401 when already on the login route', status: 401, path: '/login', redirect: false },
-  ])('$name', async ({ status, path, redirect }) => {
-    await issue('162');
-
-    expect(shouldRedirectToLogin(status, path)).toBe(redirect);
+    { name: 'allows a protected route for an authenticated user', requiresAuth: true, authed: true, redirect: false },
+    { name: 'allows a public route for a guest', requiresAuth: false, authed: false, redirect: false },
+    { name: 'allows a public route for an authenticated user', requiresAuth: false, authed: true, redirect: false },
+  ])('$name', ({ requiresAuth, authed, redirect }) => {
+    expect(shouldRedirectToLogin(requiresAuth, authed)).toBe(redirect);
   });
 });

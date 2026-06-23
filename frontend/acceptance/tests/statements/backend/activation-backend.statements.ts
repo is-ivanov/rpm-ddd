@@ -62,23 +62,9 @@ export class ActivationBackendStatements {
     );
   }
 
-  async givenSessionExpired(): Promise<void> {
-    await this.installActivationRoutes((route) => this.handleUnauthorized(route));
-  }
-
   private async installActivationRoutes(handler: (route: Route) => Promise<void>): Promise<void> {
     await this.installCsrfRoute();
     await this.page.route(ACTIVATE_URL_PATTERN, handler);
-  }
-
-  private async handleUnauthorized(route: Route): Promise<void> {
-    await this.fulfillProblem(route, {
-      type: 'https://www.rpm-ddd.my/problem/unauthorized',
-      title: 'Unauthorized',
-      status: 401,
-      detail: 'Full authentication is required to access this resource',
-      instance: '/api/auth/activate',
-    });
   }
 
   private async handleExpiredToken(route: Route): Promise<void> {

@@ -1,4 +1,4 @@
-import { LOGIN_PATH, shouldRedirectToLogin } from '@/app/logic/unauthorized-redirect.logic';
+import { isUnauthorized } from '@/app/logic/unauthorized-redirect.logic';
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL ?? '';
 const NULL_BODY_STATUSES = new Set([101, 103, 204, 205, 304]);
@@ -10,7 +10,7 @@ export function apiUrl(path: string): string {
 export async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
   const response = await fetch(apiUrl(path), init);
   const buffered = await bufferResponse(response);
-  await redirectToLoginWhenUnauthorized(buffered.status);
+  await resetSessionWhenUnauthorized(buffered.status);
   return buffered;
 }
 
@@ -24,9 +24,9 @@ async function bufferResponse(response: Response): Promise<Response> {
   });
 }
 
-async function redirectToLoginWhenUnauthorized(status: number): Promise<void> {
-  const { router } = await import('@/router');
-  if (shouldRedirectToLogin(status, router.currentRoute.value.path)) {
-    await router.push(LOGIN_PATH);
+async function resetSessionWhenUnauthorized(status: number): Promise<void> {
+  if (isUnauthorized(status)) {
+    const { useAuthStore } = await import('@/app/stores/auth.store');
+    useAuthStore().reset();
   }
 }
