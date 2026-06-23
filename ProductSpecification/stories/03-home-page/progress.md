@@ -67,9 +67,9 @@
 
 ### Scenario 4.3: Logging out from the user menu returns to the welcome page
 - [x] red-playwright (spec `logout-to-welcome.spec.ts` authored + reviewed + refactored. Genuine RED: the user-menu logout button (`user-menu-logout`) has no click handler → clicking "Выйти" does nothing, dashboard stays, welcome never appears; pinned by `assertLoginButtonIsVisible()`. Prediction matched exactly: `toBeVisible` on `welcome-login-button` timed out, element not found. Added `UserMenuStatements.clickLogout()` + `CurrentUserBackendStatements.givenAuthenticatedUserUntilLogout()` (stateful `/me` → 401 after logout, `/csrf`, `/logout`). `test.fail()` marker added. Refactor extracted shared `support/csrf-route.ts` (deduped CSRF fulfillment with `auth-backend.statements.ts`); 14 related specs green, no regression.)
-- [ ] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
+- [S] red-frontend (trivial — no branching/computation/validation/transformation in `.logic.ts`, and ZERO logic-layer production files change. Logout splits into: the logout API call (`POST /api/auth/logout` with CSRF) which belongs to the API-client layer → `red-frontend-api`; and the post-logout transition back to the welcome page, which is unconditional + presentational (re-evaluate auth → welcome) in the component, not `.logic.ts` logic. No logout-related logic function exists or is needed. Mirrors Scenario 4.2's `[S]`.)
+- [S] green-frontend (counterpart of skipped red-frontend; the session-end → welcome transition is wired in the component during align-design)
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
