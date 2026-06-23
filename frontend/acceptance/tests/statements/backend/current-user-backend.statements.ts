@@ -1,6 +1,9 @@
 import { type Page, type Route } from '@playwright/test';
+import { fulfillCsrfRoute } from '../support/csrf-route';
 
 const ME_URL_PATTERN = '**/api/auth/me';
+const CSRF_URL_PATTERN = '**/api/auth/csrf';
+const LOGOUT_URL_PATTERN = '**/api/auth/logout';
 
 interface AuthenticatedUser {
   readonly firstName: string;
@@ -15,6 +18,8 @@ const EMAIL_DOMAIN = 'rpm.local';
 const DEFAULT_EMAIL = `${CURRENT_USER_LOGIN}@${EMAIL_DOMAIN}`;
 
 export class CurrentUserBackendStatements {
+  private sessionEnded = false;
+
   constructor(private readonly page: Page) {}
 
   async givenUnauthenticated(): Promise<void> {
@@ -23,6 +28,21 @@ export class CurrentUserBackendStatements {
 
   async givenAuthenticatedUser(user: AuthenticatedUser): Promise<void> {
     await this.page.route(ME_URL_PATTERN, (route) => this.fulfillAuthenticatedCurrentUser(route, user));
+  }
+
+  async givenAuthenticatedUserUntilLogout(user: AuthenticatedUser): Promise<void> {
+    await this.page.route(ME_URL_PATTERN, (route) =>
+      this.sessionEnded
+        ? this.fulfillUnauthenticatedCurrentUser(route)
+        : this.fulfillAuthenticatedCurrentUser(route, user),
+    );
+    await this.page.route(CSRF_URL_PATTERN, fulfillCsrfRoute);
+    await this.page.route(LOGOUT_URL_PATTERN, (route) => this.endSession(route));
+  }
+
+  private async endSession(route: Route): Promise<void> {
+    this.sessionEnded = true;
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
   }
 
   private async fulfillUnauthenticatedCurrentUser(route: Route): Promise<void> {

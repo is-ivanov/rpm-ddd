@@ -66,7 +66,7 @@
 - [x] demo (recorded `frontend/test-results/demo-login-to-dashboard.webm`; spec passed 1/1 with slowMo; config reverted, tree clean)
 
 ### Scenario 4.3: Logging out from the user menu returns to the welcome page
-- [~] red-playwright
+- [x] red-playwright (spec `logout-to-welcome.spec.ts` authored + reviewed + refactored. Genuine RED: the user-menu logout button (`user-menu-logout`) has no click handler → clicking "Выйти" does nothing, dashboard stays, welcome never appears; pinned by `assertLoginButtonIsVisible()`. Prediction matched exactly: `toBeVisible` on `welcome-login-button` timed out, element not found. Added `UserMenuStatements.clickLogout()` + `CurrentUserBackendStatements.givenAuthenticatedUserUntilLogout()` (stateful `/me` → 401 after logout, `/csrf`, `/logout`). `test.fail()` marker added. Refactor extracted shared `support/csrf-route.ts` (deduped CSRF fulfillment with `auth-backend.statements.ts`); 14 related specs green, no regression.)
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api

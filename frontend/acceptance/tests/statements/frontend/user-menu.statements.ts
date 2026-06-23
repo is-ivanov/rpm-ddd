@@ -31,6 +31,10 @@ export class UserMenuStatements {
     await expect(this.userMenuLogout(), 'logout action text is exactly "Выйти"').toHaveText(LOGOUT_ACTION_TEXT);
   }
 
+  async clickLogout(): Promise<void> {
+    await this.userMenuLogout().click();
+  }
+
   private userMenu(): Locator {
     return this.page.getByTestId(TEST_ID.userMenu);
   }
