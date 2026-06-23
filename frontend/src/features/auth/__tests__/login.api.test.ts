@@ -3,15 +3,13 @@ import { http, HttpResponse } from 'msw';
 import { issue } from 'allure-js-commons';
 import { server } from '@/test/msw-server';
 import { captureRejection } from '@/test/capture-rejection';
+import { CSRF_PATH, XSRF_TOKEN, stubCsrfSetsCookie } from '@/test/csrf-stub';
 import { login } from '../logic/login.api';
 import { LoginError } from '../logic/types';
 import type { LoginRequest, ProblemFieldError } from '../logic/types';
 
 const BASE = import.meta.env.VITE_API_URL;
 
-const XSRF_TOKEN = 'test-xsrf-token';
-
-const CSRF_PATH = '/api/auth/csrf';
 const LOGIN_PATH = '/api/auth/login';
 
 const VALID_CREDENTIALS: LoginRequest = { login: 'ivan', password: 'right-pass' };
@@ -20,16 +18,6 @@ interface CapturedRequest {
   order: string[];
   csrfHeader?: string | null;
   body?: unknown;
-}
-
-function stubCsrfSetsCookie(captured: CapturedRequest): void {
-  server.use(
-    http.get(`${BASE}${CSRF_PATH}`, () => {
-      captured.order.push(`GET ${CSRF_PATH}`);
-      document.cookie = `XSRF-TOKEN=${XSRF_TOKEN}; Path=/`;
-      return HttpResponse.json({}, { status: 200 });
-    }),
-  );
 }
 
 function stubLoginCapturing(captured: CapturedRequest): void {
