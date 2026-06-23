@@ -20,7 +20,7 @@ async function handleLogout(): Promise<void> {
   loggingOut.value = true;
   try {
     await logout();
-    window.location.reload();
+    globalThis.location.reload();
   } finally {
     loggingOut.value = false;
   }
