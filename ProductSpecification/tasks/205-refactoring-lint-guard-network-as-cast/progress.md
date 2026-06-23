@@ -11,7 +11,7 @@ Type: refactoring
 - [x] design (present A/B/C with trade-offs, get user decision; record it in spec.md) — chose **(C)** ESLint `no-restricted-syntax` selector
 
 ### Step 2: Add the lint rule + fixture
-- [~] refactor (add the chosen rule to the lint config; add a fixture that casts `response.json()` with `as` to prove the rule fires, and a `schema.parse(...)` fixture to prove it stays green)
+- [x] refactor (add the chosen rule to the lint config; add a fixture that casts `response.json()` with `as` to prove the rule fires, and a `schema.parse(...)` fixture to prove it stays green) — `no-restricted-syntax` (2 selectors) in `eslint.config.ts`; fixtures in `lint-fixtures/` (eslint-ignored, verified via `--no-ignore`: invalid → 3 errors, valid → clean)
 
 ### Step 3: Verify the CI gate
-- [ ] refactor (run `npm run lint`; confirm the rule fails on the blind-`as` fixture and passes on `schema.parse`; confirm the whole repo is still clean)
+- [~] refactor (run `npm run lint`; confirm the rule fails on the blind-`as` fixture and passes on `schema.parse`; confirm the whole repo is still clean)

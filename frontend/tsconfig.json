@@ -28,6 +28,7 @@
     "vite.config.ts",
     "env.d.ts",
     "playwright.config.ts",
-    "acceptance/**/*.ts"
+    "acceptance/**/*.ts",
+    "lint-fixtures/**/*.ts"
   ]
 }
