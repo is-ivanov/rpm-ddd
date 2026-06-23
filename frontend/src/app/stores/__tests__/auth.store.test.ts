@@ -1,13 +1,15 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { http, HttpResponse, type JsonBodyType } from 'msw';
 import { server } from '@/test/msw-server';
+import { CSRF_PATH, stubCsrfSetsCookie, type CsrfCapture } from '@/test/csrf-stub';
 import { useAuthStore } from '../auth.store';
 import type { AuthenticatedUser } from '@/features/home/logic/types';
 
 const BASE = import.meta.env.VITE_API_URL;
 
 const ME_PATH = '/api/auth/me';
+const LOGOUT_PATH = '/api/auth/logout';
 
 const IVAN_PETROV: AuthenticatedUser = {
   login: 'ipetrov',
@@ -35,6 +37,15 @@ function stubMeAuthenticated(): void {
   );
 }
 
+function stubLogoutCapturing(captured: CsrfCapture): void {
+  server.use(
+    http.post(`${BASE}${LOGOUT_PATH}`, () => {
+      captured.order.push(`POST ${LOGOUT_PATH}`);
+      return new HttpResponse(null, { status: 200 });
+    }),
+  );
+}
+
 function stubMeUnauthenticated(): void {
   stubMe(
     {
@@ -51,6 +62,10 @@ function stubMeUnauthenticated(): void {
 describe('Auth Store', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+  });
+
+  afterEach(() => {
+    document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
   });
 
   it('starts unauthenticated with no current user', () => {
@@ -82,6 +97,20 @@ describe('Auth Store', () => {
 
     await store.loadMe();
 
+    expect(store.currentUser).toBeNull();
+    expect(store.isAuthenticated).toBe(false);
+  });
+
+  it('logs out via the API then clears the current user', async () => {
+    const captured: CsrfCapture = { order: [] };
+    stubCsrfSetsCookie(captured);
+    stubLogoutCapturing(captured);
+    const store = useAuthStore();
+    store.$patch({ currentUser: IVAN_PETROV });
+
+    await store.logout();
+
+    expect(captured.order).toEqual([`GET ${CSRF_PATH}`, `POST ${LOGOUT_PATH}`]);
     expect(store.currentUser).toBeNull();
     expect(store.isAuthenticated).toBe(false);
   });

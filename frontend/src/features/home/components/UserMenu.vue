@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { ChevronDown, ChevronUp, LogOut } from '@lucide/vue';
-import { logout } from '@/features/auth/logic/logout.api';
 import { useAuthStore } from '@/app/stores/auth.store';
 
-const { dashboardUser } = storeToRefs(useAuthStore());
+const router = useRouter();
+const store = useAuthStore();
+const { dashboardUser } = storeToRefs(store);
 
 const open = ref(false);
 const loggingOut = ref(false);
@@ -17,8 +19,8 @@ function toggleMenu(): void {
 async function handleLogout(): Promise<void> {
   loggingOut.value = true;
   try {
-    await logout();
-    globalThis.location.reload();
+    await store.logout();
+    await router.push('/login');
   } finally {
     loggingOut.value = false;
   }
