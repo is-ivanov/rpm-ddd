@@ -22,11 +22,6 @@ test.describe('Logout to Welcome Navigation', () => {
       'Then the session is ended, ' +
       'And the user is shown the welcome page with the "Войти" button',
     async () => {
-      // RED: the user-menu logout button has no click handler — clicking "Выйти"
-      // does nothing, so the dashboard stays and the welcome page never appears;
-      // pinned by assertLoginButtonIsVisible() below.
-      test.fail();
-
       await currentUserBackend.givenAuthenticatedUserUntilLogout({ firstName: 'Иван', lastName: 'Петров' });
       await homePage.navigateToHomePage();
       await homePage.clickUserAvatar();
