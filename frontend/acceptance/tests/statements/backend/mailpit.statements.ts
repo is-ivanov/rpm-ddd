@@ -1,4 +1,5 @@
 import { type APIRequestContext, expect, request } from '@playwright/test';
+import { z } from 'zod';
 
 const MAILPIT_API_URL = process.env.MAILPIT_API_URL || 'http://localhost:8025';
 
@@ -7,19 +8,14 @@ const ACTIVATION_LINK_PATTERN = /https?:\/\/[^\s"<>]+\/activate\?token=[A-Za-z0-
 const ACTIVATION_PATH = '/activate';
 const TOKEN_QUERY_PARAM = 'token';
 
-interface MailpitMessageSummary {
-  readonly ID: string;
-  readonly Subject: string;
-}
+const mailpitSearchResultSchema = z.object({
+  messages: z.array(z.object({ ID: z.string(), Subject: z.string() })),
+});
 
-interface MailpitSearchResult {
-  readonly messages: MailpitMessageSummary[];
-}
-
-interface MailpitMessage {
-  readonly Subject: string;
-  readonly Text: string;
-}
+const mailpitMessageSchema = z.object({
+  Subject: z.string(),
+  Text: z.string(),
+});
 
 // Reads the activation email the real backend delivers to Mailpit and extracts
 // the activation token from the link. The link points at the local frontend
@@ -55,7 +51,7 @@ export class MailpitStatements {
     if (response.status() !== 200) {
       return '';
     }
-    const result = (await response.json()) as MailpitSearchResult;
+    const result = mailpitSearchResultSchema.parse(await response.json());
     const message = result.messages.find((candidate) => candidate.Subject === ACTIVATION_SUBJECT);
     return message ? message.ID : '';
   }
@@ -63,7 +59,7 @@ export class MailpitStatements {
   private async extractActivationToken(api: APIRequestContext, messageId: string): Promise<string> {
     const response = await api.get(`/api/v1/message/${messageId}`);
     expect(response.status(), 'Mailpit returns the activation email body').toBe(200);
-    const message = (await response.json()) as MailpitMessage;
+    const message = mailpitMessageSchema.parse(await response.json());
     expect(message.Subject, 'the delivered email is the activation email').toBe(ACTIVATION_SUBJECT);
     const match = ACTIVATION_LINK_PATTERN.exec(message.Text);
     expect(match, 'activation email body contains an absolute frontend activation link').not.toBeNull();

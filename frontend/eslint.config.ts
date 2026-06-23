@@ -28,6 +28,26 @@ export default defineConfig(
     },
     rules: {
       'vue/multi-word-component-names': ['error', { ignores: ['App'] }],
+      // Task 205: forbid blind `as` casts on an unvalidated network response body.
+      // Validate at the boundary with a schema (`schema.parse(await response.json())`)
+      // instead — a trust-cast hides backend-contract drift. See frontend-rules.md
+      // (Humble Object Pattern) and vue-ts/coding.md § "Schema Validation (zod)".
+      'no-restricted-syntax': [
+        'error',
+        {
+          // (await response.json()) as T  — `.json()` call wrapped in `await`
+          selector:
+            "TSAsExpression[expression.type='AwaitExpression'][expression.argument.callee.property.name='json']",
+          message:
+            'Do not cast an unvalidated network response with `as`. Validate the body at the boundary with a schema, e.g. `schema.parse(await response.json())`.',
+        },
+        {
+          // await response.json() as T  /  response.json() as T  — `.json()` call cast directly
+          selector: "TSAsExpression[expression.type='CallExpression'][expression.callee.property.name='json']",
+          message:
+            'Do not cast an unvalidated network response with `as`. Validate the body at the boundary with a schema, e.g. `schema.parse(await response.json())`.',
+        },
+      ],
     },
   },
   {
