@@ -1,6 +1,6 @@
-import type { CurrentUserResult } from './types';
-import { currentUserResponseSchema } from '../schemas/current-user.schema';
-import { apiUrl } from '@/app/logic/fetch.api';
+import type { CurrentUserResult } from './current-user.types';
+import { currentUserResponseSchema } from '@/app/schemas/current-user.schema';
+import { apiUrl } from './fetch.api';
 
 const CURRENT_USER_PATH = '/api/auth/me';
 const UNAUTHORIZED_STATUS = 401;

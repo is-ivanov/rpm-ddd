@@ -1,22 +1,20 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { fetchCurrentUser } from '../logic/current-user.api';
-import { buildDashboardUser, type DashboardUser } from '../logic/dashboard-user.logic';
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from '@/app/stores/auth.store';
 import AppLoading from '@/app/components/AppLoading.vue';
 import WelcomeView from './WelcomeView.vue';
 import DashboardShell from './DashboardShell.vue';
 
+const auth = useAuthStore();
+const { dashboardUser } = storeToRefs(auth);
 const loading = ref(true);
-const dashboardUser = ref<DashboardUser | null>(null);
 
 onMounted(loadCurrentUser);
 
 async function loadCurrentUser(): Promise<void> {
   try {
-    const result = await fetchCurrentUser();
-    if (result.authenticated) {
-      dashboardUser.value = buildDashboardUser(result.user);
-    }
+    await auth.loadMe();
   } finally {
     loading.value = false;
   }
@@ -25,6 +23,6 @@ async function loadCurrentUser(): Promise<void> {
 
 <template>
   <AppLoading v-if="loading" />
-  <DashboardShell v-else-if="dashboardUser" :user="dashboardUser" />
+  <DashboardShell v-else-if="dashboardUser" />
   <WelcomeView v-else />
 </template>

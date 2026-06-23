@@ -39,6 +39,10 @@ only **6.1** activation→login) nor implemented. No concrete destination page i
 
 **Related:** the state-layer decision for this lives in Task #192 (Pinia store) — the 401 redirect is
 currently wired into the transport (`fetch.api.ts`) for lack of a reactive auth store.
+**Update (2026-06-23):** Story 3 (#206) closed the behavioural half of I1 — `/me` is now called and
+login navigates to `/`. Task #192 has **DECIDED to adopt a minimal Pinia auth/session store**
+(`tasks/192-refactoring-pinia-state-store/decisions/pinia-auth-store-decision.md`); the
+transport-coupled 401 redirect is decoupled there.
 
 ### I2 — Load/performance baselines deferred from MVP (decided 2026-06-15)
 

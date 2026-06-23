@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import { ChevronDown, ChevronUp, LogOut } from '@lucide/vue';
-import { logout } from '@/features/auth/logic/logout.api';
+import { useAuthStore } from '@/app/stores/auth.store';
 
-defineProps<{
-  displayName: string;
-  initials: string;
-  email: string;
-}>();
+const router = useRouter();
+const store = useAuthStore();
+const { dashboardUser } = storeToRefs(store);
 
 const open = ref(false);
 const loggingOut = ref(false);
@@ -19,8 +19,8 @@ function toggleMenu(): void {
 async function handleLogout(): Promise<void> {
   loggingOut.value = true;
   try {
-    await logout();
-    globalThis.location.reload();
+    await store.logout();
+    await router.push('/');
   } finally {
     loggingOut.value = false;
   }
@@ -38,16 +38,16 @@ async function handleLogout(): Promise<void> {
         data-testid="user-avatar"
         class="flex h-8 w-8 items-center justify-center rounded-full bg-accent-surface text-xs font-semibold text-accent"
       >
-        {{ initials }}
+        {{ dashboardUser?.initials }}
       </div>
-      <span data-testid="user-name" class="text-sm font-medium text-ink">{{ displayName }}</span>
+      <span data-testid="user-name" class="text-sm font-medium text-ink">{{ dashboardUser?.displayName }}</span>
       <component :is="open ? ChevronUp : ChevronDown" :size="16" class="text-muted" aria-hidden="true" />
     </div>
 
     <div v-if="open" data-testid="user-menu" class="dropdown-panel absolute right-0 top-[calc(100%+8px)] min-w-55">
       <div class="p-3">
-        <div data-testid="user-menu-name" class="text-sm font-semibold text-ink">{{ displayName }}</div>
-        <div data-testid="user-menu-email" class="mt-0.5 text-[13px] text-muted">{{ email }}</div>
+        <div data-testid="user-menu-name" class="text-sm font-semibold text-ink">{{ dashboardUser?.displayName }}</div>
+        <div data-testid="user-menu-email" class="mt-0.5 text-[13px] text-muted">{{ dashboardUser?.email }}</div>
       </div>
       <div class="h-px bg-line" />
       <button

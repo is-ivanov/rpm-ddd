@@ -1,5 +1,11 @@
 export const LOGIN_PATH = '/login';
 
-export function shouldRedirectToLogin(status: number, currentPath: string): boolean {
-  return status === 401 && currentPath !== LOGIN_PATH;
+/** True when an API response indicates the session is no longer authenticated. */
+export function isUnauthorized(status: number): boolean {
+  return status === 401;
+}
+
+/** True when a guarded route is entered without an authenticated session. */
+export function shouldRedirectToLogin(requiresAuth: boolean, isAuthenticated: boolean): boolean {
+  return requiresAuth && !isAuthenticated;
 }

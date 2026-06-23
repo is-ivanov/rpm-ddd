@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildDashboardUser } from '../logic/dashboard-user.logic';
-import type { AuthenticatedUser } from '../logic/types';
+import type { AuthenticatedUser } from '../logic/current-user.types';
 
 const IVAN_PETROV: AuthenticatedUser = {
   login: 'ipetrov',

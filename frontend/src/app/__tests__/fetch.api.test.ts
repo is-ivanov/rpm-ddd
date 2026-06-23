@@ -1,16 +1,21 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { http, HttpResponse } from 'msw';
-import { issue } from 'allure-js-commons';
+import { createPinia, setActivePinia } from 'pinia';
 import { server } from '@/test/msw-server';
-import { captureRejection } from '@/test/capture-rejection';
-import { router } from '@/router';
 import { apiFetch } from '@/app/logic/fetch.api';
-import { validateActivationToken } from '@/features/auth/logic/activation.api';
-import { ActivationError } from '@/features/auth/logic/types';
+import { useAuthStore } from '@/app/stores/auth.store';
+import type { AuthenticatedUser } from '@/app/logic/current-user.types';
 
 const BASE = import.meta.env.VITE_API_URL;
 
-const ACTIVATE_PATH = '/api/auth/activate';
+const PROTECTED_PATH = '/api/auth/me';
+
+const IVAN_PETROV: AuthenticatedUser = {
+  login: 'ipetrov',
+  email: 'i.petrov@rpm.local',
+  firstName: 'Иван',
+  lastName: 'Петров',
+};
 
 interface Problem {
   type: string;
@@ -33,11 +38,11 @@ const FORBIDDEN_PROBLEM: Problem = {
   detail: 'Access Denied',
 };
 
-function stubActivateProblem(problem: Problem): void {
+function stubProblem(problem: Problem): void {
   server.use(
-    http.get(`${BASE}${ACTIVATE_PATH}`, () =>
+    http.get(`${BASE}${PROTECTED_PATH}`, () =>
       HttpResponse.json(
-        { ...problem, instance: ACTIVATE_PATH },
+        { ...problem, instance: PROTECTED_PATH },
         { status: problem.status, headers: { 'Content-Type': 'application/problem+json' } },
       ),
     ),
@@ -45,38 +50,31 @@ function stubActivateProblem(problem: Problem): void {
 }
 
 describe('Shared API Fetch Layer', () => {
-  beforeEach(async () => {
-    await router.push('/activate');
+  beforeEach(() => {
+    setActivePinia(createPinia());
   });
 
-  it('navigates to the login route when a protected API call returns 401', async () => {
-    await issue('162');
-    stubActivateProblem(UNAUTHORIZED_PROBLEM);
+  it('resets the auth session when an API call returns 401', async () => {
+    stubProblem(UNAUTHORIZED_PROBLEM);
+    const store = useAuthStore();
+    store.$patch({ currentUser: IVAN_PETROV });
 
-    const response = await apiFetch(`${ACTIVATE_PATH}?token=expired-session`);
+    const response = await apiFetch(PROTECTED_PATH);
 
     expect(response.status).toBe(401);
-    expect(router.currentRoute.value.path).toBe('/login');
+    expect(store.currentUser).toBeNull();
+    expect(store.isAuthenticated).toBe(false);
   });
 
-  it('stays on the current route when an API call returns 403', async () => {
-    await issue('162');
-    stubActivateProblem(FORBIDDEN_PROBLEM);
+  it('leaves the auth session intact when an API call returns 403', async () => {
+    stubProblem(FORBIDDEN_PROBLEM);
+    const store = useAuthStore();
+    store.$patch({ currentUser: IVAN_PETROV });
 
-    const response = await apiFetch(ACTIVATE_PATH);
+    const response = await apiFetch(PROTECTED_PATH);
 
     expect(response.status).toBe(403);
-    expect(router.currentRoute.value.path).toBe('/activate');
-  });
-
-  it('routes activation token validation through the shared layer so a 401 lands on the login route', async () => {
-    await issue('162');
-    stubActivateProblem(UNAUTHORIZED_PROBLEM);
-
-    const error = await captureRejection(validateActivationToken('expired-session-token'));
-
-    expect(error).toBeInstanceOf(ActivationError);
-    expect((error as ActivationError).message).toBe('Full authentication is required to access this resource');
-    expect(router.currentRoute.value.path).toBe('/login');
+    expect(store.currentUser).toEqual(IVAN_PETROV);
+    expect(store.isAuthenticated).toBe(true);
   });
 });

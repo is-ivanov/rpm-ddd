@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { http, HttpResponse, type JsonBodyType } from 'msw';
 import { server } from '@/test/msw-server';
 import { fetchCurrentUser } from '../logic/current-user.api';
-import type { CurrentUserResult } from '../logic/types';
+import type { CurrentUserResult } from '../logic/current-user.types';
 
 const BASE = import.meta.env.VITE_API_URL;
 

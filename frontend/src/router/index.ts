@@ -3,6 +3,14 @@ import HomePage from '@/features/home/components/HomePage.vue';
 import LoginPage from '@/features/auth/components/LoginPage.vue';
 import ActivationPage from '@/features/auth/components/ActivationPage.vue';
 import NotFoundPage from '@/features/not-found/components/NotFoundPage.vue';
+import { useAuthStore } from '@/app/stores/auth.store';
+import { LOGIN_PATH, shouldRedirectToLogin } from '@/app/logic/unauthorized-redirect.logic';
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth?: boolean;
+  }
+}
 
 const routes: RouteRecordRaw[] = [
   {
@@ -30,4 +38,10 @@ const routes: RouteRecordRaw[] = [
 export const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to) => {
+  const requiresAuth = to.meta.requiresAuth === true;
+  const { isAuthenticated } = useAuthStore();
+  return shouldRedirectToLogin(requiresAuth, isAuthenticated) ? LOGIN_PATH : true;
 });

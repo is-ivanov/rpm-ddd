@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils';
+import { createPinia } from 'pinia';
+import { createMemoryHistory, createRouter } from 'vue-router';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/test/msw-server';
 import HomePage from '../components/HomePage.vue';
@@ -32,8 +34,9 @@ function stubAuthenticated(): void {
 }
 
 function mountHomePage() {
+  const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/', component: HomePage }] });
   return mount(HomePage, {
-    global: { stubs: { RouterLink: RouterLinkStub } },
+    global: { plugins: [createPinia(), router], stubs: { RouterLink: RouterLinkStub } },
   });
 }
 
