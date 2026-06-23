@@ -83,3 +83,13 @@
 
 ## Infrastructure Scenarios
 (none — n/a: no new persistence or external dependencies. See `tests/04_Infrastructure_Tests.md`.)
+
+## Extended (reviewed at Story Completion Gate — 2026-06-23)
+All extended cases reviewed with the user at the gate; decision: **defer all** (none promoted). Logged to `improvements.md` as Open items:
+- [S] UI 1.1 loading indicator while `/me` resolves → deferred (I1 — already implemented, untested)
+- [S] UI 2.1 session expiry on dashboard → welcome → deferred (I2 — not built, needs design)
+- [S] UI 3.1 click outside user menu closes it → deferred (I3 — UX polish, not built)
+- [S] UI 4.1 single-word name → single initial → deferred (I4 — logic edge case)
+- [S] SEC 1.1 XSS in profile name rendered inert → deferred (I5 — Vue auto-escapes; defence-in-depth only)
+
+(Other extended files — 01 API, 03 Load, 04 Infrastructure, 06 Integration — contain "No extended scenarios".)
