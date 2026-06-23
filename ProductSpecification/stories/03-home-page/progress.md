@@ -59,9 +59,9 @@
 - [x] red-playwright (spec `login-to-dashboard.spec.ts` authored + reviewed + refactored. Genuine RED: `LoginPage.submitLogin()` does not redirect on success → browser stays on `/login`; pinned by `assertNavigatedToHomeUrl()` (new method on `HomePageStatements`). Prediction matched exactly: `toHaveURL` expected `.../` got `.../login`. `test.fail()` marker added.)
 - [S] red-frontend (trivial — no branching/computation/validation/transformation in `.logic.ts`, and ZERO logic-layer production files change. The redirect on successful login is an unconditional `router.push('/')` to a fixed path (no return-URL feature exists; spec asks only for "navigated to the home page") — purely presentational navigation in `LoginPage.vue`'s submit handler. A `redirectPathAfterLogin()` helper would return the constant `'/'`, which the trivial gate classifies as "a value that never varies by input". Mirrors Scenario 4.1's `[S]`. The `router.push('/')` is added to the component during align-design.)
 - [S] green-frontend (counterpart of skipped red-frontend; the `router.push('/')` redirect is wired in `LoginPage.vue` during align-design)
-- [~] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend-api (existence check — Scenario 4.2 introduces no new endpoint, field, or API client, and ZERO API-layer production files change. The login request `POST /api/auth/login` is already implemented by `login.api.ts` (Story 1) and tested in `login.api.test.ts`; the dashboard's `GET /api/auth/me` is already fetched + validated by `current-user.api.ts` + `current-user.schema.ts` (incl. all fields) and tested in `current-user.api.test.ts` (Scenarios 1.1/2.1). The redirect itself is presentational navigation, not an API call. Mirrors Scenario 3.1's `[S]`.)
+- [S] green-frontend-api (counterpart; both API clients already exist and are tested)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
