@@ -1,3 +1,5 @@
-export function logout(): Promise<void> {
-  return Promise.reject(new Error('not implemented'));
+import { postJsonWithCsrf } from './csrf';
+
+export async function logout(): Promise<void> {
+  await postJsonWithCsrf('/api/auth/logout', {});
 }

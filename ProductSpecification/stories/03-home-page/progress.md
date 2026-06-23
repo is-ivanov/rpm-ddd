@@ -70,8 +70,8 @@
 - [S] red-frontend (trivial — no branching/computation/validation/transformation in `.logic.ts`, and ZERO logic-layer production files change. Logout splits into: the logout API call (`POST /api/auth/logout` with CSRF) which belongs to the API-client layer → `red-frontend-api`; and the post-logout transition back to the welcome page, which is unconditional + presentational (re-evaluate auth → welcome) in the component, not `.logic.ts` logic. No logout-related logic function exists or is needed. Mirrors Scenario 4.2's `[S]`.)
 - [S] green-frontend (counterpart of skipped red-frontend; the session-end → welcome transition is wired in the component during align-design)
 - [x] red-frontend-api (new `logout.api.ts` client — `POST /api/auth/logout` via CSRF handshake. RED test `logout.api.test.ts` (MSW) asserts the contract: GET `/api/auth/csrf` → POST `/api/auth/logout` with `X-XSRF-TOKEN`. Stub `Promise.reject(new Error('not implemented'))`; prediction matched exactly — `AssertionError: expected [] to deeply equal ['GET /api/auth/csrf','POST /api/auth/logout']`. `it.fails()` marker added; reason pinned via `toEqual` (resolve-or-reject capture). Placed in `features/auth/logic` (CSRF-POST auth mutation, grouped with login/activate near `csrf.ts`). Refactor: extracted shared `src/test/csrf-stub.ts` (deduped the order-tracking CSRF stub + `XSRF_TOKEN`/`CSRF_PATH` shared by login + logout tests). Verified: lint green, 6 passed | 1 expected-fail across login+logout+activate api tests, no regression.)
-- [~] green-frontend-api
-- [ ] align-design
+- [x] green-frontend-api (implemented `logout()` = `await postJsonWithCsrf('/api/auth/logout', {})` — reuses the auth CSRF handshake; backend ignores the empty body. Removed `it.fails()`; test green (1 passed). Minimal — logout-failure handling is unspecified by 4.3 and untested, so not added. Refactor clean (4 lines, inline path like login.api). Lint + IDE inspections green.)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
