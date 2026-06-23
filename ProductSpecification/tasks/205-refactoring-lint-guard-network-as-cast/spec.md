@@ -51,6 +51,20 @@ at the boundary instead. Preference: implement in **oxlint** (already wired as
 **Recommendation:** start with **(C)** for a precise, stable guard now; revisit **(B)**
 when oxlint JS plugins leave alpha.
 
+### Decision (Step 1 — resolved 2026-06-23)
+
+**Chosen: (C) ESLint `no-restricted-syntax` targeted selector**, added to the existing
+`eslint .` step in `npm run lint` (already a CI gate). Rationale: it expresses the
+*targeted* "`as` on a `.json()` result" rule precisely and stably, leaves legitimate DOM
+casts (`as HTMLInputElement`) untouched, and needs no per-line disables (rules out A) and
+no alpha API (rules out B). Revisit (B) once oxlint JS plugins leave alpha.
+
+The exact AST selector will be pinned against a real fixture in Step 2: the recurring
+real-world shape is `(await response.json()) as Foo`, where the `.json()` `CallExpression`
+sits inside an `AwaitExpression` — so a naive `TSAsExpression > CallExpression` direct-child
+selector does not match. Step 2 derives the working selector from the fixture, covering both
+the `await`-wrapped and un-`await`-ed forms.
+
 ## Affected Layers
 
 Frontend tooling/config only. No production code changes beyond config.
