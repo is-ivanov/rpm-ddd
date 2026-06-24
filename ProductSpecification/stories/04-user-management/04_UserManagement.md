@@ -37,10 +37,24 @@ The **Admin Center → Users** screen: an authenticated admin views every user i
 - Create modal: form (name/login/email), per-field errors, loading submit button
 - Sidebar expanded / collapsed (persisted)
 
+## Grid Columns & Filters
+| Column | Filter type | Notes |
+|--------|-------------|-------|
+| ФИО | text "contains" | full name |
+| Логин | text "contains" | |
+| Email | text "contains" | |
+| Статус | enum multi-select | center-aligned column |
+| Создан / Изменён | date range (от – до) | timestamp + TZ label |
+| Кем создан / Кем изменён | text "contains" | abbreviated actor name |
+
+- Sorting available on **every** column; filtering is client-side over the full list.
+- **Timestamps**: rendered in the **viewer's local timezone**, format `YYYY-MM-DD HH:MM` + TZ label (abbreviation when known, e.g. `МСК`; else UTC offset, e.g. `UTC+05:00`). Backend stores UTC instants.
+- **Audit actor**: shown abbreviated as `И. Фамилия` (first-name initial + last name); full `Имя Отчество Фамилия` on hover (tooltip). Seed/SYSTEM actor = `System`.
+
 ## Core Requirements
 - New endpoint GET /api/admin/users + list response DTO (rows carry resolved actor names, never raw UUIDs)
 - Add `updatedAt`/`updatedBy` to the `User` aggregate (+ migration); init = created on creation, updated on activation (`updatedBy` = activating user)
-- Actor name resolution via a list/read model — fetch everything upfront, no per-row lookups
+- Actor name resolution via a list/read model — fetch everything upfront, no per-row lookups; the row carries the actor's **full** name (parts or composed) so the frontend renders both the `И. Фамилия` abbreviation and the full-name tooltip
 - Create path unchanged — admin never sets the password
 - Extract `DashboardShell` into a reusable layout wrapping nested routes
 - API client validates the GET and create response shapes at the boundary (RFC 9457 for errors)

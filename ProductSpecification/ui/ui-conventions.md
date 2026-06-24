@@ -224,7 +224,10 @@ The authenticated app shell places the **logo at the left of the top bar** (not 
 - Actions column: icon buttons, right-aligned
 - Mobile: card layout (no table), each row becomes a card
 - **Sortable header**: header label + a 14px sort glyph (`chevrons-up-down` when unsorted, `arrow-up`/`arrow-down` when sorted); the sorted column's glyph is `--accent` at full opacity, others at 0.6
-- **Per-column filter row** (client-side grids): an optional second header row of inputs (30px, `--bg-column` background) — one filter input per column; status columns use an "Все" placeholder. Used when the grid filters/sorts client-side over the full list
+- **Per-column filter row** (client-side grids): an optional second header row (30px controls on `--bg-column` background), one control per column, typed by the column's data: **text "contains"** input for free-text columns; an **enum select / multi-select** (chevron-down, "Все …" default) for status/category columns; a **date-range** control (`calendar` icon + "от – до") for timestamp columns. Used when the grid filters/sorts client-side over the full list
+- **Status / enum columns are center-aligned** (header + cells) so the pills line up
+- **Timestamp cells**: format `YYYY-MM-DD HH:MM` in the **viewer's local timezone**, followed by a TZ label — abbreviation when one exists (e.g. `МСК`, `UTC`), else the numeric offset (e.g. `UTC+05:00`). `--text-secondary`
+- **Actor cells** (created-by / changed-by): show `И. Фамилия` (first-name initial + last name) with the full `Имя Отчество Фамилия` as a hover tooltip; hint the tooltip with a subtle dotted underline + `cursor: help`. A system/seed actor shows a fixed pseudonym (e.g. `System`)
 - **Mobile sort/filter**: a single full-width search field above the cards + a 44px sort icon button (`arrow-up-down`) — per-column filter inputs collapse into the search on mobile
 
 ### Badge / Status Pill
