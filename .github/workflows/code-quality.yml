@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Cache Checkstyle cache-file
         id: cache-checkstyle
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: target/checkstyle-cachefile
           key:  ${{ runner.os }}-checkstyle
@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Cache PMD cache-file
         id: cache-pmd
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: target/pmd/pmd.cache
           key: ${{ runner.os }}-pmd
@@ -100,7 +100,7 @@ jobs:
       # this job re-download them from Maven Central every run (~24s, silent under
       # -B). A dedicated key this job can save persists the formatter across runs.
       - name: Cache Maven repository (incl. Spotless formatter)
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-spotless-${{ hashFiles('pom.xml') }}
