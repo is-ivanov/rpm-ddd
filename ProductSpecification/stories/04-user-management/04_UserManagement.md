@@ -33,7 +33,7 @@ The **Admin Center → Users** screen: an authenticated admin views every user i
 | email | @NotBlank @Email, ≤ EmailAddress.MAX_LENGTH, unique → 422 |
 
 ## Screen States
-- Users grid: header + "Create" button + sortable/filterable table; empty/loading variants
+- Users grid: header + "Create" button + sortable/filterable table; loading variant
 - Create modal: form (name/login/email), per-field errors, loading submit button
 - Sidebar expanded / collapsed (persisted)
 
