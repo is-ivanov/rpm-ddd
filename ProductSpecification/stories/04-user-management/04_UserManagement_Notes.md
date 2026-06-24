@@ -23,6 +23,8 @@
 - Auth: `/api/admin/**` already requires authentication via the allow-list policy. No new security rule needed; no role restriction yet (deferred to the roles story).
 - Migration required for `updatedAt`/`updatedBy` columns; backfill existing rows = their created values.
 - localStorage is per-browser/per-device — collapse state is intentionally not synced server-side.
+- **Timezone display (DECISION).** Store UTC instants; render in the **viewer's profile timezone** — a new `User.timeZone` (IANA id) field. Grid shows **relative** time (`7 дней назад`) with a hover tooltip carrying the full absolute time in that zone (`YYYY-MM-DD HH:MM:SS МСК · UTC+03:00 · Europe/Moscow`). This is the GitHub/GitLab pattern (relative primary + absolute-on-hover); chosen over the actor's timezone because a per-actor column is unscannable/unsortable. Use the IANA tz database (not fixed offsets) so DST is handled. Sort/filter must use the underlying instant, not the relative string.
+- **`User.timeZone` scope (CONFIRM).** This story adds the field + migration (default `Europe/Moscow`) and exposes `currentUser.timeZone` via `/api/auth/me`; it does **not** add a TZ-picker UI — editing one's timezone is deferred to a profile-settings story. If a default-only timezone is unacceptable for first release, raise before implementation.
 
 ---
 

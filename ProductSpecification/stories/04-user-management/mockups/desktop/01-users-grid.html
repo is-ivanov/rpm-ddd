@@ -80,7 +80,9 @@
         tbody td { font-size: 14px; padding: 12px 16px; border-bottom: 1px solid var(--border); white-space: nowrap; }
         tbody tr:last-child td { border-bottom: none; }
         tbody tr:hover { background: var(--bg-primary); }
-        .muted { color: var(--text-secondary); font-size: 13px; }
+        /* relative timestamp: shows "N days ago"; full absolute in user's profile TZ on hover */
+        .ts-rel { color: var(--text-secondary); cursor: help; text-decoration: underline dotted;
+            text-underline-offset: 2px; text-decoration-color: var(--border); }
         .actor { cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;
             text-decoration-color: var(--border); }
 
@@ -117,7 +119,7 @@
                 <button class="btn-primary"><i data-lucide="plus"></i> Создать пользователя</button>
             </div>
 
-            <!-- Timestamps render in the viewer's local timezone; label = abbreviation, else UTC offset -->
+            <!-- Timestamps: relative ("N days ago"); hover tooltip shows the full absolute time in the viewer's profile timezone -->
             <div class="table-card">
                 <table>
                     <thead>
@@ -146,41 +148,41 @@
                         <tr>
                             <td>Анна Сергеевна Волкова</td><td>a.volkova</td><td>a.volkova@rpm.local</td>
                             <td class="col-status"><span class="badge status-active">Активен</span></td>
-                            <td class="muted">2026-06-12 09:14 МСК</td>
+                            <td><span class="ts-rel" title="2026-06-12 09:14:37 МСК · UTC+03:00 · Europe/Moscow">13 дней назад</span></td>
                             <td><span class="actor" title="Иван Иванович Петров">И. Петров</span></td>
-                            <td class="muted">2026-06-18 11:02 МСК</td>
+                            <td><span class="ts-rel" title="2026-06-18 11:02:09 МСК · UTC+03:00 · Europe/Moscow">7 дней назад</span></td>
                             <td><span class="actor" title="Анна Сергеевна Волкова">А. Волкова</span></td>
                         </tr>
                         <tr>
                             <td>Дмитрий Олегович Лебедев</td><td>d.lebedev</td><td>d.lebedev@rpm.local</td>
                             <td class="col-status"><span class="badge status-pending">Ожидает</span></td>
-                            <td class="muted">2026-06-20 14:30 МСК</td>
+                            <td><span class="ts-rel" title="2026-06-20 14:30:51 МСК · UTC+03:00 · Europe/Moscow">5 дней назад</span></td>
                             <td><span class="actor" title="Иван Иванович Петров">И. Петров</span></td>
-                            <td class="muted">2026-06-20 14:30 МСК</td>
+                            <td><span class="ts-rel" title="2026-06-20 14:30:51 МСК · UTC+03:00 · Europe/Moscow">5 дней назад</span></td>
                             <td><span class="actor" title="Иван Иванович Петров">И. Петров</span></td>
                         </tr>
                         <tr>
                             <td>Иван Иванович Петров</td><td>i.petrov</td><td>i.petrov@rpm.local</td>
                             <td class="col-status"><span class="badge status-active">Активен</span></td>
-                            <td class="muted">2026-06-01 08:00 МСК</td>
+                            <td><span class="ts-rel" title="2026-06-01 08:00:00 МСК · UTC+03:00 · Europe/Moscow">24 дня назад</span></td>
                             <td><span class="actor" title="Системный аккаунт">System</span></td>
-                            <td class="muted">2026-06-03 10:21 МСК</td>
+                            <td><span class="ts-rel" title="2026-06-03 10:21:44 МСК · UTC+03:00 · Europe/Moscow">22 дня назад</span></td>
                             <td><span class="actor" title="Иван Иванович Петров">И. Петров</span></td>
                         </tr>
                         <tr>
                             <td>Мария Павловна Зайцева</td><td>m.zaytseva</td><td>m.zaytseva@rpm.local</td>
                             <td class="col-status"><span class="badge status-locked">Заблокирован</span></td>
-                            <td class="muted">2026-06-05 16:45 МСК</td>
+                            <td><span class="ts-rel" title="2026-06-05 16:45:02 МСК · UTC+03:00 · Europe/Moscow">20 дней назад</span></td>
                             <td><span class="actor" title="Системный аккаунт">System</span></td>
-                            <td class="muted">2026-06-15 09:50 МСК</td>
+                            <td><span class="ts-rel" title="2026-06-15 09:50:13 МСК · UTC+03:00 · Europe/Moscow">10 дней назад</span></td>
                             <td><span class="actor" title="Иван Иванович Петров">И. Петров</span></td>
                         </tr>
                         <tr>
                             <td>Олег Викторович Соколов</td><td>o.sokolov</td><td>o.sokolov@rpm.local</td>
                             <td class="col-status"><span class="badge status-inactive">Неактивен</span></td>
-                            <td class="muted">2026-05-28 12:10 МСК</td>
+                            <td><span class="ts-rel" title="2026-05-28 12:10:30 МСК · UTC+03:00 · Europe/Moscow">28 дней назад</span></td>
                             <td><span class="actor" title="Системный аккаунт">System</span></td>
-                            <td class="muted">2026-06-10 13:33 МСК</td>
+                            <td><span class="ts-rel" title="2026-06-10 13:33:27 МСК · UTC+03:00 · Europe/Moscow">15 дней назад</span></td>
                             <td><span class="actor" title="Анна Сергеевна Волкова">А. Волкова</span></td>
                         </tr>
                     </tbody>

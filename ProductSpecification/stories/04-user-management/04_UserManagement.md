@@ -44,16 +44,17 @@ The **Admin Center → Users** screen: an authenticated admin views every user i
 | Логин | text "contains" | |
 | Email | text "contains" | |
 | Статус | enum multi-select | center-aligned column |
-| Создан / Изменён | date range (от – до) | timestamp + TZ label |
+| Создан / Изменён | date range (от – до) | relative time + full-on-hover |
 | Кем создан / Кем изменён | text "contains" | abbreviated actor name |
 
-- Sorting available on **every** column; filtering is client-side over the full list.
-- **Timestamps**: rendered in the **viewer's local timezone**, format `YYYY-MM-DD HH:MM` + TZ label (abbreviation when known, e.g. `МСК`; else UTC offset, e.g. `UTC+05:00`). Backend stores UTC instants.
+- Sorting available on **every** column; filtering is client-side over the full list. (Sort/filter on the timestamp columns operate on the underlying absolute instant, not the relative label.)
+- **Timestamps**: shown as **relative time** (e.g. `7 дней назад`); hovering reveals a tooltip with the **full absolute** time — `YYYY-MM-DD HH:MM:SS` + TZ label (abbreviation when known, e.g. `МСК`; else UTC offset, e.g. `UTC+05:00`) + IANA zone. Rendered in the **viewer's profile timezone** (`User.timeZone`), NOT the browser. Backend stores UTC instants.
 - **Audit actor**: shown abbreviated as `И. Фамилия` (first-name initial + last name); full `Имя Отчество Фамилия` on hover (tooltip). Seed/SYSTEM actor = `System`.
 
 ## Core Requirements
 - New endpoint GET /api/admin/users + list response DTO (rows carry resolved actor names, never raw UUIDs)
 - Add `updatedAt`/`updatedBy` to the `User` aggregate (+ migration); init = created on creation, updated on activation (`updatedBy` = activating user)
+- Add `timeZone` (IANA id, e.g. `Europe/Moscow`) to the `User` aggregate (+ migration, default `Europe/Moscow`); expose `currentUser.timeZone` via `GET /api/auth/me`. The grid formats every timestamp in this zone. **No TZ-picker UI this story** — value defaults; user-facing editing is deferred to a profile-settings story
 - Actor name resolution via a list/read model — fetch everything upfront, no per-row lookups; the row carries the actor's **full** name (parts or composed) so the frontend renders both the `И. Фамилия` abbreviation and the full-name tooltip
 - Create path unchanged — admin never sets the password
 - Extract `DashboardShell` into a reusable layout wrapping nested routes
