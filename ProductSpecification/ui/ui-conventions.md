@@ -96,6 +96,19 @@
 - Icons: Lucide, 20px, 12px gap before label
 - Bottom section: user avatar + name, divider above
 
+#### Nav groups
+
+- Related nav items group under a **group label**: 11px/600, uppercase, `--text-sidebar` at 60% opacity, 0.04em letter-spacing, padding `16px 24px 8px`
+- Sub-items under a group get extra left padding (32px) to read as nested
+- Example: an "Администрирование" group with a "Пользователи" sub-item
+
+#### Collapsible sidebar (icon rail)
+
+- The sidebar collapses to a **64px icon-only rail** via a toggle button in the top bar (`panel-left` icon when expanded → `panel-left-open` when collapsed)
+- Collapsed rail: icons centered (no labels, no group labels), each item 44px tall; use a 1px `--bg-sidebar-hover` divider where a group label would have been; the full label shows as a native `title` tooltip
+- Collapsed/expanded state is **persisted in `localStorage`** so it survives reloads
+- The active item keeps its 3px `--accent` left border in both states
+
 ### Sidebar (Mobile)
 
 - Hidden by default
@@ -210,13 +223,16 @@ The authenticated app shell places the **logo at the left of the top bar** (not 
 - Row hover: `--bg-primary`
 - Actions column: icon buttons, right-aligned
 - Mobile: card layout (no table), each row becomes a card
+- **Sortable header**: header label + a 14px sort glyph (`chevrons-up-down` when unsorted, `arrow-up`/`arrow-down` when sorted); the sorted column's glyph is `--accent` at full opacity, others at 0.6
+- **Per-column filter row** (client-side grids): an optional second header row of inputs (30px, `--bg-column` background) — one filter input per column; status columns use an "Все" placeholder. Used when the grid filters/sorts client-side over the full list
+- **Mobile sort/filter**: a single full-width search field above the cards + a 44px sort icon button (`arrow-up-down`) — per-column filter inputs collapse into the search on mobile
 
 ### Badge / Status Pill
 
 - Pill shape (9999px radius), 12px/600 font
 - Padding: 2px 8px
 - Variants: accent (`--accent-light` bg, `--accent` text), success, warning, danger
-- Use semantic names: `status-active`, `status-inactive`, `status-pending`
+- Use semantic names: `status-active` (success), `status-pending` (warning), `status-locked` (danger), `status-inactive` (`--bg-column` bg, `--text-secondary` text)
 
 ### Dropdown Menu
 
