@@ -30,11 +30,6 @@ test.describe('App Version Popover', () => {
       'And the popover displays the commit "abc1234", ' +
       'And the popover displays the build time',
     async () => {
-      // RED: the header help icon and version popover (app-version-* test-ids) do not exist yet;
-      // the AppVersion component is built later (red-frontend / align-design / green-frontend).
-      // assertHelpIconIsVisible / clickHelpIcon will time out waiting for the missing app-version-trigger.
-      test.fail();
-
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await appInfoBackend.givenAppInfo({ version: VERSION, commit: COMMIT, buildTime: BUILD_TIME });
       await homePage.navigateToHomePage();
