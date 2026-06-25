@@ -24,7 +24,7 @@ Type: feature
 - [x] green-frontend-api
 - [x] align-design (HelpCircle icon next to avatar + popover; loading state)
 - [x] green-playwright
-- [~] demo
+- [x] demo
 
 ## Full-Stack Journey
-- [ ] fullstack-journey (assess: produce verdict — likely no-impact, non-critical UI affordance)
+- [~] fullstack-journey (assess: produce verdict — likely no-impact, non-critical UI affordance)
