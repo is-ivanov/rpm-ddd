@@ -21,19 +21,32 @@ Production components:
 - `frontend/src/features/home/components/WelcomeView.vue`
 - `frontend/src/app/components/AppLoading.vue`
 
-Tests asserting Russian strings (flip expected text to English):
+Vitest tests asserting Russian strings (flip expected text to English):
 - `frontend/src/features/home/__tests__/home.smoke.test.ts`
 - `frontend/src/app/__tests__/dashboard-user.logic.test.ts`
 - `frontend/src/app/__tests__/current-user.api.test.ts`
 - `frontend/src/app/__tests__/fetch.api.test.ts`
 - `frontend/src/app/stores/__tests__/auth.store.test.ts`
 
-> Note: `LoginPage.vue` / `ActivationPage.vue` were checked and contain no Cyrillic — login/activation are already English. Scope is the home/dashboard chrome + `AppLoading` only. Re-confirm the full file list at fix time with `rg "\p{Cyrillic}" frontend/src`, as more Russian may have merged since.
+Playwright acceptance tests + Statements asserting Russian strings (surfaced at fix time — flip to English):
+- `frontend/acceptance/tests/statements/frontend/home-page.statements.ts` (`WELCOME_TAGLINE`, `LOGIN_BUTTON_TEXT`, `PAGE_TITLE_TEXT`)
+- `frontend/acceptance/tests/statements/frontend/user-menu.statements.ts` (`LOGOUT_ACTION_TEXT`)
+- `frontend/acceptance/tests/frontend/home/welcome-page.spec.ts`
+- `frontend/acceptance/tests/frontend/home/welcome-to-login.spec.ts`
+- `frontend/acceptance/tests/frontend/home/dashboard-page.spec.ts`
+- `frontend/acceptance/tests/frontend/home/user-menu.spec.ts`
+- `frontend/acceptance/tests/frontend/home/logout-to-welcome.spec.ts`
+- `frontend/acceptance/tests/frontend/home/login-to-dashboard.spec.ts`
+
+Story 03 mockups (frozen artifacts of a completed story — user opted to translate within Task 210 so they stay consistent with the now-English UI; docs edit, no TDD cycle):
+- `ProductSpecification/stories/03-home-page/mockups/{desktop,mobile}/{01-welcome,02-dashboard,03-dashboard-user-menu,04-loading}.html` (8 files)
+
+> Note: `LoginPage.vue` / `ActivationPage.vue` were checked and contain no Cyrillic — login/activation are already English. Production-code scope is the home/dashboard chrome + `AppLoading`. Re-confirm the full file list at fix time with `rg "\p{Cyrillic}" frontend/src frontend/acceptance ProductSpecification/stories`, as more Russian may have merged since — this is how the acceptance suite and mockups above were found.
 
 ## Reproduction
 
 1. Run the frontend and sign in; observe Russian labels in the dashboard sidebar/topbar/user menu, the welcome screen, and the app-loading text.
-2. `rg "\p{Cyrillic}" frontend/src` returns matches in production components.
+2. `rg "\p{Cyrillic}" frontend/src frontend/acceptance ProductSpecification/stories/03-home-page` returns matches in production components, the Playwright acceptance suite, and the Story 03 mockups.
 
 ## Notes
 
