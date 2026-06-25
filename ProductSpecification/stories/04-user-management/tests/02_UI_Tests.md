@@ -131,30 +131,12 @@ When the user reloads the page
 Then the sidebar is still collapsed
 ```
 
-## 7. Full-Stack Nightly Journey (separate tier — extend the existing journey)
+## 7. Full-Stack Nightly Journey (separate tier)
 
-> **Not a mocked-UI scenario.** This extends the single growing full-stack journey
-> `frontend/acceptance/tests/fullstack/account-lifecycle.fullstack.spec.ts` (real backend +
-> Postgres + Mailpit, no `page.route`), which runs **nightly**, not per-PR. It does NOT follow the
-> standard per-scenario frontend sequence (red-playwright / red-frontend / …); its implementation
-> is a direct edit of the journey spec, reusing the grid + modal page statements built during the
-> mocked frontend phase. Add a dedicated `fullstack-journey` step to `progress.md` after the core
-> frontend scenarios (sections 1–6) are green.
-
-### 7.1 Admin creates a user through the Users grid UI in the real-stack journey
-
-```gherkin
-Given the pre-seeded ACTIVE admin is logged in via the UI against the real backend
-When the admin opens Admin Center → Users
-And the admin clicks "Register user", fills the modal, and submits
-Then the newly created user appears in the grid with status Pending
-And the new user receives an activation email in Mailpit
-And the new user activates the account via the activation link and logs in via the UI
-```
-
-This replaces the journey's current direct admin-API create call (`createUserAsAdmin`) with the
-real Story 4 UI flow, so the nightly run verifies the grid GET + create POST frontend↔backend
-contract end-to-end. The activate→login tail of the journey is unchanged.
+> The full-stack journey extension for this story lives in its own verdict artifact:
+> **`tests/07_FullStack_Journey.md`** (verdict: **extend**). It is NOT a mocked-UI scenario and does
+> not follow the per-scenario frontend sequence — it is executed as the story-level
+> `fullstack-journey` step. See that file and `workflow.md` → "Full-Stack Journey Step".
 
 ---
 
@@ -174,4 +156,3 @@ contract end-to-end. The activate→login tail of the journey is unchanged.
 | 5.1 | Modal → Users | "Register" button, grid | on success: modal closes, grid refreshes, new Pending row visible |
 | 5.2 | Modal | Login field, field-level error | duplicate-login error shown under Login; modal stays open; values preserved |
 | 6.1 | Dashboard | sidebar collapse toggle | toggle collapses sidebar; state persists in localStorage across reload |
-| 7.1 | Login → Users → modal → Mailpit → activation → Login (real stack, nightly) | grid, "Register user" modal, Mailpit, activation page | extend `account-lifecycle.fullstack.spec.ts`: admin creates via the grid/modal UI (not the admin API); new user appears Pending; activation email in Mailpit; activate + login via UI |
