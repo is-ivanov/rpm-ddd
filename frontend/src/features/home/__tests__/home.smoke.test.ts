@@ -51,8 +51,7 @@ describe('HomePage', () => {
     expect(wrapper.find('[data-testid="dashboard-shell"]').exists()).toBe(false);
   });
 
-  // RED — DashboardShell still renders the Russian page title 'Главная' (Task 210); GREEN translates it to 'Home'
-  it.fails('renders the dashboard shell for the current user when authenticated', async () => {
+  it('renders the dashboard shell for the current user when authenticated', async () => {
     stubAuthenticated();
 
     const wrapper = mountHomePage();

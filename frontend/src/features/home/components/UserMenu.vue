@@ -58,7 +58,7 @@ async function handleLogout(): Promise<void> {
         @click="handleLogout"
       >
         <LogOut :size="18" class="text-muted" aria-hidden="true" />
-        Выйти
+        Log out
       </button>
     </div>
   </div>
