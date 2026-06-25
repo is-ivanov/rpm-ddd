@@ -7,7 +7,6 @@ import io.qameta.allure.Issue;
 import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.http.HttpStatus;
 
 class AppVersionInfoIntegrationTest extends AbstractApplicationIntegrationTest {
@@ -21,7 +20,6 @@ class AppVersionInfoIntegrationTest extends AbstractApplicationIntegrationTest {
     }
 
     @Issue("215")
-    @ExpectedToFail(withExceptions = AssertionError.class)
     @Test
     @DisplayName("Authenticated user retrieves deployed app version info")
     void should_returnAppVersionInfo_when_authenticated() {
