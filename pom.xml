@@ -609,6 +609,27 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <!-- Bakes build-info.properties (version, build time) into the JAR for actuator /info. -->
+          <execution>
+            <id>build-info</id>
+            <goals>
+              <goal>build-info</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!--
+        Generates git.properties (short SHA, branch, commit time) for actuator /info.
+        Version is managed by the Spring Boot parent. failOnNoGitDirectory=false so a build
+        from a source tarball (no .git) still succeeds — actuator just omits the git block.
+      -->
+      <plugin>
+        <groupId>io.github.git-commit-id</groupId>
+        <artifactId>git-commit-id-maven-plugin</artifactId>
+        <configuration>
+          <failOnNoGitDirectory>false</failOnNoGitDirectory>
+        </configuration>
       </plugin>
     </plugins>
   </build>
