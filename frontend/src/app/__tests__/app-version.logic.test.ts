@@ -20,9 +20,10 @@ describe('App Version View Model', () => {
     expect(appVersion.version).toBe('1.4.2');
   });
 
-  it('passes the build time through unchanged', () => {
+  // RED — buildAppVersion still passes the raw ISO timestamp through (T-separated)
+  it.fails('formats the build time as a readable UTC timestamp', () => {
     const appVersion = buildAppVersion(ACTUATOR_INFO);
 
-    expect(appVersion.buildTime).toBe('2026-06-20T10:20:00Z');
+    expect(appVersion.buildTime).toBe('Jun 20, 2026, 10:20 UTC');
   });
 });
