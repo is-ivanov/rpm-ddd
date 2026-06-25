@@ -49,6 +49,14 @@ permissions:
   pages: write
   id-token: write
 
+# Cancel a superseded run on the same ref so a new push doesn't run a full
+# build + e2e in parallel with the previous one. main is exempt
+# (cancel-in-progress is false there): its run drives the Pages deploy
+# (deploy-report) and must not be cancelled mid-flight.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest

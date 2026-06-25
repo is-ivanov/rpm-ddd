@@ -27,12 +27,12 @@ Type: refactoring
 - [x] commit
 
 ### Step 4: Concurrency on build.yml (cancel superseded PR runs)
-- [~] implement (top-level concurrency group keyed on workflow+ref, cancel-in-progress)
-- [ ] verify (actionlint; confirm main/Pages deploy is not cancelled mid-flight — exempt or guard)
-- [ ] commit
+- [x] implement (top-level concurrency group=workflow+ref; cancel-in-progress guarded to non-main refs so Pages deploy on main is never cancelled)
+- [x] verify (actionlint clean; main exempt via `cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}`)
+- [x] commit
 
 ### Step 5: Least-privilege permissions
-- [ ] implement (drop workflow-wide pages/id-token in build.yml; scope to deploy-report job)
+- [~] implement (drop workflow-wide pages/id-token in build.yml; scope to deploy-report job)
 - [ ] verify (actionlint; confirm deploy-report still has pages: write + id-token: write)
 - [ ] commit
 
