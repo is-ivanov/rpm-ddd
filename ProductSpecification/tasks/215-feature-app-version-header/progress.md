@@ -17,8 +17,8 @@ Type: feature
 ## Frontend
 
 ### Header version popover
-- [ ] red-playwright (click help icon → popover shows version/commit/build time; tag #215)
-- [ ] red-frontend (map /actuator/info payload → view model; [S] if pure pass-through)
+- [x] red-playwright (click help icon → popover shows version/commit/build time; tag #215)
+- [~] red-frontend (map /actuator/info payload → view model; [S] if pure pass-through)
 - [ ] green-frontend
 - [ ] red-frontend-api (getAppInfo client + payload validation; tag #215)
 - [ ] green-frontend-api
