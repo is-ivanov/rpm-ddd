@@ -42,9 +42,9 @@ Type: refactoring
 - [x] commit
 
 ### Step 7: Nightly backend teardown
-- [~] implement (use captured BACKEND_PID in an `if: always()` teardown step)
-- [ ] verify (actionlint; workflow_dispatch nightly to confirm clean teardown)
-- [ ] commit
+- [x] implement (added `if: always()` "Stop backend" step using captured BACKEND_PID, placed before upload steps)
+- [x] verify (actionlint clean incl. shellcheck; `${BACKEND_PID:-}` safe on unset; workflow_dispatch nightly confirmation is user-side)
+- [x] commit
 
 ## Full-Stack Journey
 - [S] fullstack-journey (no-impact: pure CI/infra, no rendered critical-path or UI surface)

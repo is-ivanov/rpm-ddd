@@ -88,6 +88,15 @@ jobs:
         working-directory: frontend
         run: npm run test:e2e:fullstack
 
+      # Stop the backend started earlier (BACKEND_PID was captured but otherwise unused),
+      # regardless of outcome — so it never lingers and the log is final before upload.
+      - name: Stop backend
+        if: always()
+        run: |
+          if [ -n "${BACKEND_PID:-}" ]; then
+            kill "$BACKEND_PID" 2>/dev/null || true
+          fi
+
       - name: Upload Allure results
         if: always()
         uses: actions/upload-artifact@v7
