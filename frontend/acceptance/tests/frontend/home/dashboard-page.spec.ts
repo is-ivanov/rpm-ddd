@@ -22,8 +22,6 @@ test.describe('Dashboard Page', () => {
       'And the main area displays the page title "Home", ' +
       'And the main area displays placeholder dashboard content',
     async () => {
-      // RED — DashboardShell still renders the Russian page title "Главная" (Task 210); GREEN translates it to "Home"
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await homePage.navigateToHomePage();
 

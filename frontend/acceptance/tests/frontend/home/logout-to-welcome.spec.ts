@@ -22,8 +22,6 @@ test.describe('Logout to Welcome Navigation', () => {
       'Then the session is ended, ' +
       'And the user is shown the welcome page with the "Sign in" button',
     async () => {
-      // RED — WelcomeView still renders the Russian "Войти" button after logout (Task 210); GREEN translates it to "Sign in"
-      test.fail();
       await currentUserBackend.givenAuthenticatedUserUntilLogout({ firstName: 'John', lastName: 'Doe' });
       await homePage.navigateToHomePage();
       await homePage.clickUserAvatar();

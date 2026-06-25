@@ -23,8 +23,6 @@ test.describe('User Menu', () => {
       'And the menu displays the email "j.doe@rpm.local", ' +
       'And the menu displays an action with text "Log out"',
     async () => {
-      // RED — UserMenu still renders the Russian "Выйти" logout action (Task 210); GREEN translates it to "Log out"
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser({
         firstName: 'John',
         lastName: 'Doe',
