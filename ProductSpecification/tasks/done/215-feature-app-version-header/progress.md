@@ -27,4 +27,4 @@ Type: feature
 - [x] demo
 
 ## Full-Stack Journey
-- [~] fullstack-journey (assess: produce verdict — likely no-impact, non-critical UI affordance)
+- [S] fullstack-journey (no-impact: read-only header version popover, off the account-lifecycle critical path)

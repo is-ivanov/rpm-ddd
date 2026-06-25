@@ -52,5 +52,9 @@ the UI — e.g. to confirm a deploy actually shipped the expected code.
 
 ## Full-Stack Journey Verdict
 
-To assess during implementation. Likely **no-impact** — a non-critical UI affordance, not a
-change to the critical user-lifecycle path.
+**no-impact.** The header version popover is a read-only auxiliary widget that reads
+`GET /actuator/info`; it sits off the account-lifecycle spine (admin login → create user →
+activation email → activate → new-user login) and changes no step of the critical
+user-lifecycle path. Asserting it in the journey would be an edge affordance, which the
+browser-testing binding explicitly keeps in the fast mocked suite (covered by
+`app-version.spec.ts`), never on the growing journey. No `*.fullstack.spec.ts` change.
