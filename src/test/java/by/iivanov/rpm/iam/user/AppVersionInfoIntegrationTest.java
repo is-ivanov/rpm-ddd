@@ -1,0 +1,59 @@
+package by.iivanov.rpm.iam.user;
+
+import by.iivanov.rpm.iam.user.fixtures.ActuatorApi;
+import by.iivanov.rpm.iam.user.fixtures.AuthSessionFactory;
+import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
+import io.qameta.allure.Issue;
+import net.javacrumbs.jsonunit.core.Option;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.ExpectedToFail;
+import org.springframework.http.HttpStatus;
+
+class AppVersionInfoIntegrationTest extends AbstractApplicationIntegrationTest {
+
+    private final ActuatorApi actuatorApi;
+    private final AuthSessionFactory authSessionFactory;
+
+    AppVersionInfoIntegrationTest(ActuatorApi actuatorApi, AuthSessionFactory authSessionFactory) {
+        this.actuatorApi = actuatorApi;
+        this.authSessionFactory = authSessionFactory;
+    }
+
+    @Issue("215")
+    @ExpectedToFail(withExceptions = AssertionError.class)
+    @Test
+    @DisplayName("Authenticated user retrieves deployed app version info")
+    void should_returnAppVersionInfo_when_authenticated() {
+        // GIVEN: an authenticated admin user
+        var adminSession = authSessionFactory.loginAsAdmin();
+        // WHEN: the user requests the actuator info endpoint
+        var response = actuatorApi.info(adminSession);
+        // THEN: 200 with build version, git commit, and build time exposed
+        response.assertOk("""
+                {
+                  "build": {
+                    "version": "0.0.1-SNAPSHOT",
+                    "time": "${json-unit.any-string}"
+                  },
+                  "git": {
+                    "commit": {
+                      "id": "${json-unit.any-string}",
+                      "time": "${json-unit.any-string}"
+                    }
+                  }
+                }
+                """, Option.IGNORING_EXTRA_FIELDS);
+    }
+
+    @Issue("215")
+    @Test
+    @DisplayName("Anonymous request for app version info is rejected")
+    void should_rejectWith401_when_anonymous() {
+        // GIVEN: no authenticated session
+        // WHEN: an anonymous client requests the actuator info endpoint
+        var response = actuatorApi.info();
+        // THEN: the request is rejected with 401 Unauthorized
+        response.assertStatus(HttpStatus.UNAUTHORIZED);
+    }
+}
