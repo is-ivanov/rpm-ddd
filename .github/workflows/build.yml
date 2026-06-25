@@ -6,7 +6,11 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+# Despite the filename, this is the whole per-PR/main CI pipeline: backend Maven
+# build + frontend vitest build + Playwright e2e + unified Allure report + Pages
+# deploy — not "just Java". deploy.yml's `workflow_run.workflows` references this
+# `name:`; keep the two in sync (renaming here without deploy.yml silently stops deploys).
+name: CI
 
 on:
   workflow_dispatch:
@@ -39,15 +43,23 @@ on:
       - "package-lock.json"
       - "allurerc.mjs"
 
-# Pages deployment needs write access to Pages and an OIDC token; checkout needs read.
+# Least privilege by default: only checkout needs read. The elevated pages/id-token
+# scopes are granted per-job on deploy-report (the only job that deploys to Pages).
 permissions:
   contents: read
-  pages: write
-  id-token: write
+
+# Cancel a superseded run on the same ref so a new push doesn't run a full
+# build + e2e in parallel with the previous one. main is exempt
+# (cancel-in-progress is false there): its run drives the Pages deploy
+# (deploy-report) and must not be cancelled mid-flight.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     # Shared-first Postgres for DB-tagged tests: DbContainerTestExecutionListener
     # probes localhost:54034 and reuses this service instead of cold-starting a
     # Testcontainer (image pull + ryuk + boot) on every run. Creds/port/db match
@@ -142,6 +154,7 @@ jobs:
   frontend-build:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: frontend
@@ -150,7 +163,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v6
       with:
-        node-version: '22.13.0'
+        node-version-file: .nvmrc
         cache: npm
         cache-dependency-path: frontend/package-lock.json
     - name: Install dependencies
@@ -174,6 +187,7 @@ jobs:
   frontend-e2e:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: frontend
@@ -182,7 +196,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v6
       with:
-        node-version: '22.13.0'
+        node-version-file: .nvmrc
         cache: npm
         cache-dependency-path: frontend/package-lock.json
     - name: Install dependencies
@@ -206,12 +220,13 @@ jobs:
     needs: [build, frontend-build, frontend-e2e]
     if: always() && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
     - uses: actions/checkout@v7
     - name: Set up Node.js
       uses: actions/setup-node@v6
       with:
-        node-version: 'lts/*'
+        node-version-file: .nvmrc
         cache: npm
     - name: Download build Allure results
       uses: actions/download-artifact@v8
@@ -245,6 +260,12 @@ jobs:
     needs: allure-report
     if: always() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Only this job deploys to Pages — it alone gets the elevated scopes.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     concurrency:
       group: "pages"
       cancel-in-progress: false

@@ -20,6 +20,7 @@ on:
 
 permissions:
   contents: read
+  issues: write # Step opens/reopens a `nightly-failure` issue on a red run.
 
 concurrency:
   group: nightly-fullstack-e2e
@@ -28,6 +29,7 @@ concurrency:
 jobs:
   full-stack-e2e:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
 
@@ -69,7 +71,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "22.13.0"
+          node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
@@ -86,6 +88,15 @@ jobs:
         working-directory: frontend
         run: npm run test:e2e:fullstack
 
+      # Stop the backend started earlier (BACKEND_PID was captured but otherwise unused),
+      # regardless of outcome — so it never lingers and the log is final before upload.
+      - name: Stop backend
+        if: always()
+        run: |
+          if [ -n "${BACKEND_PID:-}" ]; then
+            kill "$BACKEND_PID" 2>/dev/null || true
+          fi
+
       - name: Upload Allure results
         if: always()
         uses: actions/upload-artifact@v7
@@ -101,3 +112,37 @@ jobs:
           name: fullstack-backend-log
           path: fullstack-backend.log
           retention-days: 7
+
+      # A red nightly run is otherwise silent (only the Actions tab + the workflow author's email).
+      # Open a single, deduped tracking issue so a broken journey surfaces as an actionable task.
+      - name: Report nightly failure as a GitHub issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          LABEL="nightly-failure"
+          BODY="Nightly full-stack E2E journey failed — run: $RUN_URL. Auto-managed by the nightly-fullstack-e2e workflow (one open issue is reused across failures, and reopened if it was closed). Close it once the nightly journey is green again."
+
+          # Ensure the dedupe label exists (idempotent — ignore "already exists").
+          gh label create "$LABEL" --color B60205 --description "Automated: nightly full-stack E2E failed" 2>/dev/null || true
+
+          # Dedupe: reuse an already-open issue rather than spamming a new one each night.
+          OPEN=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$OPEN" ]; then
+            gh issue comment "$OPEN" --body "$BODY"
+            echo "Commented on already-open issue #$OPEN"
+            exit 0
+          fi
+
+          # Reopen the most recent closed occurrence if the journey breaks again after a fix.
+          CLOSED=$(gh issue list --label "$LABEL" --state closed --json number --jq '.[0].number // empty')
+          if [ -n "$CLOSED" ]; then
+            gh issue reopen "$CLOSED"
+            gh issue comment "$CLOSED" --body "$BODY"
+            echo "Reopened issue #$CLOSED"
+            exit 0
+          fi
+
+          gh issue create --title "Nightly full-stack E2E failed" --label "$LABEL" --body "$BODY"

@@ -2,7 +2,8 @@ name: Docker Build and Push
 
 on:
   workflow_run:
-    workflows: ["Java CI with Maven"]
+    # Must match build.yml's `name:` exactly, or this deploy never fires.
+    workflows: ["CI"]
     types: [completed]
     branches: [main]
   workflow_dispatch:
