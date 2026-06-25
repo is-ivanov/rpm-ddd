@@ -9,10 +9,10 @@ Type: feature
 
 ### Build metadata + version endpoint
 - [x] maven (build-info goal + git-commit-id plugin → build-info.properties + git.properties)
-- [~] actuator (add starter-actuator; expose info only; info.git/build config)
-- [ ] security (allow-list: authenticated GET /actuator/info; deny rest of /actuator/**)
-- [ ] red-acceptance (GET /actuator/info → version/commit/buildTime; 401 when anonymous; tag #215)
-- [ ] green-acceptance
+- [~] red-acceptance (GET /actuator/info → version/commit/buildTime; 401 when anonymous; tag #215)
+- [ ] actuator (green: add starter-actuator; expose info only; info.git/build config)
+- [ ] security (green: allow-list authenticated GET /actuator/info; deny rest of /actuator/**)
+- [ ] green-acceptance (remove marker → endpoint passes)
 
 ## Frontend
 
