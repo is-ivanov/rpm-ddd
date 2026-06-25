@@ -40,7 +40,7 @@ management:
         include: info
   info:
     git:
-      mode: full
+      mode: simple
     build:
       enabled: true
 
