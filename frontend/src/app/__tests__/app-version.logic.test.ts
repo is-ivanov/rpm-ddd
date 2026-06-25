@@ -20,8 +20,7 @@ describe('App Version View Model', () => {
     expect(appVersion.version).toBe('1.4.2');
   });
 
-  // RED — buildAppVersion still passes the raw ISO timestamp through (T-separated)
-  it.fails('formats the build time as a readable UTC timestamp', () => {
+  it('formats the build time as a readable UTC timestamp', () => {
     const appVersion = buildAppVersion(ACTUATOR_INFO);
 
     expect(appVersion.buildTime).toBe('Jun 20, 2026, 10:20 UTC');
