@@ -131,13 +131,6 @@ When the user reloads the page
 Then the sidebar is still collapsed
 ```
 
-## 7. Full-Stack Nightly Journey (separate tier)
-
-> The full-stack journey extension for this story lives in its own verdict artifact:
-> **`tests/07_FullStack_Journey.md`** (verdict: **extend**). It is NOT a mocked-UI scenario and does
-> not follow the per-scenario frontend sequence — it is executed as the story-level
-> `fullstack-journey` step. See that file and `workflow.md` → "Full-Stack Journey Step".
-
 ---
 
 ## DSL Technical Reference
