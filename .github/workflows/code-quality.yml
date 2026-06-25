@@ -27,6 +27,7 @@ jobs:
   checkstyle:
     name: Checkstyle
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - name: Cache Checkstyle cache-file
@@ -47,6 +48,7 @@ jobs:
   pmd:
     name: PMD
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - name: Cache PMD cache-file
@@ -73,6 +75,7 @@ jobs:
   spotbugs:
     name: SpotBugs
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - name: Set up JDK 25
@@ -91,6 +94,7 @@ jobs:
   spotless:
     name: Spotless
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       # Job-owned Maven cache. Spotless resolves the Palantir formatter
@@ -116,6 +120,7 @@ jobs:
   frontend-lint:
     name: Frontend Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: frontend

@@ -22,12 +22,12 @@ Type: refactoring
 - [x] commit
 
 ### Step 3: Add timeout-minutes to jobs
-- [~] implement (timeout-minutes on build/frontend/e2e/code-quality/nightly jobs)
-- [ ] verify (actionlint)
-- [ ] commit
+- [x] implement (timeout-minutes on all 11 jobs in build.yml, code-quality.yml, nightly; deploy.yml out of Step-3 scope per spec Key Files)
+- [x] verify (actionlint clean, exit 0)
+- [x] commit
 
 ### Step 4: Concurrency on build.yml (cancel superseded PR runs)
-- [ ] implement (top-level concurrency group keyed on workflow+ref, cancel-in-progress)
+- [~] implement (top-level concurrency group keyed on workflow+ref, cancel-in-progress)
 - [ ] verify (actionlint; confirm main/Pages deploy is not cancelled mid-flight — exempt or guard)
 - [ ] commit
 

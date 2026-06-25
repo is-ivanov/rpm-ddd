@@ -52,6 +52,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     # Shared-first Postgres for DB-tagged tests: DbContainerTestExecutionListener
     # probes localhost:54034 and reuses this service instead of cold-starting a
     # Testcontainer (image pull + ryuk + boot) on every run. Creds/port/db match
@@ -146,6 +147,7 @@ jobs:
   frontend-build:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: frontend
@@ -178,6 +180,7 @@ jobs:
   frontend-e2e:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: frontend
@@ -210,6 +213,7 @@ jobs:
     needs: [build, frontend-build, frontend-e2e]
     if: always() && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
     - uses: actions/checkout@v7
     - name: Set up Node.js
@@ -249,6 +253,7 @@ jobs:
     needs: allure-report
     if: always() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     concurrency:
       group: "pages"
       cancel-in-progress: false
