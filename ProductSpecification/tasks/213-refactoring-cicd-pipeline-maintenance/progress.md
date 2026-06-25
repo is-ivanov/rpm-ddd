@@ -12,12 +12,12 @@ Type: refactoring
 ## Fix
 
 ### Step 1: Nightly failure → auto GitHub issue
-- [ ] implement (`if: failure()` step in nightly-fullstack-e2e.yml: open/reopen/dedupe `nightly-failure` issue, link run, GITHUB_TOKEN)
-- [ ] verify (actionlint; workflow_dispatch with a forced failure to confirm the issue is created/deduped)
-- [ ] commit
+- [x] implement (`if: failure()` step in nightly-fullstack-e2e.yml: open/reopen/dedupe `nightly-failure` issue, link run, GITHUB_TOKEN)
+- [x] verify (actionlint clean; workflow_dispatch forced-failure check is user-side — requires push + real nightly run)
+- [x] commit
 
 ### Step 2: Safe rename of "Java CI with Maven" (+ deploy.yml coupling)
-- [ ] implement (rename build.yml `name:`; update deploy.yml `workflow_run.workflows` in the SAME commit)
+- [~] implement (rename build.yml `name:`; update deploy.yml `workflow_run.workflows` in the SAME commit)
 - [ ] verify (actionlint; confirm deploy.yml reference matches the new name; main-push dispatch to confirm deploy still triggers)
 - [ ] commit
 
