@@ -9,7 +9,7 @@ Type: feature
 
 ### Build metadata + version endpoint
 - [x] maven (build-info goal + git-commit-id plugin → build-info.properties + git.properties)
-- [x] red-acceptance (GET /actuator/info → version/commit/buildTime; 401 when anonymous; tag #215)
+- [x] red-acceptance (GET /actuator/info → version/commit/buildTime; 401 when anonymous)
 - [x] actuator (green: add starter-actuator; expose info only; info.git/build config)
 - [x] security (green: allow-list authenticated GET /actuator/info; deny rest of /actuator/**)
 - [x] green-acceptance (remove marker → endpoint passes)
@@ -17,10 +17,10 @@ Type: feature
 ## Frontend
 
 ### Header version popover
-- [x] red-playwright (click help icon → popover shows version/commit/build time; tag #215)
+- [x] red-playwright (click help icon → popover shows version/commit/build time)
 - [~] red-frontend (map /actuator/info payload → view model; [S] if pure pass-through)
 - [ ] green-frontend
-- [ ] red-frontend-api (getAppInfo client + payload validation; tag #215)
+- [ ] red-frontend-api (getAppInfo client + payload validation)
 - [ ] green-frontend-api
 - [ ] align-design (HelpCircle icon next to avatar + popover; loading state)
 - [ ] green-playwright

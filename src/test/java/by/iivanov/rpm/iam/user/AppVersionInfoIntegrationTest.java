@@ -3,7 +3,6 @@ package by.iivanov.rpm.iam.user;
 import by.iivanov.rpm.iam.user.fixtures.ActuatorApi;
 import by.iivanov.rpm.iam.user.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
-import io.qameta.allure.Issue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,6 @@ class AppVersionInfoIntegrationTest extends AbstractApplicationIntegrationTest {
         this.authSessionFactory = authSessionFactory;
     }
 
-    @Issue("215")
     @Test
     @DisplayName("Authenticated user retrieves deployed app version info")
     void should_returnAppVersionInfo_when_authenticated() {
@@ -47,7 +45,6 @@ class AppVersionInfoIntegrationTest extends AbstractApplicationIntegrationTest {
                 """);
     }
 
-    @Issue("215")
     @Test
     @DisplayName("Anonymous request for app version info is rejected")
     void should_rejectWith401_when_anonymous() {

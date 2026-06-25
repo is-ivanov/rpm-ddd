@@ -1,7 +1,8 @@
 # Task 215: Show deployed app version in the header
 
 Type: feature
-Issue: #215  <- tests written for this task are tagged with the issue number (per tech binding `tdd.md`)
+Issue: #215  <- for numbering/traceability only; tests are NOT issue-tagged (tagging is a
+              bug-task convention per tech binding `tdd.md` — a feature is not a regression guard)
 
 > Note: the `/task` framework natively defines `bug` and `refactoring` types. This is a small
 > standalone feature the user chose to run as a lightweight task rather than a full story, so
