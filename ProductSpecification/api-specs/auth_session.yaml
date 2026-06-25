@@ -64,6 +64,9 @@ components:
           type: string
           enum: [ACTIVE, PENDING, LOCKED, INACTIVE]
           description: User status
+        timeZone:
+          type: string
+          description: Viewer's profile IANA zone id (e.g. Europe/Berlin); the grid renders all timestamps in this zone
         roles:
           type: array
           items:
