@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=375">
-    <title>RPM — Создать пользователя (ошибки)</title>
+    <title>RPM — Register user (errors)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -34,6 +34,10 @@
         .field input:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(77,171,247,0.2); }
         .field.error input { border-color: var(--danger); }
         .field .err-msg { font-size: 13px; color: var(--danger); }
+        .select-control { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 44px;
+            padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; cursor: pointer; }
+        .select-control span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .select-control i { width: 18px; height: 18px; color: var(--text-secondary); flex-shrink: 0; }
         .foot { padding: 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
         .btn-primary { height: 44px; background: var(--accent); color: #fff; border: none; border-radius: 6px;
             font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; }
@@ -43,37 +47,44 @@
 </head>
 <body>
     <header class="sheet-head">
-        <div class="sheet-title">Новый пользователь</div>
+        <div class="sheet-title">Register user</div>
         <button class="icon-btn"><i data-lucide="x"></i></button>
     </header>
     <main class="form">
         <div class="field">
-            <label>Имя</label>
-            <input value="Анна">
+            <label>First name</label>
+            <input value="Sarah">
         </div>
         <div class="field">
-            <label>Отчество <span class="optional">— необязательно</span></label>
-            <input value="Сергеевна">
+            <label>Middle name <span class="optional">— optional</span></label>
+            <input value="Jane">
         </div>
         <div class="field error">
-            <label>Фамилия</label>
+            <label>Last name</label>
             <input value="">
-            <span class="err-msg">Укажите фамилию</span>
+            <span class="err-msg">Last name is required</span>
         </div>
         <div class="field error">
-            <label>Логин</label>
-            <input value="a.volkova">
-            <span class="err-msg">Этот логин уже занят</span>
+            <label>Login</label>
+            <input value="s.connor">
+            <span class="err-msg">This login is already taken</span>
         </div>
         <div class="field error">
             <label>Email</label>
-            <input value="a.volkova@rpm.local">
-            <span class="err-msg">Этот email уже используется</span>
+            <input value="s.connor@rpm.local">
+            <span class="err-msg">This email is already in use</span>
+        </div>
+        <div class="field">
+            <label>Timezone</label>
+            <div class="select-control">
+                <span>(UTC+01:00) Central European Time — Europe/Berlin</span>
+                <i data-lucide="chevron-down"></i>
+            </div>
         </div>
     </main>
     <footer class="foot">
-        <button class="btn-primary">Создать</button>
-        <button class="btn-secondary">Отмена</button>
+        <button class="btn-primary">Register</button>
+        <button class="btn-secondary">Cancel</button>
     </footer>
     <script>lucide.createIcons();</script>
 </body>

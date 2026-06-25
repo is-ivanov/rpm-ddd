@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=375">
-    <title>RPM — Создать пользователя</title>
+    <title>RPM — Register user</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -32,6 +32,11 @@
             font-family: inherit; font-size: 14px; }
         .field input::placeholder { color: var(--text-placeholder); }
         .field input:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(77,171,247,0.2); }
+        .select-control { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 44px;
+            padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; cursor: pointer; }
+        .select-control span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .select-control i { width: 18px; height: 18px; color: var(--text-secondary); flex-shrink: 0; }
+        .hint { font-size: 12px; color: var(--text-secondary); }
         .foot { padding: 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
         .btn-primary { height: 44px; background: var(--accent); color: #fff; border: none; border-radius: 6px;
             font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; }
@@ -41,34 +46,42 @@
 </head>
 <body>
     <header class="sheet-head">
-        <div class="sheet-title">Новый пользователь</div>
+        <div class="sheet-title">Register user</div>
         <button class="icon-btn"><i data-lucide="x"></i></button>
     </header>
     <main class="form">
         <div class="field">
-            <label>Имя</label>
-            <input placeholder="Например, Анна">
+            <label>First name</label>
+            <input placeholder="e.g. Sarah">
         </div>
         <div class="field">
-            <label>Отчество <span class="optional">— необязательно</span></label>
-            <input placeholder="Например, Сергеевна">
+            <label>Middle name <span class="optional">— optional</span></label>
+            <input placeholder="e.g. Jane">
         </div>
         <div class="field">
-            <label>Фамилия</label>
-            <input placeholder="Например, Волкова">
+            <label>Last name</label>
+            <input placeholder="e.g. Connor">
         </div>
         <div class="field">
-            <label>Логин</label>
-            <input placeholder="a.volkova">
+            <label>Login</label>
+            <input placeholder="s.connor">
         </div>
         <div class="field">
             <label>Email</label>
-            <input placeholder="a.volkova@rpm.local">
+            <input placeholder="s.connor@rpm.local">
+        </div>
+        <div class="field">
+            <label>Timezone</label>
+            <div class="select-control">
+                <span>(UTC+01:00) Central European Time — Europe/Berlin</span>
+                <i data-lucide="chevron-down"></i>
+            </div>
+            <span class="hint">Used to display dates for this user. Defaults to the application timezone.</span>
         </div>
     </main>
     <footer class="foot">
-        <button class="btn-primary">Создать</button>
-        <button class="btn-secondary">Отмена</button>
+        <button class="btn-primary">Register</button>
+        <button class="btn-secondary">Cancel</button>
     </footer>
     <script>lucide.createIcons();</script>
 </body>

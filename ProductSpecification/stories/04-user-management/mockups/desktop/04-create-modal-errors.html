@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1400">
-    <title>RPM — Создать пользователя (ошибки)</title>
+    <title>RPM — Register user (errors)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -67,6 +67,9 @@
         .field input:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(77,171,247,0.2); }
         .field.error input { border-color: var(--danger); }
         .field .err-msg { font-size: 13px; color: var(--danger); }
+        .select-control { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 40px;
+            padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; cursor: pointer; }
+        .select-control i { width: 16px; height: 16px; color: var(--text-secondary); flex-shrink: 0; }
         .modal-foot { display: flex; justify-content: flex-end; gap: 12px; padding: 0 24px 24px; }
         .btn-secondary { height: 40px; padding: 0 16px; background: transparent; color: var(--text-primary);
             border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; }
@@ -79,60 +82,67 @@
             <div class="topbar-logo">RPM</div>
         </div>
         <div class="user-menu">
-            <div class="avatar">ИП</div><span class="user-name">Иван Петров</span><i data-lucide="chevron-down"></i>
+            <div class="avatar">JD</div><span class="user-name">John Doe</span><i data-lucide="chevron-down"></i>
         </div>
     </header>
 
     <div class="layout">
         <aside class="sidebar">
-            <a class="nav-item"><i data-lucide="layout-dashboard"></i> Главная</a>
-            <div class="nav-group-label">Администрирование</div>
-            <a class="nav-item sub active"><i data-lucide="users"></i> Пользователи</a>
+            <a class="nav-item"><i data-lucide="layout-dashboard"></i> Home</a>
+            <div class="nav-group-label">Admin Center</div>
+            <a class="nav-item sub active"><i data-lucide="users"></i> Users</a>
         </aside>
         <main class="content">
             <div class="content-head">
-                <h1 class="page-title">Пользователи</h1>
-                <button class="btn-primary"><i data-lucide="plus"></i> Создать пользователя</button>
+                <h1 class="page-title">Users</h1>
+                <button class="btn-primary"><i data-lucide="plus"></i> Register user</button>
             </div>
             <div class="table-card"></div>
         </main>
     </div>
 
-    <!-- Create user modal: field-level errors (required + duplicate 422) -->
+    <!-- Register user modal: field-level errors (required + duplicate 422) -->
     <div class="overlay">
         <div class="modal">
             <div class="modal-head">
-                <div class="modal-title">Новый пользователь</div>
+                <div class="modal-title">Register user</div>
                 <button class="icon-btn"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
                 <div class="field">
-                    <label>Имя</label>
-                    <input value="Анна">
+                    <label>First name</label>
+                    <input value="Sarah">
                 </div>
                 <div class="field">
-                    <label>Отчество <span class="optional">— необязательно</span></label>
-                    <input value="Сергеевна">
+                    <label>Middle name <span class="optional">— optional</span></label>
+                    <input value="Jane">
                 </div>
                 <div class="field error">
-                    <label>Фамилия</label>
+                    <label>Last name</label>
                     <input value="">
-                    <span class="err-msg">Укажите фамилию</span>
+                    <span class="err-msg">Last name is required</span>
                 </div>
                 <div class="field error">
-                    <label>Логин</label>
-                    <input value="a.volkova">
-                    <span class="err-msg">Этот логин уже занят</span>
+                    <label>Login</label>
+                    <input value="s.connor">
+                    <span class="err-msg">This login is already taken</span>
                 </div>
                 <div class="field error">
                     <label>Email</label>
-                    <input value="a.volkova@rpm.local">
-                    <span class="err-msg">Этот email уже используется</span>
+                    <input value="s.connor@rpm.local">
+                    <span class="err-msg">This email is already in use</span>
+                </div>
+                <div class="field">
+                    <label>Timezone</label>
+                    <div class="select-control">
+                        <span>(UTC+01:00) Central European Time — Europe/Berlin</span>
+                        <i data-lucide="chevron-down"></i>
+                    </div>
                 </div>
             </div>
             <div class="modal-foot">
-                <button class="btn-secondary">Отмена</button>
-                <button class="btn-primary">Создать</button>
+                <button class="btn-secondary">Cancel</button>
+                <button class="btn-primary">Register</button>
             </div>
         </div>
     </div>

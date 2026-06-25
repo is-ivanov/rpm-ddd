@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1400">
-    <title>RPM — Пользователи (меню свёрнуто)</title>
+    <title>RPM — Users (menu collapsed)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -92,12 +92,12 @@
 <body>
     <header class="topbar">
         <div class="topbar-left">
-            <button class="icon-btn" title="Развернуть меню"><i data-lucide="panel-left-open"></i></button>
+            <button class="icon-btn" title="Expand menu"><i data-lucide="panel-left-open"></i></button>
             <div class="topbar-logo">RPM</div>
         </div>
         <div class="user-menu">
-            <div class="avatar">ИП</div>
-            <span class="user-name">Иван Петров</span>
+            <div class="avatar">JD</div>
+            <span class="user-name">John Doe</span>
             <i data-lucide="chevron-down"></i>
         </div>
     </header>
@@ -105,65 +105,65 @@
     <div class="layout">
         <!-- Collapsed rail: icons only, labels hidden; state persisted in localStorage -->
         <aside class="sidebar">
-            <a class="nav-item" title="Главная"><i data-lucide="layout-dashboard"></i></a>
+            <a class="nav-item" title="Home"><i data-lucide="layout-dashboard"></i></a>
             <div class="rail-divider"></div>
-            <a class="nav-item active" title="Пользователи"><i data-lucide="users"></i></a>
+            <a class="nav-item active" title="Users"><i data-lucide="users"></i></a>
         </aside>
 
         <main class="content">
             <div class="content-head">
-                <h1 class="page-title">Пользователи</h1>
-                <button class="btn-primary"><i data-lucide="plus"></i> Создать пользователя</button>
+                <h1 class="page-title">Users</h1>
+                <button class="btn-primary"><i data-lucide="plus"></i> Register user</button>
             </div>
 
             <div class="table-card">
                 <table>
                     <thead>
                         <tr>
-                            <th><span class="th-sort sorted">ФИО <i data-lucide="arrow-up"></i></span></th>
-                            <th><span class="th-sort">Логин <i data-lucide="chevrons-up-down"></i></span></th>
+                            <th><span class="th-sort sorted">Full name <i data-lucide="arrow-up"></i></span></th>
+                            <th><span class="th-sort">Login <i data-lucide="chevrons-up-down"></i></span></th>
                             <th><span class="th-sort">Email <i data-lucide="chevrons-up-down"></i></span></th>
-                            <th class="col-status"><span class="th-sort">Статус <i data-lucide="chevrons-up-down"></i></span></th>
-                            <th><span class="th-sort">Создан <i data-lucide="chevrons-up-down"></i></span></th>
-                            <th><span class="th-sort">Кем создан <i data-lucide="chevrons-up-down"></i></span></th>
-                            <th><span class="th-sort">Изменён <i data-lucide="chevrons-up-down"></i></span></th>
-                            <th><span class="th-sort">Кем изменён <i data-lucide="chevrons-up-down"></i></span></th>
+                            <th class="col-status"><span class="th-sort">Status <i data-lucide="chevrons-up-down"></i></span></th>
+                            <th><span class="th-sort">Created <i data-lucide="chevrons-up-down"></i></span></th>
+                            <th><span class="th-sort">Created by <i data-lucide="chevrons-up-down"></i></span></th>
+                            <th><span class="th-sort">Updated <i data-lucide="chevrons-up-down"></i></span></th>
+                            <th><span class="th-sort">Updated by <i data-lucide="chevrons-up-down"></i></span></th>
                         </tr>
                         <tr class="filter-row">
-                            <td><input class="filter-input" placeholder="содержит"></td>
-                            <td><input class="filter-input" placeholder="содержит"></td>
-                            <td><input class="filter-input" placeholder="содержит"></td>
-                            <td><div class="filter-control between">Все статусы <i data-lucide="chevron-down"></i></div></td>
-                            <td><div class="filter-control"><i data-lucide="calendar"></i> от – до</div></td>
-                            <td><input class="filter-input" placeholder="содержит"></td>
-                            <td><div class="filter-control"><i data-lucide="calendar"></i> от – до</div></td>
-                            <td><input class="filter-input" placeholder="содержит"></td>
+                            <td><input class="filter-input" placeholder="contains"></td>
+                            <td><input class="filter-input" placeholder="contains"></td>
+                            <td><input class="filter-input" placeholder="contains"></td>
+                            <td><div class="filter-control between">All statuses <i data-lucide="chevron-down"></i></div></td>
+                            <td><div class="filter-control"><i data-lucide="calendar"></i> from – to</div></td>
+                            <td><input class="filter-input" placeholder="contains"></td>
+                            <td><div class="filter-control"><i data-lucide="calendar"></i> from – to</div></td>
+                            <td><input class="filter-input" placeholder="contains"></td>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Анна Сергеевна Волкова</td><td>a.volkova</td><td>a.volkova@rpm.local</td>
-                            <td class="col-status"><span class="badge status-active">Активен</span></td>
-                            <td><span class="ts-rel" title="2026-06-12 09:14:37 МСК · UTC+03:00 · Europe/Moscow">13 дней назад</span></td>
-                            <td><span class="actor" title="Иван Иванович Петров">И. Петров</span></td>
-                            <td><span class="ts-rel" title="2026-06-18 11:02:09 МСК · UTC+03:00 · Europe/Moscow">7 дней назад</span></td>
-                            <td><span class="actor" title="Анна Сергеевна Волкова">А. Волкова</span></td>
+                            <td>Sarah Jane Connor</td><td>s.connor</td><td>s.connor@rpm.local</td>
+                            <td class="col-status"><span class="badge status-active">Active</span></td>
+                            <td><span class="ts-rel" title="2026-06-12 09:14:37 CEST · UTC+02:00 · Europe/Berlin">13 days ago</span></td>
+                            <td><span class="actor" title="John Robert Doe">J. Doe</span></td>
+                            <td><span class="ts-rel" title="2026-06-18 11:02:09 CEST · UTC+02:00 · Europe/Berlin">7 days ago</span></td>
+                            <td><span class="actor" title="Sarah Jane Connor">S. Connor</span></td>
                         </tr>
                         <tr>
-                            <td>Дмитрий Олегович Лебедев</td><td>d.lebedev</td><td>d.lebedev@rpm.local</td>
-                            <td class="col-status"><span class="badge status-pending">Ожидает</span></td>
-                            <td><span class="ts-rel" title="2026-06-20 14:30:51 МСК · UTC+03:00 · Europe/Moscow">5 дней назад</span></td>
-                            <td><span class="actor" title="Иван Иванович Петров">И. Петров</span></td>
-                            <td><span class="ts-rel" title="2026-06-20 14:30:51 МСК · UTC+03:00 · Europe/Moscow">5 дней назад</span></td>
-                            <td><span class="actor" title="Иван Иванович Петров">И. Петров</span></td>
+                            <td>Michael Scott</td><td>m.scott</td><td>m.scott@rpm.local</td>
+                            <td class="col-status"><span class="badge status-pending">Pending</span></td>
+                            <td><span class="ts-rel" title="2026-06-20 14:30:51 CEST · UTC+02:00 · Europe/Berlin">5 days ago</span></td>
+                            <td><span class="actor" title="John Robert Doe">J. Doe</span></td>
+                            <td><span class="ts-rel" title="2026-06-20 14:30:51 CEST · UTC+02:00 · Europe/Berlin">5 days ago</span></td>
+                            <td><span class="actor" title="John Robert Doe">J. Doe</span></td>
                         </tr>
                         <tr>
-                            <td>Иван Иванович Петров</td><td>i.petrov</td><td>i.petrov@rpm.local</td>
-                            <td class="col-status"><span class="badge status-active">Активен</span></td>
-                            <td><span class="ts-rel" title="2026-06-01 08:00:00 МСК · UTC+03:00 · Europe/Moscow">24 дня назад</span></td>
-                            <td><span class="actor" title="Системный аккаунт">System</span></td>
-                            <td><span class="ts-rel" title="2026-06-03 10:21:44 МСК · UTC+03:00 · Europe/Moscow">22 дня назад</span></td>
-                            <td><span class="actor" title="Иван Иванович Петров">И. Петров</span></td>
+                            <td>John Robert Doe</td><td>j.doe</td><td>j.doe@rpm.local</td>
+                            <td class="col-status"><span class="badge status-active">Active</span></td>
+                            <td><span class="ts-rel" title="2026-06-01 08:00:00 CEST · UTC+02:00 · Europe/Berlin">24 days ago</span></td>
+                            <td><span class="actor" title="System account">System</span></td>
+                            <td><span class="ts-rel" title="2026-06-03 10:21:44 CEST · UTC+02:00 · Europe/Berlin">22 days ago</span></td>
+                            <td><span class="actor" title="John Robert Doe">J. Doe</span></td>
                         </tr>
                     </tbody>
                 </table>

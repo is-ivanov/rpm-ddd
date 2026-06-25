@@ -30,7 +30,7 @@ Use templates from `ProductSpecification/ui/templates/` as structural starting p
 ## Format
 
 - Standalone HTML with embedded CSS. External dependencies: Google Fonts (Inter), Lucide icons CDN.
-- `lang="ru"`. Interface text in Russian.
+- `lang="en"`. Interface text in English.
 - All design tokens, spacing, typography, and component styles MUST match `ui-conventions.md`.
 - Icons: use Lucide CDN per `frontend-rules.md`. Add `<script src="https://unpkg.com/lucide@latest"></script>` in `<head>` and `<script>lucide.createIcons();</script>` before `</body>`. Reference icons by name using `<i data-lucide="icon-name"></i>`.
 - Unsplash URLs for product images.

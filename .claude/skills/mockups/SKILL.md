@@ -58,7 +58,7 @@ Report: Screen Plan table, total files, screenshot locations, design decisions, 
 - [ ] Desktop file count equals mobile file count
 - [ ] All patterns match `ui-conventions.md`
 - [ ] Sidebar matches `sidebar.html` template exactly
-- [ ] Interface text is in Russian
+- [ ] Interface text is in English
 - [ ] Screenshots generated for both desktop and mobile
 - [ ] Existing mockups checked (ask user before overwriting)
 - [ ] If new UI patterns introduced, `ui-conventions.md` updated
