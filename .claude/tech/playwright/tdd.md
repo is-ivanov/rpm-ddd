@@ -34,6 +34,17 @@ test('UI Bug #127: unexpected login failure shows a generic error banner - Given
 - Pass the bare number; the report links it via `links.issue.urlTemplate` configured in `playwright.config.ts`'s `allure-playwright` reporter.
 - `allure-js-commons` is a direct devDependency. Only tag bug-task tests; story-scenario tests are NOT tagged.
 
+## Full-Stack Journey (top-tier E2E)
+
+Concrete mechanism for the `fullstack-journey` step (`workflow.md` → "Full-Stack Journey Step") and the verdict (`tdd-rules.md` → "Top-Tier Full-Stack Journey Assessment").
+
+- **Location & suffix:** `frontend/acceptance/tests/fullstack/*.fullstack.spec.ts`. The `.fullstack.spec.ts` suffix is what isolates the tier — the default `npm run test:e2e` (`--project=chromium`) excludes it; the `fullstack` Playwright project (`retries: 2`) runs only it.
+- **Real stack, no mocks:** real frontend + backend + Postgres + Mailpit, **no `page.route`**. It verifies the actual frontend↔backend HTTP contract on the critical lifecycle path. Run recipe (infra compose, `fullstack` backend profile, seed script, Vite, `npm run test:e2e:fullstack`) is in `frontend/acceptance/tests/fullstack/README.md`; ADR in `ProductSpecification/tasks/7-refactoring-full-stack-contract-e2e/decisions/`.
+- **Cadence:** nightly only (`.github/workflows/nightly-fullstack-e2e.yml`), never per-PR.
+- **One growing journey:** prefer **extend** — weave the story's critical step into the existing `account-lifecycle.fullstack.spec.ts` spine, reusing the page Statements from `../statements/` built during the frontend phase (do not duplicate navigation/locators — one page object per page, same rule as the mocked suite). Add a **new** `*.fullstack.spec.ts` only for an independent lifecycle that doesn't sit on the existing spine. Edge cases NEVER go here — they stay in the fast mocked suite.
+- **Unique-per-run data:** the journey mints a unique identity per run (e.g. `fsuser_<unique>`) so `retries: 2` never collides on "already exists". Read tokens/links from Mailpit via the backend Statements, not by reaching into the DB.
+- **No `test.fail()` / no issue tagging here:** the journey is a real passing E2E, not a RED scenario and not a per-scenario story slot.
+
 ## Statements Assertions (Playwright Built-in)
 
 - Real `await expect(locator).toBeVisible()` calls, real `await expect(locator).toHaveText(...)` assertions

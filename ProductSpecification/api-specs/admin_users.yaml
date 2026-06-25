@@ -1,0 +1,175 @@
+openapi: 3.0.3
+info:
+  title: Admin Users
+  version: 1.0.0
+
+paths:
+  /api/admin/users:
+    get:
+      summary: List all users for the admin grid
+      description: >
+        Returns the full user list in a deterministic default order
+        (createdAt DESC, userId DESC — newest first; userId is a UUIDv7 tiebreaker
+        guaranteeing a total order). The frontend re-sorts/filters client-side.
+      operationId: listUsers
+      tags:
+        - admin-users
+      responses:
+        '200':
+          description: Full user list with resolved actor names
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserListResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: './common.yaml#/components/schemas/ProblemDetailResponse'
+        '500':
+          description: Internal server error
+
+    post:
+      summary: Register a new user (PENDING + activation email)
+      operationId: registerUser
+      tags:
+        - admin-users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+      responses:
+        '201':
+          description: User created; Location header points to the new user
+          headers:
+            Location:
+              schema:
+                type: string
+              description: URI of the created user
+        '401':
+          description: Not authenticated
+          content:
+            application/problem+json:
+              schema:
+                $ref: './common.yaml#/components/schemas/ProblemDetailResponse'
+        '422':
+          description: Validation error (e.g. duplicate login/email) with per-field details
+          content:
+            application/problem+json:
+              schema:
+                $ref: './common.yaml#/components/schemas/ValidationProblemDetailResponse'
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    AdminUserListResponse:
+      type: object
+      required:
+        - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminUserRow'
+
+    AdminUserRow:
+      type: object
+      required:
+        - userId
+        - firstName
+        - lastName
+        - login
+        - email
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+      properties:
+        userId:
+          type: string
+          format: uuid
+          description: User unique identifier
+        firstName:
+          type: string
+        middleName:
+          type: string
+          nullable: true
+          description: Optional middle name
+        lastName:
+          type: string
+        login:
+          type: string
+        email:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, ACTIVE, LOCKED, INACTIVE]
+          description: >
+            Canonical lifecycle order (PENDING → ACTIVE → LOCKED → INACTIVE).
+            The Status filter lists options and the Status-column sort ranks
+            by this lifecycle order (the enum ordinal), NOT alphabetically.
+        createdAt:
+          type: string
+          format: date-time
+          description: UTC instant the user was created (ISO 8601)
+        createdBy:
+          $ref: '#/components/schemas/AuditActor'
+        updatedAt:
+          type: string
+          format: date-time
+          description: UTC instant of the last update (init = createdAt)
+        updatedBy:
+          $ref: '#/components/schemas/AuditActor'
+
+    AuditActor:
+      type: object
+      description: >
+        Resolved name of an audit actor. The frontend composes the abbreviated
+        "J. Doe" label and the full "First [Middle] Last" tooltip from the parts.
+        The seed/SYSTEM actor is returned as firstName "System" with an empty
+        lastName.
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+          nullable: true
+        lastName:
+          type: string
+          description: Empty for the SYSTEM actor
+
+    RegisterUserRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - login
+        - email
+        - timeZone
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+          nullable: true
+          maxLength: 255
+        lastName:
+          type: string
+        login:
+          type: string
+          description: Unique; duplicate → 422 field error
+        email:
+          type: string
+          format: email
+          description: Unique; duplicate → 422 field error
+        timeZone:
+          type: string
+          description: IANA zone id (e.g. Europe/Berlin); pre-filled with the app default

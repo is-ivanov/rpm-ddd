@@ -2,7 +2,9 @@
 
 ## Lifecycle
 
-Every story follows: **interview → spec → backend scenarios → integration scenarios → frontend scenarios → security scenarios → load scenarios → infrastructure scenarios**.
+Every story follows: **interview → spec → backend scenarios → integration scenarios → frontend scenarios → security scenarios → load scenarios → infrastructure scenarios → full-stack journey**.
+
+The trailing **full-stack journey** phase is the top-tier E2E assessment (see `tdd-rules.md` → "Top-Tier Full-Stack Journey Assessment"): its verdict is produced during the **spec** phase by `/test-spec` (as `tests/07_FullStack_Journey.md`) and executed once at the end as a tracked `fullstack-journey` step (see "Full-Stack Journey Step" below).
 
 **High-level progress** is tracked in `ProductSpecification/stories.md` — three tables: **In Progress**, **Backlog**, and **Done**. Phase columns (Spec, Backend, Integration, Frontend, Security, Load, Infra) per story. The `/continue` skill updates it after each work unit commit. Phase values: ✅ done, 🔧 in progress, — not started, · no story folder yet. When a story reaches 100% (all scenarios done), run the **Story Completion Gate** (below) and then move its row from the **In Progress** table to the **Done** table.
 
@@ -67,6 +69,16 @@ For each scenario in `tests/02_UI_Tests.md`:
 8. `demo` → `/demo {test_class}` → progress-only commit
 
 
+## Full-Stack Journey Step
+
+After the frontend scenarios are green, a single story-level `fullstack-journey` step executes the verdict recorded in `tests/07_FullStack_Journey.md` (produced by `/test-spec`). It runs once per story, not per scenario, because the journey needs the real grid/page UI and the page Statements built during the frontend phase.
+
+- **`extend`** → edit the existing full-stack journey spec to weave in this story's critical path (reusing the page Statements from the frontend phase), run it against the real stack, commit. Mark `[x] fullstack-journey`.
+- **`new`** → add a new `*.fullstack.spec.ts` journey for the independent lifecycle, run it, commit. Mark `[x] fullstack-journey`.
+- **`no-impact`** → mark `[S] fullstack-journey (no-impact: <reason from 07_FullStack_Journey.md>)`. No spec change.
+
+The concrete mechanics (journey location, suffix, how to extend vs create, real-stack run recipe) are in the browser-testing tech binding (`.claude/tech/{browser-testing}/tdd.md`). This step is the per-story analog of the Scheduled-jobs wiring scenario: a recorded artifact plus a tracked checkbox so the assessment can never be silently skipped — the **Story Completion Gate** will not close a story with an open `fullstack-journey` checkbox.
+
 ## Security Scenario Sequence
 
 For each scenario in `tests/05_Security_Tests.md` (if exists): same TDD cycle as backend scenarios above. Security scenarios cover OWASP concerns: injection, XSS, CSRF, rate limiting, mass assignment, and input validation.
@@ -123,6 +135,7 @@ If no `progress.md` exists, create one by:
 4. Marking completed steps as `[x]`, next step as `[~]`, rest as `[ ]`
 5. For backend/integration/security scenarios, **always include `design` after `red-acceptance`** — it is mandatory for every scenario that needs new implementation. Only omit it when the entire scenario is `[S]` (existing implementation covers everything). Include `[ ] adapters-discovery` after `green-usecase` — adapter discovery runs when this step is reached. Include `[ ] red-domain` / `[ ] green-domain` after `green-usecase` as `[S]` by default — they are activated only when coverage-agent or design-preview identifies need.
 6. For frontend scenarios, include `demo` as the final step per scenario
+6a. **Full-stack journey step.** After the frontend scenarios block, include one story-level `fullstack-journey` step driven by `tests/07_FullStack_Journey.md`: if the verdict is `extend`/`new` add `[ ] fullstack-journey`; if `no-impact` add `[S] fullstack-journey (no-impact: <reason>)`. If `07_FullStack_Journey.md` is missing (older story), add `[ ] fullstack-journey (assess: produce 07_FullStack_Journey.md verdict)` so the assessment isn't skipped. See "Full-Stack Journey Step".
 7. **Surface extended cases as `[S]`.** If `tests/extended/*_Extended.md` exists, add an `### Extended (deferred — decide at Story Completion Gate)` block at the end of the matching scenarios section, listing each extended case as `[S] {case name} (deferred — review at Story Completion Gate)`. These are **never executed by `/continue`** (they stay `[S]`); the block exists only so the cases are visible in `progress.md` instead of silently omitted, and so the **Story Completion Gate** can review them before the story closes. Do not add TDD sub-steps for them — promotion happens at the gate, under user decision.
 
 ## Atomic Work Units
@@ -159,6 +172,8 @@ Tasks follow the same TDD discipline as stories: `/test-review` after red phases
 **Every test written in a bug task's TDD cycle — backend AND frontend — MUST be tagged with the bug's issue number.** This is mandatory and applies to every red phase of the task (red-acceptance, red-usecase, red-domain, red-adapter, red-playwright, red-frontend, red-frontend-api). The tag links each test back to the tracked bug in the report, so a regression is traceable to its origin. Do NOT reuse a story's UI/API scenario numbering for a bug test — a bug test is identified by its issue number, not a story-scenario slot. The concrete tagging mechanism is technology-specific — see the tech binding's `tdd.md` (backend: `.claude/tech/{backend}/tdd.md`; frontend/E2E: `.claude/tech/{frontend}/tdd.md` and `.claude/tech/{browser-testing}/tdd.md`).
 
 **Scoped steps:** Progress should only include TDD steps for layers the fix actually touches — applies to tasks, and to individual story scenarios. If the fix is pure CSS, don't generate logic/API/align-design steps. If the fix is backend-only, don't generate frontend steps. Affected layers are determined from the spec at creation time.
+
+**Full-stack journey verdict (bug tasks).** A `bug` task whose fix changes a critical user-lifecycle path (a step the top-tier full-stack journey exercises, or should) MUST record a full-stack-journey verdict — `extend` / `new` / `no-impact` — in its `spec.md`, and add a `fullstack-journey` step when the verdict is `extend`/`new` (`[S]` with reason when `no-impact`). See `tdd-rules.md` → "Top-Tier Full-Stack Journey Assessment". Pure refactoring tasks and fixes that don't touch the rendered critical path record `no-impact` (or omit the verdict entirely when there is plainly no UI/lifecycle surface).
 
 Operational details: `/task` skill (creation, sections, progress format), `/continue` skill (execution, dispatch, adapter discovery).
 

@@ -69,3 +69,6 @@ D*infrastructureagent-progress.log
 
 # Claude Code git worktrees (agent isolation)
 .claude/worktrees/
+
+# Throwaway Puppeteer runner for mockup screenshots (created by /screenshot)
+.screenshots-temp/

@@ -2,19 +2,12 @@
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |---|-------|------|------|------|-------|-----|------|-------|-------|----|
+| 4 | User management: admin user grid & create user | ✅ | — | — | — | — | — | — | | |
 
 # Backlog
 
 | #  | Story                                               | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |----|-----------------------------------------------------|------|------|------|-------|-----|------|-------|-------|----|
-| 4  | User management: roles, agencies, basic permissions | · | · | · | · | · | · | · | | |
-| 5  | Patient creation                                    | · | · | · | · | · | · | · | | |
-| 6  | Monitoring order: create and view                   | · | · | · | · | · | · | · | | |
-| 7  | IoT device registration and patient assignment      | · | · | · | · | · | · | · | | |
-| 8  | Vitals collection from IoT devices                  | · | · | · | · | · | · | · | | |
-| 9  | Alerting on abnormal readings                       | · | · | · | · | · | · | · | | |
-| 10 | Home visit route planning                           | · | · | · | · | · | · | · | | |
-| 11 | Insurance report generation                         | · | · | · | · | · | · | · | | |
 
 # Done
 

@@ -43,14 +43,26 @@ Create files in `ProductSpecification/stories/NN-story-name/tests/`:
 **Extended files in `extended/` subfolder (nice-to-have edge cases):**
 - `extended/01_API_Tests_Extended.md` through `extended/06_Integration_Tests_Extended.md`
 
+**Full-stack journey verdict (always — see Phase 2b):**
+- `07_FullStack_Journey.md` (extend / new / no-impact verdict — not a test category, a recorded decision)
+
 Add this header to extended files:
 ```markdown
 > These are additional edge case tests. Implement after core tests pass.
 ```
 
+### Phase 2b: Full-Stack Journey Verdict (mandatory)
+
+Assess this story's impact on the top-tier full-stack journey and ALWAYS write the verdict to `tests/07_FullStack_Journey.md` — one of **extend**, **new**, or **no-impact**. The file is never omitted: a backend-only or non-lifecycle story records `no-impact` with a one-line rationale. See `tdd-rules.md` → "Top-Tier Full-Stack Journey Assessment" for the principle and the browser-testing tech binding (`.claude/tech/{browser-testing}/tdd.md`) for the journey location, suffix, and extend-vs-new mechanics. Use the `07_FullStack_Journey.md` format in `test-spec-format.md`.
+
+Decision guide:
+- Does the story drive an existing critical-lifecycle step through real UI for the first time, or add a new happy-path leg (auth/onboarding/checkout/cross-service hand-off)? → **extend** the existing journey (default), naming the journey and the changed step.
+- Is the new path an independent lifecycle that doesn't belong on the existing journey's spine? → **new**.
+- No rendered critical-path change (backend-only, infra, pure data)? → **no-impact** + reason.
+
 ### Phase 3: Summary
 
-Report: folder path, files created, test counts per file.
+Report: folder path, files created (including `07_FullStack_Journey.md` and its verdict), test counts per file.
 
 ## Rules
 

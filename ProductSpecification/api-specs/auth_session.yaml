@@ -20,9 +20,9 @@ paths:
         '401':
           description: Not authenticated
           content:
-            application/json:
+            application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: './common.yaml#/components/schemas/ProblemDetailResponse'
         '500':
           description: Internal server error
 
@@ -64,32 +64,11 @@ components:
           type: string
           enum: [ACTIVE, PENDING, LOCKED, INACTIVE]
           description: User status
+        timeZone:
+          type: string
+          description: Viewer's profile IANA zone id (e.g. Europe/Berlin); the grid renders all timestamps in this zone
         roles:
           type: array
           items:
             type: string
           description: User roles
-
-    ProblemDetailResponse:
-      type: object
-      required:
-        - type
-        - title
-        - status
-        - detail
-      properties:
-        type:
-          type: string
-          description: URI reference to the error type
-        title:
-          type: string
-          description: Short human-readable summary
-        status:
-          type: integer
-          description: HTTP status code
-        detail:
-          type: string
-          description: Specific explanation of the error
-        instance:
-          type: string
-          description: URI reference to the specific occurrence

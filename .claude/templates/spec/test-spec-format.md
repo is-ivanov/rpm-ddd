@@ -140,6 +140,40 @@ Generate **only scenarios relevant to the story's actual attack surface**. Do no
 3. External API timeout handling
 4. Token refresh flow
 
+## 07_FullStack_Journey.md (verdict — always present)
+
+Not a test category — a recorded decision about the top-tier full-stack journey (`tdd-rules.md` → "Top-Tier Full-Stack Journey Assessment"). Always written, even for `no-impact`. Start with the verdict on the first line so it is greppable.
+
+**`extend` / `new` format:**
+```markdown
+# Full-Stack Journey — [Story Name]
+
+**Verdict:** extend            <!-- extend | new | no-impact -->
+**Journey:** frontend/acceptance/tests/fullstack/<existing-or-new>.fullstack.spec.ts
+
+## What changes
+- [The critical-lifecycle step this story adds/changes, and how the journey weaves it in]
+- [Which page Statements (built in the frontend phase) it reuses]
+
+## Journey scenario
+\`\`\`gherkin
+Given ...
+When ...
+Then ...
+\`\`\`
+
+> Executed as the story-level `fullstack-journey` step after the core frontend scenarios are green
+> (workflow.md → "Full-Stack Journey Step"). Mechanics: browser-testing tech binding.
+```
+
+**`no-impact` format:**
+```markdown
+# Full-Stack Journey — [Story Name]
+
+**Verdict:** no-impact
+**Reason:** [one line — e.g. backend-only story, no rendered critical-path change]
+```
+
 ## BDD Format Rules
 
 1. Use Gherkin syntax with domain-specific language (DSL)

@@ -96,6 +96,19 @@
 - Icons: Lucide, 20px, 12px gap before label
 - Bottom section: user avatar + name, divider above
 
+#### Nav groups
+
+- Related nav items group under a **group label**: 11px/600, uppercase, `--text-sidebar` at 60% opacity, 0.04em letter-spacing, padding `16px 24px 8px`
+- Sub-items under a group get extra left padding (32px) to read as nested
+- Example: an "Admin Center" group with a "Users" sub-item
+
+#### Collapsible sidebar (icon rail)
+
+- The sidebar collapses to a **64px icon-only rail** via a toggle button in the top bar (`panel-left` icon when expanded → `panel-left-open` when collapsed)
+- Collapsed rail: icons centered (no labels, no group labels), each item 44px tall; use a 1px `--bg-sidebar-hover` divider where a group label would have been; the full label shows as a native `title` tooltip
+- Collapsed/expanded state is **persisted in `localStorage`** so it survives reloads
+- The active item keeps its 3px `--accent` left border in both states
+
 ### Sidebar (Mobile)
 
 - Hidden by default
@@ -127,7 +140,7 @@ The authenticated app shell places the **logo at the left of the top bar** (not 
 
 - Logo: 20px/700, `--accent`, left-aligned
 - User menu (right): avatar (32px) + user name (14px/500) + `chevron-down` icon, 4px/8px padding, `--bg-primary` on hover
-- Clicking the user menu opens a dropdown anchored top-right: header row (name 14px/600 + email 13px/`--text-secondary`), divider, then items (e.g. `log-out` "Выйти")
+- Clicking the user menu opens a dropdown anchored top-right: header row (name 14px/600 + email 13px/`--text-secondary`), divider, then items (e.g. `log-out` "Sign out")
 - Mobile: logo left, avatar right (no name); dropdown anchored under the avatar
 - Reusable scaffold: `templates/dashboard-layout.html`
 
@@ -151,6 +164,7 @@ The authenticated app shell places the **logo at the left of the top bar** (not 
 - Labels above inputs, 14px/500
 - Input height: 40px (text input), 120px (textarea)
 - Input border: 1px solid `--border`, focus: `--border-focus` with 3px ring
+- **Select / dropdown field**: same 40px box + border as a text input, label-on-the-left value with a `chevron-down` (`--text-secondary`) on the right; long values truncate with ellipsis. Optional 12px `--text-secondary` hint below (e.g. a timezone field: "Used to display dates for this user. Defaults to the application timezone.")
 - Character counter below constrained fields: right-aligned, `--text-secondary`, 12px
 
 ### Form (Full Page)
@@ -210,13 +224,19 @@ The authenticated app shell places the **logo at the left of the top bar** (not 
 - Row hover: `--bg-primary`
 - Actions column: icon buttons, right-aligned
 - Mobile: card layout (no table), each row becomes a card
+- **Sortable header**: header label + a 14px sort glyph (`chevrons-up-down` when unsorted, `arrow-up`/`arrow-down` when sorted); the sorted column's glyph is `--accent` at full opacity, others at 0.6
+- **Per-column filter row** (client-side grids): an optional second header row (30px controls on `--bg-column` background), one control per column, typed by the column's data: **text "contains"** input for free-text columns; an **enum select / multi-select** (chevron-down, "All …" default) for status/category columns; a **date-range** control (`calendar` icon + "from – to") for timestamp columns. Used when the grid filters/sorts client-side over the full list
+- **Status / enum columns are center-aligned** (header + cells) so the pills line up
+- **Timestamp cells**: show **relative time** as the cell text (e.g. `7 days ago`, `2 hours ago`), with a hover **tooltip** carrying the full absolute time — `YYYY-MM-DD HH:MM:SS` + TZ label (abbreviation when one exists, e.g. `CET`/`UTC`, else numeric offset `UTC+05:00`) + IANA zone. Hint the tooltip with a dotted underline + `cursor: help`. Render in the **viewer's profile timezone** (stored per-user, IANA id), not the raw browser zone; backend stores UTC instants. Sort/filter operate on the underlying instant, never the relative label. `--text-secondary`
+- **Actor cells** (created-by / changed-by): show `J. Doe` (first-name initial + last name) with the full `First [Middle] Last` as a hover tooltip; hint the tooltip with a subtle dotted underline + `cursor: help`. A system/seed actor shows a fixed pseudonym (e.g. `System`)
+- **Mobile sort/filter**: a single full-width search field above the cards + a 44px sort icon button (`arrow-up-down`) — per-column filter inputs collapse into the search on mobile
 
 ### Badge / Status Pill
 
 - Pill shape (9999px radius), 12px/600 font
 - Padding: 2px 8px
 - Variants: accent (`--accent-light` bg, `--accent` text), success, warning, danger
-- Use semantic names: `status-active`, `status-inactive`, `status-pending`
+- Use semantic names: `status-active` (success), `status-pending` (warning), `status-locked` (danger), `status-inactive` (`--bg-column` bg, `--text-secondary` text)
 
 ### Dropdown Menu
 
@@ -272,7 +292,7 @@ The authenticated app shell places the **logo at the left of the top bar** (not 
 - Centered hero, no card, no sidebar, no top bar, `--bg-primary` background
 - Logo: large wordmark (48px desktop / 40px mobile, 700, `--accent`)
 - Tagline below logo (18px/600, `--text-primary`), then a short description (14px/`--text-secondary`)
-- Single primary CTA button below ("Войти" with `log-in` icon), 44px height
+- Single primary CTA button below ("Sign in" with `log-in` icon), 44px height
 - Max width 480px (desktop); full width minus 32px (mobile)
 
 ### App Shell (Dashboard Layout)
