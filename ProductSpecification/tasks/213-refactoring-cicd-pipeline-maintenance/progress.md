@@ -17,12 +17,12 @@ Type: refactoring
 - [x] commit
 
 ### Step 2: Safe rename of "Java CI with Maven" (+ deploy.yml coupling)
-- [~] implement (rename build.yml `name:`; update deploy.yml `workflow_run.workflows` in the SAME commit)
-- [ ] verify (actionlint; confirm deploy.yml reference matches the new name; main-push dispatch to confirm deploy still triggers)
-- [ ] commit
+- [x] implement (renamed build.yml `name:` → `CI`; updated deploy.yml `workflow_run.workflows` + docs/ci-pipeline diagram in the SAME commit)
+- [x] verify (actionlint clean; deploy.yml ref == "CI"; no stale "Java CI with Maven" left in repo except historical task docs; main-push dispatch confirmation is user-side)
+- [x] commit
 
 ### Step 3: Add timeout-minutes to jobs
-- [ ] implement (timeout-minutes on build/frontend/e2e/code-quality/nightly jobs)
+- [~] implement (timeout-minutes on build/frontend/e2e/code-quality/nightly jobs)
 - [ ] verify (actionlint)
 - [ ] commit
 

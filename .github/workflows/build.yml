@@ -6,7 +6,11 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+# Despite the filename, this is the whole per-PR/main CI pipeline: backend Maven
+# build + frontend vitest build + Playwright e2e + unified Allure report + Pages
+# deploy — not "just Java". deploy.yml's `workflow_run.workflows` references this
+# `name:`; keep the two in sync (renaming here without deploy.yml silently stops deploys).
+name: CI
 
 on:
   workflow_dispatch:
