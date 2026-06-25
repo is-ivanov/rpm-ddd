@@ -44,7 +44,7 @@ async function handleLogout(): Promise<void> {
       <component :is="open ? ChevronUp : ChevronDown" :size="16" class="text-muted" aria-hidden="true" />
     </div>
 
-    <div v-if="open" data-testid="user-menu" class="dropdown-panel absolute right-0 top-[calc(100%+8px)] min-w-55">
+    <div v-if="open" data-testid="user-menu" class="dropdown-panel dropdown-anchor min-w-55">
       <div class="p-3">
         <div data-testid="user-menu-name" class="text-sm font-semibold text-ink">{{ dashboardUser?.displayName }}</div>
         <div data-testid="user-menu-email" class="mt-0.5 text-[13px] text-muted">{{ dashboardUser?.email }}</div>

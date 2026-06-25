@@ -22,8 +22,8 @@ Type: feature
 - [x] green-frontend
 - [x] red-frontend-api (getAppInfo client + payload validation)
 - [x] green-frontend-api
-- [~] align-design (HelpCircle icon next to avatar + popover; loading state)
-- [ ] green-playwright
+- [x] align-design (HelpCircle icon next to avatar + popover; loading state)
+- [~] green-playwright
 - [ ] demo
 
 ## Full-Stack Journey
