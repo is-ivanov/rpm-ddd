@@ -48,6 +48,10 @@ Story 03 mockups (frozen artifacts of a completed story — user opted to transl
 1. Run the frontend and sign in; observe Russian labels in the dashboard sidebar/topbar/user menu, the welcome screen, and the app-loading text.
 2. `rg "\p{Cyrillic}" frontend/src frontend/acceptance ProductSpecification/stories/03-home-page` returns matches in production components, the Playwright acceptance suite, and the Story 03 mockups.
 
+## Full-Stack Journey Verdict
+
+**no-impact.** Text-only change to the home/dashboard chrome. The nightly full-stack journey (`account-lifecycle.fullstack.spec.ts`) exercises the register → activate → login lifecycle via `LoginPageStatements` / `ActivationPageStatements` (already English) and does not reuse `HomePageStatements` / `UserMenuStatements` nor assert any of the translated home/dashboard strings. No journey spec change required.
+
 ## Notes
 
 This is a mechanical text change, not a logic defect: the TDD cycle is **flip the existing test expectations to English (red) → translate the components so they pass (green) → verify no Cyrillic remains (green-playwright) → demo**. No new tests are written; existing assertions are updated. If any genuinely new test is added, tag it with `#210` per the tech binding.

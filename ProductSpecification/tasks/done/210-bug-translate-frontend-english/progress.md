@@ -13,7 +13,7 @@ Type: bug
 - [x] green-frontend (translate WelcomeView, DashboardShell, UserMenu, AppLoading; `lang="en"` already set in index.html; removed Vitest `it.fails` in home.smoke)
 - [x] green-playwright (removed 5 `test.fail` markers; `rg "\p{Cyrillic}" frontend/src frontend/acceptance` clean; lint clean; full Playwright chromium suite green — 25 passed)
 - [x] translate-mockups (translated 8 Story 03 home-page mockup HTML files to English; `rg "\p{Cyrillic}" ProductSpecification/stories/03-home-page/mockups` clean; no PNG screenshots to regenerate) — docs edit, no TDD cycle
-- [~] demo
+- [x] demo (recorded dashboard-page.spec.ts run → test-results/demo-dashboard-page.webm, gitignored; 1 passed)
 
 > Scoped per `workflow.md` (scoped steps): text-only change, no `.logic.ts`/API/align-design work, so the logic/api/design steps of the standard frontend sequence are omitted.
 > Scope expanded mid-task (after `red-frontend`): `rg "\p{Cyrillic}"` at fix time surfaced Russian beyond the spec's original list — the Playwright acceptance suite (`frontend/acceptance/tests/frontend/home/*` + statements), which would break `green-playwright` once components are English, and the Story 03 mockups. User opted to translate the mockups within Task 210 (see spec.md "Key Files").
