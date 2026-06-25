@@ -13,22 +13,24 @@ test.describe('Dashboard Page', () => {
 
   test(
     'UI Test Scenario 2.1: Authenticated home shows the dashboard shell with the current user - ' +
-      'Given an authenticated user with first name "Иван" and last name "Петров", ' +
+      'Given an authenticated user with first name "John" and last name "Doe", ' +
       'When the user navigates to the home page, ' +
       'Then the page displays the top bar with the "RPM" logo, ' +
-      'And the top bar displays the user\'s avatar with initials "ИП", ' +
-      'And the top bar displays the user\'s name "Иван Петров", ' +
+      'And the top bar displays the user\'s avatar with initials "JD", ' +
+      'And the top bar displays the user\'s name "John Doe", ' +
       'And the page displays the navigation sidebar, ' +
-      'And the main area displays the page title "Главная", ' +
+      'And the main area displays the page title "Home", ' +
       'And the main area displays placeholder dashboard content',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'Иван', lastName: 'Петров' });
+      // RED — DashboardShell still renders the Russian page title "Главная" (Task 210); GREEN translates it to "Home"
+      test.fail();
+      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await homePage.navigateToHomePage();
 
       await homePage.assertDashboardShellIsVisible();
       await homePage.assertTopbarLogoIsVisible();
-      await homePage.assertUserAvatarShowsInitials('ИП');
-      await homePage.assertUserNameIsVisible('Иван Петров');
+      await homePage.assertUserAvatarShowsInitials('JD');
+      await homePage.assertUserNameIsVisible('John Doe');
       await homePage.assertSidebarIsVisible();
       await homePage.assertPageTitleIsVisible();
       await homePage.assertPlaceholderContentIsVisible();

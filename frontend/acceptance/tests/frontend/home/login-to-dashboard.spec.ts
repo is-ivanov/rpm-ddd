@@ -26,7 +26,7 @@ test.describe('Login to Dashboard Navigation', () => {
       "And the dashboard shell is displayed with the user's name in the top bar",
     async () => {
       await authBackend.givenRegisteredUser('ipetrov', 'correct-pass');
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'Иван', lastName: 'Петров' });
+      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await loginPage.navigateToLoginPage();
 
       await loginPage.enterLoginText('ipetrov');
@@ -35,7 +35,7 @@ test.describe('Login to Dashboard Navigation', () => {
 
       await homePage.assertNavigatedToHomeUrl();
       await homePage.assertDashboardShellIsVisible();
-      await homePage.assertUserNameIsVisible('Иван Петров');
+      await homePage.assertUserNameIsVisible('John Doe');
     },
   );
 });

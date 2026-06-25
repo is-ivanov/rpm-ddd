@@ -16,10 +16,12 @@ test.describe('Welcome Page', () => {
       'Given the user is not authenticated, ' +
       'When the user navigates to the home page, ' +
       'Then the page displays the "RPM" logo, ' +
-      'And the page displays the tagline "Удалённый мониторинг пациентов", ' +
-      'And the page displays a button with text "Войти", ' +
+      'And the page displays the tagline "Remote Patient Monitoring", ' +
+      'And the page displays a button with text "Sign in", ' +
       'And the dashboard shell is not displayed',
     async () => {
+      // RED — WelcomeView still renders the Russian tagline/"Войти" button (Task 210); GREEN translates them
+      test.fail();
       await currentUserBackend.givenUnauthenticated();
       await homePage.navigateToHomePage();
 

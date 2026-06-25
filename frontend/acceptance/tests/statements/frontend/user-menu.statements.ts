@@ -7,7 +7,7 @@ const TEST_ID = {
   userMenuLogout: 'user-menu-logout',
 } as const;
 
-const LOGOUT_ACTION_TEXT = 'Выйти';
+const LOGOUT_ACTION_TEXT = 'Log out';
 
 export class UserMenuStatements {
   constructor(private readonly page: Page) {}
@@ -28,7 +28,7 @@ export class UserMenuStatements {
 
   async assertMenuShowsLogoutAction(): Promise<void> {
     await expect(this.userMenuLogout(), 'logout action is visible').toBeVisible();
-    await expect(this.userMenuLogout(), 'logout action text is exactly "Выйти"').toHaveText(LOGOUT_ACTION_TEXT);
+    await expect(this.userMenuLogout(), 'logout action text is exactly "Log out"').toHaveText(LOGOUT_ACTION_TEXT);
   }
 
   async clickLogout(): Promise<void> {

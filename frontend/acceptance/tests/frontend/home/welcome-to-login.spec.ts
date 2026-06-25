@@ -15,12 +15,14 @@ test.describe('Welcome to Login Navigation', () => {
   });
 
   test(
-    'UI Test Scenario 4.1: Clicking "Войти" on the welcome page opens the login page - ' +
+    'UI Test Scenario 4.1: Clicking "Sign in" on the welcome page opens the login page - ' +
       'Given the user is not authenticated, ' +
       'And the user is on the welcome page, ' +
-      'When the user clicks the "Войти" button, ' +
+      'When the user clicks the "Sign in" button, ' +
       'Then the user is navigated to the login page',
     async () => {
+      // RED — WelcomeView still renders the Russian "Войти" button (Task 210); GREEN translates it to "Sign in"
+      test.fail();
       await currentUserBackend.givenUnauthenticated();
       await homePage.navigateToHomePage();
       await homePage.assertLoginButtonIsVisible();
