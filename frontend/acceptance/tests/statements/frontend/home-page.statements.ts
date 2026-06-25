@@ -15,9 +15,9 @@ const TEST_ID = {
 } as const;
 
 const BRAND_LOGO_TEXT = 'RPM';
-const WELCOME_TAGLINE = 'Удалённый мониторинг пациентов';
-const LOGIN_BUTTON_TEXT = 'Войти';
-const PAGE_TITLE_TEXT = 'Главная';
+const WELCOME_TAGLINE = 'Remote Patient Monitoring';
+const LOGIN_BUTTON_TEXT = 'Sign in';
+const PAGE_TITLE_TEXT = 'Home';
 
 export class HomePageStatements {
   constructor(
@@ -44,12 +44,12 @@ export class HomePageStatements {
 
   async assertTaglineIsVisible(): Promise<void> {
     await expect(this.welcomeTagline(), 'tagline is visible').toBeVisible();
-    await expect(this.welcomeTagline(), 'tagline shows the exact Russian text').toHaveText(WELCOME_TAGLINE);
+    await expect(this.welcomeTagline(), 'tagline shows the exact text').toHaveText(WELCOME_TAGLINE);
   }
 
   async assertLoginButtonIsVisible(): Promise<void> {
     await expect(this.welcomeLoginButton(), 'login button is visible').toBeVisible();
-    await expect(this.welcomeLoginButton(), 'login button text is exactly "Войти"').toHaveText(LOGIN_BUTTON_TEXT);
+    await expect(this.welcomeLoginButton(), 'login button text is exactly "Sign in"').toHaveText(LOGIN_BUTTON_TEXT);
   }
 
   async clickLoginButton(): Promise<void> {
@@ -89,7 +89,7 @@ export class HomePageStatements {
 
   async assertPageTitleIsVisible(): Promise<void> {
     await expect(this.pageTitle(), 'page title is visible').toBeVisible();
-    await expect(this.pageTitle(), 'page title shows "Главная"').toHaveText(PAGE_TITLE_TEXT);
+    await expect(this.pageTitle(), 'page title shows "Home"').toHaveText(PAGE_TITLE_TEXT);
   }
 
   async assertPlaceholderContentIsVisible(): Promise<void> {

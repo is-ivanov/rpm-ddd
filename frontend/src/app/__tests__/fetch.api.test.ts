@@ -10,11 +10,11 @@ const BASE = import.meta.env.VITE_API_URL;
 
 const PROTECTED_PATH = '/api/auth/me';
 
-const IVAN_PETROV: AuthenticatedUser = {
-  login: 'ipetrov',
-  email: 'i.petrov@rpm.local',
-  firstName: 'Иван',
-  lastName: 'Петров',
+const JOHN_DOE: AuthenticatedUser = {
+  login: 'jdoe',
+  email: 'j.doe@rpm.local',
+  firstName: 'John',
+  lastName: 'Doe',
 };
 
 interface Problem {
@@ -57,7 +57,7 @@ describe('Shared API Fetch Layer', () => {
   it('resets the auth session when an API call returns 401', async () => {
     stubProblem(UNAUTHORIZED_PROBLEM);
     const store = useAuthStore();
-    store.$patch({ currentUser: IVAN_PETROV });
+    store.$patch({ currentUser: JOHN_DOE });
 
     const response = await apiFetch(PROTECTED_PATH);
 
@@ -69,12 +69,12 @@ describe('Shared API Fetch Layer', () => {
   it('leaves the auth session intact when an API call returns 403', async () => {
     stubProblem(FORBIDDEN_PROBLEM);
     const store = useAuthStore();
-    store.$patch({ currentUser: IVAN_PETROV });
+    store.$patch({ currentUser: JOHN_DOE });
 
     const response = await apiFetch(PROTECTED_PATH);
 
     expect(response.status).toBe(403);
-    expect(store.currentUser).toEqual(IVAN_PETROV);
+    expect(store.currentUser).toEqual(JOHN_DOE);
     expect(store.isAuthenticated).toBe(true);
   });
 });

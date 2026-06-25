@@ -18,11 +18,11 @@ test.describe('Logout to Welcome Navigation', () => {
     'UI Test Scenario 4.3: Logging out from the user menu returns to the welcome page - ' +
       'Given an authenticated user is on the dashboard, ' +
       'And the user has opened the user menu, ' +
-      'When the user clicks "Выйти", ' +
+      'When the user clicks "Log out", ' +
       'Then the session is ended, ' +
-      'And the user is shown the welcome page with the "Войти" button',
+      'And the user is shown the welcome page with the "Sign in" button',
     async () => {
-      await currentUserBackend.givenAuthenticatedUserUntilLogout({ firstName: 'Иван', lastName: 'Петров' });
+      await currentUserBackend.givenAuthenticatedUserUntilLogout({ firstName: 'John', lastName: 'Doe' });
       await homePage.navigateToHomePage();
       await homePage.clickUserAvatar();
 

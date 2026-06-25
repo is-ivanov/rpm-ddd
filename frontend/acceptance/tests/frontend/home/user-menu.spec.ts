@@ -16,25 +16,25 @@ test.describe('User Menu', () => {
 
   test(
     "UI Test Scenario 3.1: Opening the user menu shows the user's name, email, and logout action - " +
-      'Given an authenticated user with name "Иван Петров" and email "i.petrov@rpm.local", ' +
+      'Given an authenticated user with name "John Doe" and email "j.doe@rpm.local", ' +
       'And the user is on the dashboard, ' +
       'When the user clicks the avatar in the top bar, ' +
-      'Then a menu opens displaying the name "Иван Петров", ' +
-      'And the menu displays the email "i.petrov@rpm.local", ' +
-      'And the menu displays an action with text "Выйти"',
+      'Then a menu opens displaying the name "John Doe", ' +
+      'And the menu displays the email "j.doe@rpm.local", ' +
+      'And the menu displays an action with text "Log out"',
     async () => {
       await currentUserBackend.givenAuthenticatedUser({
-        firstName: 'Иван',
-        lastName: 'Петров',
-        email: 'i.petrov@rpm.local',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'j.doe@rpm.local',
       });
       await homePage.navigateToHomePage();
 
       await homePage.clickUserAvatar();
 
       await userMenu.assertMenuIsOpen();
-      await userMenu.assertMenuShowsName('Иван Петров');
-      await userMenu.assertMenuShowsEmail('i.petrov@rpm.local');
+      await userMenu.assertMenuShowsName('John Doe');
+      await userMenu.assertMenuShowsEmail('j.doe@rpm.local');
       await userMenu.assertMenuShowsLogoutAction();
     },
   );

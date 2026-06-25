@@ -11,11 +11,11 @@ const BASE = import.meta.env.VITE_API_URL;
 const ME_PATH = '/api/auth/me';
 const LOGOUT_PATH = '/api/auth/logout';
 
-const IVAN_PETROV: AuthenticatedUser = {
-  login: 'ipetrov',
-  email: 'i.petrov@rpm.local',
-  firstName: 'Иван',
-  lastName: 'Петров',
+const JOHN_DOE: AuthenticatedUser = {
+  login: 'jdoe',
+  email: 'j.doe@rpm.local',
+  firstName: 'John',
+  lastName: 'Doe',
 };
 
 function stubMe(body: JsonBodyType, init: ResponseInit): void {
@@ -26,10 +26,10 @@ function stubMeAuthenticated(): void {
   stubMe(
     {
       userId: '11111111-1111-1111-1111-111111111111',
-      login: 'ipetrov',
-      email: 'i.petrov@rpm.local',
-      firstName: 'Иван',
-      lastName: 'Петров',
+      login: 'jdoe',
+      email: 'j.doe@rpm.local',
+      firstName: 'John',
+      lastName: 'Doe',
       status: 'ACTIVE',
       roles: [],
     },
@@ -82,12 +82,12 @@ describe('Auth Store', () => {
 
     await store.loadMe();
 
-    expect(store.currentUser).toEqual(IVAN_PETROV);
+    expect(store.currentUser).toEqual(JOHN_DOE);
     expect(store.isAuthenticated).toBe(true);
     expect(store.dashboardUser).toEqual({
-      displayName: 'Иван Петров',
-      initials: 'ИП',
-      email: 'i.petrov@rpm.local',
+      displayName: 'John Doe',
+      initials: 'JD',
+      email: 'j.doe@rpm.local',
     });
   });
 
@@ -106,7 +106,7 @@ describe('Auth Store', () => {
     stubCsrfSetsCookie(captured);
     stubLogoutCapturing(captured);
     const store = useAuthStore();
-    store.$patch({ currentUser: IVAN_PETROV });
+    store.$patch({ currentUser: JOHN_DOE });
 
     await store.logout();
 
@@ -117,7 +117,7 @@ describe('Auth Store', () => {
 
   it('clears the current user on reset', () => {
     const store = useAuthStore();
-    store.$patch({ currentUser: IVAN_PETROV });
+    store.$patch({ currentUser: JOHN_DOE });
 
     store.reset();
 
