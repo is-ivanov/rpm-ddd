@@ -19,8 +19,8 @@ Type: feature
 ### Header version popover
 - [x] red-playwright (click help icon → popover shows version/commit/build time)
 - [x] red-frontend (map /actuator/info payload → view model: flatten + 7-char short commit)
-- [~] green-frontend
-- [ ] red-frontend-api (getAppInfo client + payload validation)
+- [x] green-frontend
+- [~] red-frontend-api (getAppInfo client + payload validation)
 - [ ] green-frontend-api
 - [ ] align-design (HelpCircle icon next to avatar + popover; loading state)
 - [ ] green-playwright

@@ -1,6 +1,9 @@
 import type { AppInfo, AppVersion } from './app-version.types';
 
 export function buildAppVersion(info: AppInfo): AppVersion {
-  void info;
-  return { version: '', commit: '', buildTime: '' };
+  return {
+    version: info.build.version,
+    commit: info.git.commit.id.slice(0, 7),
+    buildTime: info.build.time,
+  };
 }
