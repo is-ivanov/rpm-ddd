@@ -29,10 +29,10 @@ function stubMeAuthenticated(): void {
   stubMe(
     {
       userId: '11111111-1111-1111-1111-111111111111',
-      login: 'ipetrov',
-      email: 'i.petrov@rpm.local',
-      firstName: 'Иван',
-      lastName: 'Петров',
+      login: 'jdoe',
+      email: 'j.doe@rpm.local',
+      firstName: 'John',
+      lastName: 'Doe',
       status: 'ACTIVE',
       roles: [],
     },
@@ -58,10 +58,10 @@ describe('Current User API Client', () => {
     const expected: CurrentUserResult = {
       authenticated: true,
       user: {
-        login: 'ipetrov',
-        email: 'i.petrov@rpm.local',
-        firstName: 'Иван',
-        lastName: 'Петров',
+        login: 'jdoe',
+        email: 'j.doe@rpm.local',
+        firstName: 'John',
+        lastName: 'Doe',
       },
     };
     expect(result).toEqual(expected);

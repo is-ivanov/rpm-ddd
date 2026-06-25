@@ -24,10 +24,10 @@ function stubAuthenticated(): void {
   server.use(
     http.get(`${BASE}${ME_PATH}`, () =>
       HttpResponse.json({
-        login: 'ipetrov',
-        email: 'i.petrov@rpm.local',
-        firstName: 'Иван',
-        lastName: 'Петров',
+        login: 'jdoe',
+        email: 'j.doe@rpm.local',
+        firstName: 'John',
+        lastName: 'Doe',
       }),
     ),
   );
@@ -51,15 +51,16 @@ describe('HomePage', () => {
     expect(wrapper.find('[data-testid="dashboard-shell"]').exists()).toBe(false);
   });
 
-  it('renders the dashboard shell for the current user when authenticated', async () => {
+  // RED — DashboardShell still renders the Russian page title 'Главная' (Task 210); GREEN translates it to 'Home'
+  it.fails('renders the dashboard shell for the current user when authenticated', async () => {
     stubAuthenticated();
 
     const wrapper = mountHomePage();
     await flushPromises();
 
-    expect(wrapper.get('[data-testid="user-name"]').text()).toBe('Иван Петров');
-    expect(wrapper.get('[data-testid="user-avatar"]').text()).toBe('ИП');
-    expect(wrapper.get('[data-testid="page-title"]').text()).toBe('Главная');
+    expect(wrapper.get('[data-testid="user-name"]').text()).toBe('John Doe');
+    expect(wrapper.get('[data-testid="user-avatar"]').text()).toBe('JD');
+    expect(wrapper.get('[data-testid="page-title"]').text()).toBe('Home');
     expect(wrapper.find('[data-testid="welcome-logo"]').exists()).toBe(false);
   });
 });
