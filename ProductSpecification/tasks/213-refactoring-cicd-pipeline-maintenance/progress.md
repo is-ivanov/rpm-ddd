@@ -32,12 +32,12 @@ Type: refactoring
 - [x] commit
 
 ### Step 5: Least-privilege permissions
-- [~] implement (drop workflow-wide pages/id-token in build.yml; scope to deploy-report job)
-- [ ] verify (actionlint; confirm deploy-report still has pages: write + id-token: write)
-- [ ] commit
+- [x] implement (workflow-wide perms reduced to `contents: read`; pages/id-token scoped to deploy-report job only)
+- [x] verify (actionlint clean; deploy-report retains pages: write + id-token: write — confirmed via grep)
+- [x] commit
 
 ### Step 6: Node version sync
-- [ ] implement (align/centralize Node version; reconcile allure-report `lts/*` vs pinned 22.13.0)
+- [~] implement (align/centralize Node version; reconcile allure-report `lts/*` vs pinned 22.13.0)
 - [ ] verify (actionlint)
 - [ ] commit
 

@@ -43,11 +43,10 @@ on:
       - "package-lock.json"
       - "allurerc.mjs"
 
-# Pages deployment needs write access to Pages and an OIDC token; checkout needs read.
+# Least privilege by default: only checkout needs read. The elevated pages/id-token
+# scopes are granted per-job on deploy-report (the only job that deploys to Pages).
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # Cancel a superseded run on the same ref so a new push doesn't run a full
 # build + e2e in parallel with the previous one. main is exempt
@@ -262,6 +261,11 @@ jobs:
     if: always() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Only this job deploys to Pages — it alone gets the elevated scopes.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     concurrency:
       group: "pages"
       cancel-in-progress: false
