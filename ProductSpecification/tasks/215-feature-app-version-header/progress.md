@@ -21,8 +21,8 @@ Type: feature
 - [x] red-frontend (map /actuator/info payload → view model: flatten + 7-char short commit)
 - [x] green-frontend
 - [x] red-frontend-api (getAppInfo client + payload validation)
-- [~] green-frontend-api
-- [ ] align-design (HelpCircle icon next to avatar + popover; loading state)
+- [x] green-frontend-api
+- [~] align-design (HelpCircle icon next to avatar + popover; loading state)
 - [ ] green-playwright
 - [ ] demo
 

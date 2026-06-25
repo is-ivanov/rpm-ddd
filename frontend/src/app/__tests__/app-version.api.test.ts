@@ -15,8 +15,7 @@ function stubInfo(body: JsonBodyType): void {
 }
 
 describe('App Info API Client', () => {
-  // RED — getAppInfo not implemented yet (stub returns empty strings)
-  it.fails('maps GET /actuator/info into the AppInfo subset', async () => {
+  it('maps GET /actuator/info into the AppInfo subset', async () => {
     stubInfo({
       git: {
         branch: 'main',
