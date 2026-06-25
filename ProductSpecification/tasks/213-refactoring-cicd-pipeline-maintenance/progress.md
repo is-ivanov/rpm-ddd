@@ -37,12 +37,12 @@ Type: refactoring
 - [x] commit
 
 ### Step 6: Node version sync
-- [~] implement (align/centralize Node version; reconcile allure-report `lts/*` vs pinned 22.13.0)
-- [ ] verify (actionlint)
-- [ ] commit
+- [x] implement (added root `.nvmrc`=22.13.0; all 5 setup-node steps now use `node-version-file: .nvmrc`; allure-report `lts/*` drift removed)
+- [x] verify (actionlint clean; grep confirms 0 hardcoded node-version, all 5 use the file; node-version-file resolves from repo root per setup-node docs)
+- [x] commit
 
 ### Step 7: Nightly backend teardown
-- [ ] implement (use captured BACKEND_PID in an `if: always()` teardown step)
+- [~] implement (use captured BACKEND_PID in an `if: always()` teardown step)
 - [ ] verify (actionlint; workflow_dispatch nightly to confirm clean teardown)
 - [ ] commit
 
