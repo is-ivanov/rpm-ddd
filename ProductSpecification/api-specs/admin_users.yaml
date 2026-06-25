@@ -7,6 +7,10 @@ paths:
   /api/admin/users:
     get:
       summary: List all users for the admin grid
+      description: >
+        Returns the full user list in a deterministic default order
+        (createdAt DESC, userId DESC — newest first; userId is a UUIDv7 tiebreaker
+        guaranteeing a total order). The frontend re-sorts/filters client-side.
       operationId: listUsers
       tags:
         - admin-users
@@ -22,7 +26,7 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
+                $ref: './common.yaml#/components/schemas/ProblemDetailResponse'
         '500':
           description: Internal server error
 
@@ -50,13 +54,13 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
+                $ref: './common.yaml#/components/schemas/ProblemDetailResponse'
         '422':
           description: Validation error (e.g. duplicate login/email) with per-field details
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ValidationProblemDetailResponse'
+                $ref: './common.yaml#/components/schemas/ValidationProblemDetailResponse'
         '500':
           description: Internal server error
 
@@ -105,6 +109,10 @@ components:
         status:
           type: string
           enum: [PENDING, ACTIVE, LOCKED, INACTIVE]
+          description: >
+            Canonical lifecycle order (PENDING → ACTIVE → LOCKED → INACTIVE).
+            The Status filter lists options and the Status-column sort ranks
+            by this lifecycle order (the enum ordinal), NOT alphabetically.
         createdAt:
           type: string
           format: date-time
@@ -165,56 +173,3 @@ components:
         timeZone:
           type: string
           description: IANA zone id (e.g. Europe/Berlin); pre-filled with the app default
-
-    ProblemDetailResponse:
-      type: object
-      required:
-        - type
-        - title
-        - status
-      properties:
-        type:
-          type: string
-          description: URI reference to the error type
-        title:
-          type: string
-          description: Short human-readable summary
-        status:
-          type: integer
-          description: HTTP status code
-        detail:
-          type: string
-          description: Specific explanation of the error
-        instance:
-          type: string
-          description: URI reference to the specific occurrence
-
-    ValidationProblemDetailResponse:
-      allOf:
-        - $ref: '#/components/schemas/ProblemDetailResponse'
-        - type: object
-          properties:
-            fieldErrors:
-              type: array
-              items:
-                $ref: '#/components/schemas/FieldError'
-
-    FieldError:
-      type: object
-      required:
-        - code
-        - property
-        - message
-      properties:
-        code:
-          type: string
-        property:
-          type: string
-          description: Offending field (e.g. login, email)
-        message:
-          type: string
-        rejectedValue:
-          type: string
-          nullable: true
-        path:
-          type: string

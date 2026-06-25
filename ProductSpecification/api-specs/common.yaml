@@ -1,0 +1,68 @@
+openapi: 3.0.3
+info:
+  title: Common Schemas
+  version: 1.0.0
+  description: >
+    Shared schema components referenced by the other API specs via relative $ref
+    (e.g. './common.yaml#/components/schemas/ProblemDetailResponse'). RFC 9457
+    Problem Detail is the single error shape for every endpoint.
+
+# This file defines no paths; it is a schema library only.
+paths: {}
+
+components:
+  schemas:
+    ProblemDetailResponse:
+      type: object
+      description: RFC 9457 Problem Detail (application/problem+json)
+      required:
+        - type
+        - title
+        - status
+      properties:
+        type:
+          type: string
+          description: URI reference to the error type
+        title:
+          type: string
+          description: Short human-readable summary
+        status:
+          type: integer
+          description: HTTP status code
+        detail:
+          type: string
+          description: Specific explanation of the error
+        instance:
+          type: string
+          description: URI reference to the specific occurrence
+
+    ValidationProblemDetailResponse:
+      description: Problem Detail with per-field validation errors (422)
+      allOf:
+        - $ref: '#/components/schemas/ProblemDetailResponse'
+        - type: object
+          properties:
+            fieldErrors:
+              type: array
+              items:
+                $ref: '#/components/schemas/FieldError'
+
+    FieldError:
+      type: object
+      required:
+        - code
+        - property
+        - message
+      properties:
+        code:
+          type: string
+        property:
+          type: string
+          description: Offending field (e.g. login, email)
+        message:
+          type: string
+        rejectedValue:
+          type: string
+          nullable: true
+        path:
+          type: string
