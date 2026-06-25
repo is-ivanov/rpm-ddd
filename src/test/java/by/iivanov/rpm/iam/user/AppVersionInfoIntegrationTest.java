@@ -4,7 +4,6 @@ import by.iivanov.rpm.iam.user.fixtures.ActuatorApi;
 import by.iivanov.rpm.iam.user.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import io.qameta.allure.Issue;
-import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -27,21 +26,25 @@ class AppVersionInfoIntegrationTest extends AbstractApplicationIntegrationTest {
         var adminSession = authSessionFactory.loginAsAdmin();
         // WHEN: the user requests the actuator info endpoint
         var response = actuatorApi.info(adminSession);
-        // THEN: 200 with build version, git commit, and build time exposed
+        // THEN: 200 with the full info payload — build metadata and git commit (simple mode)
         response.assertOk("""
                 {
-                  "build": {
-                    "version": "0.0.1-SNAPSHOT",
-                    "time": "${json-unit.any-string}"
-                  },
                   "git": {
+                    "branch": "${json-unit.any-string}",
                     "commit": {
                       "id": "${json-unit.any-string}",
                       "time": "${json-unit.any-string}"
                     }
+                  },
+                  "build": {
+                    "artifact": "rpm-ddd",
+                    "name": "rpm-ddd",
+                    "time": "${json-unit.any-string}",
+                    "version": "0.0.1-SNAPSHOT",
+                    "group": "by.iivanov.rpm"
                   }
                 }
-                """, Option.IGNORING_EXTRA_FIELDS);
+                """);
     }
 
     @Issue("215")
