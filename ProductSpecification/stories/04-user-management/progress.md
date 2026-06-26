@@ -16,8 +16,8 @@
 
 ### Scenario 1.1: Authenticated user lists all users with resolved actor names
 - [x] red-acceptance (UserGridIntegrationTest — @ExpectedToFail; GET /api/admin/users stub → 500; RED confirmed, prediction all-YES)
-- [~] design
-- [ ] red-usecase
+- [x] design (Option A: read-model view-entity + ORM-resolved actor names + Null-Object "System"; ADR written)
+- [~] red-usecase
 - [ ] green-usecase
 - [S] red-domain (activate only if coverage/design-preview finds testable domain logic)
 - [S] green-domain
