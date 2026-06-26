@@ -9,8 +9,8 @@ Type: bug
 
 ### Fix: add fail-fast DB timeouts (JDBC + Hikari)
 - [x] red (wiring test: timeouts reach HikariDataSource bean + JDBC props; tag #214)
-- [~] green (apply Hikari + JDBC timeout config)
-- [ ] refactor
+- [x] green (apply Hikari + JDBC timeout config)
+- [x] refactor (no changes needed — config-only, test already clean)
 - [S] adapters-discovery (config-only, no new ports/adapters)
 
 ### Infra: Render health check

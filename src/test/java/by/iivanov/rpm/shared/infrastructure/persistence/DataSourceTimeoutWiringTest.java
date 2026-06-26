@@ -9,7 +9,6 @@ import java.util.Properties;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ExpectedToFail;
 
 /**
  * Wiring test for the fail-fast database timeouts (Task #214). Boots the shared full application
@@ -34,9 +33,6 @@ class DataSourceTimeoutWiringTest extends AbstractApplicationIntegrationTest {
     }
 
     @Test
-    @ExpectedToFail(
-            value = "GREEN adds Hikari fail-fast timeouts to application.yml",
-            withExceptions = AssertionError.class)
     @DisplayName("WHEN the application context is built EXPECT fail-fast DB timeouts wired into the Hikari pool")
     void hikariPool_carriesFailFastTimeouts() {
         // GIVEN

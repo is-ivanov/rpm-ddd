@@ -11,6 +11,18 @@
 # https://docs.spring.io/spring-boot/appendix/application-properties/index.html
 # ===================================================================
 spring:
+  datasource:
+    hikari:
+      # Fail-fast DB timeouts (Task 214). A stalled Supabase-pooler handshake must fail
+      # fast and let Render auto-retry instead of hanging the main startup thread ~13 min.
+      connection-timeout: 10000
+      validation-timeout: 5000
+      initialization-fail-timeout: 10000
+      data-source-properties:
+        # PostgreSQL JDBC driver timeouts (seconds) carried into the connection.
+        socketTimeout: 30
+        connectTimeout: 10
+        loginTimeout: 10
   jpa:
     hibernate:
       ddl-auto: validate
