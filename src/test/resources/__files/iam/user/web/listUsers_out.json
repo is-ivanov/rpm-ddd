@@ -1,0 +1,80 @@
+[
+  {
+    "userId": "019b76da-a800-7000-a957-f5fb8061a537",
+    "name": { "firstName": "Ann", "middleName": null, "lastName": "Lee" },
+    "login": "ann_lee",
+    "email": "ann.lee@localhost.com",
+    "status": "PENDING",
+    "audit": {
+      "createdAt": "2026-01-05T10:23:56.632Z",
+      "createdBy": { "firstName": "System", "middleName": "System", "lastName": "System" },
+      "updatedAt": "2026-01-05T10:23:56.632Z",
+      "updatedBy": { "firstName": "System", "middleName": "System", "lastName": "System" }
+    }
+  },
+  {
+    "userId": "019b76da-a800-7000-a957-f5fb8061a536",
+    "name": { "firstName": "Throttle", "middleName": "Test", "lastName": "Victim" },
+    "login": "throttle_victim",
+    "email": "throttle_victim@localhost.com",
+    "status": "ACTIVE",
+    "audit": {
+      "createdAt": "2026-01-01T00:00:00Z",
+      "createdBy": { "firstName": "System", "middleName": "", "lastName": "" },
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "updatedBy": { "firstName": "System", "middleName": "", "lastName": "" }
+    }
+  },
+  {
+    "userId": "019b76da-a800-7000-a957-f5fb8061a535",
+    "name": { "firstName": "Inactive", "middleName": "Test", "lastName": "User" },
+    "login": "inactive_user",
+    "email": "inactive@localhost.com",
+    "status": "INACTIVE",
+    "audit": {
+      "createdAt": "2026-01-01T00:00:00Z",
+      "createdBy": { "firstName": "System", "middleName": "", "lastName": "" },
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "updatedBy": { "firstName": "System", "middleName": "", "lastName": "" }
+    }
+  },
+  {
+    "userId": "019b76da-a800-7000-a957-f5fb8061a534",
+    "name": { "firstName": "Locked", "middleName": "Test", "lastName": "User" },
+    "login": "locked_user",
+    "email": "locked@localhost.com",
+    "status": "LOCKED",
+    "audit": {
+      "createdAt": "2026-01-01T00:00:00Z",
+      "createdBy": { "firstName": "System", "middleName": "", "lastName": "" },
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "updatedBy": { "firstName": "System", "middleName": "", "lastName": "" }
+    }
+  },
+  {
+    "userId": "019b76da-a800-7000-a957-f5fb8061a533",
+    "name": { "firstName": "Pending", "middleName": "Test", "lastName": "User" },
+    "login": "pending_user",
+    "email": "pending@localhost.com",
+    "status": "PENDING",
+    "audit": {
+      "createdAt": "2026-01-01T00:00:00Z",
+      "createdBy": { "firstName": "System", "middleName": "", "lastName": "" },
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "updatedBy": { "firstName": "System", "middleName": "", "lastName": "" }
+    }
+  },
+  {
+    "userId": "019b76da-a800-7000-a957-f5fb8061a532",
+    "name": { "firstName": "System", "middleName": "System", "lastName": "System" },
+    "login": "admin",
+    "email": "admin@localhost.com",
+    "status": "ACTIVE",
+    "audit": {
+      "createdAt": "2026-01-01T00:00:00Z",
+      "createdBy": { "firstName": "System", "middleName": "", "lastName": "" },
+      "updatedAt": "2026-01-01T00:00:00Z",
+      "updatedBy": { "firstName": "System", "middleName": "", "lastName": "" }
+    }
+  }
+]

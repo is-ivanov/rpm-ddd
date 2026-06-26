@@ -4,3 +4,4 @@ id;first_name;middle_name;last_name;email;login;password_hash;status;created_by;
 019b76da-a800-7000-a957-f5fb8061a534;Locked;Test;User;locked@localhost.com;locked_user;{noop}Locked@123;LOCKED;00000000-0000-0000-0000-000000000000;2026-01-01T00:00:00;0;0;
 019b76da-a800-7000-a957-f5fb8061a535;Inactive;Test;User;inactive@localhost.com;inactive_user;{noop}Inactive@123;INACTIVE;00000000-0000-0000-0000-000000000000;2026-01-01T00:00:00;0;0;
 019b76da-a800-7000-a957-f5fb8061a536;Throttle;Test;Victim;throttle_victim@localhost.com;throttle_victim;{noop}Throttle@123;ACTIVE;00000000-0000-0000-0000-000000000000;2026-01-01T00:00:00;0;0;
+019b76da-a800-7000-a957-f5fb8061a537;Ann;;Lee;ann.lee@localhost.com;ann_lee;{noop}Ann@123456;PENDING;019b76da-a800-7000-a957-f5fb8061a532;2026-01-05T10:23:56.632;0;0;
