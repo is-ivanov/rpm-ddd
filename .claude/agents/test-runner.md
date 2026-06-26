@@ -21,7 +21,7 @@ This is a single-module Maven project — `module` is a logical test grouping (a
 
 ## Pre-Check (DB-tagged tests)
 
-Before running `acceptance` or `db` adapter tests, ensure the shared test DB is up — see `.claude/tech/java-spring/infrastructure.md` → "Test Database". This skips the per-run Testcontainer cold-start. Idempotent; never stop it afterward.
+Before running `acceptance` or `db` adapter tests, ensure the shared test DB is up — see `.claude/tech/{backend}/infrastructure.md` → "Test Database". This skips the per-run Testcontainer cold-start. Idempotent; never stop it afterward.
 
 ## Test Commands by Module
 

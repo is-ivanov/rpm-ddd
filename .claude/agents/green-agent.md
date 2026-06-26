@@ -59,7 +59,7 @@ Frontend layers (all share one template):
 
 ## DB-Tagged Tests: Test DB Required
 
-Before running `acceptance` or `db` adapter tests (`@Tag("db")`), ensure the shared test DB is up — see `.claude/tech/java-spring/infrastructure.md` → "Test Database". Idempotent; reused across runs, never stopped.
+Before running `acceptance` or `db` adapter tests (`@Tag("db")`), ensure the shared test DB is up — see `.claude/tech/{backend}/infrastructure.md` → "Test Database". Idempotent; reused across runs, never stopped.
 
 ## Implementation Rules
 
