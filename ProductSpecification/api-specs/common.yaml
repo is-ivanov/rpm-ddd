@@ -66,3 +66,47 @@ components:
           nullable: true
         path:
           type: string
+
+    PersonNameResponse:
+      type: object
+      description: >
+        A person's name broken into parts, reused by any read model that exposes one
+        (users, patients, audit actors). The frontend composes an abbreviated label
+        ("J. Doe") and a full "First [Middle] Last" tooltip from the parts. The seed/SYSTEM
+        actor is returned as firstName "System" with empty middleName and lastName.
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+          nullable: true
+        lastName:
+          type: string
+          description: Empty for the SYSTEM actor
+
+    AuditResponse:
+      type: object
+      description: >
+        Audit metadata of an auditable read model: when it was created and last updated,
+        and the resolved actor names behind each change (init: updated = created).
+      required:
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+          description: UTC instant the resource was created (ISO 8601)
+        createdBy:
+          $ref: '#/components/schemas/PersonNameResponse'
+        updatedAt:
+          type: string
+          format: date-time
+          description: UTC instant of the last update (init = createdAt)
+        updatedBy:
+          $ref: '#/components/schemas/PersonNameResponse'

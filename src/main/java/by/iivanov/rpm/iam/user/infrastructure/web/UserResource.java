@@ -42,7 +42,7 @@ class UserResource {
      * List all users for the admin grid (resolved actor names, deterministic order).
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    List<UserRowResponse> listUsers() {
+    List<UserSummaryResponse> listUsers() {
         throw new UnsupportedOperationException();
     }
 }
