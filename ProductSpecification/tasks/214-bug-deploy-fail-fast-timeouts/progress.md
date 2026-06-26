@@ -18,8 +18,8 @@ Type: bug
      (authenticated /info, denyAll rest). So the Render probe path needs a security scenario:
      expose health + add a narrow PUBLIC allow-list entry for GET /actuator/health, keeping
      all other /actuator/** closed. User approved full TDD implementation. -->
-- [~] red (security: anon GET /actuator/health -> 200 {status:UP}; other /actuator/** stay 401; tag #214)
-- [ ] green (expose health in application.yml + permit GET /actuator/health in SecurityConfig + healthCheckPath in infra/render.yaml)
+- [x] red (security: anon GET /actuator/health -> 200 {status:UP}; other /actuator/** stay 401; tag #214)
+- [~] green (expose health in application.yml + permit GET /actuator/health in SecurityConfig + healthCheckPath in infra/render.yaml)
 - [ ] refactor
 
 ## Full-Stack Journey
