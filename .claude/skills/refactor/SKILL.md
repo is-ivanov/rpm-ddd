@@ -38,6 +38,9 @@ Spawns `refactor-agent` for code improvements.
 - `parameterize-helper.md` - Add parameters to test helpers
 - `inline-test-params.md` - Simplify test→statement data flow
 - `replace-map-with-dto.md` - Replace Map.of() with typed DTO
+- `replace-jsonnode-with-dto.md` - Replace untyped JsonNode traversal with typed DTO
+- `recursive-comparison.md` - Replace manual per-field assertions with recursive comparison
+- `test-data-builder.md` - Extract builder for repeated test entity construction
 - `rest-response-dto.md` - Wrap in REST DTO for snake_case conversion
 - `move-to-data.md` - Move behavior, serialization, factories to data owner
 - `simplify-expressions.md` - Static imports, method references, inline variables
@@ -51,6 +54,7 @@ Spawns `refactor-agent` for code improvements.
 
 - `extract-component.md` - Extract JSX block into field/section component
 - `extract-shared-ui.md` - Move reusable component to `app/components/ui/`
+- `extract-tailwind-class.md` - Extract opaque Tailwind arbitrary-value utilities to an @apply class
 - `extract-test-fixture.md` - Extract MSW response fixtures, stub helpers, assertion helpers
 
 ## Constraints
