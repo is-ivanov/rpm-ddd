@@ -40,12 +40,8 @@ logging:
 
 # ===================================================================
 # Actuator (management) properties.
-# Expose the info and health endpoints over the web. info surfaces the deployed
-# build version, git commit, and build time (Task 215). health is the Render
-# deploy health check probe path (Task 214) and is the only PUBLIC actuator
-# endpoint. Other endpoints (env, beans) stay closed. Security permits
-# authenticated GET /actuator/info, anonymous GET /actuator/health, and denies
-# the rest of /actuator/**.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/reference/actuator/index.html
 # ===================================================================
 management:
   endpoints:
@@ -54,13 +50,10 @@ management:
         include: info, health
   endpoint:
     health:
-      # Render uses a single HTTP health-check path, not Kubernetes liveness/readiness
-      # probes, so keep the public payload the canonical {"status":"UP"}.
       probes:
         enabled: false
   health:
-    # A flaky SMTP server must NOT fail the Render deploy health check: the app is
-    # alive (and DB-connected) even when mail delivery is temporarily unavailable.
+    # A flaky SMTP server must NOT fail the deploy health check.
     mail:
       enabled: false
   info:
