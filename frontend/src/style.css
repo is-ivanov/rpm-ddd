@@ -66,6 +66,10 @@
     @apply overflow-hidden rounded-lg bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)];
   }
 
+  .dropdown-anchor {
+    @apply absolute right-0 top-[calc(100%+8px)];
+  }
+
   .complexity-rule {
     @apply mb-1 flex items-center gap-2 text-[13px];
   }

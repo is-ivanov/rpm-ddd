@@ -47,6 +47,8 @@ class SecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/api/**")
                                 .authenticated()
+                                .requestMatchers(HttpMethod.GET, "/actuator/info")
+                                .authenticated()
                                 .requestMatchers(HttpMethod.GET, SpaRoutes.SPA_ROUTE_PATTERN)
                                 .permitAll()
                                 .anyRequest()

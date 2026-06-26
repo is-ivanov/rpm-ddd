@@ -27,6 +27,24 @@ logging:
     org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: error
 
 # ===================================================================
+# Actuator (management) properties.
+# Expose ONLY the info endpoint over the web; it surfaces the deployed build
+# version, git commit, and build time (Task 215). Other endpoints (health,
+# env, beans) stay closed. Security permits authenticated GET /actuator/info
+# and denies the rest of /actuator/**.
+# ===================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info
+  info:
+    git:
+      mode: simple
+    build:
+      enabled: true
+
+# ===================================================================
 # Error handling application properties.
 # Full reference is available at:
 # https://wimdeblauwe.github.io/error-handling-spring-boot-starter/current/#properties
