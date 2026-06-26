@@ -1,4 +1,4 @@
-package by.iivanov.rpm.shared.web;
+package by.iivanov.rpm.shared.infrastructure.web.responses;
 
 import org.jspecify.annotations.Nullable;
 

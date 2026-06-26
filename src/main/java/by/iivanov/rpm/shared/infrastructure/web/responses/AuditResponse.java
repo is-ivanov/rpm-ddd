@@ -1,4 +1,4 @@
-package by.iivanov.rpm.shared.web;
+package by.iivanov.rpm.shared.infrastructure.web.responses;
 
 import java.time.Instant;
 
