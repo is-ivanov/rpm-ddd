@@ -7,26 +7,32 @@ import by.iivanov.rpm.testing.session.SessionContext;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
 /**
- * Raw transport API for the Spring Boot Actuator {@code info} endpoint.
- *
- * <p>This bean stays singleton and transport-only. It exposes the shared {@code /actuator/info}
- * path so tests can request the deployed application version metadata, with or without an
- * authenticated session.
+ * Raw transport API for the Spring Boot Actuator endpoints.
  */
 @WebApi
 public class ActuatorApi extends AbstractApi {
 
-    private static final String BASE_URI = "/actuator/info";
+    private static final String INFO_URI = "/actuator/info";
+    private static final String HEALTH_URI = "/actuator/health";
+    private static final String ENV_URI = "/actuator/env";
 
     public ActuatorApi(RestTestClient restClient) {
         super(restClient);
     }
 
     public AssertionResponse info() {
-        return get(BASE_URI);
+        return get(INFO_URI);
     }
 
     public AssertionResponse info(SessionContext session) {
-        return get(BASE_URI, session);
+        return get(INFO_URI, session);
+    }
+
+    public AssertionResponse health() {
+        return get(HEALTH_URI);
+    }
+
+    public AssertionResponse env() {
+        return get(ENV_URI);
     }
 }
