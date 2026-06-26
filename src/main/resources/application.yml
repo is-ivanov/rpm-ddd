@@ -11,6 +11,18 @@
 # https://docs.spring.io/spring-boot/appendix/application-properties/index.html
 # ===================================================================
 spring:
+  datasource:
+    hikari:
+      # Fail-fast DB timeouts (Task 214). A stalled Supabase-pooler handshake must fail
+      # fast and let Render auto-retry instead of hanging the main startup thread ~13 min.
+      connection-timeout: 10000
+      validation-timeout: 5000
+      initialization-fail-timeout: 10000
+      data-source-properties:
+        # PostgreSQL JDBC driver timeouts (seconds) carried into the connection.
+        socketTimeout: 30
+        connectTimeout: 10
+        loginTimeout: 10
   jpa:
     hibernate:
       ddl-auto: validate
@@ -28,16 +40,22 @@ logging:
 
 # ===================================================================
 # Actuator (management) properties.
-# Expose ONLY the info endpoint over the web; it surfaces the deployed build
-# version, git commit, and build time (Task 215). Other endpoints (health,
-# env, beans) stay closed. Security permits authenticated GET /actuator/info
-# and denies the rest of /actuator/**.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/reference/actuator/index.html
 # ===================================================================
 management:
   endpoints:
     web:
       exposure:
-        include: info
+        include: info, health
+  endpoint:
+    health:
+      probes:
+        enabled: false
+  health:
+    # A flaky SMTP server must NOT fail the deploy health check.
+    mail:
+      enabled: false
   info:
     git:
       mode: simple

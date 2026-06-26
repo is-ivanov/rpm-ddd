@@ -6,6 +6,7 @@ services:
     region: frankfurt
     image:
       url: ghcr.io/is-ivanov/rpm-ddd:latest
+    healthCheckPath: /actuator/health
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
