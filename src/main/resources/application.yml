@@ -40,16 +40,29 @@ logging:
 
 # ===================================================================
 # Actuator (management) properties.
-# Expose ONLY the info endpoint over the web; it surfaces the deployed build
-# version, git commit, and build time (Task 215). Other endpoints (health,
-# env, beans) stay closed. Security permits authenticated GET /actuator/info
-# and denies the rest of /actuator/**.
+# Expose the info and health endpoints over the web. info surfaces the deployed
+# build version, git commit, and build time (Task 215). health is the Render
+# deploy health check probe path (Task 214) and is the only PUBLIC actuator
+# endpoint. Other endpoints (env, beans) stay closed. Security permits
+# authenticated GET /actuator/info, anonymous GET /actuator/health, and denies
+# the rest of /actuator/**.
 # ===================================================================
 management:
   endpoints:
     web:
       exposure:
-        include: info
+        include: info, health
+  endpoint:
+    health:
+      # Render uses a single HTTP health-check path, not Kubernetes liveness/readiness
+      # probes, so keep the public payload the canonical {"status":"UP"}.
+      probes:
+        enabled: false
+  health:
+    # A flaky SMTP server must NOT fail the Render deploy health check: the app is
+    # alive (and DB-connected) even when mail delivery is temporarily unavailable.
+    mail:
+      enabled: false
   info:
     git:
       mode: simple

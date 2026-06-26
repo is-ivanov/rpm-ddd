@@ -5,7 +5,6 @@ import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import io.qameta.allure.Issue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.http.HttpStatus;
 
 @Issue("214")
@@ -18,7 +17,6 @@ class HealthCheckIntegrationTest extends AbstractApplicationIntegrationTest {
     }
 
     @Test
-    @ExpectedToFail(withExceptions = AssertionError.class)
     @DisplayName("Anonymous health probe is permitted for the Render health check")
     void should_returnOk_when_anonymousRequestsHealth() {
         // GIVEN: no authenticated session

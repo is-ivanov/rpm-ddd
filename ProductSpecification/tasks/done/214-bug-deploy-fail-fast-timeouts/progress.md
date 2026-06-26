@@ -19,8 +19,8 @@ Type: bug
      expose health + add a narrow PUBLIC allow-list entry for GET /actuator/health, keeping
      all other /actuator/** closed. User approved full TDD implementation. -->
 - [x] red (security: anon GET /actuator/health -> 200 {status:UP}; other /actuator/** stay 401; tag #214)
-- [~] green (expose health in application.yml + permit GET /actuator/health in SecurityConfig + healthCheckPath in infra/render.yaml)
-- [ ] refactor
+- [x] green (expose health in application.yml + permit GET /actuator/health in SecurityConfig + healthCheckPath in infra/render.yaml; disabled mail health indicator + probes so the deploy probe is the canonical {status:UP} and SMTP outage can't fail it)
+- [x] refactor (no changes needed — config-only + pattern-following security matcher)
 
 ## Full-Stack Journey
 - [S] fullstack-journey (no-impact: config-only, no rendered critical path change)
