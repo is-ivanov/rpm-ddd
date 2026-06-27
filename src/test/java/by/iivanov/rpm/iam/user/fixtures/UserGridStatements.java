@@ -7,6 +7,7 @@ import by.iivanov.rpm.iam.user.infrastructure.web.UserSummaryResponse;
 import by.iivanov.rpm.shared.infrastructure.web.responses.AuditResponse;
 import by.iivanov.rpm.shared.infrastructure.web.responses.PersonNameResponse;
 import by.iivanov.rpm.testing.session.SessionContext;
+import java.time.Instant;
 import java.util.Arrays;
 import org.springframework.stereotype.Component;
 
@@ -28,37 +29,32 @@ public class UserGridStatements {
     /**
      * Asserts the user with the given id is listed in the admin grid exactly as registered — name, login and
      * email echoing the submitted request, status PENDING, both audit actors resolving to the seeded admin's
-     * name — with createdAt equal to updatedAt. The full row is pinned by recursive comparison; the audit
-     * timestamps are echoed into the expected row because they are verified by the createdAt==updatedAt
-     * invariant rather than against an absolute instant.
+     * name, and createdAt and updatedAt both at the registration instant. The full row is pinned by exact
+     * equality against the expected row.
      *
      * @param admin the authenticated admin session used to read the grid
      * @param userId the id of the freshly-created user to locate in the grid
      * @param registration the registration request whose fields the listed row must echo
+     * @param registeredAt the instant the user was registered at — both audit timestamps must equal it
      */
     public void assertUserListedAsPendingCreatedByAdmin(
-            SessionContext admin, String userId, RegisterUserRequest registration) {
+            SessionContext admin, String userId, RegisterUserRequest registration, Instant registeredAt) {
         UserSummaryResponse[] users = userApi.listUsers(admin).assertOk().extractBodyAs(UserSummaryResponse[].class);
         UserSummaryResponse row = findById(users, userId);
-        AuditResponse audit = row.audit();
         then(row)
                 .as("Freshly-created user %s listed in the admin grid as PENDING created by the admin", userId)
-                .usingRecursiveComparison()
-                .isEqualTo(expectedPendingRow(userId, registration, audit));
-        then(audit.createdAt())
-                .as("createdAt equals updatedAt for freshly-created user %s", userId)
-                .isEqualTo(audit.updatedAt());
+                .isEqualTo(expectedPendingRow(userId, registration, registeredAt));
     }
 
     private UserSummaryResponse expectedPendingRow(
-            String userId, RegisterUserRequest registration, AuditResponse audit) {
+            String userId, RegisterUserRequest registration, Instant registeredAt) {
         return new UserSummaryResponse(
                 userId,
                 new PersonNameResponse(registration.firstName(), registration.middleName(), registration.lastName()),
                 registration.login(),
                 registration.email(),
                 "PENDING",
-                new AuditResponse(audit.createdAt(), SEEDED_ADMIN_ACTOR, audit.updatedAt(), SEEDED_ADMIN_ACTOR));
+                new AuditResponse(registeredAt, SEEDED_ADMIN_ACTOR, registeredAt, SEEDED_ADMIN_ACTOR));
     }
 
     private UserSummaryResponse findById(UserSummaryResponse[] users, String userId) {
