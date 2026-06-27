@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.junitpioneer.jupiter.ExpectedToFail;
 
 @WebTest
 @Execution(ExecutionMode.SAME_THREAD)
@@ -61,10 +60,6 @@ class UserResourceTest {
         @Test
         @DisplayName("Create with a duplicate email returns a field-level 422: "
                 + "WHEN email already exists EXPECT 422 with an email field error")
-        @ExpectedToFail(
-                value = "TDD Red Phase - no EmailAlreadyExistsExceptionHandler yet; the unmapped "
-                        + "exception falls through to the starter default (500), not a 422 field error",
-                withExceptions = AssertionError.class)
         void should_return422WithEmailFieldError_when_emailAlreadyExists() {
             givenEmailAlreadyExists();
 

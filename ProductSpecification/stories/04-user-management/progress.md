@@ -65,9 +65,9 @@
 > Mirrors Scenario 2.1 (duplicate login) for the email field: EmailAlreadyExistsException had NO
 > web-layer mapping → fell through to the error-handling starter default (500 with a problem type but
 > no field-level 422/fieldErrors). Web-slice (L2): red-adapter rest → green-adapter rest.
-- [~] red-adapter rest (UserResourceTest.should_return422WithEmailFieldError_when_emailAlreadyExists: stub UserRegistrationService → EmailAlreadyExistsException; assert 422 + ProblemDetail + fieldErrors[email]; @ExpectedToFail(AssertionError.class); RED confirmed 500-vs-422, prediction all-YES; 3 run/0 fail/1 skip. Also fixed a latent mock-leak: auto-registered Mockito mocks are NOT reset between web-slice tests, so the existing login test broke on re-stub (given(mock.method()) invokes the already-throwing stub) → switched both duplicate-* stubs to willThrow(...).given(mock).method() which doesn't invoke during setup.)
+- [x] red-adapter rest (UserResourceTest.should_return422WithEmailFieldError_when_emailAlreadyExists: stub UserRegistrationService → EmailAlreadyExistsException; assert 422 + ProblemDetail + fieldErrors[email]; @ExpectedToFail(AssertionError.class); RED confirmed 500-vs-422, prediction all-YES; 3 run/0 fail/1 skip. Also fixed a latent mock-leak: auto-registered Mockito mocks are NOT reset between web-slice tests, so the existing login test broke on re-stub (given(mock.method()) invokes the already-throwing stub) → switched both duplicate-* stubs to willThrow(...).given(mock).method() which doesn't invoke during setup.)
 - [S] design (mirrors 2.1 — validation-failed field error mapping; no ADR)
-- [ ] green-adapter rest
+- [x] green-adapter rest (EmailAlreadyExistsExceptionHandler mirrors LoginAlreadyExistsExceptionHandler → 422 VALIDATION_FAILED + ApiFieldError[ALREADY_EXISTS/email]; EmailAlreadyExistsException gained an email() accessor for the rejectedValue; @ExpectedToFail removed; handler auto-discovered by WebTest @ComponentScan (no @Import). UserResourceTest 3/0/0; full suite 160/0/0; spotbugs cast-FP covered by the scoped *ExceptionHandler exclude-filter; checkstyle/pmd green.)
 - [S] red-usecase (duplicate-email detection already implemented & tested at application level — UserRegistrationPolicy)
 - [S] green-usecase
 - [S] red-domain
