@@ -53,4 +53,20 @@
     <Class name="~.*\$jMolecules\$.*"/>
   </Match>
 
+  <!--
+    BC_UNCONFIRMED_CAST — false positive on error-handling-spring-boot-starter
+    ApiExceptionHandler implementations. The interface contract guarantees that
+    handle(Throwable) is only ever called after canHandle(Throwable) returned true
+    (documented on ApiExceptionHandler), so the downcast inside handle() is safe — but
+    SpotBugs cannot see that cross-method guarantee. The starter's own handlers cast the
+    same way (e.g. TypeMismatchApiExceptionHandler → TypeMismatchException). The
+    code-level alternative (pattern-match + throw on the impossible branch) only trades
+    this finding for a permanently-uncovered defensive branch. Scoped by the
+    `*ExceptionHandler` naming convention in the web adapter package.
+  -->
+  <Match>
+    <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    <Class name="~.*\.infrastructure\.web\..*ExceptionHandler"/>
+  </Match>
+
 </FindBugsFilter>

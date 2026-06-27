@@ -14,9 +14,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.junitpioneer.jupiter.ExpectedToFail;
+import org.springframework.context.annotation.Import;
 
 @WebTest
+@Import(LoginAlreadyExistsExceptionHandler.class)
 @Execution(ExecutionMode.SAME_THREAD)
 class UserResourceTest {
 
@@ -41,7 +42,6 @@ class UserResourceTest {
         }
 
         @Test
-        @ExpectedToFail(withExceptions = AssertionError.class)
         @DisplayName("WHEN login already exists EXPECT 422 with a login field error")
         void should_return422WithLoginFieldError_when_loginAlreadyExists() {
             givenLoginAlreadyExists();

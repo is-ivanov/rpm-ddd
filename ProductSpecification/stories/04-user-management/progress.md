@@ -39,7 +39,7 @@
 > property:login, message:"Login already exists", rejectedValue, path:login}].
 - [x] red-adapter rest (UserResourceTest @WebTest: stub UserRegistrationService → LoginAlreadyExistsException; assert 422 + ProblemDetail + fieldErrors[login]; @ExpectedToFail; RED 422-vs-500 prediction all-YES; 2 run/0 fail/1 skip; test-review clean; EXISTING_LOGIN const removes param-always-same IDE warnings)
 - [x] design (Option A — validation-failed field error; chosen by user, no ADR needed for a web-layer mapping)
-- [~] green-adapter rest (map LoginAlreadyExistsException → 422 + login field error via the error-handling starter)
+- [x] green-adapter rest (LoginAlreadyExistsExceptionHandler: wim-deblauwe ApiExceptionHandler maps the domain exception → ApiErrorResponse(422, VALIDATION_FAILED) + ApiFieldError[ALREADY_EXISTS/login]; LoginAlreadyExistsException gains a login() accessor for the rejectedValue; test @Imports the handler into the @WebMvcTest slice (a plain @Component isn't slice-scanned); SpotBugs BC_UNCONFIRMED_CAST FP suppressed in exclude-filter. 2/0/0 green; coverage 100%; spotbugs/checkstyle/pmd green)
 - [S] red-usecase (duplicate-login detection already implemented & tested at application level — UserRegistrationPolicy)
 - [S] green-usecase (no new usecase logic)
 - [S] red-domain
