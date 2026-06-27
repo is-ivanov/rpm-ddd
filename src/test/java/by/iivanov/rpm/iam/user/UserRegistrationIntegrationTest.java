@@ -20,7 +20,7 @@ class UserRegistrationIntegrationTest extends AbstractMailIntegrationTest {
      * the live clock rather than coincidentally matching a seed value, while staying within the admin
      * session's validity window.
      */
-    private static final Instant REGISTERED_AT = Instant.parse("2026-01-20T12:00:00Z");
+    private static final Instant REGISTERED_AT = Instant.parse("2026-01-20T12:34:17.482Z");
 
     private final AuthSessionFactory authSessionFactory;
     private final UserApi userApi;

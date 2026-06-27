@@ -174,6 +174,8 @@ Above the per-PR pyramid sits a single growing **full-stack journey** — a top-
 ### Time-Dependent Behavior
 **NEVER mutate storage data to simulate time passing.** Use a test clock and advance it instead. For example, to expire a session: create it normally (30-day expiry), then advance the clock past expiry. Directly overwriting entities with past timestamps couples tests to internal storage structure and misrepresents how the system actually works.
 
+**Arbitrary test instants must be realistic — non-round.** When a test needs an arbitrary "some moment" timestamp (a sample creation time, a clock value to advance to, a fixture date), include minutes, seconds, AND fractional seconds (e.g. `…T12:34:17.482Z`), not a value zeroed to the minute or second (`…T12:00:00Z`). Real-world timestamps almost never land on a whole minute; a zeroed instant reads as a placeholder and can hide precision bugs that only surface with sub-second values (truncation, rounding, formatting, equality after a serialization round-trip). Reserve round/zeroed instants for cases where the round value is itself the point — a tested boundary (exactly midnight, an exact interval edge) — and make that intent explicit. This applies to all test data: literals in test classes, Statements/Scope defaults, and seed/fixture files (CSV, JSON, SQL).
+
 ### Scheduled / Recurring Jobs
 A scheduled job has two separable concerns — its **logic** (what it does each run) and its **wiring** (that it is actually scheduled to run in production). Direct invocation tests only the logic; the wiring is the part that silently rots (a forgotten schedule annotation never fires, and no logic test notices).
 
