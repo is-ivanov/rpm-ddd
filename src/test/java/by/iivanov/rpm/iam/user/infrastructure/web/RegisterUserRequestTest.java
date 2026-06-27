@@ -3,8 +3,6 @@ package by.iivanov.rpm.iam.user.infrastructure.web;
 import static org.instancio.Select.field;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 
-import by.iivanov.rpm.iam.user.domain.EmailAddress;
-import by.iivanov.rpm.iam.user.domain.Login;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.Email;
@@ -24,7 +22,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class RegisterUserRequestTest {
 
+    // Contract limits pinned as literals on purpose: a boundary test must FAIL (not silently follow)
+    // if the production limit changes. Mirrors @RequiredString/@Size(255), Login.MAX_LENGTH (50),
+    // EmailAddress.MAX_LENGTH (254), and RegisterUserRequest.timeZone @Size(64).
     private static final int NAME_MAX = 255;
+    private static final int LOGIN_MAX = 50;
+    private static final int EMAIL_MAX = 254;
     private static final int TIME_ZONE_MAX = 64;
 
     private final Validator validator =
@@ -83,8 +86,8 @@ class RegisterUserRequestTest {
     static Stream<Arguments> invalidFields() {
         String blank = " \t \n";
         String tooLongName = "a".repeat(NAME_MAX + 1);
-        String tooLongLogin = "a".repeat(Login.MAX_LENGTH + 1);
-        String longLocalPart = "a".repeat(EmailAddress.MAX_LENGTH) + "@example.com";
+        String tooLongLogin = "a".repeat(LOGIN_MAX + 1);
+        String longLocalPart = "a".repeat(EMAIL_MAX) + "@example.com";
         String tooLongTimeZone = "a".repeat(TIME_ZONE_MAX + 1);
         return Stream.of(
                 blankCase("firstName", field(RegisterUserRequest::firstName), blank),
@@ -93,7 +96,7 @@ class RegisterUserRequestTest {
                 blankCase("lastName", field(RegisterUserRequest::lastName), blank),
                 sizeCase("lastName", field(RegisterUserRequest::lastName), tooLongName, NAME_MAX),
                 blankCase("login", field(RegisterUserRequest::login), blank),
-                sizeCase("login", field(RegisterUserRequest::login), tooLongLogin, Login.MAX_LENGTH),
+                sizeCase("login", field(RegisterUserRequest::login), tooLongLogin, LOGIN_MAX),
                 // A non-empty blank email is also malformed, so @NotBlank and @Email both fire.
                 argumentSet(
                         "Invalid email: blank",
@@ -110,7 +113,7 @@ class RegisterUserRequestTest {
                         "Invalid email: too long",
                         field(RegisterUserRequest::email),
                         longLocalPart,
-                        List.of(size("email", longLocalPart, EmailAddress.MAX_LENGTH), emailFormat(longLocalPart))),
+                        List.of(size("email", longLocalPart, EMAIL_MAX), emailFormat(longLocalPart))),
                 blankCase("timeZone", field(RegisterUserRequest::timeZone), blank),
                 sizeCase("timeZone", field(RegisterUserRequest::timeZone), tooLongTimeZone, TIME_ZONE_MAX));
     }
