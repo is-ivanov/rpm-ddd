@@ -17,12 +17,9 @@ import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.http.HttpStatus;
 
 @WebTest
-@Execution(ExecutionMode.SAME_THREAD)
 class AuthResourceTest {
 
     private final AuthApi authApi;
@@ -59,7 +56,6 @@ class AuthResourceTest {
 
     @Nested
     @DisplayName("test GET '/auth/activate' endpoint")
-    @Execution(ExecutionMode.SAME_THREAD)
     class ValidateActivationTokenTest {
 
         @Test
