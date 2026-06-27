@@ -27,15 +27,24 @@
 - [x] green-adapter db (corrective): UserSummary projection was under-modeled (only userId + 2 ActorNames) vs the ADR/acceptance fixture (full grid row). Enriched UserSummary with name/login/email/status/createdAt/updatedAt (trivial pass-through, no new db test — Level 1 covers); toSummary maps them from UserSummaryView; db test narrowed two actor assertions from full-object eq to extracting(createdBy, updatedBy). db test GREEN; checkstyle+pmd+spotbugs green.
 - [x] green-acceptance (ListUsersService + UserResource.listUsers handler + UserSummaryResponse.from mapper created under the simple-delegation plumbing exception; @ExpectedToFail removed. Surfaced + fixed 4 prerequisite gaps: (1) @EntityGraph(createdBy,updatedBy) fetch-join on the view repo — LazyInitializationException because actor @ManyToOne was LAZY and mapping ran outside a session; (2) TZ-naive seed timestamps in timestamptz interpreted in JVM TZ → SET TIME ZONE 'UTC' in db.changelog-test.xml (Liquibase rejects the offset-bearing 'Z' literal, so the fix is session-level not value-level); (3) ann_lee.middle_name empty-string → NULL in user.csv; (4) shared-DB pollution — full-context tests accumulate committed users so the read-all grid asserted 6 but saw 12: added baseline reset (@BeforeEach deletes non-seed/non-system iam_user) to AbstractApplicationIntegrationTest and DELETED the redundant JpaUserSummaryQueryTest per ADR (duplicated L1). Full suite 147/0/0; checkstyle+pmd+spotbugs green.)
 
-### Scenario 2.1: Create with a duplicate login returns a field-level 422
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+### Scenario 2.1: Create with a duplicate login returns a field-level 422 (web-slice, Level 2)
+> Duplicate login/email detection already exists & is tested at the application level
+> (UserRegistrationPolicy + usecase tests). The only NEW behavior is the web-layer
+> exception→HTTP mapping, so this is a web-slice (Level 2) scenario in UserResourceTest —
+> NOT a Level-1 acceptance test (pyramid: acceptance = happy path only; the spec's own
+> note in 01_API_Tests.md says per-status variations live in web-slice). Original
+> bootstrapped red-acceptance/usecase/acceptance steps were the wrong level → corrected.
+> Design (user, Option A): model the duplicate as a validation-failed field error —
+> status 422, type=.../problem/validation-failed, fieldErrors[{code:ALREADY_EXISTS,
+> property:login, message:"Login already exists", rejectedValue, path:login}].
+- [x] red-adapter rest (UserResourceTest @WebTest: stub UserRegistrationService → LoginAlreadyExistsException; assert 422 + ProblemDetail + fieldErrors[login]; @ExpectedToFail; RED 422-vs-500 prediction all-YES; 2 run/0 fail/1 skip; test-review clean; EXISTING_LOGIN const removes param-always-same IDE warnings)
+- [x] design (Option A — validation-failed field error; chosen by user, no ADR needed for a web-layer mapping)
+- [~] green-adapter rest (map LoginAlreadyExistsException → 422 + login field error via the error-handling starter)
+- [S] red-usecase (duplicate-login detection already implemented & tested at application level — UserRegistrationPolicy)
+- [S] green-usecase (no new usecase logic)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] green-acceptance (no Level-1 test for an error category — pyramid: acceptance = happy path only)
 
 ### Scenario 3.1: Create user with a timezone succeeds and appears in the grid
 > Extends the existing registration acceptance test (UserRegistrationIntegrationTest) — add `timeZone`
