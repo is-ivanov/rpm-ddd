@@ -16,12 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
  * through the meta-annotation) so all e2e tests serialize against the shared Testcontainers
  * database — without the blanket {@code @Execution(SAME_THREAD)} that also serialized them
  * against the unrelated web-slice lane.
- * Registers {@link IamUserBaselineCleanupExtension} to reset the {@code iam_user} baseline per test.
+ * Registers {@link IamUserBaselineCleanupExtension} to reset the {@code iam_user} baseline per test
+ * and {@link EventPublicationCleanupExtension} to clear the shared event publication registry, so
+ * incomplete publications left by one test do not leak into another (order-independence).
  */
 @DbTest
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
-@ExtendWith(IamUserBaselineCleanupExtension.class)
+@ExtendWith({IamUserBaselineCleanupExtension.class, EventPublicationCleanupExtension.class})
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

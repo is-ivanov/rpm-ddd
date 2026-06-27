@@ -19,3 +19,6 @@ Type: refactoring
 ### Step 4: Confirm no parallel flakiness (both lanes)
 - [x] green-acceptance (full suite green across repeated runs; verify DB and web-slice lanes parallelize via timing, no mock/DB races, no exposed ordering assumptions)
   - 3 consecutive `./mvnw test` runs: 160 tests, 0 failures/errors/skipped each (~54s). 8 concurrent worker threads → lanes parallelize (no SAME_THREAD collapse). Stable across repeats → no mock/DB races, no exposed ordering assumptions.
+
+### Step 5: Fix CI-exposed ordering assumption (event publication registry leak)
+- [x] refactor (CI run #28302206686 failed: ExactlyOnceEmailDeliveryIntegrationTest.assertNoIncompletePublications saw an incomplete row left by Stale/InFlight tests. Removing SAME_THREAD changed the DB-lock acquisition order (non-deterministic) and exposed the latent leak — event_publication was never cleaned between tests, only iam_user. Fix: EventPublicationCleanupExtension clears event_publication before each @ApplicationIntegrationTest, making the registry order-independent. NOT a concurrency race — the DB lock still serializes; it was pure order-dependence. Full suite 160 green locally after fix.)
