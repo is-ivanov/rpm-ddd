@@ -34,62 +34,44 @@ import org.jspecify.annotations.Nullable;
 class UserSummaryView {
 
     @Id
-    private final UUID id;
+    private UUID id;
 
     @Column(name = "first_name")
-    private final String firstName;
+    private String firstName;
 
     @Column(name = "middle_name")
-    private final @Nullable String middleName;
+    private @Nullable String middleName;
 
     @Column(name = "last_name")
-    private final String lastName;
+    private String lastName;
 
-    private final String login;
+    @Column(name = "login")
+    private String login;
 
-    private final String email;
+    @Column(name = "email")
+    private String email;
 
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    private final UserStatus status;
+    private UserStatus status;
 
     @Column(name = "registered_at")
-    private final Instant createdAt;
+    private Instant createdAt;
 
     @Column(name = "updated_at")
-    private final Instant updatedAt;
+    private Instant updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
-    private final UserSummaryView createdBy;
+    private UserSummaryView createdBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by")
-    private final UserSummaryView updatedBy;
+    private UserSummaryView updatedBy;
 
-    UserSummaryView(
-            UUID id,
-            String firstName,
-            @Nullable String middleName,
-            String lastName,
-            String login,
-            String email,
-            UserStatus status,
-            Instant createdAt,
-            Instant updatedAt,
-            UserSummaryView createdBy,
-            UserSummaryView updatedBy) {
-        this.id = id;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.login = login;
-        this.email = email;
-        this.status = status;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-    }
+    // JPA reflection-init exception: Hibernate instantiates this @Subselect entity via the no-arg
+    // constructor and populates fields by reflection, so they are non-null after load despite NullAway.
+    @SuppressWarnings("NullAway.Init")
+    protected UserSummaryView() {}
 
     UUID id() {
         return id;

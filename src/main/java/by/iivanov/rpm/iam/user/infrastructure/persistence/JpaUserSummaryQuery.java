@@ -1,12 +1,19 @@
 package by.iivanov.rpm.iam.user.infrastructure.persistence;
 
+import by.iivanov.rpm.iam.user.domain.ActorName;
+import by.iivanov.rpm.iam.user.domain.UserId;
 import by.iivanov.rpm.iam.user.domain.UserSummary;
 import by.iivanov.rpm.iam.user.domain.UserSummaryQuery;
+import by.iivanov.rpm.iam.user.infrastructure.security.SystemActors;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
 class JpaUserSummaryQuery implements UserSummaryQuery {
+
+    private static final Sort GRID_ORDER = Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id"));
+    private static final ActorName SYSTEM_ACTOR_NAME = new ActorName("System", "", "");
 
     private final SpringDataUserSummaryRepository repository;
 
@@ -16,6 +23,19 @@ class JpaUserSummaryQuery implements UserSummaryQuery {
 
     @Override
     public List<UserSummary> findAllForGrid() {
-        throw new UnsupportedOperationException();
+        return repository.findByIdNot(SystemActors.SYSTEM_USER_ID.id(), GRID_ORDER).stream()
+                .map(this::toSummary)
+                .toList();
+    }
+
+    private UserSummary toSummary(UserSummaryView view) {
+        return new UserSummary(new UserId(view.id()), resolveActor(view.createdBy()), resolveActor(view.updatedBy()));
+    }
+
+    private ActorName resolveActor(UserSummaryView actor) {
+        if (actor.id().equals(SystemActors.SYSTEM_USER_ID.id())) {
+            return SYSTEM_ACTOR_NAME;
+        }
+        return new ActorName(actor.firstName(), actor.middleName(), actor.lastName());
     }
 }

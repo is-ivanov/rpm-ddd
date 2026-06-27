@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
@@ -48,10 +47,6 @@ class JpaUserSummaryQueryTest {
     }
 
     @Test
-    @ExpectedToFail(
-            value = "JpaUserSummaryQuery.findAllForGrid() not implemented - throws"
-                    + " UnsupportedOperationException; exclusion/ordering/actor-name resolution deferred to GREEN",
-            withExceptions = UnsupportedOperationException.class)
     @DisplayName(
             "findAllForGrid excludes the system user, orders createdAt DESC then id DESC, and resolves actor names")
     void should_excludeSystemUser_resolveActorNames_andOrderByCreatedAtThenIdDesc() {
