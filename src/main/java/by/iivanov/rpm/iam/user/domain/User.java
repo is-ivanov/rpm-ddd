@@ -46,14 +46,15 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
             Login login,
             Password password,
             UserId createdBy,
-            Instant registeredAt) {
+            Instant registeredAt,
+            ZoneId timeZone) {
         this.id = id;
         this.personName = personName;
         this.email = email;
         this.login = login;
         this.password = password;
         this.registeredAt = registeredAt;
-        this.timeZone = ZoneId.of("UTC");
+        this.timeZone = timeZone;
         this.status = UserStatus.PENDING;
         this.createdBy = Association.forId(createdBy);
         // A freshly-registered user has never been updated: updated audit equals created audit.
@@ -70,7 +71,7 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
             UserId createdBy,
             Instant now,
             ZoneId timeZone) {
-        var user = new User(id, personName, email, login, password, createdBy, now);
+        var user = new User(id, personName, email, login, password, createdBy, now, timeZone);
         user.registerEvent(new UserRegisteredEvent(id, login, email));
         return user;
     }

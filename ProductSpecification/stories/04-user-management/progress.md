@@ -54,10 +54,10 @@
 - [x] red-acceptance (no RED achievable — feature pre-existing: all create-action consequences (201, Location, activation email, grid PENDING, createdAt==updatedAt, createdBy==updatedBy==admin) already green via Story 1 registration + Scn 1.1 grid. timeZone is NOT L1-observable (PENDING user can't reach /me w/o activate+login = separate lifecycle → full-stack journey; grid carries no timeZone). Strengthened the existing UserRegistrationIntegrationTest to assert the new user flows into the grid (recursive-comparison full row) — a real new consequence on the same single action; committed green, no @ExpectedToFail. Added timeZone to RegisterUserRequest as nullable/ignored plumbing. DECISION (user): verify timeZone storage at L3 usecase, NOT via jdbcClient DB-peek in L1 (violates black-box rule). 1/0/0; test-review tightened to full-row eq; checkstyle/pmd/IDE clean.)
 - [x] design (ADR create-user-timezone-decision: domain type = core-Java ZoneId (no bespoke VO); RegisterUserRequest keeps String @NotBlank @Size(64) + toCommand() ZoneId.of; User/command gain ZoneId timeZone; migration time_zone varchar(64) nullable→backfill 'UTC'→NOT NULL. Forward: 5.5 validity = web-slice jakarta constraint → 422, NOT a domain VO, so red/green-domain stay [S] in 3.1 & 5.5. Postgres has no zone-id type → varchar.)
 - [x] red-usecase (UserRegistrationServiceTest.when_commandHasTimeZone_expect_storedUserKeepsZone — command carries ZoneId; User.register stores a fixed ZoneId.of("UTC") RED stub so the strict assert (expected America/New_York) fails; @ExpectedToFail(AssertionError.class); prediction all-YES; 3 run/1 fail→skip; test-review tightened the shared clock to a non-round instant 2026-04-30T12:34:17.482Z; refactor clean; checkstyle Javadoc added on RegisterUserCommand ctor + RegisterUserRequest.toCommand; pmd/checkstyle green. Plumbing only — no migration/persistence; ZoneId param unused on User.register is the deliberate GREEN seam.)
-- [~] green-usecase
+- [x] green-usecase (User constructor now stores the passed ZoneId instead of the hardcoded ZoneId.of("UTC") placeholder; register threads command.timeZone() through; @ExpectedToFail removed. UserRegistrationServiceTest 3/0/0 (XML report — surefire .txt shows 0 for @Nested, XML authoritative); spotless/checkstyle/pmd/spotbugs green; one-line assignment, no new branch → coverage trivially satisfied.)
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
+- [~] adapters-discovery
 - [ ] green-acceptance
 
 ## Integration Scenarios (06_Integration_Tests.md)

@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ExpectedToFail;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 class UserRegistrationServiceTest {
@@ -84,9 +83,6 @@ class UserRegistrationServiceTest {
         @Test
         @DisplayName("Create user with a timezone succeeds and appears in the grid: "
                 + "WHEN registerUser with a time zone EXPECT the stored user keeps that zone")
-        @ExpectedToFail(
-                value = "TDD Red Phase - User stores a placeholder zone, not command.timeZone()",
-                withExceptions = AssertionError.class)
         void when_commandHasTimeZone_expect_storedUserKeepsZone() {
             // GIVEN:
             var newYork = ZoneId.of("America/New_York");
