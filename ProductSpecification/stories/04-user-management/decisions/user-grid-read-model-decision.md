@@ -29,9 +29,18 @@ Two "System" identities exist and must both render as a name, never a UUID:
 | **B — explicit JPQL/native projection with two self JOINs + `CASE WHEN cb.id = :system`** into a constructor-expression row DTO | Hand-written join SQL is exactly what the storage rule discourages ("delegate mapping to the ORM; never manual grouping"); adds a throwaway row DTO; more brittle than letting the ORM resolve associations. The system special-case is handled just as cleanly by a single id check in the adapter mapper (chosen A) without pushing presentation logic into SQL. |
 | **C — load `User` aggregates + a second batched name lookup** in a domain service | Violates "fetch everything upfront / one storage port"; two queries; forces `updatedAt`/`updatedBy` onto the write aggregate **now** (scenario 1.1 is read-only) instead of deferring them to the create/activate scenarios that actually mutate them. |
 
-**Chosen (A)**: A dedicated read-only view-entity `UserSummaryView` (`@Entity @Immutable`,
-mapped to `iam_user`) with a `@ManyToOne` to a lightweight `ActorView` (`@Immutable`,
-mapped to `iam_user`, exposing only `id` + name parts) for both `createdBy` and `updatedBy`.
+> **Correction (2026-06-27, during red-adapter db):** the draft mapped TWO `@Entity` classes
+> (`UserSummaryView` + a lightweight `ActorView`) onto `iam_user`. Hibernate rejects that with
+> `DuplicateMappingException` — and a single `@Entity` on `iam_user` also collides with the write
+> aggregate `User`, which already maps that table. Fix: `UserSummaryView` is mapped with
+> `@org.hibernate.annotations.@Subselect` (a read-only derived "table" that coexists with `User`
+> and is skipped by `ddl-auto: validate`), and `createdBy`/`updatedBy` are resolved through a
+> **self-referencing** `@ManyToOne UserSummaryView` — there is no separate `ActorView`. The
+> ORM-resolves-the-join intent and the outcome are unchanged.
+
+**Chosen (A)**: A dedicated read-only view `UserSummaryView` (`@Subselect @Immutable` over
+`iam_user`) with a **self-referencing** `@ManyToOne UserSummaryView` for both `createdBy` and
+`updatedBy` (a separate `ActorView` is not possible — see the correction above).
 The ORM resolves the joins; the find method stays trivial (`findByIdNot(SYSTEM_USER_ID, Sort)`
 → map). The synthetic `SYSTEM_USER_ID` is **excluded** from the listing by the derived
 `findByIdNot`, and when it appears as an actor it is special-cased to the constant
@@ -42,11 +51,11 @@ fully separated from the write aggregate, so `updatedAt`/`updatedBy`/`timeZone` 
 
 ## Model
 
-- `UserSummaryView` (`@Entity @Immutable`, `@Table("iam_user")`, `infrastructure.persistence`) —
+- `UserSummaryView` (`@Subselect @Immutable` over `iam_user`, `infrastructure.persistence`) —
   `id`, name parts, `login`, `email`, `status`, `created_at`, `updated_at`,
-  `@ManyToOne ActorView createdBy`, `@ManyToOne ActorView updatedBy`.
-- `ActorView` (`@Entity @Immutable`, `@Table("iam_user")`) — `id` + name parts only; used solely
-  to resolve an actor UUID to a name through the association.
+  self-referencing `@ManyToOne UserSummaryView createdBy`, `@ManyToOne UserSummaryView updatedBy`.
+  A second `@Entity` on `iam_user` is impossible (collides with the write aggregate `User` and
+  with itself) — the actor is resolved through the view's own self-join, not a separate `ActorView`.
 - Domain read-model `UserSummary` (`iam.user.domain`, no persistence annotations) — the rich
   projection the query port returns: identity, status, audit timestamps, and resolved actor
   names. Actor/own name as a presentation-neutral read-model name triple (first/middle/last) —

@@ -13,5 +13,6 @@
   <include file="2026.04.18-01-changelog-event-publication.xml" relativeToChangelogFile="true"/>
   <include file="2026.06.01-01-changelog-shedlock.xml" relativeToChangelogFile="true"/>
   <include file="2026.06.14-01-changelog-iam-user-login-throttle.xml" relativeToChangelogFile="true"/>
+  <include file="2026.06.27-01-changelog-iam-user-audit.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

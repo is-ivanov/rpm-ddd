@@ -22,8 +22,8 @@
 - [S] red-domain (activate only if coverage/design-preview finds testable domain logic)
 - [S] green-domain
 - [x] adapters-discovery (Check 1 db: UserSummaryQuery.findAllForGrid() — non-trivial self-join view query (UserSummaryView + ActorView), not skippable per ADR → red/green-adapter db; Check 2: read-only list, no domain exceptions → [S]; Check 3: UserResource.listUsers simple-delegation GET, no validation → [S], handler + ListUsersService created in green-acceptance)
-- [~] red-adapter db (JpaUserSummaryQuery over UserSummaryView + ActorView; ordering + Null-Object "System" name resolution)
-- [ ] green-adapter db
+- [x] red-adapter db (JpaUserSummaryQueryTest @DataJpaTest; @Subselect view + self-join @ManyToOne (no ActorView — DuplicateMappingException); exclusion + ordering + actor resolution; RED on UnsupportedOperationException, prediction all-YES; ADR corrected)
+- [~] green-adapter db
 - [ ] green-acceptance
 
 ### Scenario 2.1: Create with a duplicate login returns a field-level 422
