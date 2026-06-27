@@ -7,6 +7,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -27,11 +28,14 @@ import org.springframework.test.context.ActiveProfiles;
  * subtree to one thread, no two web-slice methods (across classes or {@code @Nested} groups)
  * stub the cached context's shared auto-mock beans concurrently. Replaces the per-class
  * {@code @Execution(SAME_THREAD)}.
+ * Registers {@link WebSliceMockResetExtension} to reset those shared mocks before each test, so
+ * stubbing and recorded invocations never leak across tests through the cached context.
  */
 @WebMvcTest
 @AutoConfigureRestTestClient
 @ActiveProfiles("test")
 @ResourceLock(Constants.WEB_SLICE_LOCK)
+@ExtendWith(WebSliceMockResetExtension.class)
 @Import(ControllerDependencyAutoMockRegistrar.class)
 @ComponentScan(
         basePackages = "by.iivanov.rpm",
