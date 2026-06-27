@@ -17,3 +17,20 @@
 **Where:** `by.iivanov.rpm.testing.AbstractApplicationIntegrationTest`.
 **Implication:** any read-all or count assertion over a shared aggregate depends on this reset; seed ids must keep the `019b76da` prefix to survive it.
 **From:** scenario 1.1 (1.1-list-users)
+
+## Quirk: custom ApiExceptionHandler is not scanned by @WebMvcTest
+**Quirk:** A wim-deblauwe `ApiExceptionHandler` declared as a plain `@Component` is not loaded by `@WebMvcTest`; a web-slice test of the mapping gets the starter's fallback 500 unless it `@Import`s the handler (config-based `error.handling.http-statuses` mappings need no import — they load via auto-config).
+**Where:** `iam.user.infrastructure.web.LoginAlreadyExistsExceptionHandler`, `UserResourceTest`.
+**Implication:** any future web-slice test of a custom ApiExceptionHandler (e.g. timezone validation in 5.5, a future EmailAlreadyExists handler) must @Import the handler.
+**From:** scenario 2.1 (2.1-duplicate-login-422)
+
+## Decision: domain exception → field-level 422 via a custom ApiExceptionHandler
+**Decision:** To surface a domain exception as a field-level 422 with the bean-validation `fieldErrors` shape, implement an `ApiExceptionHandler` building `ApiErrorResponse(status, "VALIDATION_FAILED", "...Error count: N")` + `addFieldError(new ApiFieldError(code, property, message, rejectedValue, path))`; config-based `http-statuses` cannot emit a `fieldErrors` array.
+**Where applied:** `iam.user.infrastructure.web` exception handlers — reusable for 5.5 (timezone) and any uniqueness/duplicate mapping.
+**From:** scenario 2.1 (2.1-duplicate-login-422)
+
+## Quirk: SpotBugs BC_UNCONFIRMED_CAST false positive on ApiExceptionHandler downcast
+**Quirk:** SpotBugs flags `BC_UNCONFIRMED_CAST` on the contract-safe `(Subtype) throwable` cast in `ApiExceptionHandler.handle()` (canHandle guarantees the type, invisible cross-method); suppressed in `exclude-filter.xml` scoped to `*ExceptionHandler` in `infrastructure.web`.
+**Where:** `code-quality-config/spotbugs/exclude-filter.xml`.
+**Implication:** future ApiExceptionHandlers are already covered by the scoped filter — don't remove it, and don't rewrite as pattern-match-with-throw (that trades the FP for a permanently-uncovered branch).
+**From:** scenario 2.1 (2.1-duplicate-login-422)
