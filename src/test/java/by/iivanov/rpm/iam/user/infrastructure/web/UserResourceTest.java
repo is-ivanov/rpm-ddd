@@ -8,15 +8,13 @@ import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.LoginAlreadyExistsException;
 import by.iivanov.rpm.iam.user.fixtures.UserApi;
 import by.iivanov.rpm.testing.WebTest;
-import by.iivanov.rpm.testing.api.AssertionResponse;
-import net.javacrumbs.jsonunit.core.Option;
+import by.iivanov.rpm.testing.api.FieldError;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junitpioneer.jupiter.ExpectedToFail;
-import org.springframework.http.HttpStatus;
 
 @WebTest
 @Execution(ExecutionMode.SAME_THREAD)
@@ -50,7 +48,12 @@ class UserResourceTest {
 
             var response = userApi.registerUser(validRegistrationRequest());
 
-            assertLoginAlreadyExistsError(response);
+            response.assertBindingError(FieldError.builder()
+                    .code("ALREADY_EXISTS")
+                    .property("login")
+                    .message("Login already exists")
+                    .rejectedValue(EXISTING_LOGIN)
+                    .path("login"));
         }
 
         private void givenLoginAlreadyExists() {
@@ -67,28 +70,6 @@ class UserResourceTest {
                       "email": "alice@example.com"
                     }
                     """.formatted(EXISTING_LOGIN);
-        }
-
-        private void assertLoginAlreadyExistsError(AssertionResponse response) {
-            response.assertStatus(HttpStatus.UNPROCESSABLE_CONTENT)
-                    .assertProblemJson()
-                    .assertBodyMatches(
-                            """
-                            {
-                              "status": 422,
-                              "title": "Unprocessable Content",
-                              "type": "https://www.rpm-ddd.my/problem/validation-failed",
-                              "fieldErrors": [
-                                {
-                                  "code": "ALREADY_EXISTS",
-                                  "property": "login",
-                                  "message": "Login already exists",
-                                  "rejectedValue": "%s",
-                                  "path": "login"
-                                }
-                              ]
-                            }
-                            """.formatted(EXISTING_LOGIN), Option.IGNORING_EXTRA_FIELDS, Option.IGNORING_ARRAY_ORDER);
         }
     }
 }
