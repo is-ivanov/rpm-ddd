@@ -21,7 +21,7 @@
   </changeSet>
 
   <changeSet id="2026-06-27-06-iam-user-time-zone-not-null" author="i.s.ivanov">
-    <addNotNullConstraint tableName="iam_user" columnName="time_zone" columnDataType="varchar(64)"/>
+    <addNotNullConstraint tableName="iam_user" columnName="time_zone"/>
   </changeSet>
 
 </databaseChangeLog>
