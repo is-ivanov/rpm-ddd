@@ -5,6 +5,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
@@ -14,10 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
  * Meta-annotation for full application integration tests.
  * Combines {@link SpringBootTest} with {@link DbTest}.
  * Uses {@link ExecutionMode#SAME_THREAD} because all e2e tests share one Testcontainers database.
+ * Registers {@link IamUserBaselineCleanupExtension} to reset the {@code iam_user} baseline per test.
  */
 @DbTest
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
+@ExtendWith(IamUserBaselineCleanupExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

@@ -8,8 +8,8 @@ Type: refactoring
 ## Fix
 
 ### Step 1: Create the cleanup extension (JdbcClient, BeforeEachCallback)
-- [ ] refactor (new extension resolving DataSource from ApplicationContext, JdbcClient delete)
+- [x] refactor (new extension resolving DataSource from ApplicationContext, JdbcClient delete)
 
 ### Step 2: Wire into @ApplicationIntegrationTest, slim the base
-- [ ] refactor (add @ExtendWith; remove the second @BeforeEach + JdbcTemplate field)
-- [ ] green-acceptance (full suite green; SonarLint S8745 clear)
+- [x] refactor (add @ExtendWith; remove the second @BeforeEach + JdbcTemplate field)
+- [x] green-acceptance (full suite green; SonarLint S8745 clear)
