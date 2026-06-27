@@ -20,6 +20,8 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
     private final EmailAddress email;
     private final Association<User, UserId> createdBy;
     private final Instant registeredAt;
+    private final Association<User, UserId> updatedBy;
+    private final Instant updatedAt;
 
     private Login login;
 
@@ -51,6 +53,9 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
         this.registeredAt = registeredAt;
         this.status = UserStatus.PENDING;
         this.createdBy = Association.forId(createdBy);
+        // A freshly-registered user has never been updated: updated audit equals created audit.
+        this.updatedBy = Association.forId(createdBy);
+        this.updatedAt = registeredAt;
     }
 
     public static User register(

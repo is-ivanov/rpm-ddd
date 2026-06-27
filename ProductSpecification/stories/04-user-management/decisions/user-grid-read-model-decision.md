@@ -74,11 +74,17 @@ fully separated from the write aggregate, so `updatedAt`/`updatedBy`/`timeZone` 
 
 ## Foundation (this scenario)
 
-- Migration adds `updated_at` + `updated_by` columns to `iam_user`, seeded equal to
+- Migration adds `updated_at` + `updated_by` columns to `iam_user` (NOT NULL + FK), seeded equal to
   `registered_at` / `created_by` for existing rows (the fixture expects `updatedAt == createdAt`,
   `updatedBy == createdBy` for all seed users). `time_zone` is **out of scope** here — it arrives
   with the create/activate scenarios.
-- The write aggregate `User` is **not** modified in scenario 1.1.
+- The write aggregate `User` **is** modified in scenario 1.1 — **correction**: the draft deferred
+  this to 3.1, but making the new columns NOT NULL with no write-side population broke every new-user
+  INSERT (`UserRegistrationIntegrationTest` failed: "null value in column updated_at violates
+  not-null constraint"). So `User` now carries `updatedAt` (`Instant`) + `updatedBy`
+  (`Association<User, UserId>`), and `User.register(...)` sets them equal to `registeredAt` /
+  `createdBy` (a freshly-registered user has never been updated: updated audit == created audit).
+  Mutating them on a real update is still deferred (no update operation exists yet).
 
 ## Test layering
 
