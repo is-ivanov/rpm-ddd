@@ -348,14 +348,14 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] adapters-discovery
 - [ ] green-acceptance
 
-## Extended (deferred — decide at Story Completion Gate)
+## Extended (reviewed at each phase's Extended Gate; Story Completion Gate is the backstop)
 
-> Never executed by /continue. Surfaced here so the Story Completion Gate reviews them before the story closes.
+> Never executed by /continue. Surfaced here so the Per-Phase Extended Gate (or Story Completion Gate) reviews them.
 
-**API (tests/extended/01_API_Tests_Extended.md)**
+**API (tests/extended/01_API_Tests_Extended.md) — Backend Extended Gate DONE (2026-06-27)**
 - [x] E1. Create with a duplicate email returns a field-level 422 (PROMOTED at user request → see "Scenario E1" in Backend Scenarios above)
-- [S] E2. Activation updates the audit fields visible in the grid (deferred — review at Story Completion Gate)
-- [S] E3. List order is stable when two users share the same createdAt (deferred — review at Story Completion Gate)
+- [S] E2. Activation updates the audit fields visible in the grid (reviewed — DEFERRED to improvements I7)
+- [S] E3. List order is stable when two users share the same createdAt (reviewed — DEFERRED to improvements I8; tiebreaker already implemented)
 
 **UI (tests/extended/02_UI_Tests_Extended.md)**
 - [S] E1. Status multi-select filter lists statuses in lifecycle order (deferred — review at Story Completion Gate)

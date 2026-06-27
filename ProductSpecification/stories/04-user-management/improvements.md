@@ -71,3 +71,29 @@ no new endpoint, but the browser's tz list may differ from the JVM's accepted se
 Pre-selection of the app default (`Europe/Berlin`) is independent of the option source.
 **Scope:** small new read endpoint + FE client + dropdown wiring; decide at the Story Completion Gate or when
 FE Scenario 4.1 is built (whichever comes first).
+
+### I7 — Activation should update the audit fields shown in the grid (Extended E2, deferred at Backend Extended Gate)
+**Observed:** Extended case E2 expects that when a PENDING user activates (sets a password), their grid row
+shows status ACTIVE, `updatedAt` later than `createdAt`, and `updatedBy` resolving to the user themselves
+(self-service activation). Today `User.activate(hashedPassword)` only flips status + password; `updatedAt`
+and `updatedBy` are **`final`** fields set once in the constructor, so activation never touches the audit trail.
+**Analysis:** never-built behaviour → improvement, not a bug. Implementing it requires making the audit pair
+mutable on the aggregate and having `activate(...)` stamp `updatedAt = now(clock)` and `updatedBy = the
+activating user` (a self-actor — the activation flow currently has no acting-principal plumbed through). This
+touches the activation use case (clock + actor), the `User` aggregate (mutable audit), and is then observable
+in the existing grid read-model. Sizable; needs a small design (where the self-actor comes from in the
+activation request/principal).
+**Scope:** L1 acceptance (activate → grid row ACTIVE with updatedAt>createdAt, updatedBy=self) + domain unit
+for the audit stamp; activation use-case change + aggregate change. Decide whether to promote to a scenario or
+raise as a standalone story/task. Deferred at the Backend Extended Gate (user decision).
+
+### I8 — Lock the deterministic grid tiebreaker with an explicit test (Extended E3, deferred at Backend Extended Gate)
+**Observed:** Extended case E3 wants the user list deterministically ordered when two users share the same
+`createdAt` — tie broken by `userId` descending, stable across requests.
+**Analysis:** the behaviour is **already implemented** — `JpaUserSummaryQuery.findAllForGrid()` sorts by
+`createdAt DESC, id DESC`, so the tiebreaker exists. What is missing is an explicit test pinning the contract;
+the dedicated `JpaUserSummaryQueryTest` was deleted in Scenario 1.1 as redundant with the L1 grid test, and
+the L1 seed has distinct `createdAt` values, so the tie path is not exercised anywhere.
+**Scope:** small `@DataJpaTest` (`red/green-adapter db`) — two users with identical `createdAt`, assert order
+by `id` DESC and stability across repeated queries. Cheap regression lock. Deferred at the Backend Extended
+Gate (user decision); promote when the read path is next touched, or leave relying on the implemented sort.
