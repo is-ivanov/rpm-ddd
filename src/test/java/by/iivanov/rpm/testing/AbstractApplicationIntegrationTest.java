@@ -16,7 +16,6 @@ public abstract class AbstractApplicationIntegrationTest {
     @TestBean(name = "clock", enforceOverride = true)
     protected Clock clock;
 
-    @SuppressWarnings("NullAway.Init")
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -36,7 +35,7 @@ public abstract class AbstractApplicationIntegrationTest {
         // read-all assertion is only deterministic against the seeded baseline. Seed rows use the
         // fixed 019b76da… id prefix (see db/data/user.csv); the synthetic system user is 0000…. Drop
         // everything else before each test to restore that baseline.
-        jdbcTemplate.update("delete from iam_user where id::text not like '019b76da%'"
-                + " and id <> '00000000-0000-0000-0000-000000000000'");
+        jdbcTemplate.update("DELETE FROM iam_user WHERE id::text NOT LIKE '019b76da%'"
+                + " AND id <> '00000000-0000-0000-0000-000000000000'");
     }
 }

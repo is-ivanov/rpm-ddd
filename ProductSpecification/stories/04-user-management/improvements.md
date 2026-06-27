@@ -1,0 +1,58 @@
+# Story 4 — Improvements Backlog
+
+Enhancements and refinements found during Story 4. Architecture is deferred: finish the base story
+in its current form, then revisit these. Move an item to `Done` with the resolving task/PR.
+
+## Open
+
+### I1 — Read-model projections live in the domain layer (Q1 + Q2)
+**Observed:** `UserSummary` and `ActorName` sit in `iam.user.domain`, and the `UserSummaryQuery` port is a
+domain interface. `ActorName` is explicitly validation-free ("lenient, no validation"), and `UserSummary`
+is an anemic projection returned by a query — neither carries invariants or behaviour.
+**Analysis:** these are CQRS read models, not write-side domain types. A domain value object validates; a
+read projection does not. They fit `iam.user.application` (or `application.query`). `ActorName` is described
+as a name triple reusable across contexts (users, patients, audit), so it is really a **shared-kernel** read
+type → `shared`. Once relocated, `PersonNameResponse.from(nameTriple)` can move onto `PersonNameResponse`
+(shared) and be reused everywhere (Q2) — today that move is blocked because `shared` must not depend on
+`iam.user.domain` (ArchUnit/Modulith would reject it).
+**Scope options:** (a) move `UserSummary` + `UserSummaryQuery` to `iam.user.application`, move the name triple
+to `shared`, add `PersonNameResponse.from(...)`; (b) keep the projection in `iam.user` but relocate only the
+name triple to `shared` for the `from` factory. Verify against `ArchitectureTest`.
+
+### I2 — DB-baseline cleanup belongs in a JUnit extension, not a second @BeforeEach (Q5 + Q6)
+**Observed:** `AbstractApplicationIntegrationTest` now has two `@BeforeEach` methods (clock reset + iam_user
+baseline reset). SonarLint `java:S8745` flags "only one method should be `@BeforeEach`".
+**Analysis:** extract the baseline reset into a dedicated `BeforeEachCallback` extension (single
+responsibility) that resolves the datasource from the Spring `ApplicationContext`
+(`SpringExtension.getApplicationContext(ctx)`) and runs the delete via the modern Spring 6 `JdbcClient`
+(`jdbcClient.sql("DELETE FROM …").update()`) instead of `JdbcTemplate`. Register it via `@ExtendWith` on the
+full-context meta-annotation `@ApplicationIntegrationTest` (the layer that commits users and asserts read-all)
+— not `@DbTest`, which marks the `@DataJpaTest` slices. Removes the second `@BeforeEach` and the injected
+field from the base.
+
+### I3 — Replace blanket @Execution(SAME_THREAD) with @ResourceLock("DB") (Q7)
+**Observed:** `@ApplicationIntegrationTest` forces `SAME_THREAD`, serializing all full-context tests even
+though the only shared resource is the Testcontainers Postgres.
+**Analysis:** annotate every DB-touching meta-annotation (`@ApplicationIntegrationTest` and `@DbTest`) with
+`@ResourceLock("DB", mode = READ_WRITE)` so only DB tests serialize on the shared DB while pure unit/domain
+tests keep running in parallel — better throughput and one explicit serialization mechanism. Validate
+carefully: a flaky parallel DB test is costly; ensure both markers share the lock key.
+
+### I4 — Set UTC in the production database/runtime, not only in tests (Q8)
+**Observed:** the TZ saga (naive `timestamptz` seed read in the JVM zone) was fixed for tests with
+`SET TIME ZONE 'UTC'` in `db.changelog-test.xml`. Production has no timezone pin
+(`hibernate.jdbc.time_zone` is unset).
+**Analysis:** a `SET TIME ZONE` in a migration does NOT fix runtime — each app connection resets to its own
+session zone. The correct production fix is `spring.jpa.properties.hibernate.jdbc.time_zone=UTC` (Hibernate
+normalizes all timestamp binding/reading to UTC regardless of JVM/DB zone), optionally plus `-Duser.timezone=UTC`
+and container `TZ=UTC`. Note: Hibernate's setting does not cover Liquibase's own connection, so the test
+seed-load pin may still be needed for the CSV load. Candidate for a standalone task (production-impacting).
+
+### I5 — Static-analysis check for UPPER_CASE SQL/JPQL keywords (Q4)
+**Observed:** the new rule "SQL/JPQL keywords are UPPER_CASE" (coding-rules.md → SQL & JPQL) is currently
+convention-only.
+**Analysis:** investigate enforcing it automatically. PMD/Checkstyle cannot parse SQL semantically inside Java
+string literals; a Checkstyle `RegexpMultiline` over `@Query`/`.sql(...)`/string literals is possible but
+false-positive-prone (matches keywords appearing as identifiers or in comments). An Error Prone custom check
+could target `@Query` and `JdbcClient`/`JdbcTemplate` call sites more precisely. Candidate for a standalone
+task to prototype feasibility and pick the mechanism.
