@@ -19,7 +19,7 @@ type → `shared`. Once relocated, `PersonNameResponse.from(nameTriple)` can mov
 to `shared`, add `PersonNameResponse.from(...)`; (b) keep the projection in `iam.user` but relocate only the
 name triple to `shared` for the `from` factory. Verify against `ArchitectureTest`.
 
-### I2 — DB-baseline cleanup belongs in a JUnit extension, not a second @BeforeEach (Q5 + Q6)
+### I2 — DB-baseline cleanup belongs in a JUnit extension, not a second @BeforeEach (Q5 + Q6) — Tracked as Task #223
 **Observed:** `AbstractApplicationIntegrationTest` now has two `@BeforeEach` methods (clock reset + iam_user
 baseline reset). SonarLint `java:S8745` flags "only one method should be `@BeforeEach`".
 **Analysis:** extract the baseline reset into a dedicated `BeforeEachCallback` extension (single
@@ -30,7 +30,7 @@ full-context meta-annotation `@ApplicationIntegrationTest` (the layer that commi
 — not `@DbTest`, which marks the `@DataJpaTest` slices. Removes the second `@BeforeEach` and the injected
 field from the base.
 
-### I3 — Replace blanket @Execution(SAME_THREAD) with @ResourceLock("DB") (Q7)
+### I3 — Replace blanket @Execution(SAME_THREAD) with @ResourceLock("DB") (Q7) — Tracked as Task #224
 **Observed:** `@ApplicationIntegrationTest` forces `SAME_THREAD`, serializing all full-context tests even
 though the only shared resource is the Testcontainers Postgres.
 **Analysis:** annotate every DB-touching meta-annotation (`@ApplicationIntegrationTest` and `@DbTest`) with
@@ -38,7 +38,7 @@ though the only shared resource is the Testcontainers Postgres.
 tests keep running in parallel — better throughput and one explicit serialization mechanism. Validate
 carefully: a flaky parallel DB test is costly; ensure both markers share the lock key.
 
-### I4 — Set UTC in the production database/runtime, not only in tests (Q8)
+### I4 — Set UTC in the production database/runtime, not only in tests (Q8) — Tracked as Task #225
 **Observed:** the TZ saga (naive `timestamptz` seed read in the JVM zone) was fixed for tests with
 `SET TIME ZONE 'UTC'` in `db.changelog-test.xml`. Production has no timezone pin
 (`hibernate.jdbc.time_zone` is unset).
@@ -48,7 +48,7 @@ normalizes all timestamp binding/reading to UTC regardless of JVM/DB zone), opti
 and container `TZ=UTC`. Note: Hibernate's setting does not cover Liquibase's own connection, so the test
 seed-load pin may still be needed for the CSV load. Candidate for a standalone task (production-impacting).
 
-### I5 — Static-analysis check for UPPER_CASE SQL/JPQL keywords (Q4)
+### I5 — Static-analysis check for UPPER_CASE SQL/JPQL keywords (Q4) — Tracked as Task #226
 **Observed:** the new rule "SQL/JPQL keywords are UPPER_CASE" (coding-rules.md → SQL & JPQL) is currently
 convention-only.
 **Analysis:** investigate enforcing it automatically. PMD/Checkstyle cannot parse SQL semantically inside Java
