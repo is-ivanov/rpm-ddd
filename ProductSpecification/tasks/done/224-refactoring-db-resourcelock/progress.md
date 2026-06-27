@@ -17,4 +17,5 @@ Type: refactoring
 - [x] refactor (auto-registered controller-dependency mocks are shared singletons in the cached @WebMvcTest context and never reset -- stubbing/invocations leak across tests within and between classes; add a JUnit BeforeEachCallback wired into @WebTest that resets every Mockito mock bean before each test)
 
 ### Step 4: Confirm no parallel flakiness (both lanes)
-- [~] green-acceptance (full suite green across repeated runs; verify DB and web-slice lanes parallelize via timing, no mock/DB races, no exposed ordering assumptions)
+- [x] green-acceptance (full suite green across repeated runs; verify DB and web-slice lanes parallelize via timing, no mock/DB races, no exposed ordering assumptions)
+  - 3 consecutive `./mvnw test` runs: 160 tests, 0 failures/errors/skipped each (~54s). 8 concurrent worker threads → lanes parallelize (no SAME_THREAD collapse). Stable across repeats → no mock/DB races, no exposed ordering assumptions.
