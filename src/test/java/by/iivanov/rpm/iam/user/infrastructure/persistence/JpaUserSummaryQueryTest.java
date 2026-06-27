@@ -57,10 +57,12 @@ class JpaUserSummaryQueryTest {
         then(summaries)
                 .filteredOn(summary -> summary.userId().equals(ADMIN_ID))
                 .singleElement()
-                .isEqualTo(new UserSummary(ADMIN_ID, SYSTEM_ACTOR, SYSTEM_ACTOR));
+                .extracting(UserSummary::createdBy, UserSummary::updatedBy)
+                .containsExactly(SYSTEM_ACTOR, SYSTEM_ACTOR);
         then(summaries)
                 .filteredOn(summary -> summary.userId().equals(ANN_LEE_ID))
                 .singleElement()
-                .isEqualTo(new UserSummary(ANN_LEE_ID, ADMIN_ACTOR, ADMIN_ACTOR));
+                .extracting(UserSummary::createdBy, UserSummary::updatedBy)
+                .containsExactly(ADMIN_ACTOR, ADMIN_ACTOR);
     }
 }

@@ -29,7 +29,16 @@ class JpaUserSummaryQuery implements UserSummaryQuery {
     }
 
     private UserSummary toSummary(UserSummaryView view) {
-        return new UserSummary(new UserId(view.id()), resolveActor(view.createdBy()), resolveActor(view.updatedBy()));
+        return new UserSummary(
+                new UserId(view.id()),
+                new ActorName(view.firstName(), view.middleName(), view.lastName()),
+                view.login(),
+                view.email(),
+                view.status(),
+                view.createdAt(),
+                view.updatedAt(),
+                resolveActor(view.createdBy()),
+                resolveActor(view.updatedBy()));
     }
 
     private ActorName resolveActor(UserSummaryView actor) {
