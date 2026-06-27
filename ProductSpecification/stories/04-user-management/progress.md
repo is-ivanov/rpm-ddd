@@ -21,7 +21,9 @@
 - [S] green-usecase (no usecase logic; UserSummary + UserSummaryQuery created in red/green-adapter db, ListUsersService + controller wiring in green-acceptance)
 - [S] red-domain (activate only if coverage/design-preview finds testable domain logic)
 - [S] green-domain
-- [~] adapters-discovery
+- [x] adapters-discovery (Check 1 db: UserSummaryQuery.findAllForGrid() — non-trivial self-join view query (UserSummaryView + ActorView), not skippable per ADR → red/green-adapter db; Check 2: read-only list, no domain exceptions → [S]; Check 3: UserResource.listUsers simple-delegation GET, no validation → [S], handler + ListUsersService created in green-acceptance)
+- [~] red-adapter db (JpaUserSummaryQuery over UserSummaryView + ActorView; ordering + Null-Object "System" name resolution)
+- [ ] green-adapter db
 - [ ] green-acceptance
 
 ### Scenario 2.1: Create with a duplicate login returns a field-level 422
