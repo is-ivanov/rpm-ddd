@@ -85,16 +85,35 @@ void should_returnGenericError_when_loginFails() { ... }
 
 ## Parallel Execution
 
-JUnit 5 parallel execution is enabled by default. Project meta-annotations enforce the correct mode:
+JUnit 5 parallel execution is enabled by default. Project meta-annotations enforce the correct mode
+via per-shared-resource `@ResourceLock` (NOT blanket `@Execution(SAME_THREAD)` — that lumps unrelated
+groups into one serial lane; see Task 224):
 
 | Test type | Execution | Mechanism |
 |-----------|-----------|-----------|
-| Unit tests (domain, usecase) | **Parallel** (default) | Plain JUnit 5 — no `@Execution` override |
-| Web slice tests (`@WebTest`) | **Parallel** (default) | `@WebMvcTest` — Spring-managed |
-| E2E integration (`@ApplicationIntegrationTest`) | **Sequential** | `@Execution(SAME_THREAD)` in meta-annotation — shared Testcontainers database |
-| DB adapter tests (`@DataJpaTest`) | **Sequential** | `@Execution(SAME_THREAD)` in `@RepositoryTest` — shared test database |
+| Unit tests (domain, usecase) | **Parallel** (default) | Plain JUnit 5 — no lock |
+| Web slice tests (`@WebTest`) | **Serialized vs each other**, parallel vs other lanes | `@ResourceLock("WEB_SLICE_MOCKS")` — shared auto-mock beans in the cached `@WebMvcTest` context |
+| E2E integration (`@ApplicationIntegrationTest`) | **Serialized vs each other**, parallel vs other lanes | `@ResourceLock("DB")` (via `@DbTest`) — shared Testcontainers database |
+| DB adapter tests (`@DataJpaTest`) | **Serialized vs DB lane** | `@ResourceLock("DB")` (via `@DbTest`) — shared test database |
 
-Never manually add `@Execution(SAME_THREAD)` to individual tests — use the project's meta-annotations.
+A class-level `@ResourceLock` with the default `READ_WRITE` mode forces the whole subtree onto one
+thread, so methods within a class (and across classes sharing the key) never run concurrently — yet
+the three lanes (DB / web-slice / pure-unit) still run in parallel with each other. Never manually
+add `@Execution(SAME_THREAD)` or a per-class `@ResourceLock` — use the project's meta-annotations.
+
+Shared DB state still leaks across *serialized* full-context tests (the lock prevents concurrency,
+not state carry-over). `@ApplicationIntegrationTest` resets it per-test: `IamUserBaselineCleanupExtension`
+(iam_user) and `EventPublicationCleanupExtension` (`event_publication` registry); `@WebTest` resets
+the shared auto-mocks via `WebSliceMockResetExtension`.
+
+### Reproducing flaky/order-dependent failures deterministically
+
+When `tdd-rules.md` → "Flaky Test Fix Protocol" calls for a deterministic repro, these are the JUnit knobs:
+
+- **Force test-class order:** set `junit.jupiter.testclass.order.default = org.junit.jupiter.api.ClassOrderer$OrderAnnotation` and put `@Order(n)` on the classes (lower runs first) to pin the suspected bad order. For methods, `@TestMethodOrder(MethodOrderer.OrderAnnotation.class)` + `@Order`.
+- **Disable parallelism** to rule out concurrency: `junit.jupiter.execution.parallel.enabled = false`. If the test still fails serially in the bad order, it is **order-dependence / shared-state leak**, not a race.
+- **Where to set these:** surefire's explicit `<configurationParameters>` in `pom.xml` **outrank** both `junit-platform.properties` and `-D` system properties, so toggle parallelism by editing the pom (a throwaway local edit on a detached checkout), not via `-D`. The class-orderer key has no explicit pom value, so `-Djunit.jupiter.testclass.order.default=...` does work for that one.
+- After confirming the repro and applying the fix, revert the throwaway config and verify under the normal parallel setup.
 
 ## Single Application Context
 
