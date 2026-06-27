@@ -2,30 +2,43 @@
 
 **Date**: 2026-06-27 **Scenarios**: 1.1
 
+> **Correction (2026-06-27, during red-adapter db):** the original draft assumed the synthetic
+> `SYSTEM_USER_ID` (`0000…`) has **no** `iam_user` row and relied on a LEFT-JOIN-null → Null-Object.
+> That is false: migration `2026-04-10-04-insert-system-user` **inserts** that row (named "System /
+> User") and it is the `created_by` FK anchor for every seed user. The fixture also **excludes** the
+> `0000` row from the grid (6 rows, not 7) and renders actor `0000` as `{System,"",""}` — which is
+> neither the join-resolved "System User" nor a JOIN null. The mechanism is corrected below to:
+> **exclude `SYSTEM_USER_ID` from the listing, and special-case actor `id == SystemActors.SYSTEM_USER_ID`
+> to the constant `{System,"",""}` in the adapter mapper** (regular `@ManyToOne`, no LEFT-JOIN-null).
+> Outcome unchanged; only the reason and mechanism are fixed. Migration/FK are NOT touched.
+
 How to serve `GET /api/admin/users` — every user row plus its `createdBy`/`updatedBy`
 **names** (not raw UUIDs), in one query, ordered `createdAt DESC, id DESC` — without
 loading the write aggregate or hand-writing join SQL.
 
 Two "System" identities exist and must both render as a name, never a UUID:
 1. The real `admin` row (`…a532`) is literally named `System/System/System` — resolved through the join.
-2. The synthetic `SYSTEM_USER_ID` (`0000…`) has **no** `iam_user` row — it must resolve to the
-   Null-Object name `{firstName:"System", middleName:"", lastName:""}`. This name is **not**
-   a domain `PersonName` (it requires a non-blank `lastName`), so actor names are a read-model
-   projection, not a domain value object.
+2. The synthetic `SYSTEM_USER_ID` (`0000…`) **does have** an `iam_user` row (named "System / User"), but
+   it is **excluded** from the listing and, when it is an actor, is special-cased to the constant
+   read-model name `{firstName:"System", middleName:"", lastName:""}` — keyed on
+   `SystemActors.SYSTEM_USER_ID`, not derived from the row. This name is **not** a domain `PersonName`
+   (it requires a non-blank `lastName`), so actor names are a read-model projection, not a domain value object.
 
 | Rejected | Why |
 |----------|-----|
-| **B — explicit JPQL/native projection with two self LEFT JOINs** into a constructor-expression row DTO | Hand-written join SQL is exactly what the storage rule discourages ("delegate mapping to the ORM; never manual grouping"); adds a throwaway row DTO; more brittle than letting the ORM resolve associations. The Null-Object-from-LEFT-JOIN convenience does not outweigh the rule violation. |
+| **B — explicit JPQL/native projection with two self JOINs + `CASE WHEN cb.id = :system`** into a constructor-expression row DTO | Hand-written join SQL is exactly what the storage rule discourages ("delegate mapping to the ORM; never manual grouping"); adds a throwaway row DTO; more brittle than letting the ORM resolve associations. The system special-case is handled just as cleanly by a single id check in the adapter mapper (chosen A) without pushing presentation logic into SQL. |
 | **C — load `User` aggregates + a second batched name lookup** in a domain service | Violates "fetch everything upfront / one storage port"; two queries; forces `updatedAt`/`updatedBy` onto the write aggregate **now** (scenario 1.1 is read-only) instead of deferring them to the create/activate scenarios that actually mutate them. |
 
 **Chosen (A)**: A dedicated read-only view-entity `UserSummaryView` (`@Entity @Immutable`,
 mapped to `iam_user`) with a `@ManyToOne` to a lightweight `ActorView` (`@Immutable`,
 mapped to `iam_user`, exposing only `id` + name parts) for both `createdBy` and `updatedBy`.
-The ORM resolves the joins; the find method stays trivial (`findAll(Sort)` → map). A missing
-actor association (the synthetic `SYSTEM_USER_ID` has no row) is mapped to the Null-Object
-"System" name **at the adapter boundary** — the only layer that touches null. This keeps the
-read concern fully separated from the write aggregate, so `updatedAt`/`updatedBy`/`timeZone`
-are added to `User` only when the create/activate scenarios (3.1) need them.
+The ORM resolves the joins; the find method stays trivial (`findByIdNot(SYSTEM_USER_ID, Sort)`
+→ map). The synthetic `SYSTEM_USER_ID` is **excluded** from the listing by the derived
+`findByIdNot`, and when it appears as an actor it is special-cased to the constant
+`{System,"",""}` name **at the adapter boundary** (a single `id == SystemActors.SYSTEM_USER_ID`
+check in the mapper) — the only layer that owns such boundary rules. This keeps the read concern
+fully separated from the write aggregate, so `updatedAt`/`updatedBy`/`timeZone` are added to
+`User` only when the create/activate scenarios (3.1) need them.
 
 ## Model
 
@@ -36,13 +49,14 @@ are added to `User` only when the create/activate scenarios (3.1) need them.
   to resolve an actor UUID to a name through the association.
 - Domain read-model `UserSummary` (`iam.user.domain`, no persistence annotations) — the rich
   projection the query port returns: identity, status, audit timestamps, and resolved actor
-  names. Actor name as a presentation-neutral name triple (first/middle/last) — middle nullable,
-  the system Null-Object carries `{System, "", ""}`.
+  names. Actor/own name as a presentation-neutral read-model name triple (first/middle/last) —
+  middle nullable, the system actor carries the constant `{System, "", ""}`.
 - Query port `UserSummaryQuery.findAllForGrid()` (`iam.user.domain`) → `List<UserSummary>`
-  ordered `created_at DESC, id DESC`.
+  ordered `created_at DESC, id DESC`, excluding the synthetic system user.
 - Adapter `JpaUserSummaryQuery` (`infrastructure.persistence`) — wraps a Spring Data repository
-  over `UserSummaryView`, `findAll(Sort.by(DESC, "createdAt").and(DESC, "id"))`, maps each view to
-  `UserSummary`; a null `ActorView` → Null-Object "System" name.
+  over `UserSummaryView`, `findByIdNot(SystemActors.SYSTEM_USER_ID.id(), Sort.by(DESC, "createdAt").and(DESC, "id"))`,
+  maps each view to `UserSummary`; an actor whose `id` equals `SystemActors.SYSTEM_USER_ID` →
+  constant `{System,"",""}` name, otherwise the joined `ActorView` name parts.
 - Application service `ListUsersService` (`@ApplicationService`, new top-level entry point) —
   calls the one port, returns `List<UserSummary>`. No other application service is injected.
 - `UserResource.listUsers()` — replaces the `UnsupportedOperationException` stub: calls
@@ -61,9 +75,13 @@ are added to `User` only when the create/activate scenarios (3.1) need them.
 
 - Level 1 acceptance (`UserGridIntegrationTest`): seed-only, whole-body JSON-fixture match —
   resolved names, both "System" identities, status, audit quartet, deterministic order.
-- `red/green-usecase`: `ListUsersService` over a `FakeUserSummaryQuery` — ordering + actor-name
-  resolution (real actor vs system Null-Object) as corner cases.
-- `red/green-adapter (db)`: `JpaUserSummaryQuery` — the self-join name resolution + ordering is a
-  non-trivial query, so the adapter test is **not** skippable.
-- `red/green-domain`: `[S]` unless coverage finds a branch — the Null-Object mapping lives at the
-  adapter boundary, not in a domain method.
+- `red/green-usecase`: **`[S]`** — `ListUsersService` is a pure pass-through (ordering + actor
+  exclusion + system special-case all live in the adapter), so a usecase unit test would be a
+  trivial `output == input` identity test. Covered by Level 1 acceptance + Level 3 db adapter.
+- `red/green-adapter (db)`: `JpaUserSummaryQuery` — the self-join name resolution, exclusion, and
+  ordering. This is the only legitimate TDD phase to author the view-entity storage code (the
+  reason the step runs); `green-acceptance` is remove-marker-only and cannot create storage
+  mapping. The `@DataJpaTest` is a **candidate for deletion** once green, as it duplicates the
+  acceptance happy path — keep it narrow (both System identities in isolation, ordering/tie-break).
+- `red/green-domain`: `[S]` unless coverage finds a branch — the system special-case mapping lives
+  at the adapter boundary, not in a domain method.
