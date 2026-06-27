@@ -23,7 +23,7 @@
 - [S] green-domain
 - [x] adapters-discovery (Check 1 db: UserSummaryQuery.findAllForGrid() — non-trivial self-join view query (UserSummaryView + ActorView), not skippable per ADR → red/green-adapter db; Check 2: read-only list, no domain exceptions → [S]; Check 3: UserResource.listUsers simple-delegation GET, no validation → [S], handler + ListUsersService created in green-acceptance)
 - [x] red-adapter db (JpaUserSummaryQueryTest @DataJpaTest; @Subselect view + self-join @ManyToOne (no ActorView — DuplicateMappingException); exclusion + ordering + actor resolution; RED on UnsupportedOperationException, prediction all-YES; ADR corrected)
-- [~] green-adapter db
+- [~] green-adapter db (IDE-inspection flagged a real latent blocker to fix FIRST: UserSummaryView is a literal @Entity, so jMolecules byte-buddy weaving does NOT add a default constructor — Hibernate will throw "No default constructor" when findByIdNot first materializes the view. Make fields non-final + add a protected no-arg ctor + handle NullAway, mirroring a valid Hibernate @Immutable form. Then implement findAllForGrid mapping + system special-case.)
 - [ ] green-acceptance
 
 ### Scenario 2.1: Create with a duplicate login returns a field-level 422
