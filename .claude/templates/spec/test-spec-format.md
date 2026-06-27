@@ -24,6 +24,28 @@ Follow `TESTING.md`. Acceptance tests (Level 1, e2e) cover **happy path only**. 
 
 **Acceptance ≠ exhaustive.** If 5 different domain states produce the same HTTP response (same status, same error structure, different message), that is ONE acceptance scenario — not 5. The per-state message variations belong in domain unit tests (Level 4).
 
+**Per-scenario Level tag + overlap pass (MANDATORY — applies to every backend-style scenario: API, Security, Integration, Infrastructure).**
+
+The single most common spec defect is leaving a scenario's **test level implicit**, so the later bootstrap step defaults it to a Level-1 acceptance test even when a cheaper level is correct. Prevent it at authoring time: before writing each `### N.M` scenario, run an **overlap pass** and record the chosen level as the first line of the scenario block.
+
+```markdown
+### 2.1 Create with a duplicate login returns a field-level 422
+**Level:** L2 web-slice  <!-- L1 acceptance | L2 web-slice | L3 usecase | L4 domain | db-adapter -->
+```
+
+Levels follow the pyramid in `tdd-rules.md` ("Test Pyramid Alignment") — classify against it, do not restate it:
+- **L1 acceptance** — happy path only (1-2 per use case); full-context black-box. Also the level for full-context **resilience/outage** scenarios (DB unavailable → 500) — they need the real app + broken infra.
+- **L2 web-slice** — validation errors and **business-exception → HTTP-status / Problem-Detail mapping** (duplicate-key 4xx, invalid-field 422, mass-assignment binding, CSRF 403). **This is the default for error / validation / per-status categories.**
+- **L3 usecase** / **L4 domain** — business corner cases, value-object / entity / policy rules.
+- **db-adapter** (`@DataJpaTest`) — persistence-query behavior only: complex `@Query` / native SQL, and **SQL-injection literal-treatment** (prove via `findByX` returning empty + a control row — asserting a 4xx at L1 proves nothing). See `tdd-rules.md` → "Infra (ad-hoc)".
+
+**Overlap pass — pick the cheapest level that recovers the NEW behavior:**
+1. Ask: *is the underlying domain/business rule already covered by a lower level or an existing scenario* (this story or an earlier one)? If yes, the only new behavior is usually the HTTP mapping → tag **L2 web-slice**, never L1. (Example: the duplicate-login rule is already tested at L3/L4, so the 422 scenario is L2 — only the exception→status mapping is new.)
+2. If the action already has an L1 acceptance scenario and this scenario only adds another observable consequence of the SAME action → **extend that scenario**, don't add a new one (see the table above).
+3. Reserve L1 for the happy path. An error category gets its own L1 scenario only when that error path itself is the new behavior AND it is the one representative error per endpoint — otherwise it is L2.
+
+Diagnostic: *"If I deleted this scenario, what coverage is actually lost — and what is the cheapest test that recovers it?"* Tag that level.
+
 **Ordering principles (apply in this priority):**
 1. **Prerequisite guards first** — generate guard scenarios for every prerequisite listed in the story spec. See Prerequisite Guard Checklist below. Do NOT include generic auth (401 for unauthenticated) tests — those are tested globally by the security filter, not per-story.
 2. **Read operations before writes** — GET before POST/PUT/DELETE. Less infrastructure needed. **Exception:** if a GET scenario's Given clause requires a write operation (e.g., "Given a task exists"), move that scenario after the write scenarios that create the precondition. A scenario must never depend on capabilities not yet implemented at its position in the TDD sequence.
@@ -31,7 +53,7 @@ Follow `TESTING.md`. Acceptance tests (Level 1, e2e) cover **happy path only**. 
 4. **Simple states before complex states** — default/initial state before edge cases (e.g., empty board before board with tasks).
 5. **Verification/confirmation flows last** — depend on prior operations succeeding (e.g., email verification after registration, webhook after checkout).
 
-**Structure:** Use `## N. Section Title` for groups, `### N.M Scenario Title` for individual tests. Separate sections with `---`.
+**Structure:** Use `## N. Section Title` for groups, `### N.M Scenario Title` for individual tests — each scenario block opens with its `**Level:**` tag (see "Per-scenario Level tag + overlap pass" above). Separate sections with `---`.
 
 **Typical section progression** (adapt to story — skip irrelevant sections, add story-specific ones):
 ```
