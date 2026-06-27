@@ -46,7 +46,9 @@
 - [S] green-domain
 - [S] green-acceptance (no Level-1 test for an error category — pyramid: acceptance = happy path only)
 
-### Scenario 3.1: Create user with a timezone succeeds and appears in the grid
+### Scenario 3.1: Create user with a timezone succeeds and appears in the grid (L1 acceptance)
+> Level: L1 acceptance — happy path with genuine new backend work (threads the `timeZone`
+> foundation through DTO/command/User.register + persistence), so the full backend sequence applies.
 > Extends the existing registration acceptance test (UserRegistrationIntegrationTest) — add `timeZone`
 > to the request and assert the new user is listed in the grid. Do NOT create a parallel acceptance class.
 - [ ] red-acceptance
@@ -193,15 +195,19 @@ email is asserted as a side effect of backend Scenario 3.1)
 
 ## Security Scenarios (05_Security_Tests.md)
 
-### Scenario 5.1: SQL injection in create fields is treated as literal text
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+### Scenario 5.1: SQL injection in create fields is treated as literal text (db-adapter)
+> Level: db-adapter (@DataJpaTest). Asserting a 422/201 at L1 proves nothing — JPA binds
+> parameters literally regardless. Prove literal treatment at the repository: store a payload,
+> look it up via findByX → empty + a control row that does match. Existence-check in red-adapter db:
+> may already be covered by the Story 1 login-SQLi repository test → [S] if so.
+- [ ] red-adapter db
+- [ ] green-adapter db
+- [S] design (literal-treatment is structural — JPA-parameterized; no design)
+- [S] red-usecase
+- [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] green-acceptance (repository-level proof per the SQLi pattern; no L1 test)
 
 ### Scenario 5.2: Stored XSS in a user name is escaped when rendered in the grid
 - [ ] red-playwright
@@ -213,44 +219,60 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [ ] green-playwright
 - [ ] demo
 
-### Scenario 5.3: Mass assignment — extra fields on create are ignored
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+### Scenario 5.3: Mass assignment — extra fields on create are ignored (web-slice, L2)
+> Level: L2 web-slice. RegisterUserRequest binds no role/status/id field, so extra JSON is ignored
+> at the DTO boundary; PENDING status + server-generated id are guaranteed by the create path
+> (already covered by 3.1). Verify at the web slice that injected fields don't reach the command.
+> green-adapter rest is likely a no-op (the DTO is already structurally safe).
+- [ ] red-adapter rest
+- [ ] green-adapter rest
+- [S] design (structural DTO safety — no design)
+- [S] red-usecase
+- [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] green-acceptance
 
-### Scenario 5.4: Input length limits on create fields are enforced
-- [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+### Scenario 5.4: Input length limits on create fields are enforced (web-slice, L2)
+> Level: L2 web-slice. @Size bean-validation on RegisterUserRequest → 422 with field errors
+> (same path as the existing beanValidationTest). green-adapter rest is [S] where @Size already
+> covers the field (login/email/middleName); add @Size only where a field still lacks a limit.
+- [ ] red-adapter rest
+- [ ] green-adapter rest
+- [S] design (bean-validation constraints — no design)
+- [S] red-usecase
+- [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] green-acceptance
 
-### Scenario 5.5: Invalid timezone value is rejected
-- [ ] red-acceptance
+### Scenario 5.5: Invalid timezone value is rejected (web-slice, L2)
+> Level: L2 web-slice. Non-IANA timeZone → 422 field error for timeZone. Depends on the timeZone
+> field added in 3.1. Design decides where validity lives: a TimeZone value object (domain) whose
+> invalid value surfaces as a 422, vs a DTO-level constraint. red-domain/green-domain activate
+> only if the chosen design introduces a TimeZone VO with testable branches.
+- [ ] red-adapter rest
 - [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [ ] green-adapter rest
+- [S] red-usecase
+- [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
-- [ ] green-acceptance
+- [S] green-acceptance
 
-### Scenario 5.6: POST /api/admin/users without a CSRF token returns 403
+### Scenario 5.6: POST /api/admin/users without a CSRF token returns 403 (L1 acceptance)
+> Level: L1 acceptance (corrected from web-slice). CSRF lives in the global security filter chain
+> and is rendered by ProblemDetailAccessDeniedHandler; the project tests it full-context
+> (ActivateAccountCsrfIntegrationTest, AuthCsrfIntegrationTest) — a web slice cannot exercise the
+> real filter chain. Mirror that for POST /api/admin/users → 403 RFC-9457 ProblemDetail. Verifies
+> existing global behavior reaches the new endpoint, so green-acceptance is likely a no-op.
 - [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] design (existing CSRF + access-denied handler — no new design)
+- [S] red-usecase
+- [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
+- [S] adapters-discovery
 - [ ] green-acceptance
 
 ## Load Scenarios (03_Load_Tests.md)
@@ -287,24 +309,29 @@ email is asserted as a side effect of backend Scenario 3.1)
 
 ## Infrastructure Scenarios (04_Infrastructure_Tests.md)
 
-### Scenario 1.1: Database unavailable during list returns 500 with a Problem Detail
+### Scenario 1.1: Database unavailable during list returns 500 with a Problem Detail (L1 acceptance)
+> Level: L1 acceptance — full-context resilience (real app + broken DB). The global exception
+> handler already maps an unhandled DB failure to a 500 RFC-9457 ProblemDetail with no internal
+> leak; this verifies that for the list read path. No usecase/domain work.
 - [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] design (existing global exception handling — no new design)
+- [S] red-usecase
+- [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
+- [S] adapters-discovery
 - [ ] green-acceptance
 
-### Scenario 2.1: Database recovery allows the list after an outage
+### Scenario 2.1: Database recovery allows the list after an outage (L1 acceptance)
+> Level: L1 acceptance — full-context resilience: real app, DB outage then recovery, list works
+> again. Exercises the existing read path's behavior across an outage; no usecase/domain work.
 - [ ] red-acceptance
-- [ ] design
-- [ ] red-usecase
-- [ ] green-usecase
+- [S] design (existing read path — no new design)
+- [S] red-usecase
+- [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [ ] adapters-discovery
+- [S] adapters-discovery
 - [ ] green-acceptance
 
 ## Extended (deferred — decide at Story Completion Gate)

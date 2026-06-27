@@ -61,7 +61,7 @@ Scenario: A non-IANA timezone value is rejected
 ```
 
 ## 5.6 POST /api/admin/users without a CSRF token returns 403
-**Level:** L2 web-slice  <!-- CSRF enforcement is security-filter behavior at the web layer -->
+**Level:** L1 acceptance  <!-- CSRF lives in the global security filter chain + ProblemDetailAccessDeniedHandler; the project tests it full-context (ActivateAccountCsrfIntegrationTest) — a web slice cannot exercise the real filter chain -->
 
 ```gherkin
 Scenario: Create endpoint rejects a request missing the CSRF token
