@@ -14,11 +14,8 @@ import by.iivanov.rpm.testing.api.FieldError;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
 @WebTest
-@Execution(ExecutionMode.SAME_THREAD)
 class UserResourceTest {
 
     private final UserApi userApi;
