@@ -6,17 +6,14 @@ import by.iivanov.rpm.iam.user.domain.UserSummary;
 import by.iivanov.rpm.iam.user.domain.UserSummaryQuery;
 import by.iivanov.rpm.iam.user.infrastructure.security.SystemActors;
 import java.util.List;
-import org.springframework.data.core.TypedPropertyPath;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
 class JpaUserSummaryQuery implements UserSummaryQuery {
 
-    private static final Sort GRID_ORDER = Sort.by(
-            Sort.Direction.DESC,
-            TypedPropertyPath.path(UserSummaryView::createdAt),
-            TypedPropertyPath.path(UserSummaryView::id));
+    private static final Sort GRID_ORDER =
+            Sort.by(Sort.Direction.DESC, UserSummaryView::createdAt, UserSummaryView::id);
 
     private final SpringDataUserSummaryRepository repository;
 
