@@ -18,10 +18,10 @@
 **Implication:** any read-all or count assertion over a shared aggregate depends on this reset; seed ids must keep the `019b76da` prefix to survive it.
 **From:** scenario 1.1 (1.1-list-users)
 
-## Quirk: custom ApiExceptionHandler is not scanned by @WebMvcTest
-**Quirk:** A wim-deblauwe `ApiExceptionHandler` declared as a plain `@Component` is not loaded by `@WebMvcTest`; a web-slice test of the mapping gets the starter's fallback 500 unless it `@Import`s the handler (config-based `error.handling.http-statuses` mappings need no import — they load via auto-config).
-**Where:** `iam.user.infrastructure.web.LoginAlreadyExistsExceptionHandler`, `UserResourceTest`.
-**Implication:** any future web-slice test of a custom ApiExceptionHandler (e.g. timezone validation in 5.5, a future EmailAlreadyExists handler) must @Import the handler.
+## Quirk: custom ApiExceptionHandler is auto-discovered into the web-slice context via WebTest
+**Quirk:** A wim-deblauwe `ApiExceptionHandler` declared as a plain `@Component` is NOT loaded by a bare `@WebMvcTest` (only web stereotypes are scanned), so a web-slice test of the mapping would get the starter's fallback 500. Resolved centrally: `WebTest`'s `@ComponentScan` has an `ASSIGNABLE_TYPE` includeFilter for `ApiExceptionHandler`, so EVERY handler is auto-discovered into the single shared web-slice context.
+**Where:** `by.iivanov.rpm.testing.WebTest` (`@ComponentScan` includeFilters), `iam.user.infrastructure.web.LoginAlreadyExistsExceptionHandler`.
+**Implication:** a new custom `ApiExceptionHandler` (e.g. timezone validation in 5.5, a future EmailAlreadyExists handler) needs NO per-test `@Import` — just declare it as a bean; it loads automatically and all web-slice tests keep one shared context. Never add `@Import(SomeHandler.class)` to a single web-slice test (it forks a second context).
 **From:** scenario 2.1 (2.1-duplicate-login-422)
 
 ## Decision: domain exception → field-level 422 via a custom ApiExceptionHandler

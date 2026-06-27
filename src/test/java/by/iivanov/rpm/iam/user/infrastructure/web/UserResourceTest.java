@@ -14,10 +14,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.springframework.context.annotation.Import;
 
 @WebTest
-@Import(LoginAlreadyExistsExceptionHandler.class)
 @Execution(ExecutionMode.SAME_THREAD)
 class UserResourceTest {
 
