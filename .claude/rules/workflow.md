@@ -4,6 +4,8 @@
 
 Every story follows: **interview → spec → backend scenarios → integration scenarios → frontend scenarios → security scenarios → load scenarios → infrastructure scenarios → full-stack journey**.
 
+Each phase ends with a **Per-Phase Extended Gate** (below): once a phase's last core scenario is done, its extended cases (`tests/extended/NN_<Category>_Extended.md`) are reviewed for promote/defer before the next phase starts — not deferred wholesale to story close.
+
 The trailing **full-stack journey** phase is the top-tier E2E assessment (see `tdd-rules.md` → "Top-Tier Full-Stack Journey Assessment"): its verdict is produced during the **spec** phase by `/test-spec` (as `tests/07_FullStack_Journey.md`) and executed once at the end as a tracked `fullstack-journey` step (see "Full-Stack Journey Step" below).
 
 **High-level progress** is tracked in `ProductSpecification/stories.md` — three tables: **In Progress**, **Backlog**, and **Done**. Phase columns (Spec, Backend, Integration, Frontend, Security, Load, Infra) per story. The `/continue` skill updates it after each work unit commit. Phase values: ✅ done, 🔧 in progress, — not started, · no story folder yet. When a story reaches 100% (all scenarios done), run the **Story Completion Gate** (below) and then move its row from the **In Progress** table to the **Done** table.
@@ -12,13 +14,24 @@ The trailing **full-stack journey** phase is the top-tier E2E assessment (see `t
 
 Spec phase: `/interview` → `/story` → `/mockups` → `/api-spec` → `/test-spec` (one at a time, review each before proceeding).
 
+## Per-Phase Extended Gate
+
+**Extended cases are reviewed at the end of the phase they belong to — not deferred wholesale to story close.** Each test category produces its own extended file (`tests/extended/NN_<Category>_Extended.md`), and each maps to a phase: `01_API`→Backend, `06_Integration`→Integration, `02_UI`→Frontend, `05_Security`→Security, `03_Load`→Load, `04_Infrastructure`→Infrastructure. When the **last core scenario of a phase** is completed (every other checkbox in that phase's section is `[x]`/`[S]`), `/continue` MUST **STOP** before starting the next phase (a deliberate exception to "Atomic Work Units: never pause") and run the extended gate for that phase's extended file.
+
+**The agent only surfaces and recommends; the user decides** — identical mechanics to the Story Completion Gate. Present every case in that phase's `NN_<Category>_Extended.md` with a one-line promote/defer recommendation, ask the user per item, then execute:
+
+1. **Promote** — append the case as a new scenario block in `progress.md` *within the same phase* (full TDD steps per that phase's scenario sequence). The phase is not finished while a promoted scenario has open checkboxes — continue in-phase before advancing to the next phase.
+2. **Defer** — log the case to `improvements.md` as an `Open` item (id `I{n}`) and mark its entry in the `### Extended` block of `progress.md` as reviewed, so the Story Completion Gate does not re-surface it.
+
+If the phase's extended file is empty or absent, record "no extended items for `<phase>`" and proceed. This gate is the per-phase analog of the Story Completion Gate; together they guarantee every extended case gets a user decision at the earliest meaningful point — when its phase's core work is still fresh — instead of all at once at story close. The reviewed-vs-open marking in the `### Extended` block is what lets the two gates share state without double-asking.
+
 ## Story Completion Gate
 
 **A story may NOT move to the Done table until its extended test cases and improvements backlog have been reviewed — and the promote/defer decision is the user's, not the agent's.** `/test-spec` generates `tests/extended/*_Extended.md` files (header: *"Implement after core tests pass"*) and QA fills `improvements.md` during the story — both are deferred work that has no per-scenario checkbox, so without a gate they are silently orphaned when the story closes (this is the root cause of issue #189).
 
-**The agent only surfaces and recommends; the user decides.** When the work unit it just completed was a story's final scenario, `/continue` MUST **STOP** before moving the row to Done (this is a deliberate exception to "Atomic Work Units: never pause") and present, for the user to decide:
+**The agent only surfaces and recommends; the user decides.** This gate is the backstop to the **Per-Phase Extended Gate** (above): extended cases already decided at their phase gate are marked reviewed in the `### Extended` block and are NOT re-surfaced here. When the work unit it just completed was a story's final scenario, `/continue` MUST **STOP** before moving the row to Done (this is a deliberate exception to "Atomic Work Units: never pause") and present, for the user to decide:
 
-- every case in `tests/extended/*_Extended.md`, and
+- every still-unreviewed case in `tests/extended/*_Extended.md` (any whose phase gate was skipped — e.g. older stories, or a phase that ended before this rule existed), and
 - every `Open` item in the story's `improvements.md`,
 
 each annotated with a one-line agent recommendation (promote / defer + why). **The agent never auto-promotes a case, never auto-closes the story, and never moves the row to Done on its own** — it waits for the user's per-item decision.
@@ -34,6 +47,8 @@ Only once every extended case and `Open` item has a user decision does the agent
 This gate is the owner and trigger for the *"implement after core"* instruction. `/continue` enforces it (the STOP above) when it detects that the work unit it just completed was a story's final scenario.
 
 ## Backend Scenario Sequence
+
+This sequence is for a scenario tagged **`Level: L1 acceptance`** (a happy-path, full-context behavior). A scenario tagged **`Level: L2 web-slice`** (a validation / error / business-exception→HTTP-status category) does NOT use this sequence — its domain rule is already covered at a lower level, so it is driven by a `@WebTest` web-slice test, not an acceptance test: `red-adapter rest` → `design` → `green-adapter rest`, with `red/green-usecase`, `red/green-domain` and `green-acceptance` marked `[S]` (already covered / no Level-1 test for an error category). The `**Level:**` tag is authored in the test spec (`test-spec-format.md`) and consumed by Bootstrapping below.
 
 For each scenario in `tests/01_API_Tests.md`:
 
@@ -133,10 +148,16 @@ If no `progress.md` exists, create one by:
 2. Reading the story's test specs (`tests/01_API_Tests.md`, `tests/06_Integration_Tests.md` if exists, `tests/02_UI_Tests.md`, `tests/05_Security_Tests.md` if exists, `tests/03_Load_Tests.md` if exists, `tests/04_Infrastructure_Tests.md` if exists) and the extended cases (`tests/extended/*_Extended.md` if the folder exists)
 3. Scanning existing test classes and production code for completed steps
 4. Marking completed steps as `[x]`, next step as `[~]`, rest as `[ ]`
-5. For backend/integration/security scenarios, **always include `design` after `red-acceptance`** — it is mandatory for every scenario that needs new implementation. Only omit it when the entire scenario is `[S]` (existing implementation covers everything). Include `[ ] adapters-discovery` after `green-usecase` — adapter discovery runs when this step is reached. Include `[ ] red-domain` / `[ ] green-domain` after `green-usecase` as `[S]` by default — they are activated only when coverage-agent or design-preview identifies need.
+5. **Map each backend-style scenario to a step sequence by its `**Level:**` tag** (authored in the test spec — `test-spec-format.md` → "Per-scenario Level tag + overlap pass"). Do NOT default every `### Scenario` in `01_API_Tests.md` to the acceptance sequence:
+   - **`L1 acceptance`** → the Backend Scenario Sequence above (`red-acceptance` → `design` → `red/green-usecase` → `adapters-discovery` → adapter steps → `green-acceptance`).
+   - **`L2 web-slice`** (validation / error / business-exception→HTTP-status category — duplicate-key 4xx, invalid-field 422, CSRF 403) → a web-slice sequence: `red-adapter rest` → `design` → `green-adapter rest`, and mark `red/green-usecase`, `red/green-domain`, `green-acceptance` as `[S]` when the domain rule is already covered at a lower level. **Never bootstrap an error/validation/per-status category as `red-acceptance`.**
+   - **`L3 usecase` / `L4 domain`** → the usecase/domain cycle only.
+   - **`db-adapter`** (e.g. SQL-injection literal-treatment, complex `@Query`) → a `red-adapter db` / `green-adapter db` cycle (`@DataJpaTest`), with the other layers `[S]`.
+   - **Untagged scenario (older spec):** infer the level from the pyramid (`tdd-rules.md`) and the overlap check — an error/validation category is L2, not L1. Never assume "API-test scenario = acceptance".
+   For an `L1 acceptance` scenario that needs new implementation, **always include `design` after `red-acceptance`** (omit only when the whole scenario is `[S]`). Include `[ ] adapters-discovery` after `green-usecase`; include `[ ] red-domain` / `[ ] green-domain` after `green-usecase` as `[S]` by default — activated only when coverage-agent or design-preview identifies need.
 6. For frontend scenarios, include `demo` as the final step per scenario
 6a. **Full-stack journey step.** After the frontend scenarios block, include one story-level `fullstack-journey` step driven by `tests/07_FullStack_Journey.md`: if the verdict is `extend`/`new` add `[ ] fullstack-journey`; if `no-impact` add `[S] fullstack-journey (no-impact: <reason>)`. If `07_FullStack_Journey.md` is missing (older story), add `[ ] fullstack-journey (assess: produce 07_FullStack_Journey.md verdict)` so the assessment isn't skipped. See "Full-Stack Journey Step".
-7. **Surface extended cases as `[S]`.** If `tests/extended/*_Extended.md` exists, add an `### Extended (deferred — decide at Story Completion Gate)` block at the end of the matching scenarios section, listing each extended case as `[S] {case name} (deferred — review at Story Completion Gate)`. These are **never executed by `/continue`** (they stay `[S]`); the block exists only so the cases are visible in `progress.md` instead of silently omitted, and so the **Story Completion Gate** can review them before the story closes. Do not add TDD sub-steps for them — promotion happens at the gate, under user decision.
+7. **Surface extended cases as `[S]`, grouped by phase.** If `tests/extended/*_Extended.md` exists, add an `### Extended (deferred — decide at the phase's Extended Gate)` block at the end of each matching phase's scenarios section, listing that phase's extended cases as `[S] {case name} (deferred — review at the <phase> Extended Gate)`. These are **never executed by `/continue`** (they stay `[S]`); the block exists only so the cases are visible in `progress.md` instead of silently omitted, and so the **Per-Phase Extended Gate** (or the **Story Completion Gate** as backstop) can review them. Do not add TDD sub-steps for them — promotion happens at a gate, under user decision.
 
 ## Atomic Work Units
 

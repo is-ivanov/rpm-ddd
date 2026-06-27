@@ -13,6 +13,7 @@ import by.iivanov.rpm.iam.user.domain.UserRegistrationPolicy;
 import by.iivanov.rpm.iam.user.fixtures.UserStatements;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.UUID;
 import org.instancio.Instancio;
@@ -40,7 +41,7 @@ class UserRegistrationServiceTest {
                 userRepository,
                 new UserRegistrationPolicy(userRepository),
                 NoOpPasswordEncoder.getInstance(),
-                Clock.fixed(Instant.parse("2026-04-30T12:00:00Z"), ZoneOffset.UTC));
+                Clock.fixed(Instant.parse("2026-04-30T12:34:17.482Z"), ZoneOffset.UTC));
     }
 
     @Nested
@@ -77,6 +78,21 @@ class UserRegistrationServiceTest {
             then(caughtException)
                     .isInstanceOf(EmailAlreadyExistsException.class)
                     .hasMessage("Email already exists: existing@example.com");
+        }
+
+        @Test
+        @DisplayName("Create user with a timezone succeeds and appears in the grid: "
+                + "WHEN registerUser with a time zone EXPECT the stored user keeps that zone")
+        void when_commandHasTimeZone_expect_storedUserKeepsZone() {
+            // GIVEN:
+            var newYork = ZoneId.of("America/New_York");
+            var command = Instancio.of(RegisterUserCommand.class)
+                    .set(field(RegisterUserCommand::timeZone), newYork)
+                    .create();
+            // WHEN:
+            UserId registeredId = sut.registerUser(command, CREATED_BY);
+            // THEN:
+            userStatements.assertStoredUserTimeZone(registeredId, newYork);
         }
     }
 }

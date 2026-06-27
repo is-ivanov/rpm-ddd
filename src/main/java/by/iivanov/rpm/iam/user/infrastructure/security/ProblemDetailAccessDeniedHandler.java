@@ -1,6 +1,6 @@
 package by.iivanov.rpm.iam.user.infrastructure.security;
 
-import by.iivanov.rpm.shared.web.errors.ErrorConstants;
+import by.iivanov.rpm.shared.infrastructure.web.errors.ErrorConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;

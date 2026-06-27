@@ -8,6 +8,11 @@
   <include file="db/changelog/db.changelog-master.xml" relativeToChangelogFile="false"/>
 
   <changeSet id="test-data-user" author="i.s.ivanov" runAlways="true" context="test">
+    <!-- pgjdbc sets the session time zone to the JVM default; the user.csv timestamps are TZ-naive
+         (Liquibase only recognizes the offset-less yyyy-MM-dd'T'HH:mm:ss form). Pin the session to UTC
+         so the naive seed instants are stored as UTC regardless of the host's time zone, matching the
+         checked-in grid fixture in every environment (locally and in CI). -->
+    <sql>SET TIME ZONE 'UTC';</sql>
     <loadUpdateData tableName="iam_user" file="db/data/user.csv" separator=";" primaryKey="id"
                     usePreparedStatements="true">
       <column name="password_hash" type="text"/>

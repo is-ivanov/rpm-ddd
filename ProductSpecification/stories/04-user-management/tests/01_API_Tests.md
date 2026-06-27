@@ -9,6 +9,7 @@ The create endpoint (`POST /api/admin/users`) already exists and is reused; this
 ## 1. List Users (GET)
 
 ### 1.1 Authenticated user lists all users with resolved actor names
+**Level:** L1 acceptance  <!-- happy path, full-context grid read with ORM actor resolution -->
 
 **Given** several registered users created by the seed actor and by an admin
 **When** the user requests the admin user list
@@ -23,6 +24,7 @@ The create endpoint (`POST /api/admin/users`) already exists and is reused; this
 ## 2. Create User (POST) — Validation
 
 ### 2.1 Create with a duplicate login returns a field-level 422
+**Level:** L2 web-slice  <!-- duplicate-login domain rule already covered at application level; only the exception→422+fieldErrors mapping is new -->
 
 **Given** an existing user with login "alice"
 **When** an admin submits a create-user request with login "alice" and an otherwise valid body
@@ -37,6 +39,7 @@ The create endpoint (`POST /api/admin/users`) already exists and is reused; this
 > Extends the existing registration acceptance test — add `timeZone` to the request and assert the new user is listed in the grid. Do NOT create a parallel acceptance class: the existing test already provisions the full context and asserts the activation email.
 
 ### 3.1 Create user with a timezone succeeds and appears in the grid
+**Level:** L1 acceptance  <!-- happy path; extends the existing registration acceptance test (one When, multiple Then) -->
 
 **Given** an authenticated admin
 **When** the admin submits a valid create-user request including a timezone "Europe/Berlin"

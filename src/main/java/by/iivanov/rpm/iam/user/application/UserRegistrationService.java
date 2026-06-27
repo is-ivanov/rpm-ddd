@@ -64,7 +64,8 @@ public class UserRegistrationService {
                 login,
                 new Password(placeholderHash),
                 createdBy,
-                Instant.now(clock));
+                Instant.now(clock),
+                command.timeZone());
 
         return userRepository.save(user).getId();
     }

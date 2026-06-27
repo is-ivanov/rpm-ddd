@@ -3,6 +3,7 @@
 Attack surface this story: `GET /api/admin/users` (reads and renders user-provided text), `POST /api/admin/users` (accepts a JSON body, now with `timeZone`). Auth is required for both, but any authenticated user may reach them this story (no role gate yet — deferred to the roles story). Generic unauthenticated-access (401), security headers, CORS, and HTTPS are tested globally and excluded here. Filter/sort run client-side over the already-fetched list, so they reach no server query — no server-side injection surface there.
 
 ## 5.1 SQL injection in create fields is treated as literal text
+**Level:** db-adapter  <!-- @DataJpaTest: prove literal treatment via findByX→empty + control row; asserting 422/201 at L1 proves nothing (JPA params already bind literally) -->
 
 ```gherkin
 Scenario: SQL injection payloads in create-user fields do not execute
@@ -14,6 +15,7 @@ Scenario: SQL injection payloads in create-user fields do not execute
 ```
 
 ## 5.2 Stored XSS in a user name is escaped when rendered in the grid
+**Level:** frontend (Playwright/E2E)  <!-- render-escaping is a UI concern; driven by the frontend scenario sequence, not a backend test -->
 
 ```gherkin
 Scenario: A script payload in a user name does not execute in the grid
@@ -24,6 +26,7 @@ Scenario: A script payload in a user name does not execute in the grid
 ```
 
 ## 5.3 Mass assignment — extra fields on create are ignored
+**Level:** L2 web-slice  <!-- RegisterUserRequest binds no role/status/id field; extra JSON is ignored at the DTO boundary -->
 
 ```gherkin
 Scenario: Create request with extra privileged fields does not elevate the user
@@ -36,6 +39,7 @@ Scenario: Create request with extra privileged fields does not elevate the user
 ```
 
 ## 5.4 Input length limits on create fields are enforced
+**Level:** L2 web-slice  <!-- @Size bean-validation on the request DTO → 422 with field errors -->
 
 ```gherkin
 Scenario: Over-length create fields are rejected
@@ -46,6 +50,7 @@ Scenario: Over-length create fields are rejected
 ```
 
 ## 5.5 Invalid timezone value is rejected
+**Level:** L2 web-slice  <!-- non-IANA timeZone rejected by the request DTO validator → 422 field error -->
 
 ```gherkin
 Scenario: A non-IANA timezone value is rejected
@@ -56,6 +61,7 @@ Scenario: A non-IANA timezone value is rejected
 ```
 
 ## 5.6 POST /api/admin/users without a CSRF token returns 403
+**Level:** L1 acceptance  <!-- CSRF lives in the global security filter chain + ProblemDetailAccessDeniedHandler; the project tests it full-context (ActivateAccountCsrfIntegrationTest) — a web slice cannot exercise the real filter chain -->
 
 ```gherkin
 Scenario: Create endpoint rejects a request missing the CSRF token

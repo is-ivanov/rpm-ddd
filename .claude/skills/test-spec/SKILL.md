@@ -51,6 +51,10 @@ Add this header to extended files:
 > These are additional edge case tests. Implement after core tests pass.
 ```
 
+### Phase 2a: Level & overlap classification (mandatory)
+
+For **every backend-style scenario** (API, Security, Integration, Infrastructure), run the overlap pass and stamp a `**Level:**` tag per `test-spec-format.md` → "Per-scenario Level tag + overlap pass". For each scenario, check what is already covered (by a lower level, or an existing scenario in this or an earlier story) and tag the **cheapest** level that recovers the new behavior: error / validation / per-status categories default to **L2 web-slice** (their domain rule is already tested at L3/L4 — only the HTTP mapping is new); reserve **L1 acceptance** for the happy path. This tag is what the `/continue` bootstrap reads to pick the step sequence (`workflow.md` → Bootstrapping) — an untagged scenario is the root cause of a validation case wrongly bootstrapped as a Level-1 acceptance test.
+
 ### Phase 2b: Full-Stack Journey Verdict (mandatory)
 
 Assess this story's impact on the top-tier full-stack journey and ALWAYS write the verdict to `tests/07_FullStack_Journey.md` — one of **extend**, **new**, or **no-impact**. The file is never omitted: a backend-only or non-lifecycle story records `no-impact` with a one-line rationale. See `tdd-rules.md` → "Top-Tier Full-Stack Journey Assessment" for the principle and the browser-testing tech binding (`.claude/tech/{browser-testing}/tdd.md`) for the journey location, suffix, and extend-vs-new mechanics. Use the `07_FullStack_Journey.md` format in `test-spec-format.md`.

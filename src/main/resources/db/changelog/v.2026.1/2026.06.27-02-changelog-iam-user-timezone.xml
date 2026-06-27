@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!-- User time zone (Scenario 3.1): IANA zone id stored on iam_user.
+       Added nullable, backfilled with 'UTC', then made NOT NULL. Hibernate maps ZoneId to this
+       varchar natively (no AttributeConverter). Postgres has no dedicated zone-id type, so varchar
+       holding the IANA id is canonical; validity is enforced in the application, not at the DB. -->
+  <changeSet id="2026-06-27-04-add-iam-user-time-zone-column" author="i.s.ivanov">
+    <addColumn tableName="iam_user">
+      <column name="time_zone" type="varchar(64)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="2026-06-27-05-backfill-iam-user-time-zone" author="i.s.ivanov">
+    <update tableName="iam_user">
+      <column name="time_zone" value="UTC"/>
+    </update>
+  </changeSet>
+
+  <changeSet id="2026-06-27-06-iam-user-time-zone-not-null" author="i.s.ivanov">
+    <addNotNullConstraint tableName="iam_user" columnName="time_zone"/>
+  </changeSet>
+
+</databaseChangeLog>

@@ -20,7 +20,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdminUserListResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSummaryResponse'
         '401':
           description: Not authenticated
           content:
@@ -66,42 +68,26 @@ paths:
 
 components:
   schemas:
-    AdminUserListResponse:
+    UserSummaryResponse:
       type: object
-      required:
-        - users
-      properties:
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/AdminUserRow'
-
-    AdminUserRow:
-      type: object
+      description: >
+        A user as shown in the admin user list: a summary projection. The list endpoint
+        returns a bare JSON array of these (no envelope). The full single-user view will be
+        exposed separately as UserDetailResponse on GET /api/admin/users/{id}.
       required:
         - userId
-        - firstName
-        - lastName
+        - name
         - login
         - email
         - status
-        - createdAt
-        - createdBy
-        - updatedAt
-        - updatedBy
+        - audit
       properties:
         userId:
           type: string
           format: uuid
           description: User unique identifier
-        firstName:
-          type: string
-        middleName:
-          type: string
-          nullable: true
-          description: Optional middle name
-        lastName:
-          type: string
+        name:
+          $ref: './common.yaml#/components/schemas/PersonNameResponse'
         login:
           type: string
         email:
@@ -113,38 +99,8 @@ components:
             Canonical lifecycle order (PENDING → ACTIVE → LOCKED → INACTIVE).
             The Status filter lists options and the Status-column sort ranks
             by this lifecycle order (the enum ordinal), NOT alphabetically.
-        createdAt:
-          type: string
-          format: date-time
-          description: UTC instant the user was created (ISO 8601)
-        createdBy:
-          $ref: '#/components/schemas/AuditActor'
-        updatedAt:
-          type: string
-          format: date-time
-          description: UTC instant of the last update (init = createdAt)
-        updatedBy:
-          $ref: '#/components/schemas/AuditActor'
-
-    AuditActor:
-      type: object
-      description: >
-        Resolved name of an audit actor. The frontend composes the abbreviated
-        "J. Doe" label and the full "First [Middle] Last" tooltip from the parts.
-        The seed/SYSTEM actor is returned as firstName "System" with an empty
-        lastName.
-      required:
-        - firstName
-        - lastName
-      properties:
-        firstName:
-          type: string
-        middleName:
-          type: string
-          nullable: true
-        lastName:
-          type: string
-          description: Empty for the SYSTEM actor
+        audit:
+          $ref: './common.yaml#/components/schemas/AuditResponse'
 
     RegisterUserRequest:
       type: object

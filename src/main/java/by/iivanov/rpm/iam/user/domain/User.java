@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.time.Instant;
+import java.time.ZoneId;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.jmolecules.ddd.types.AggregateRoot;
@@ -20,6 +21,9 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
     private final EmailAddress email;
     private final Association<User, UserId> createdBy;
     private final Instant registeredAt;
+    private final ZoneId timeZone;
+    private final Association<User, UserId> updatedBy;
+    private final Instant updatedAt;
 
     private Login login;
 
@@ -42,15 +46,20 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
             Login login,
             Password password,
             UserId createdBy,
-            Instant registeredAt) {
+            Instant registeredAt,
+            ZoneId timeZone) {
         this.id = id;
         this.personName = personName;
         this.email = email;
         this.login = login;
         this.password = password;
         this.registeredAt = registeredAt;
+        this.timeZone = timeZone;
         this.status = UserStatus.PENDING;
         this.createdBy = Association.forId(createdBy);
+        // A freshly-registered user has never been updated: updated audit equals created audit.
+        this.updatedBy = Association.forId(createdBy);
+        this.updatedAt = registeredAt;
     }
 
     public static User register(
@@ -60,8 +69,9 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
             Login login,
             Password password,
             UserId createdBy,
-            Instant now) {
-        var user = new User(id, personName, email, login, password, createdBy, now);
+            Instant now,
+            ZoneId timeZone) {
+        var user = new User(id, personName, email, login, password, createdBy, now, timeZone);
         user.registerEvent(new UserRegisteredEvent(id, login, email));
         return user;
     }
@@ -93,6 +103,10 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
 
     public PersonName getPersonName() {
         return personName;
+    }
+
+    public ZoneId getTimeZone() {
+        return timeZone;
     }
 
     public void validateActiveForAuthentication() {

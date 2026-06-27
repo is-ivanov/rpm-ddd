@@ -4,6 +4,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import by.iivanov.rpm.testing.assertj.RpmSoftAssertions;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.UUID;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -29,12 +30,13 @@ class UserTest {
         private final Password password = new Password("$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy");
         private final UserId createdBy = new UserId(UUID.fromString("123e4567-e89b-12d3-a456-426614174023"));
         private final Instant now = Instant.parse("2026-04-30T12:00:00Z");
+        private final ZoneId timeZone = ZoneId.of("America/New_York");
 
         @Test
         @DisplayName("WHEN register EXPECT status is PENDING")
         void when_register_expect_statusPending() {
             // WHEN:
-            var user = User.register(id, personName, email, login, password, createdBy, now);
+            var user = User.register(id, personName, email, login, password, createdBy, now, timeZone);
             // THEN:
             then(user.getStatus()).isEqualTo(UserStatus.PENDING);
         }
@@ -43,7 +45,7 @@ class UserTest {
         @DisplayName("WHEN register EXPECT createdBy is set")
         void when_register_expect_createdByIsSet() {
             // WHEN:
-            var user = User.register(id, personName, email, login, password, createdBy, now);
+            var user = User.register(id, personName, email, login, password, createdBy, now, timeZone);
             // THEN:
             then(user.getCreatedBy().getId()).isEqualTo(createdBy);
         }
@@ -52,7 +54,7 @@ class UserTest {
         @DisplayName("WHEN register EXPECT version is 0")
         void when_register_expect_versionIsZero() {
             // WHEN:
-            var user = User.register(id, personName, email, login, password, createdBy, now);
+            var user = User.register(id, personName, email, login, password, createdBy, now, timeZone);
             // THEN:
             then(user.getVersion()).isEqualTo(0);
         }
@@ -61,7 +63,7 @@ class UserTest {
         @DisplayName("WHEN register EXPECT UserRegisteredEvent is published")
         void when_register_expect_eventPublished() {
             // WHEN:
-            var user = User.register(id, personName, email, login, password, createdBy, now);
+            var user = User.register(id, personName, email, login, password, createdBy, now, timeZone);
             // THEN:
             softly.then(user)
                     .hasEventsSize(1)

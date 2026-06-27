@@ -7,6 +7,7 @@
 ## 1. Database Failure During List
 
 ### 1.1 Database unavailable during list returns 500 with a Problem Detail
+**Level:** L1 acceptance  <!-- full-context resilience: needs the real app + a broken DB -->
 
 **Given** an authenticated admin
 **And** the database is unavailable
@@ -19,6 +20,7 @@
 ## 2. Database Recovery
 
 ### 2.1 Database recovery allows the list after an outage
+**Level:** L1 acceptance  <!-- full-context resilience: real app, DB outage then recovery -->
 
 **Given** an authenticated admin
 **And** the database is unavailable

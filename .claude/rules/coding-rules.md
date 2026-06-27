@@ -119,6 +119,10 @@ Each bounded context is a Spring Modulith module. Module boundaries are enforced
 - Storage `find*()` methods should be trivial: fetch all, map each to domain, collect. If the method body has helper methods, intermediate DTOs, or complex pipelines — the entity model is wrong.
 - Query/filter parameter objects for storage ports belong in `{subdomain}.infrastructure`, not `{subdomain}.domain`. Use a mutable class with protected fields so adapters can extend it with framework-specific behavior (query specification building, criteria construction).
 
+## SQL & JPQL
+
+- **SQL/JPQL keywords are UPPER_CASE.** Every reserved word — `SELECT`, `FROM`, `WHERE`, `INSERT`, `UPDATE`, `DELETE`, `JOIN`, `ON`, `AND`, `OR`, `NOT`, `LIKE`, `ORDER BY`, `GROUP BY`, `SET`, `VALUES`, etc. — is written in upper case in every place a query is authored: `@Query` strings, native queries, `JdbcClient`/`JdbcTemplate` statements, Liquibase `<sql>`, and migration scripts. Identifiers (tables, columns, aliases) stay lower_snake_case. This applies to test code as well as production.
+
 ## Error Handling
 
 - Domain exceptions extend the language's base unchecked exception, no framework dependencies. Let them bubble to the centralized exception handler.
