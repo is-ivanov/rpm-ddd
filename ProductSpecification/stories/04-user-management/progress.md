@@ -17,11 +17,11 @@
 ### Scenario 1.1: Authenticated user lists all users with resolved actor names
 - [x] red-acceptance (UserGridIntegrationTest — @ExpectedToFail; GET /api/admin/users stub → 500; RED confirmed, prediction all-YES)
 - [x] design (Option A: read-model view-entity + ORM-resolved actor names + Null-Object "System"; ADR written)
-- [~] red-usecase
-- [ ] green-usecase
+- [S] red-usecase (ListUsersService is a pure pass-through; trivial-test gate — covered by L1 acceptance + L3 db adapter)
+- [S] green-usecase (no usecase logic; UserSummary + UserSummaryQuery created in red/green-adapter db, ListUsersService + controller wiring in green-acceptance)
 - [S] red-domain (activate only if coverage/design-preview finds testable domain logic)
 - [S] green-domain
-- [ ] adapters-discovery
+- [~] adapters-discovery
 - [ ] green-acceptance
 
 ### Scenario 2.1: Create with a duplicate login returns a field-level 422
