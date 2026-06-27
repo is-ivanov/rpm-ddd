@@ -7,15 +7,12 @@ import by.iivanov.rpm.iam.user.domain.User;
 import by.iivanov.rpm.testing.DbTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 
 @DataJpaTest
 @DbTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Execution(ExecutionMode.SAME_THREAD)
 class UserRepositorySqlInjectionTest {
 
     private static final Login SEEDED_LOGIN = new Login("admin");
