@@ -52,8 +52,8 @@
 > Extends the existing registration acceptance test (UserRegistrationIntegrationTest) — add `timeZone`
 > to the request and assert the new user is listed in the grid. Do NOT create a parallel acceptance class.
 - [x] red-acceptance (no RED achievable — feature pre-existing: all create-action consequences (201, Location, activation email, grid PENDING, createdAt==updatedAt, createdBy==updatedBy==admin) already green via Story 1 registration + Scn 1.1 grid. timeZone is NOT L1-observable (PENDING user can't reach /me w/o activate+login = separate lifecycle → full-stack journey; grid carries no timeZone). Strengthened the existing UserRegistrationIntegrationTest to assert the new user flows into the grid (recursive-comparison full row) — a real new consequence on the same single action; committed green, no @ExpectedToFail. Added timeZone to RegisterUserRequest as nullable/ignored plumbing. DECISION (user): verify timeZone storage at L3 usecase, NOT via jdbcClient DB-peek in L1 (violates black-box rule). 1/0/0; test-review tightened to full-row eq; checkstyle/pmd/IDE clean.)
-- [~] design
-- [ ] red-usecase
+- [x] design (ADR create-user-timezone-decision: domain type = core-Java ZoneId (no bespoke VO); RegisterUserRequest keeps String @NotBlank @Size(64) + toCommand() ZoneId.of; User/command gain ZoneId timeZone; migration time_zone varchar(64) nullable→backfill 'UTC'→NOT NULL. Forward: 5.5 validity = web-slice jakarta constraint → 422, NOT a domain VO, so red/green-domain stay [S] in 3.1 & 5.5. Postgres has no zone-id type → varchar.)
+- [~] red-usecase
 - [ ] green-usecase
 - [S] red-domain
 - [S] green-domain
