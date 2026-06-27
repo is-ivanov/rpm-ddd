@@ -5,7 +5,6 @@ import by.iivanov.rpm.iam.user.fixtures.UserApi;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ExpectedToFail;
 
 class UserGridIntegrationTest extends AbstractApplicationIntegrationTest {
 
@@ -20,9 +19,6 @@ class UserGridIntegrationTest extends AbstractApplicationIntegrationTest {
     }
 
     @Test
-    @ExpectedToFail(
-            value = "GET /api/admin/users not implemented - returns 500 (UnsupportedOperationException) instead of 200",
-            withExceptions = AssertionError.class)
     @DisplayName("WHEN admin lists users EXPECT 200 with resolved actor names in createdAt DESC, userId DESC order")
     void when_adminListsUsers_expect_resolvedGridInDeterministicOrder() {
         // GIVEN: an authenticated admin (the seeded users are the fixture data)

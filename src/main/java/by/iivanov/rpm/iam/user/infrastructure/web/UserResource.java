@@ -1,5 +1,6 @@
 package by.iivanov.rpm.iam.user.infrastructure.web;
 
+import by.iivanov.rpm.iam.user.application.ListUsersService;
 import by.iivanov.rpm.iam.user.application.UserRegistrationService;
 import by.iivanov.rpm.iam.user.domain.UserId;
 import by.iivanov.rpm.iam.user.infrastructure.security.SecurityCurrentActorProvider;
@@ -20,10 +21,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 class UserResource {
 
     private final UserRegistrationService userRegistrationService;
+    private final ListUsersService listUsersService;
     private final SecurityCurrentActorProvider currentActorProvider;
 
-    UserResource(UserRegistrationService userRegistrationService, SecurityCurrentActorProvider currentActorProvider) {
+    UserResource(
+            UserRegistrationService userRegistrationService,
+            ListUsersService listUsersService,
+            SecurityCurrentActorProvider currentActorProvider) {
         this.userRegistrationService = userRegistrationService;
+        this.listUsersService = listUsersService;
         this.currentActorProvider = currentActorProvider;
     }
 
@@ -43,6 +49,8 @@ class UserResource {
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     List<UserSummaryResponse> listUsers() {
-        throw new UnsupportedOperationException();
+        return listUsersService.listUsers().stream()
+                .map(UserSummaryResponse::from)
+                .toList();
     }
 }
