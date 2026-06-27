@@ -19,7 +19,7 @@ public record RegisterUserRequest(
 
         @NotBlank @Email @Size(max = EmailAddress.MAX_LENGTH) String email,
 
-        @Nullable @Size(max = 64) String timeZone) {
+        @NotBlank @Size(max = 64) String timeZone) {
 
     /** Converts this request into a {@link RegisterUserCommand}. */
     public RegisterUserCommand toCommand() {
@@ -27,6 +27,6 @@ public record RegisterUserRequest(
                 new PersonName(firstName, middleName, lastName),
                 new Login(login),
                 new EmailAddress(email),
-                ZoneId.of("UTC"));
+                ZoneId.of(timeZone));
     }
 }

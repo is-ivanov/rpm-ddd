@@ -65,7 +65,8 @@ class UserResourceTest {
                       "firstName": "Alice",
                       "lastName": "Anderson",
                       "login": "%s",
-                      "email": "alice@example.com"
+                      "email": "alice@example.com",
+                      "timeZone": "UTC"
                     }
                     """.formatted(EXISTING_LOGIN);
         }

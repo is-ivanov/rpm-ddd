@@ -58,7 +58,7 @@
 - [S] red-domain
 - [S] green-domain
 - [x] adapters-discovery (Check 1 ports: UserRepository.save() = built-in Spring Data JPA save, no @Query → [S] no db-adapter test; required production plumbing for green-acceptance (simple-plumbing exception, mirrors Scn 1.1): Liquibase migration adding `time_zone varchar(64)` to iam_user (nullable→backfill 'UTC'→NOT NULL, mirroring 2026.06.27-01 audit) + include in changelog-cumulative; Hibernate maps ZoneId→VARCHAR natively (no AttributeConverter per ADR); seed user.csv + loadUpdateData need a time_zone value once NOT NULL. Check 2 exceptions: registerUser's Login/EmailAlreadyExists already mapped; ZoneId stored as-is, no NEW exception (invalid-zone is 5.5 web-slice) → [S]. Check 3 inbound REST: UserResource create endpoint is simple delegation; RegisterUserRequest.toCommand() must build ZoneId.of(timeZone) (currently hardcodes UTC) + field becomes @NotBlank @Size(64) per ADR — DTO conversion plumbing, no error-mapping for 3.1 (validity = 5.5) → [S], wiring created in green-acceptance. NO new red/green-adapter steps.)
-- [~] green-acceptance (plumbing per discovery: time_zone migration + changelog-cumulative include + seed value; RegisterUserRequest.timeZone @NotBlank + toCommand ZoneId.of; verify full suite green)
+- [x] green-acceptance (timeZone foundation plumbing per discovery, simple-plumbing exception: new migration 2026.06.27-02-changelog-iam-user-timezone.xml (add time_zone varchar(64) nullable → backfill 'UTC' → NOT NULL, mirroring audit) + include in changelog-cumulative; Hibernate maps timeZone→time_zone (snake_case strategy, no @Column/converter); seed user.csv gained a time_zone=UTC column (loadUpdateData auto-detects). RegisterUserRequest.timeZone @Nullable→@NotBlank + toCommand ZoneId.of(timeZone). UserRegistrationIntegrationTest 1/0/0. Collateral web-slice breakage from @NotBlank fixed (user-approved accept-as-is, required-field wiring): registerUser_beanValidation_out.json count 4→5 + timeZone error; UserResourceTest.validRegistrationRequest() gained "timeZone":"UTC"; ActivationTokenFixture null→"UTC" (posts via real HTTP @Valid). Full suite 145/0/0; spotless/checkstyle/pmd/spotbugs green.)
 
 ## Integration Scenarios (06_Integration_Tests.md)
 (none — create-user reuses the existing event → JWT → activation-email pipeline unchanged; activation
@@ -67,7 +67,7 @@ email is asserted as a side effect of backend Scenario 3.1)
 ## Frontend Scenarios (02_UI_Tests.md)
 
 ### Scenario 1.1: Sidebar shows an Admin Center group with a Users item
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api

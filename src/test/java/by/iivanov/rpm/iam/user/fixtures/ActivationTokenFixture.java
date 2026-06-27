@@ -35,7 +35,7 @@ public class ActivationTokenFixture {
         var uniqueSuffix = UUID.randomUUID().toString();
         var login = "activate_user_" + uniqueSuffix;
         var email = login + "@example.com";
-        var request = new RegisterUserRequest(FIRST_NAME, null, LAST_NAME, login, email, null);
+        var request = new RegisterUserRequest(FIRST_NAME, null, LAST_NAME, login, email, "UTC");
         var registerResponse = userApi.registerUser(request, admin);
         var userId = userApi.extractCreatedUserId(registerResponse);
         var userIdObj = new UserId(UUID.fromString(userId));

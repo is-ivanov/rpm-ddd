@@ -1,5 +1,5 @@
 {
-  "detail": "Validation failed for object='registerUserRequest'. Error count: 4",
+  "detail": "Validation failed for object='registerUserRequest'. Error count: 5",
   "instance": "/api/admin/users",
   "status": 422,
   "title": "Unprocessable Content",
@@ -32,6 +32,13 @@
       "message": "must not be blank",
       "rejectedValue": null,
       "path": "login"
+    },
+    {
+      "code": "REQUIRED_NOT_BLANK",
+      "property": "timeZone",
+      "message": "must not be blank",
+      "rejectedValue": null,
+      "path": "timeZone"
     }
   ]
 }
