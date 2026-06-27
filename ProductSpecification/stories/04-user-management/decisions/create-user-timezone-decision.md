@@ -42,6 +42,15 @@ and — decided here, not in 5.5 — **where its IANA-validity is enforced**.
 - Migration: add `time_zone varchar(64)` to `iam_user` — nullable → backfill existing rows with `'UTC'` →
   NOT NULL (mirrors the audit-columns migration `2026.06.27-01`). Postgres has **no** dedicated zone-id type
   (`timestamptz` stores an instant, not a zone), so a `varchar` column holding the IANA id is canonical.
+  Validity is enforced in the application (jakarta constraint + the self-validating `ZoneId` domain type),
+  **not** at the DB. A `CHECK (time_zone IN (SELECT name FROM pg_timezone_names))` is **impossible** —
+  Postgres forbids subqueries in CHECK constraints. DB-level enforcement would require a trigger or a FK to a
+  `timezone` lookup table; both were rejected here because the canonical valid-zone set is the JVM
+  `ZoneId.getAvailableZoneIds()` (already the single source of truth for validation and, prospectively, the
+  dropdown endpoint), and a seeded DB table would be a third copy that drifts as the IANA tz database updates.
+  `timeZone` recurs in the patient context — reuse is achieved at the application level (shared `@ValidTimeZone`
+  constraint + `ZoneId` type), not via a shared DB table. (If hard DB referential integrity is later wanted
+  across contexts, revisit via `/architecture`.)
 
 ## Test layering
 

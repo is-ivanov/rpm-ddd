@@ -56,3 +56,18 @@ string literals; a Checkstyle `RegexpMultiline` over `@Query`/`.sql(...)`/string
 false-positive-prone (matches keywords appearing as identifiers or in comments). An Error Prone custom check
 could target `@Query` and `JdbcClient`/`JdbcTemplate` call sites more precisely. Candidate for a standalone
 task to prototype feasibility and pick the mechanism.
+
+### I6 — Timezone dropdown option source is unspecified (FE Scenario 4.1)
+**Observed:** the create-user modal has a Timezone field (FE Scenario 4.1), but the spec only says it is
+"pre-filled with the app default (Central Europe)" — it does NOT define where the **option list** for the
+dropdown comes from. `endpoints.md` exposes `timeZone` only on `POST /api/admin/users` and `GET /api/auth/me`;
+there is no zone-list endpoint. Under-specified by design (never built), so an improvement, not a bug.
+**Analysis:** the dropdown must offer only zones the backend accepts, otherwise a user can pick a zone the
+server 422-rejects. Our canonical valid-zone set is the JVM `ZoneId.getAvailableZoneIds()` — the same source
+the create-user jakarta `@ValidTimeZone` constraint validates against (see `create-user-timezone-decision`).
+Two options: (a) **`GET /api/timezones`** returning `ZoneId.getAvailableZoneIds()` (sorted) — FE fetches it;
+zero FE/BE drift, one source of truth (recommended); (b) browser-native `Intl.supportedValuesOf('timeZone')` —
+no new endpoint, but the browser's tz list may differ from the JVM's accepted set → drift/422 risk.
+Pre-selection of the app default (`Europe/Berlin`) is independent of the option source.
+**Scope:** small new read endpoint + FE client + dropdown wiring; decide at the Story Completion Gate or when
+FE Scenario 4.1 is built (whichever comes first).
