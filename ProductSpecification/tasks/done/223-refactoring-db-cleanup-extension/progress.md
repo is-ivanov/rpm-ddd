@@ -12,4 +12,4 @@ Type: refactoring
 
 ### Step 2: Wire into @ApplicationIntegrationTest, slim the base
 - [x] refactor (add @ExtendWith; remove the second @BeforeEach + JdbcTemplate field)
-- [~] green-acceptance (full suite green; SonarLint S8745 clear)
+- [x] green-acceptance (full suite green; SonarLint S8745 clear)

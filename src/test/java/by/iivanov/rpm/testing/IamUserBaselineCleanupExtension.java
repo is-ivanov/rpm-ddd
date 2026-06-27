@@ -20,9 +20,10 @@ public class IamUserBaselineCleanupExtension implements BeforeEachCallback {
         // fixed 019b76da… id prefix (see db/data/user.csv); the synthetic system user is 0000…. Drop
         // everything else before each test to restore that baseline.
         JdbcClient jdbcClient = SpringExtension.getApplicationContext(context).getBean(JdbcClient.class);
-        jdbcClient
-                .sql("DELETE FROM iam_user WHERE id::text NOT LIKE '019b76da%'"
-                        + " AND id <> '00000000-0000-0000-0000-000000000000'")
-                .update();
+        jdbcClient.sql("""
+            DELETE FROM iam_user
+            WHERE id::text NOT LIKE '019b76da%'
+              AND id <> '00000000-0000-0000-0000-000000000000'
+            """).update();
     }
 }
