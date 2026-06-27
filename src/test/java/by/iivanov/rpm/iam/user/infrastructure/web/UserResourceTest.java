@@ -1,9 +1,11 @@
 package by.iivanov.rpm.iam.user.infrastructure.web;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 
 import by.iivanov.rpm.iam.user.application.UserRegistrationService;
+import by.iivanov.rpm.iam.user.domain.EmailAddress;
+import by.iivanov.rpm.iam.user.domain.EmailAlreadyExistsException;
 import by.iivanov.rpm.iam.user.domain.Login;
 import by.iivanov.rpm.iam.user.domain.LoginAlreadyExistsException;
 import by.iivanov.rpm.iam.user.fixtures.UserApi;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junitpioneer.jupiter.ExpectedToFail;
 
 @WebTest
 @Execution(ExecutionMode.SAME_THREAD)
@@ -32,6 +35,7 @@ class UserResourceTest {
     class RegisterUserTest {
 
         private static final String EXISTING_LOGIN = "alice";
+        private static final String EXISTING_EMAIL = "alice@example.com";
 
         @Test
         void beanValidationTest_shouldReturn422AndProblemJson() {
@@ -54,9 +58,36 @@ class UserResourceTest {
                     .path("login"));
         }
 
+        @Test
+        @DisplayName("Create with a duplicate email returns a field-level 422: "
+                + "WHEN email already exists EXPECT 422 with an email field error")
+        @ExpectedToFail(
+                value = "TDD Red Phase - no EmailAlreadyExistsExceptionHandler yet; the unmapped "
+                        + "exception falls through to the starter default (500), not a 422 field error",
+                withExceptions = AssertionError.class)
+        void should_return422WithEmailFieldError_when_emailAlreadyExists() {
+            givenEmailAlreadyExists();
+
+            var response = userApi.registerUser(validRegistrationRequest());
+
+            response.assertBindingError(FieldError.builder()
+                    .code("ALREADY_EXISTS")
+                    .property("email")
+                    .message("Email already exists")
+                    .rejectedValue(EXISTING_EMAIL)
+                    .path("email"));
+        }
+
         private void givenLoginAlreadyExists() {
-            given(userRegistrationService.registerUser(any(), any()))
-                    .willThrow(new LoginAlreadyExistsException(new Login(EXISTING_LOGIN)));
+            willThrow(new LoginAlreadyExistsException(new Login(EXISTING_LOGIN)))
+                    .given(userRegistrationService)
+                    .registerUser(any(), any());
+        }
+
+        private void givenEmailAlreadyExists() {
+            willThrow(new EmailAlreadyExistsException(new EmailAddress(EXISTING_EMAIL)))
+                    .given(userRegistrationService)
+                    .registerUser(any(), any());
         }
 
         private String validRegistrationRequest() {

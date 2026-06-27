@@ -60,6 +60,20 @@
 - [x] adapters-discovery (Check 1 ports: UserRepository.save() = built-in Spring Data JPA save, no @Query → [S] no db-adapter test; required production plumbing for green-acceptance (simple-plumbing exception, mirrors Scn 1.1): Liquibase migration adding `time_zone varchar(64)` to iam_user (nullable→backfill 'UTC'→NOT NULL, mirroring 2026.06.27-01 audit) + include in changelog-cumulative; Hibernate maps ZoneId→VARCHAR natively (no AttributeConverter per ADR); seed user.csv + loadUpdateData need a time_zone value once NOT NULL. Check 2 exceptions: registerUser's Login/EmailAlreadyExists already mapped; ZoneId stored as-is, no NEW exception (invalid-zone is 5.5 web-slice) → [S]. Check 3 inbound REST: UserResource create endpoint is simple delegation; RegisterUserRequest.toCommand() must build ZoneId.of(timeZone) (currently hardcodes UTC) + field becomes @NotBlank @Size(64) per ADR — DTO conversion plumbing, no error-mapping for 3.1 (validity = 5.5) → [S], wiring created in green-acceptance. NO new red/green-adapter steps.)
 - [x] green-acceptance (timeZone foundation plumbing per discovery, simple-plumbing exception: new migration 2026.06.27-02-changelog-iam-user-timezone.xml (add time_zone varchar(64) nullable → backfill 'UTC' → NOT NULL, mirroring audit) + include in changelog-cumulative; Hibernate maps timeZone→time_zone (snake_case strategy, no @Column/converter); seed user.csv gained a time_zone=UTC column (loadUpdateData auto-detects). RegisterUserRequest.timeZone @Nullable→@NotBlank + toCommand ZoneId.of(timeZone). UserRegistrationIntegrationTest 1/0/0. Collateral web-slice breakage from @NotBlank fixed (user-approved accept-as-is, required-field wiring): registerUser_beanValidation_out.json count 4→5 + timeZone error; UserResourceTest.validRegistrationRequest() gained "timeZone":"UTC"; ActivationTokenFixture null→"UTC" (posts via real HTTP @Valid). Full suite 145/0/0; spotless/checkstyle/pmd/spotbugs green.)
 
+### Scenario E1 (promoted from Extended): Create with a duplicate email returns a field-level 422 (web-slice, L2)
+> Promoted from tests/extended/01_API_Tests_Extended.md at user request (per-level extended gate).
+> Mirrors Scenario 2.1 (duplicate login) for the email field: EmailAlreadyExistsException had NO
+> web-layer mapping → fell through to the error-handling starter default (500 with a problem type but
+> no field-level 422/fieldErrors). Web-slice (L2): red-adapter rest → green-adapter rest.
+- [~] red-adapter rest (UserResourceTest.should_return422WithEmailFieldError_when_emailAlreadyExists: stub UserRegistrationService → EmailAlreadyExistsException; assert 422 + ProblemDetail + fieldErrors[email]; @ExpectedToFail(AssertionError.class); RED confirmed 500-vs-422, prediction all-YES; 3 run/0 fail/1 skip. Also fixed a latent mock-leak: auto-registered Mockito mocks are NOT reset between web-slice tests, so the existing login test broke on re-stub (given(mock.method()) invokes the already-throwing stub) → switched both duplicate-* stubs to willThrow(...).given(mock).method() which doesn't invoke during setup.)
+- [S] design (mirrors 2.1 — validation-failed field error mapping; no ADR)
+- [ ] green-adapter rest
+- [S] red-usecase (duplicate-email detection already implemented & tested at application level — UserRegistrationPolicy)
+- [S] green-usecase
+- [S] red-domain
+- [S] green-domain
+- [S] green-acceptance (no Level-1 test for an error category — pyramid: acceptance = happy path only)
+
 ## Integration Scenarios (06_Integration_Tests.md)
 (none — create-user reuses the existing event → JWT → activation-email pipeline unchanged; activation
 email is asserted as a side effect of backend Scenario 3.1)
@@ -339,7 +353,7 @@ email is asserted as a side effect of backend Scenario 3.1)
 > Never executed by /continue. Surfaced here so the Story Completion Gate reviews them before the story closes.
 
 **API (tests/extended/01_API_Tests_Extended.md)**
-- [S] E1. Create with a duplicate email returns a field-level 422 (deferred — review at Story Completion Gate)
+- [x] E1. Create with a duplicate email returns a field-level 422 (PROMOTED at user request → see "Scenario E1" in Backend Scenarios above)
 - [S] E2. Activation updates the audit fields visible in the grid (deferred — review at Story Completion Gate)
 - [S] E3. List order is stable when two users share the same createdAt (deferred — review at Story Completion Gate)
 
