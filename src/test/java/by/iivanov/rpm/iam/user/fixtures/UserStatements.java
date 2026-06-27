@@ -17,6 +17,7 @@ import by.iivanov.rpm.iam.user.domain.UserStatus;
 import by.iivanov.rpm.iam.user.infrastructure.InMemoryUserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import java.time.ZoneId;
 import org.jspecify.annotations.Nullable;
 
 public class UserStatements {
@@ -75,6 +76,12 @@ public class UserStatements {
     /** Generates a user ID that does not correspond to any saved user. */
     public UserId givenUnknownUserId() {
         return userRepository.nextId();
+    }
+
+    /** Asserts that the user stored under the given id has the expected time zone. */
+    public void assertStoredUserTimeZone(UserId userId, ZoneId expectedTimeZone) {
+        User storedUser = userRepository.findById(userId).orElseThrow();
+        assertThat(storedUser.getTimeZone()).isEqualTo(expectedTimeZone);
     }
 
     /** Asserts that the captured exception is a UserNotFoundException. */
