@@ -51,8 +51,8 @@
 > foundation through DTO/command/User.register + persistence), so the full backend sequence applies.
 > Extends the existing registration acceptance test (UserRegistrationIntegrationTest) — add `timeZone`
 > to the request and assert the new user is listed in the grid. Do NOT create a parallel acceptance class.
-- [ ] red-acceptance
-- [ ] design
+- [x] red-acceptance (no RED achievable — feature pre-existing: all create-action consequences (201, Location, activation email, grid PENDING, createdAt==updatedAt, createdBy==updatedBy==admin) already green via Story 1 registration + Scn 1.1 grid. timeZone is NOT L1-observable (PENDING user can't reach /me w/o activate+login = separate lifecycle → full-stack journey; grid carries no timeZone). Strengthened the existing UserRegistrationIntegrationTest to assert the new user flows into the grid (recursive-comparison full row) — a real new consequence on the same single action; committed green, no @ExpectedToFail. Added timeZone to RegisterUserRequest as nullable/ignored plumbing. DECISION (user): verify timeZone storage at L3 usecase, NOT via jdbcClient DB-peek in L1 (violates black-box rule). 1/0/0; test-review tightened to full-row eq; checkstyle/pmd/IDE clean.)
+- [~] design
 - [ ] red-usecase
 - [ ] green-usecase
 - [S] red-domain

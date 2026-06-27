@@ -58,7 +58,8 @@ public class EmailStatements {
     public ActivationRegistration givenActivationRegistration() {
         var uniqueSuffix = UUID.randomUUID().toString();
         var email = "activation_" + uniqueSuffix + "@example.com";
-        var request = new RegisterUserRequest("Ivan", "Ivanovich", "Ivanov", "act_" + uniqueSuffix, email);
+        var request =
+                new RegisterUserRequest("Ivan", "Ivanovich", "Ivanov", "act_" + uniqueSuffix, email, "Europe/Berlin");
         return new ActivationRegistration(request, email);
     }
 

@@ -16,7 +16,9 @@ public record RegisterUserRequest(
         @RequiredString String lastName,
         @NotBlank @Size(max = Login.MAX_LENGTH) String login,
 
-        @NotBlank @Email @Size(max = EmailAddress.MAX_LENGTH) String email) {
+        @NotBlank @Email @Size(max = EmailAddress.MAX_LENGTH) String email,
+
+        @Nullable @Size(max = 64) String timeZone) {
 
     public RegisterUserCommand toCommand() {
         return new RegisterUserCommand(
