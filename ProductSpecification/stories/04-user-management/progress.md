@@ -87,8 +87,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] red-frontend-api (no API call in this scenario — the gherkin is a static nav group + item with no data fetch. Zero production files in the frontend-api layer; the shell's /me call uses the pre-existing current-user.api.ts from prior stories, no NEW API client needed. Existence/applicability skip per the skip-validation rule.)
 - [S] green-frontend-api (no API client to implement — green counterpart of the [S] red-frontend-api)
 - [x] align-design (DashboardShell.vue sidebar rebuilt from placeholder → real nav matching mockup 01-users-grid.html: Home nav-item (active), "Admin Center" nav-group-label, "Users" sub nav-item (pl-8). test-ids home-nav-item/admin-center-group/users-nav-item; exact-text "Admin Center"/"Users" satisfied (icon SVG contributes no text). style.css: added --color-sidebar-hover/#2d3139 + --color-sidebar-active/#3b4252 tokens + extracted .nav-group-label/.nav-item/.nav-item-active component classes (repeated/opaque-chain extraction per tailwind binding). design-review PASS (no placeholder data leaked — names/emails/dates correctly omitted). refactor no-op (clean). verify: value-level match to mockup confirmed. coverage N/A (green-frontend/green-frontend-api both [S], no testable logic — pure presentational, covered E2E at green-playwright). build+lint(oxlint/eslint/prettier/type-check)+57/57 unit green; IDE inspections clean on both files.)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (removed test.fail() + stale RED comment from admin-center-nav.spec.ts; frontend-only test — /api/auth/me mocked via page.route (CurrentUserBackendStatements), no real backend needed; Playwright webServer auto-started Vite. 1 passed (3.9s); remove-marker-only, no production/Statements changes. lint(oxlint/eslint/prettier/type-check) green; IDE inspection clean.)
+- [~] demo
 
 ### Scenario 1.2: Clicking Users navigates to the Users page inside the shell
 - [ ] red-playwright

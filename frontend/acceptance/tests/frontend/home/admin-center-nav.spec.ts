@@ -17,11 +17,6 @@ test.describe('Admin Center Navigation', () => {
       'Then the sidebar displays an "Admin Center" group, ' +
       'And the group contains a "Users" item',
     async () => {
-      // RED: DashboardShell.vue sidebar renders only a placeholder — no "Admin Center"
-      // group label and no "Users" nav item, and no admin-center-group / users-nav-item
-      // test-ids. assertAdminCenterGroupIsVisible() fails (locator resolves to 0 elements,
-      // toBeVisible times out). Cleared in align-design when the sidebar groups are built.
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await homePage.navigateToHomePage();
 
