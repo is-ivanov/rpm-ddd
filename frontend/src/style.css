@@ -63,6 +63,15 @@
     @apply whitespace-nowrap border-b border-line px-4 py-3 text-sm text-ink;
   }
 
+  .filter-cell {
+    @apply border-b border-line bg-column px-4 py-2;
+  }
+
+  .filter-input {
+    @apply h-[30px] w-full rounded-md border border-line bg-white px-2 text-[13px] outline-none;
+    @apply placeholder:text-placeholder focus:border-accent-focus focus:shadow-[0_0_0_3px_rgba(77,171,247,0.2)];
+  }
+
   .status-badge {
     @apply inline-block rounded-full px-2 py-0.5 text-xs font-semibold;
   }

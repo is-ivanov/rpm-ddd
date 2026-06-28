@@ -1,16 +1,19 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
+import { filterRowsByFullName } from '../logic/users-grid.logic';
 import type { UserRow } from '../logic/users-grid.types';
 
-defineProps<{ rows: readonly UserRow[] }>();
+const props = defineProps<{ rows: readonly UserRow[] }>();
 
 interface Column {
   readonly testId: string;
   readonly label: string;
   readonly center?: boolean;
+  readonly filterTestId?: string;
 }
 
 const COLUMNS: readonly Column[] = [
-  { testId: 'users-grid-header-name', label: 'Full name' },
+  { testId: 'users-grid-header-name', label: 'Full name', filterTestId: 'users-filter-name' },
   { testId: 'users-grid-header-login', label: 'Login' },
   { testId: 'users-grid-header-email', label: 'Email' },
   { testId: 'users-grid-header-status', label: 'Status', center: true },
@@ -30,6 +33,10 @@ const STATUS_BADGE_CLASS: Record<string, string> = {
 function statusBadgeClass(status: string): string {
   return STATUS_BADGE_CLASS[status] ?? 'status-inactive';
 }
+
+const nameFilter = ref('');
+
+const displayedRows = computed(() => filterRowsByFullName([...props.rows], nameFilter.value));
 </script>
 
 <template>
@@ -47,9 +54,21 @@ function statusBadgeClass(status: string): string {
             {{ col.label }}
           </th>
         </tr>
+        <tr>
+          <td v-for="col in COLUMNS" :key="col.testId" class="filter-cell">
+            <input
+              v-if="col.filterTestId"
+              v-model="nameFilter"
+              :data-testid="col.filterTestId"
+              type="text"
+              class="filter-input"
+              placeholder="contains"
+            />
+          </td>
+        </tr>
       </thead>
       <tbody class="[&>tr:last-child>td]:border-b-0">
-        <tr v-for="row in rows" :key="row.login" data-testid="users-grid-row" class="hover:bg-surface">
+        <tr v-for="row in displayedRows" :key="row.login" data-testid="users-grid-row" class="hover:bg-surface">
           <td data-testid="users-cell-name" class="grid-cell">{{ row.name }}</td>
           <td data-testid="users-cell-login" class="grid-cell">{{ row.login }}</td>
           <td data-testid="users-cell-email" class="grid-cell">{{ row.email }}</td>
