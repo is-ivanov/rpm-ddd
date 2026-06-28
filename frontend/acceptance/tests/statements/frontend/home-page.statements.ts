@@ -103,6 +103,10 @@ export class HomePageStatements {
     await expect(this.usersNavItem(), 'item text is exactly "Users"').toHaveText(USERS_NAV_ITEM_TEXT);
   }
 
+  async clickUsersNavItem(): Promise<void> {
+    await this.usersNavItem().click();
+  }
+
   async assertPageTitleIsVisible(): Promise<void> {
     await expect(this.pageTitle(), 'page title is visible').toBeVisible();
     await expect(this.pageTitle(), 'page title shows "Home"').toHaveText(PAGE_TITLE_TEXT);

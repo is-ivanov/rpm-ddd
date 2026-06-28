@@ -91,8 +91,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] demo (recorded admin-center-nav E2E in headless slowMo=2000 + video on; 1 passed (6.9s); recording → frontend/test-results/demo-admin-center-nav.webm (gitignored); playwright.config.ts demo edits reverted, working tree clean.)
 
 ### Scenario 1.2: Clicking Users navigates to the Users page inside the shell
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (users-navigation.spec.ts in new acceptance/tests/frontend/users/ dir + UsersPageStatements (users-page, register-user-button) + HomePageStatements.clickUsersNavItem(). UI-nav only (sidebar click, never URL); one-page-object-per-page — Users page asserts its own content + reuses homePage shell-chrome asserts (dashboard-shell + topbar-logo + sidebar), no middleman. RED: static users-nav-item link has no nav wired, no /users route/page → click leaves user on dashboard, users-page/register-user-button never render → assertUsersPageIsVisible() toBeVisible timeout (getByTestId 0 elements, 5000ms); prediction all-YES. test.fail() locked (1 passed RED-state). test-review tightened: added assertTopbarLogoIsVisible() (spec says "inside the same top bar AND sidebar shell"). refactor no-op (idiomatic, sibling-consistent, all <200 lines). lint+IDE clean. Story scenario → no issue tag.)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
