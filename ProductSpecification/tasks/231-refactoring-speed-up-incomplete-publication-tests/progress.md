@@ -33,7 +33,7 @@ Rationale:
 - Option B rejected: `SimpleAsyncTaskExecutor` offers no deterministic quiesce handle; achieving one would require test-only executor wiring that risks a second cached full context.
 
 ### Step 2: Make the no-delivery assertion fast
-- [~] refactor (rework `StalePublicationStatements.assertNoActivationEmailDeliveredTo`: Option B -- deterministically wait for the async republication executor to quiesce, then assert 0 emails; or Option A -- shorten `.during()` to the margin chosen in Step 1. Keep `assertActivationPublicationStaysIncompleteFor`. Do NOT weaken the assertion's teeth; do NOT touch the `doThrow().doCallRealMethod()` spy setup)
+- [x] refactor (rework `StalePublicationStatements.assertNoActivationEmailDeliveredTo`: Option B -- deterministically wait for the async republication executor to quiesce, then assert 0 emails; or Option A -- shorten `.during()` to the margin chosen in Step 1. Keep `assertActivationPublicationStaysIncompleteFor`. Do NOT weaken the assertion's teeth; do NOT touch the `doThrow().doCallRealMethod()` spy setup)
 
 ### Step 3: Verify no flakiness (local + CI)
-- [ ] green-acceptance (run both tests 5+ times locally AND the full suite green; confirm zero flakiness and the wall-clock drop; cross-check the chosen margin against CI timing distributions before closing -- per the CI statistics requirement in spec.md)
+- [~] green-acceptance (run both tests 5+ times locally AND the full suite green; confirm zero flakiness and the wall-clock drop; cross-check the chosen margin against CI timing distributions before closing -- per the CI statistics requirement in spec.md)
