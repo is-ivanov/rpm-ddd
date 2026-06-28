@@ -84,9 +84,9 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] red-playwright (admin-center-nav.spec.ts + HomePageStatements sidebar locators/asserts: admin-center-group/users-nav-item test-ids, exact toHaveText "Admin Center"/"Users"; reuses CurrentUserBackendStatements.givenAuthenticatedUser. RED on the missing group label + Users item in DashboardShell's placeholder sidebar, prediction all-YES (locator→0 elements, toBeVisible timeout); test.fail() locked; test-review CLEAN; refactor no-op (idiomatic copy of existing page-object pattern); lint green; idea MCP get_file_problems unavailable → IDE inspection skipped.)
 - [S] red-frontend (purely presentational static nav group — no branching/computation/validation/transformation; no .logic.ts seam, no existing nav logic to reuse: grep nav|sidebar|admin.center across frontend/src returned zero. "Admin Center" group + "Users" item are static markup added to DashboardShell.vue during align-design. Trivial-logic gate fails → no test written per the post-implementation trivial-test gate.)
 - [S] green-frontend (no logic to implement — green counterpart of the trivial-logic [S] red-frontend)
-- [~] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend-api (no API call in this scenario — the gherkin is a static nav group + item with no data fetch. Zero production files in the frontend-api layer; the shell's /me call uses the pre-existing current-user.api.ts from prior stories, no NEW API client needed. Existence/applicability skip per the skip-validation rule.)
+- [S] green-frontend-api (no API client to implement — green counterpart of the [S] red-frontend-api)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
