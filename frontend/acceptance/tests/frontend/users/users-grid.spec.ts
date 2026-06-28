@@ -71,11 +71,6 @@ test.describe('Users Grid', () => {
       'Then only rows whose Full name contains that text remain visible, ' +
       'And no additional network request is made',
     async () => {
-      // RED: the Full name column filter input (data-testid="users-filter-name") is not built
-      // in UsersGrid yet, so assertFullNameFilterIsVisible() fails (toBeVisible times out on the
-      // missing locator). Built in align-design/green-frontend (client-side "contains" filter,
-      // no refetch). test.fail() absorbs this thrown assertion error.
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
