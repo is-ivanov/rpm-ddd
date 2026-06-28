@@ -121,8 +121,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] demo (recorded users-grid Scn 2.2 loading-state E2E in headless slowMo=2000 + video on; 1 passed (8.7s); recording → frontend/test-results/demo-users-grid-loading.webm (gitignored). FE-only (page.route mocks, no backend). playwright.config.ts demo edits reverted, working tree clean.)
 
 ### Scenario 3.1: Typing in a column filter narrows the rows client-side
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (Scn 3.1 added to users-grid.spec.ts: types "ar" into the Full name filter (`data-testid=users-filter-name`), asserts only "Sarah Jane Connor" + "Emily Carter" rows survive — strict ordered `toHaveText` array + `toHaveCount(2)` by identity not index — AND that `/api/admin/users` was fetched exactly once (request counter in AdminUsersBackendStatements.assertAdminUserListRequestedOnce → `toBe(1)`, the heart of "client-side filter, no refetch"). UsersPageStatements gained assertFullNameFilterIsVisible/enterFullNameFilter/assertOnlyMatchingFullNamesRemain; filter term + matching-names set live in admin-users-fixture.ts (FULL_NAME_FILTER_TERM + FULL_NAMES_MATCHING_FILTER **derived** from EXPECTED_USER_ROWS via .filter(includes), lock-step w/ row data like SEED_ACTOR_CELLS). RED locked with `test.fail()`; reason pinned via bounded assertFullNameFilterIsVisible (5s toBeVisible on the missing input) so an incidental whole-test timeout isn't absorbed as expected-fail. Prediction all-YES (locator→0 elems, toBeVisible timeout). 3 passed (Scn 3.1 = expected ✘). QUIRK: `test.fail()` absorbs thrown assertion/errors but NOT a 30s whole-test timeout (first fill()-only attempt failed the build red) → always front a bounded visibility assertion. test-review CLEAN; refactor moved filter constants to fixture (derived). red-frontend-api stays [S] (reuses fetchAdminUsers, no new client); downstream red-frontend IS a real .logic.ts "contains" predicate (non-trivial). lint(oxlint/eslint/prettier/vue-tsc)+IDE clean; all files <200. Story scenario → no issue tag.)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

@@ -2,6 +2,8 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import {
   type AuditActorField,
   EXPECTED_USER_ROWS,
+  FULL_NAME_FILTER_TERM,
+  FULL_NAMES_MATCHING_FILTER,
   SEED_ACTOR_CELLS,
   SEED_ACTOR_DISPLAY,
 } from '../support/admin-users-fixture';
@@ -12,6 +14,7 @@ const TEST_ID = {
   grid: 'users-grid',
   row: 'users-grid-row',
   loading: 'users-grid-loading',
+  fullNameFilter: 'users-filter-name',
 } as const;
 
 const REGISTER_USER_BUTTON_TEXT = 'Register user';
@@ -116,6 +119,31 @@ export class UsersPageStatements {
         `row ${rowIndex} seed ${field} shows "${SEED_ACTOR_DISPLAY}"`,
       ).toHaveText(SEED_ACTOR_DISPLAY);
     }
+  }
+
+  async assertFullNameFilterIsVisible(): Promise<void> {
+    await expect(this.fullNameFilter(), 'the Full name column filter input is visible in the grid').toBeVisible();
+  }
+
+  async enterFullNameFilter(): Promise<void> {
+    await this.fullNameFilter().fill(FULL_NAME_FILTER_TERM);
+  }
+
+  async assertOnlyMatchingFullNamesRemain(): Promise<void> {
+    await expect(this.rows(), 'only rows whose full name contains the filter text remain visible').toHaveCount(
+      FULL_NAMES_MATCHING_FILTER.length,
+    );
+    await expect(this.nameCells(), 'remaining rows are exactly the full names that contain the filter text').toHaveText(
+      [...FULL_NAMES_MATCHING_FILTER],
+    );
+  }
+
+  private fullNameFilter(): Locator {
+    return this.page.getByTestId(TEST_ID.fullNameFilter);
+  }
+
+  private nameCells(): Locator {
+    return this.grid().getByTestId(CELL.name);
   }
 
   private cell(rowIndex: number, cellTestId: string): Locator {

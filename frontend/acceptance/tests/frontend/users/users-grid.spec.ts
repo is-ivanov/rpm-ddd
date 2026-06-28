@@ -63,4 +63,30 @@ test.describe('Users Grid', () => {
       await usersPage.assertRowsRenderAfterResponse();
     },
   );
+
+  test(
+    'UI Test Scenario 3.1: Typing in a column filter narrows the rows client-side - ' +
+      'Given the Users page shows multiple users, ' +
+      'When the user types text into the Full name column filter, ' +
+      'Then only rows whose Full name contains that text remain visible, ' +
+      'And no additional network request is made',
+    async () => {
+      // RED: the Full name column filter input (data-testid="users-filter-name") is not built
+      // in UsersGrid yet, so assertFullNameFilterIsVisible() fails (toBeVisible times out on the
+      // missing locator). Built in align-design/green-frontend (client-side "contains" filter,
+      // no refetch). test.fail() absorbs this thrown assertion error.
+      test.fail();
+      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await adminUsersBackend.givenSeveralUsers();
+      await homePage.navigateToHomePage();
+      await homePage.clickUsersNavItem();
+      await usersPage.assertGridIsVisible();
+      await usersPage.assertFullNameFilterIsVisible();
+
+      await usersPage.enterFullNameFilter();
+
+      await usersPage.assertOnlyMatchingFullNamesRemain();
+      adminUsersBackend.assertAdminUserListRequestedOnce();
+    },
+  );
 });

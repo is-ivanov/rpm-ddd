@@ -1,12 +1,21 @@
-import { type Page, type Route } from '@playwright/test';
+import { expect, type Page, type Route } from '@playwright/test';
 import { type AdminUser, SEVERAL_ADMIN_USERS } from '../support/admin-users-fixture';
 
 const ADMIN_USERS_URL_PATTERN = '**/api/admin/users';
 
 export class AdminUsersBackendStatements {
   private releaseInFlightList: (() => void) | null = null;
+  private adminUserListRequestCount = 0;
 
   constructor(private readonly page: Page) {}
+
+  /** Asserts the admin user list was fetched exactly once (the initial load, no filter refetch). */
+  assertAdminUserListRequestedOnce(): void {
+    expect(
+      this.adminUserListRequestCount,
+      'only the initial load fetched /api/admin/users; the client-side filter fired no extra request',
+    ).toBe(1);
+  }
 
   async givenSeveralUsers(): Promise<void> {
     await this.givenAdminUserListReturns(SEVERAL_ADMIN_USERS);
@@ -33,6 +42,7 @@ export class AdminUsersBackendStatements {
   }
 
   private async fulfillAdminUserList(route: Route, users: readonly AdminUser[]): Promise<void> {
+    this.adminUserListRequestCount += 1;
     await route.fulfill({
       status: 200,
       contentType: 'application/json',

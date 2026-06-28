@@ -133,6 +133,18 @@ export const EXPECTED_USER_ROWS: readonly ExpectedUserRow[] = [
   },
 ];
 
+// "ar" is a "contains" probe for the Full name column filter: it appears mid-word in
+// "S(ar)ah Jane Connor" and "Emily C(ar)ter", but not in "Michael Scott" or "David Lee",
+// so the client-side filter must keep exactly those two rows in their original render order.
+export const FULL_NAME_FILTER_TERM = 'ar';
+
+// The full names that survive FULL_NAME_FILTER_TERM, derived from EXPECTED_USER_ROWS (render
+// order preserved) so the filter assertion stays in lock-step with the row data and needs no
+// hand-maintained literal list.
+export const FULL_NAMES_MATCHING_FILTER: readonly string[] = EXPECTED_USER_ROWS.filter((row) =>
+  row.name.includes(FULL_NAME_FILTER_TERM),
+).map((row) => row.name);
+
 export type AuditActorField = 'createdBy' | 'updatedBy';
 
 export interface SeedActorCell {
