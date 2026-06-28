@@ -18,4 +18,4 @@ Type: refactoring
 > test changelogs. Replace zeroed seed/fixture instants; mirror every change in the matching
 > expected-response fixture and assertions. Keep boundary values; document exclusions. Run the full
 > test suite green.
-- [~] refactor (fixture data)
+- [x] refactor (fixture data)
