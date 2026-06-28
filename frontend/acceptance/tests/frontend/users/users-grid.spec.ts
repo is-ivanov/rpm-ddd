@@ -27,11 +27,6 @@ test.describe('Users Grid', () => {
       'And each audit actor is shown abbreviated as "J. Doe", ' +
       'And the seed actor is shown as "System"',
     async () => {
-      // RED: UsersPage renders only the heading + "Register user" button — no grid yet.
-      // Pinned by assertGridIsVisible(): getByTestId('users-grid') resolves to 0 elements
-      // and toBeVisible() times out. Built in align-design/green-playwright.
-      test.fail();
-
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
