@@ -42,4 +42,31 @@ test.describe('Users Grid', () => {
       await usersPage.assertSeedActorIsShownAsSystem();
     },
   );
+
+  test(
+    'UI Test Scenario 2.2: Grid shows a loading state while fetching - ' +
+      'Given the admin user list request is in flight, ' +
+      'When the user opens the Users page, ' +
+      'Then the grid shows a loading state, ' +
+      'And the rows render once the response arrives',
+    async () => {
+      // RED: UsersPage.vue renders no loading indicator (no data-testid="users-grid-loading"),
+      // so assertLoadingStateIsVisible() times out. Remove once GREEN/align-design adds the spinner.
+      test.fail();
+      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await adminUsersBackend.givenAdminUserListInFlight();
+      await homePage.navigateToHomePage();
+
+      await homePage.clickUsersNavItem();
+
+      // RED: UsersPage.vue renders no loading indicator while fetching, so the
+      // data-testid="users-grid-loading" locator resolves to 0 elements and
+      // toBeVisible() times out. GREEN/align-design adds the loading markup.
+      await usersPage.assertLoadingStateIsVisible();
+
+      adminUsersBackend.releaseAdminUserList();
+
+      await usersPage.assertRowsRenderAfterResponse();
+    },
+  );
 });

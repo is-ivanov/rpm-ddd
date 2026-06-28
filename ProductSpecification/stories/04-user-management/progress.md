@@ -111,8 +111,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] demo (recorded users-grid E2E in headless slowMo=2000 + video on; 1 passed (6.1s); recording → frontend/test-results/demo-users-grid.webm (gitignored). FE-only (page.route mocks, no backend). playwright.config.ts demo edits reverted, working tree clean.)
 
 ### Scenario 2.2: Grid shows a loading state while fetching
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (users-grid.spec.ts +Scn2.2 test in existing describe; held-route loading pattern: AdminUsersBackendStatements.givenAdminUserListInFlight() (route handler awaits a release promise — no fixed sleep) + releaseAdminUserList(); UsersPageStatements +loading testid `users-grid-loading` + assertLoadingStateIsVisible (indicator visible & rows toHaveCount(0) while in-flight) + assertRowsRenderAfterResponse (indicator gone + grid visible + rows toHaveCount(4) after release). Nav via UI (clickUsersNavItem), backend mock injected. RED: UsersPage.vue has no loading markup → getByTestId('users-grid-loading') 0 elems → toBeVisible timeout 5000ms; prediction all-YES (Type/Message/Status). test.fail() locked (1 passed expected-failure) + 2 RED-reason comments. test-review CLEAN (strict assertions confirmed; 1 prettier line-wrap fix only). refactor CLEAN no-op (mirrors Scn 2.1 siblings; fulfillAdminUserList shared, release flag mirrors current-user sessionEnded idiom). lint(oxlint/eslint/prettier/type-check) exit 0; IDE inspections clean on all 3 files; all <200. Story scenario → no issue tag.)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

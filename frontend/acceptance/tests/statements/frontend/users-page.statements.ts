@@ -11,6 +11,7 @@ const TEST_ID = {
   registerUserButton: 'register-user-button',
   grid: 'users-grid',
   row: 'users-grid-row',
+  loading: 'users-grid-loading',
 } as const;
 
 const REGISTER_USER_BUTTON_TEXT = 'Register user';
@@ -61,6 +62,22 @@ export class UsersPageStatements {
     await expect(this.rows(), 'grid shows one row per user from the API').toHaveCount(EXPECTED_USER_ROWS.length);
   }
 
+  async assertLoadingStateIsVisible(): Promise<void> {
+    await expect(
+      this.loadingIndicator(),
+      'grid loading indicator is visible while the request is in flight',
+    ).toBeVisible();
+    await expect(this.rows(), 'no rows render while the request is still in flight').toHaveCount(0);
+  }
+
+  async assertRowsRenderAfterResponse(): Promise<void> {
+    await expect(this.loadingIndicator(), 'loading indicator disappears once the response arrives').toHaveCount(0);
+    await expect(this.grid(), 'users grid is visible after the response arrives').toBeVisible();
+    await expect(this.rows(), 'grid shows one row per user once the response arrives').toHaveCount(
+      EXPECTED_USER_ROWS.length,
+    );
+  }
+
   async assertAllColumnHeadersAreDisplayed(): Promise<void> {
     for (const header of COLUMN_HEADERS) {
       const headerCell = this.page.getByTestId(header.testId);
@@ -107,6 +124,10 @@ export class UsersPageStatements {
 
   private rows(): Locator {
     return this.grid().getByTestId(TEST_ID.row);
+  }
+
+  private loadingIndicator(): Locator {
+    return this.page.getByTestId(TEST_ID.loading);
   }
 
   private grid(): Locator {

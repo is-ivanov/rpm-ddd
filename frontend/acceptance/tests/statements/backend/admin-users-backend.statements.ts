@@ -4,6 +4,8 @@ import { type AdminUser, SEVERAL_ADMIN_USERS } from '../support/admin-users-fixt
 const ADMIN_USERS_URL_PATTERN = '**/api/admin/users';
 
 export class AdminUsersBackendStatements {
+  private releaseInFlightList: (() => void) | null = null;
+
   constructor(private readonly page: Page) {}
 
   async givenSeveralUsers(): Promise<void> {
@@ -12,6 +14,22 @@ export class AdminUsersBackendStatements {
 
   async givenAdminUserListReturns(users: readonly AdminUser[]): Promise<void> {
     await this.page.route(ADMIN_USERS_URL_PATTERN, (route) => this.fulfillAdminUserList(route, users));
+  }
+
+  /** Holds the GET /api/admin/users response in flight until releaseAdminUserList() is called. */
+  async givenAdminUserListInFlight(): Promise<void> {
+    const held = new Promise<void>((resolve) => {
+      this.releaseInFlightList = resolve;
+    });
+    await this.page.route(ADMIN_USERS_URL_PATTERN, async (route) => {
+      await held;
+      await this.fulfillAdminUserList(route, SEVERAL_ADMIN_USERS);
+    });
+  }
+
+  /** Releases the in-flight admin user list so the held response is delivered. */
+  releaseAdminUserList(): void {
+    this.releaseInFlightList?.();
   }
 
   private async fulfillAdminUserList(route: Route, users: readonly AdminUser[]): Promise<void> {
