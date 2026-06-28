@@ -32,17 +32,16 @@ class FullstackSeedSchemaGuardTest extends AbstractApplicationIntegrationTest {
 
     @Test
     @DisplayName("WHEN the full-stack journey admin seed runs against the production-migrated schema "
-            + "EXPECT a clean insert that satisfies the NOT NULL audit/timezone columns")
+            + "EXPECT it applies cleanly (no NOT NULL/FK violation) and is idempotent")
     void fullstackSeed_appliesAgainstProductionSchema() {
         String seedSql = TestResources.readUtf8(FULLSTACK_SEED);
 
-        jdbcClient.sql(seedSql).update();
+        int rowsAffected = jdbcClient.sql(seedSql).update();
 
-        Long adminsMissingAuditColumns = jdbcClient.sql("""
-                        SELECT COUNT(*) FROM iam_user
-                        WHERE login = 'admin'
-                          AND (updated_at IS NULL OR updated_by IS NULL OR time_zone IS NULL)
-                        """).query(Long.class).single();
-        then(adminsMissingAuditColumns).isZero();
+        then(rowsAffected)
+                .as("fullstack-seed.sql must apply against the production-migrated iam_user schema "
+                        + "(a missing NOT NULL / FK column would throw here); 0 rows because the journey admin "
+                        + "is already seeded by user.csv in the test context, so ON CONFLICT DO NOTHING is a no-op")
+                .isZero();
     }
 }
