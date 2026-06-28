@@ -1,5 +1,20 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
 import { Plus } from '@lucide/vue';
+import { fetchAdminUsers } from '../logic/admin-users.api';
+import { buildUserRows } from '../logic/users-grid.logic';
+import type { UserRow } from '../logic/users-grid.types';
+import UsersGrid from './UsersGrid.vue';
+
+const rows = ref<UserRow[]>([]);
+
+async function loadUsers(): Promise<void> {
+  rows.value = buildUserRows(await fetchAdminUsers());
+}
+
+onMounted(() => {
+  void loadUsers();
+});
 </script>
 
 <template>
@@ -14,5 +29,6 @@ import { Plus } from '@lucide/vue';
         <Plus :size="18" aria-hidden="true" /> Register user
       </button>
     </div>
+    <UsersGrid :rows="rows" />
   </div>
 </template>

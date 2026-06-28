@@ -22,6 +22,10 @@
   --color-danger: #fa5252;
   --color-danger-surface: #fff5f5;
   --color-success: #40c057;
+  --color-success-surface: #ebfbee;
+  --color-warning: #f59f00;
+  --color-warning-surface: #fff9db;
+  --color-column: #f1f3f5;
 }
 
 @layer components {
@@ -44,6 +48,39 @@
 
   .nav-item-active {
     @apply border-l-accent bg-sidebar-active text-white;
+  }
+
+  .table-card {
+    @apply overflow-hidden rounded-lg bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08)];
+  }
+
+  .grid-head-cell {
+    @apply whitespace-nowrap border-b border-line px-4 py-3 text-left;
+    @apply text-xs font-semibold uppercase text-muted;
+  }
+
+  .grid-cell {
+    @apply whitespace-nowrap border-b border-line px-4 py-3 text-sm text-ink;
+  }
+
+  .status-badge {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-semibold;
+  }
+
+  .status-active {
+    @apply bg-success-surface text-success;
+  }
+
+  .status-pending {
+    @apply bg-warning-surface text-warning;
+  }
+
+  .status-locked {
+    @apply bg-danger-surface text-danger;
+  }
+
+  .status-inactive {
+    @apply bg-column text-muted;
   }
 
   .btn-primary {
