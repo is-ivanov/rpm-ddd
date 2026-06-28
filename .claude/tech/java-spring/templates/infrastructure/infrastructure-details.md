@@ -13,21 +13,25 @@ per-repo-instance port isolation and no `infrastructure/scripts/` or `infrastruc
 | Service | Port | Where |
 |---------|------|-------|
 | Backend (Spring Boot, profile `local`) | 8080 (fixed) | `by.iivanov.rpm.RpmDddApplication` |
-| Dev Postgres | 5432 | `docker/services.yml` (extends `docker/postgres.yml`) |
-| Test Postgres (shared, tmpfs) | 54034 | `docker/infra-tests.yml` |
+| Dev Postgres (persistent, named volume) — `local` run | 54036 | `docker/infra-local.yml` |
+| Fullstack Postgres (shared, tmpfs) — fullstack E2E | 54035 | `docker/infra-fullstack-tests.yml` |
+| Test Postgres (shared, tmpfs) — db-tagged tests | 54034 | `docker/infra-tests.yml` |
 
 ## Run the Backend (local)
 
-Profile `local` connects to `jdbc:postgresql://localhost:5432/rpm_ddd` (user/pass `postgres`/`postgres`).
-Start the dev Postgres first (idempotent), then run the app.
+Profile `local` connects to `jdbc:postgresql://localhost:54036/rpm_ddd` (user/pass `postgres`/`postgres`),
+the persistent dev stack. Start that stack first (idempotent — Postgres on `54036`, Mailpit
+on `1025`/`8025`), then run the app.
 
 ```bash
-docker compose -f docker/services.yml up -d
+docker compose -f docker/infra-local.yml up -d
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
 Alternatively, run the IntelliJ `App-Local` run configuration via MCP
-(`mcp__idea__execute_run_configuration`, `configurationName: "App-Local"`) — requires the IDE to be open.
+(`mcp__idea__execute_run_configuration`, `configurationName: "App-Local"`) — requires the IDE
+to be open. `App-Local` runs `Infra-Local-Up` as a before-launch task, so it starts the dev
+stack (`docker/infra-local.yml`) automatically — no separate compose step is needed.
 
 Health check:
 
@@ -39,7 +43,8 @@ curl http://localhost:8080/actuator/health
 
 | File | Purpose | Postgres | Notes |
 |------|---------|----------|-------|
-| `docker/services.yml` | Dev Postgres for the `local` profile | port 5432, DB `rpm_ddd`, `postgres`/`postgres` | extends `docker/postgres.yml`; persistent |
+| `docker/infra-local.yml` | Dev stack for the `local` profile | port 54036, persistent named volume | bundles Mailpit (`1025`/`8025`); stock tuning (durable, autovacuum on); self-contained image default (no `--env-file`); started via the `Infra-Local-Up` IDEA run config (auto before-launch of `App-Local`) |
+| `docker/infra-fullstack-tests.yml` | Fullstack E2E real-stack infra | port 54035, tmpfs (ephemeral) | bundles Mailpit (`1025`/`8025`); tuning vars in `docker/.env`; shared-first, never torn down |
 | `docker/infra-tests.yml` | Shared TEST Postgres for DB-tagged tests | port 54034, tmpfs (ephemeral) | tuning vars in `docker/.env`; started via the `Infra-Tests-Up` IDEA run config |
 
 Start the shared test DB (idempotent — leave it running across runs):
@@ -64,5 +69,7 @@ For the full datasource-resolution and start procedure, see the "Test Database" 
 
 ## Mail (dev)
 
-The chosen dev mail server is **Mailpit**, provisioned via Testcontainers (per
-`ProductSpecification/technology.md`). There is currently no mail service in `docker/services.yml`.
+The dev mail server is **Mailpit**, bundled in `docker/infra-local.yml` (SMTP on `1025`, web
+UI on `8025`). The `local` profile sends to `localhost:1025`, so starting the dev stack above
+also provisions dev mail. The fullstack test stack bundles its own Mailpit on the same ports
+— do not run both stacks at once.
