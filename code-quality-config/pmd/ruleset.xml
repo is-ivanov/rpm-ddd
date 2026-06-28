@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="rpm-ddd PMD rules"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        Project PMD ruleset: the maven-pmd-plugin default rules with a few project overrides.
+    </description>
+
+    <!-- All the rules the plugin enforces by default when no ruleset is configured. -->
+    <rule ref="rulesets/java/maven-pmd-plugin-default.xml" />
+
+    <!-- Override: the default cap of 4 is too low for test DSLs that lean on static imports. -->
+    <rule ref="category/java/codestyle.xml/TooManyStaticImports">
+        <properties>
+            <property name="maximumStaticImports" value="7" />
+        </properties>
+    </rule>
+</ruleset>
