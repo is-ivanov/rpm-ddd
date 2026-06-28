@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { buildUserRows } from '../logic/users-grid.logic';
+import { buildUserRows, filterRowsByFullName } from '../logic/users-grid.logic';
 import type { PersonName, UserSummaryResponse } from '../logic/users-grid.types';
 
 const JOHN_DOE: PersonName = { firstName: 'John', middleName: 'Robert', lastName: 'Doe' };
 const SARAH_CONNOR: PersonName = { firstName: 'Sarah', middleName: 'Jane', lastName: 'Connor' };
 const MICHAEL_SCOTT: PersonName = { firstName: 'Michael', middleName: null, lastName: 'Scott' };
+const EMILY_CARTER: PersonName = { firstName: 'Emily', middleName: null, lastName: 'Carter' };
+const DAVID_LEE: PersonName = { firstName: 'David', middleName: null, lastName: 'Lee' };
 const SYSTEM_ACTOR: PersonName = { firstName: 'System', middleName: null, lastName: '' };
 
 function userWith(overrides: Partial<UserSummaryResponse>): UserSummaryResponse {
@@ -74,5 +76,41 @@ describe('Users grid view model', () => {
     const [row] = buildUserRows([userWith({ name: MICHAEL_SCOTT })]);
 
     expect(row.name).toBe('Michael Scott');
+  });
+});
+
+describe('Full name column filter', () => {
+  const fourRows = buildUserRows([
+    userWith({ name: SARAH_CONNOR }),
+    userWith({ name: MICHAEL_SCOTT }),
+    userWith({ name: EMILY_CARTER }),
+    userWith({ name: DAVID_LEE }),
+  ]);
+
+  // RED — filterRowsByFullName stub passes all rows through; expects only the two rows whose
+  // Full name contains "ar" ("S(ar)ah Jane Connor", "Emily C(ar)ter"), in original render order.
+  it.fails('keeps only rows whose Full name contains the term, preserving render order', () => {
+    const filtered = filterRowsByFullName(fourRows, 'ar');
+
+    expect(filtered.map((row) => row.name)).toEqual(['Sarah Jane Connor', 'Emily Carter']);
+  });
+
+  // RED — stub passes all rows through; expects a case-insensitive match so "AR" still narrows to
+  // the two "ar" rows (proves the seam is real, not satisfiable by a raw case-sensitive includes).
+  it.fails('matches the term case-insensitively', () => {
+    const filtered = filterRowsByFullName(fourRows, 'AR');
+
+    expect(filtered.map((row) => row.name)).toEqual(['Sarah Jane Connor', 'Emily Carter']);
+  });
+
+  it('returns all rows unchanged for a blank term', () => {
+    const filtered = filterRowsByFullName(fourRows, '   ');
+
+    expect(filtered.map((row) => row.name)).toEqual([
+      'Sarah Jane Connor',
+      'Michael Scott',
+      'Emily Carter',
+      'David Lee',
+    ]);
   });
 });

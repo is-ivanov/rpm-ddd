@@ -34,3 +34,9 @@ export function buildUserRows(users: UserSummaryResponse[]): UserRow[] {
     updatedAt: user.audit.updatedAt,
   }));
 }
+
+export function filterRowsByFullName(rows: UserRow[], term: string): UserRow[] {
+  // RED stub: ignores the term and passes rows through; green-frontend implements the contains filter.
+  void term;
+  return rows;
+}
