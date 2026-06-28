@@ -7,8 +7,6 @@ import by.iivanov.rpm.testing.TestResources;
 import io.qameta.allure.Issue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ExpectedToFail;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
 /**
@@ -35,9 +33,6 @@ class FullstackSeedSchemaGuardTest extends AbstractApplicationIntegrationTest {
     @Test
     @DisplayName("WHEN the full-stack journey admin seed runs against the production-migrated schema "
             + "EXPECT a clean insert that satisfies the NOT NULL audit/timezone columns")
-    @ExpectedToFail(
-            value = "fullstack-seed.sql omits the NOT NULL updated_at/updated_by/time_zone columns added in Story 4",
-            withExceptions = DataIntegrityViolationException.class)
     void fullstackSeed_appliesAgainstProductionSchema() {
         String seedSql = TestResources.readUtf8(FULLSTACK_SEED);
 
