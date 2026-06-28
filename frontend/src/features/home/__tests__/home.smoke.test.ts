@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia } from 'pinia';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/test/msw-server';
+import App from '@/App.vue';
 import HomePage from '../components/HomePage.vue';
+import DashboardHome from '../components/DashboardHome.vue';
+
+const ROUTE_STUB = { template: '<div />' };
 
 const BASE = import.meta.env.VITE_API_URL;
 const ME_PATH = '/api/auth/me';
@@ -33,18 +37,31 @@ function stubAuthenticated(): void {
   );
 }
 
-function mountHomePage() {
-  const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/', component: HomePage }] });
-  return mount(HomePage, {
-    global: { plugins: [createPinia(), router], stubs: { RouterLink: RouterLinkStub } },
+async function mountHomePage() {
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [
+      {
+        path: '/',
+        component: HomePage,
+        children: [
+          { path: '', name: 'home', component: DashboardHome },
+          { path: 'users', name: 'users', component: ROUTE_STUB },
+        ],
+      },
+      { path: '/login', name: 'login', component: ROUTE_STUB },
+    ],
   });
+  await router.push('/');
+  await router.isReady();
+  return mount(App, { global: { plugins: [createPinia(), router] } });
 }
 
 describe('HomePage', () => {
   it('renders the welcome view when the visitor is unauthenticated', async () => {
     stubUnauthenticated();
 
-    const wrapper = mountHomePage();
+    const wrapper = await mountHomePage();
     await flushPromises();
 
     expect(wrapper.get('[data-testid="welcome-logo"]').text()).toBe('RPM');
@@ -54,7 +71,7 @@ describe('HomePage', () => {
   it('renders the dashboard shell for the current user when authenticated', async () => {
     stubAuthenticated();
 
-    const wrapper = mountHomePage();
+    const wrapper = await mountHomePage();
     await flushPromises();
 
     expect(wrapper.get('[data-testid="user-name"]').text()).toBe('John Doe');

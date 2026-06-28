@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import HomePage from '@/features/home/components/HomePage.vue';
+import DashboardHome from '@/features/home/components/DashboardHome.vue';
+import UsersPage from '@/features/users/components/UsersPage.vue';
 import LoginPage from '@/features/auth/components/LoginPage.vue';
 import ActivationPage from '@/features/auth/components/ActivationPage.vue';
 import NotFoundPage from '@/features/not-found/components/NotFoundPage.vue';
@@ -15,8 +17,19 @@ declare module 'vue-router' {
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'home',
     component: HomePage,
+    children: [
+      {
+        path: '',
+        name: 'home',
+        component: DashboardHome,
+      },
+      {
+        path: 'users',
+        name: 'users',
+        component: UsersPage,
+      },
+    ],
   },
   {
     path: '/login',
