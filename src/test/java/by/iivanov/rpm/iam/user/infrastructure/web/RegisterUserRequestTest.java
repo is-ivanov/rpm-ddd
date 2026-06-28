@@ -8,6 +8,7 @@ import static by.iivanov.rpm.testing.ConstraintViolationCases.size;
 import static by.iivanov.rpm.testing.ConstraintViolationCases.tooLongCase;
 import static org.instancio.Select.field;
 
+import by.iivanov.rpm.testing.ConstraintViolationCases;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.util.List;
@@ -32,16 +33,23 @@ class RegisterUserRequestTest {
     private static final int EMAIL_MAX = 254;
     private static final int TIME_ZONE_MAX = 64;
 
+    private static final Selector FIRST_NAME = field(RegisterUserRequest::firstName);
+    private static final Selector MIDDLE_NAME = field(RegisterUserRequest::middleName);
+    private static final Selector LAST_NAME = field(RegisterUserRequest::lastName);
+    private static final Selector LOGIN = field(RegisterUserRequest::login);
+    private static final Selector EMAIL = field(RegisterUserRequest::email);
+    private static final Selector TIME_ZONE = field(RegisterUserRequest::timeZone);
+
     private final Validator validator =
             Validation.buildDefaultValidatorFactory().getValidator();
 
     private final Model<RegisterUserRequest> validModel = Instancio.of(RegisterUserRequest.class)
-            .set(field(RegisterUserRequest::firstName), "John")
-            .set(field(RegisterUserRequest::middleName), "Quincy")
-            .set(field(RegisterUserRequest::lastName), "Doe")
-            .set(field(RegisterUserRequest::login), "john_doe")
-            .set(field(RegisterUserRequest::email), "john.doe@example.com")
-            .set(field(RegisterUserRequest::timeZone), "America/New_York")
+            .set(FIRST_NAME, "John")
+            .set(MIDDLE_NAME, "Quincy")
+            .set(LAST_NAME, "Doe")
+            .set(LOGIN, "john_doe")
+            .set(EMAIL, "john.doe@example.com")
+            .set(TIME_ZONE, "America/New_York")
             .toModel();
 
     @Test
@@ -59,9 +67,7 @@ class RegisterUserRequestTest {
     @DisplayName("Valid request: absent middle name is allowed")
     void should_noViolations_when_middleNameIsNull() {
         // GIVEN: a request without a middle name
-        var request = Instancio.of(validModel)
-                .set(field(RegisterUserRequest::middleName), null)
-                .create();
+        var request = Instancio.of(validModel).set(MIDDLE_NAME, null).create();
         // WHEN:
         var actualViolations = validator.validate(request);
         // THEN:
@@ -86,39 +92,30 @@ class RegisterUserRequestTest {
     }
 
     static Stream<Arguments> invalidFields() {
-        String blank = " \t \n";
+        String blank = ConstraintViolationCases.BLANK;
         String tooLongName = "a".repeat(NAME_MAX + 1);
         String tooLongLogin = "a".repeat(LOGIN_MAX + 1);
         String longLocalPart = "a".repeat(EMAIL_MAX) + "@example.com";
         String tooLongTimeZone = "a".repeat(TIME_ZONE_MAX + 1);
         return Stream.of(
-                blankCase("firstName", field(RegisterUserRequest::firstName), blank),
-                tooLongCase("firstName", field(RegisterUserRequest::firstName), tooLongName, NAME_MAX),
-                tooLongCase("middleName", field(RegisterUserRequest::middleName), tooLongName, NAME_MAX),
-                blankCase("lastName", field(RegisterUserRequest::lastName), blank),
-                tooLongCase("lastName", field(RegisterUserRequest::lastName), tooLongName, NAME_MAX),
-                blankCase("login", field(RegisterUserRequest::login), blank),
-                tooLongCase("login", field(RegisterUserRequest::login), tooLongLogin, LOGIN_MAX),
+                blankCase("firstName", FIRST_NAME, blank),
+                tooLongCase("firstName", FIRST_NAME, tooLongName, NAME_MAX),
+                tooLongCase("middleName", MIDDLE_NAME, tooLongName, NAME_MAX),
+                blankCase("lastName", LAST_NAME, blank),
+                tooLongCase("lastName", LAST_NAME, tooLongName, NAME_MAX),
+                blankCase("login", LOGIN, blank),
+                tooLongCase("login", LOGIN, tooLongLogin, LOGIN_MAX),
                 // A non-empty blank email is also malformed, so @NotBlank and @Email both fire.
-                invalidField(
-                        "Invalid email: blank",
-                        field(RegisterUserRequest::email),
-                        blank,
-                        notBlank("email", blank),
-                        email("email", blank)),
-                invalidField(
-                        "Invalid email: malformed",
-                        field(RegisterUserRequest::email),
-                        "not-an-email",
-                        email("email", "not-an-email")),
+                invalidField("Invalid email: blank", EMAIL, blank, notBlank("email", blank), email("email", blank)),
+                invalidField("Invalid email: malformed", EMAIL, "not-an-email", email("email", "not-an-email")),
                 // A 254-char local part exceeds @Size and is rejected by @Email, so both fire.
                 invalidField(
                         "Invalid email: too long",
-                        field(RegisterUserRequest::email),
+                        EMAIL,
                         longLocalPart,
                         size("email", longLocalPart, 0, EMAIL_MAX),
                         email("email", longLocalPart)),
-                blankCase("timeZone", field(RegisterUserRequest::timeZone), blank),
-                tooLongCase("timeZone", field(RegisterUserRequest::timeZone), tooLongTimeZone, TIME_ZONE_MAX));
+                blankCase("timeZone", TIME_ZONE, blank),
+                tooLongCase("timeZone", TIME_ZONE, tooLongTimeZone, TIME_ZONE_MAX));
     }
 }

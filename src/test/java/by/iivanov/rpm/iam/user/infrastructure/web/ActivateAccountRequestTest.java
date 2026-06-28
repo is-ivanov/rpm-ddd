@@ -5,6 +5,7 @@ import static by.iivanov.rpm.testing.ConstraintViolationCases.invalidField;
 import static by.iivanov.rpm.testing.ConstraintViolationCases.size;
 import static org.instancio.Select.field;
 
+import by.iivanov.rpm.testing.ConstraintViolationCases;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.util.List;
@@ -66,13 +67,12 @@ class ActivateAccountRequestTest {
     }
 
     static Stream<Arguments> invalidFields() {
-        String blankToken = " \t \n";
         // A blank password of exactly PASSWORD_MIN spaces is length-valid, so only @NotBlank fires.
         String blankPassword = " ".repeat(PASSWORD_MIN);
         String shortPassword = "a".repeat(PASSWORD_MIN - 1);
         String longPassword = "a".repeat(PASSWORD_MAX + 1);
         return Stream.of(
-                blankCase("token", TOKEN, blankToken),
+                blankCase("token", TOKEN, ConstraintViolationCases.BLANK),
                 blankCase("password", PASSWORD, blankPassword),
                 invalidField(
                         "Invalid password: too short",

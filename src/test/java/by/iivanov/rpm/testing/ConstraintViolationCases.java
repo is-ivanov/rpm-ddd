@@ -27,6 +27,13 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 public final class ConstraintViolationCases {
 
+    /**
+     * A non-empty but blank value — mixed whitespace (space, tab, newline). {@code @NotBlank} trims
+     * before testing, so it rejects this; a plain emptiness/length check would wrongly accept it. Shared
+     * across request-DTO tests so every {@code @NotBlank} field is exercised with the same representative.
+     */
+    public static final String BLANK = " \t \n";
+
     private ConstraintViolationCases() {}
 
     /** A {@code @NotBlank} violation expectation for {@code property} rejecting {@code invalidValue}. */
