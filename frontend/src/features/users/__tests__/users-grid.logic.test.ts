@@ -87,17 +87,13 @@ describe('Full name column filter', () => {
     userWith({ name: DAVID_LEE }),
   ]);
 
-  // RED — filterRowsByFullName stub passes all rows through; expects only the two rows whose
-  // Full name contains "ar" ("S(ar)ah Jane Connor", "Emily C(ar)ter"), in original render order.
-  it.fails('keeps only rows whose Full name contains the term, preserving render order', () => {
+  it('keeps only rows whose Full name contains the term, preserving render order', () => {
     const filtered = filterRowsByFullName(fourRows, 'ar');
 
     expect(filtered.map((row) => row.name)).toEqual(['Sarah Jane Connor', 'Emily Carter']);
   });
 
-  // RED — stub passes all rows through; expects a case-insensitive match so "AR" still narrows to
-  // the two "ar" rows (proves the seam is real, not satisfiable by a raw case-sensitive includes).
-  it.fails('matches the term case-insensitively', () => {
+  it('matches the term case-insensitively', () => {
     const filtered = filterRowsByFullName(fourRows, 'AR');
 
     expect(filtered.map((row) => row.name)).toEqual(['Sarah Jane Connor', 'Emily Carter']);

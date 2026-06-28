@@ -36,7 +36,9 @@ export function buildUserRows(users: UserSummaryResponse[]): UserRow[] {
 }
 
 export function filterRowsByFullName(rows: UserRow[], term: string): UserRow[] {
-  // RED stub: ignores the term and passes rows through; green-frontend implements the contains filter.
-  void term;
-  return rows;
+  const needle = term.trim().toLowerCase();
+  if (needle === '') {
+    return rows;
+  }
+  return rows.filter((row) => row.name.toLowerCase().includes(needle));
 }
