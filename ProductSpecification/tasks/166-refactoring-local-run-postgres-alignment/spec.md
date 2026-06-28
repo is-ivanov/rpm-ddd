@@ -25,17 +25,12 @@ backend on the `fullstack` profile + seed script).
 Decide and implement one coherent local-real-stack story so `/run-backend`, the
 java-spring `infrastructure.md` tech binding, and the compose files all agree.
 
-Options to evaluate at the `design` step:
-
-1. Publish a host port for Postgres in the dev compose (e.g. `5432:5432` or a non-default
-   port + matching `local` profile config) — restores the documented path; check for
-   collisions with parallel sessions / other local Postgres instances.
-2. Re-point the `local` profile (or the skill) at the fullstack infra (`:54035`) so one
-   shared infra serves both local runs and fullstack E2E. **(user's preliminary lean)**
-3. Drop the `local` `spring-boot:run` path from the skill entirely and document the
-   fullstack recipe as the single way to run the real stack locally.
-
-The chosen option is locked at the `design` step (Step 1) before implementation.
+**Decision (Step 1, locked): Option 2** — re-point the `local` profile at the fullstack
+infra (`:54035`) so one shared infra serves both local runs and fullstack E2E, and delete
+the now-dead dev compose (`docker/services.yml` + `docker/postgres.yml`; its Mailpit is
+covered by the fullstack infra's Mailpit on 1025/8025). Rationale, the rejected options
+(1: publish 5432 on the dev compose; 3: drop the local run path), and the implementation
+touch-list are in `decisions/local-run-postgres-alignment-decision.md`.
 
 ## Dependency
 
@@ -47,6 +42,7 @@ real-stack wording. Full map: `ProductSpecification/audits/dependencies.md`.
 
 - `.claude/skills/run-backend/SKILL.md`
 - `.claude/tech/java-spring/infrastructure.md` ("Run (local)" / "Test Database" sections)
+- `.claude/tech/java-spring/templates/infrastructure/infrastructure-details.md`
 - `docker/services.yml`, `docker/postgres.yml`
 - `docker/infra-fullstack-tests.yml`, `frontend/acceptance/tests/fullstack/README.md` (reference)
 - `src/main/resources/application-local.yml`
