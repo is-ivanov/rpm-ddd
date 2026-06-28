@@ -101,8 +101,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] demo (recorded users-navigation E2E in headless slowMo=2000 + video on; 1 passed (7.9s); recording → frontend/test-results/demo-users-navigation.webm (gitignored). FE-only (page.route mocks, no backend). playwright.config.ts demo edits reverted, working tree clean.)
 
 ### Scenario 2.1: Grid renders all columns and rows from the API
-- [ ] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (users-grid.spec.ts + AdminUsersBackendStatements (page.route '**/api/admin/users' → bare JSON array) + admin-users-fixture.ts (SEVERAL_ADMIN_USERS API-shape + EXPECTED_USER_ROWS display values, 4 rows createdAt DESC, non-round ts, all 4 statuses + System/J.Doe actors); extended UsersPageStatements with grid asserts (8 headers exact toHaveText, toHaveCount rows, per-row name/login/email + status badge + abbreviated actor + seed "System"). Nav via UI (homePage.clickUsersNavItem), backend mock via injected backend Statements. RED: UsersPage.vue has only heading+button, no grid → getByTestId('users-grid') 0 elems → toBeVisible timeout 5000ms; prediction all-YES; test.fail() locked (1 passed expected-failure). test-review CLEAN (0 edits — all deterministic values already strict). refactor: de-branched assertSeedActorIsShownAsSystem via fixture-derived SEED_ACTOR_CELLS + ACTOR_CELL lookup (move-behavior-to-data, no assertion deleted), unified loop idiom. Timestamps NOT asserted (relative time = Scn 3.3). lint(oxlint/eslint/prettier/type-check)+IDE clean; all files <200. Story scenario → no issue tag.)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
