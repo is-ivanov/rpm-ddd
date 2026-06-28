@@ -42,8 +42,7 @@ function stubAdminUsers(body: JsonBodyType, init: ResponseInit): void {
 }
 
 describe('Admin Users API Client', () => {
-  // RED — fetchAdminUsers throws 'Not implemented'; no GET /api/admin/users client/schema yet.
-  it.fails('returns the parsed user summaries when GET /api/admin/users returns 200', async () => {
+  it('returns the parsed user summaries when GET /api/admin/users returns 200', async () => {
     stubAdminUsers(ADMIN_USERS, { status: 200 });
 
     const result = await fetchAdminUsers().catch((error: unknown) => error);
