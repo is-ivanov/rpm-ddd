@@ -36,4 +36,11 @@ Rationale:
 - [x] refactor (rework `StalePublicationStatements.assertNoActivationEmailDeliveredTo`: Option B -- deterministically wait for the async republication executor to quiesce, then assert 0 emails; or Option A -- shorten `.during()` to the margin chosen in Step 1. Keep `assertActivationPublicationStaysIncompleteFor`. Do NOT weaken the assertion's teeth; do NOT touch the `doThrow().doCallRealMethod()` spy setup)
 
 ### Step 3: Verify no flakiness (local + CI)
-- [~] green-acceptance (run both tests 5+ times locally AND the full suite green; confirm zero flakiness and the wall-clock drop; cross-check the chosen margin against CI timing distributions before closing -- per the CI statistics requirement in spec.md)
+- [x] green-acceptance (run both tests 5+ times locally AND the full suite green; confirm zero flakiness and the wall-clock drop; cross-check the chosen margin against CI timing distributions before closing -- per the CI statistics requirement in spec.md)
+
+#### Verification results
+- **5× repeated local run of both tests: 5/5 green, zero flakiness.** Warm-context (window-dominated) per-test time stable at **~3.65s** every iteration (the test that runs first each iteration absorbs the one-time ~12.7–13.4s context cold-start — a fixed per-JVM cost, not the window).
+- **Full backend suite green:** `161 tests, 0 failures, 0 errors, 0 skipped`, BUILD SUCCESS, total **29.3s** (down from the ~50s run with a ~30s single-threaded tail noted in spec.md).
+- **Wall-clock drop:** each negative test ~15.6s → ~3.65s (warm) — the dominant single-threaded tail is gone.
+- **CI margin cross-check (3 CI runs):** the full async republish→SMTP→GreenMail roundtrip (positive `SmtpRecoveryEmailDeliveryIntegrationTest`, same path a wrongful resubmit would take) measured **0.62 / 0.67 / 0.65s** — max **0.67s**. The 3s window is ~4.5× that worst case. Margin validated against real CI timing distributions per spec.md.
+- Post-change CI green is the final cross-environment confirmation, observed on the PR run before merge.
