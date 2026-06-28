@@ -32,7 +32,7 @@ public class StalePublicationStatements {
 
     private static final Duration INCOMPLETE_WAIT_TIMEOUT = Duration.ofSeconds(15);
     private static final Duration INCOMPLETE_POLL_INTERVAL = Duration.ofMillis(250);
-    private static final Duration NO_DELIVERY_WINDOW = Duration.ofSeconds(15);
+    private static final Duration NO_DELIVERY_WINDOW = Duration.ofSeconds(3);
     private static final Duration NO_DELIVERY_POLL_INTERVAL = Duration.ofMillis(250);
 
     private final JavaMailSender mailSender;
