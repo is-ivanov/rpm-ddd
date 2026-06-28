@@ -97,8 +97,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] red-frontend-api (no API call in this scenario — clicking Users navigates to the Users page; it fetches no data (the grid data load is Scenario 2.1). Zero production files in the frontend-api layer, no new API client. Existence/applicability skip per the skip-validation rule.)
 - [S] green-frontend-api (no API client to implement — green counterpart of the [S] red-frontend-api)
 - [x] align-design (USER-APPROVED architecture = Option A nested-route layout, route /users for the users grid. Built: DashboardShell.vue main → <RouterView> + sidebar <a> → <RouterLink> with route-name active state (navItemClasses helper); new DashboardHome.vue (extracted Home content: page-title+placeholder) as child route ''; new features/users/components/UsersPage.vue (users-page + Register user button per mockup content-head, inline toolbar button — not the w-full form .btn-primary); router nested children ''→DashboardHome / users→UsersPage under /→HomePage (auth-gating unchanged). home.smoke.test.ts re-pointed to mount App+router with the nested home child (assertions unchanged, 57/57). refactor: extracted .page-title (dup h1 chain). design-review PASS (no grid placeholder data leaked — grid deferred to 2.1). verify: mockup match confirmed. coverage: navItemClasses both branches hit by smoke test; rest presentational/E2E. No regression — home+routing E2E 9/9 green; users-navigation.spec.ts now "expected-fail-but-passed" (impl works, marker flips in green-playwright). build+lint+57/57 vitest green; IDE clean on all code files.)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (removed test.fail() + RED comment from users-navigation.spec.ts; frontend-only test — /api/auth/me mocked via page.route (CurrentUserBackendStatements), no real backend; Playwright webServer auto-started Vite. Run via `--project=chromium` (project carries baseURL/webServer); 1 passed (4.2s). Remove-marker-only, no production/Statements changes. prettier --check clean on the spec.)
+- [~] demo
 
 ### Scenario 2.1: Grid renders all columns and rows from the API
 - [ ] red-playwright

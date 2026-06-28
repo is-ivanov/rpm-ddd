@@ -21,12 +21,6 @@ test.describe('Users Navigation', () => {
       'Then the Users page is displayed inside the same top bar and sidebar shell, ' +
       'And the page shows a "Register user" button',
     async () => {
-      // RED: the "Users" sidebar item is a static link with no navigation wired, and there
-      // is no /users route or Users page component yet. Clicking it leaves the user on the
-      // dashboard, so the Users page and its "Register user" button never render.
-      // Pinned by assertUsersPageIsVisible() + assertRegisterUserButtonIsVisible() below.
-      test.fail();
-
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await homePage.navigateToHomePage();
 
