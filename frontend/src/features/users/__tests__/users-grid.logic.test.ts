@@ -26,7 +26,7 @@ function userWith(overrides: Partial<UserSummaryResponse>): UserSummaryResponse 
 
 describe('Users grid view model', () => {
   // RED — buildUserRows stub passes the raw status code through; expects the human-readable label
-  it.fails.each([
+  it.each([
     { status: 'ACTIVE', label: 'Active' },
     { status: 'PENDING', label: 'Pending' },
     { status: 'LOCKED', label: 'Locked' },
@@ -38,7 +38,7 @@ describe('Users grid view model', () => {
   });
 
   // RED — buildUserRows stub emits the raw firstName; expects the "J. Doe" abbreviation
-  it.fails('abbreviates a normal audit actor as "{firstInitial}. {lastName}"', () => {
+  it('abbreviates a normal audit actor as "{firstInitial}. {lastName}"', () => {
     const [row] = buildUserRows([userWith({})]);
 
     expect(row.createdBy).toBe('J. Doe');
@@ -46,7 +46,7 @@ describe('Users grid view model', () => {
   });
 
   // RED — stub has no seed special-case; updatedBy abbreviation ("J. Doe") is unimplemented
-  it.fails('renders the seed/System actor verbatim as "System" (empty last name)', () => {
+  it('renders the seed/System actor verbatim as "System" (empty last name)', () => {
     const seeded = userWith({
       audit: {
         createdAt: '2026-06-20T11:02:09.310Z',
@@ -63,14 +63,14 @@ describe('Users grid view model', () => {
   });
 
   // RED — stub emits only firstName; expects "First Middle Last" when a middle name is present
-  it.fails('composes the full name including the middle name when present', () => {
+  it('composes the full name including the middle name when present', () => {
     const [row] = buildUserRows([userWith({ name: SARAH_CONNOR })]);
 
     expect(row.name).toBe('Sarah Jane Connor');
   });
 
   // RED — stub emits only firstName; expects "First Last" when no middle name
-  it.fails('composes the full name without a middle name when absent', () => {
+  it('composes the full name without a middle name when absent', () => {
     const [row] = buildUserRows([userWith({ name: MICHAEL_SCOTT })]);
 
     expect(row.name).toBe('Michael Scott');
