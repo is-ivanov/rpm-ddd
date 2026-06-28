@@ -89,6 +89,27 @@ the L1 seed has distinct `createdAt` values, so the tie path is not exercised an
 by `id` DESC and stability across repeated queries. Cheap regression lock. Deferred at the Backend Extended
 Gate (user decision); promote when the read path is next touched, or leave relying on the implemented sort.
 
+### I9 — Deduplicate repeated given-setup across users e2e tests (fixture + compound nav)
+**Observed:** the same pre-conditions repeat verbatim across the users Playwright scenarios (1.1, 1.2, 2.1,
+2.2): `currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' })` then
+`homePage.navigateToHomePage()`, and `homePage.navigateToHomePage()` + `homePage.clickUsersNavItem()`. Pure
+test-infrastructure DRY, not a product behaviour — an improvement, not a bug.
+**Analysis:** two distinct dedup mechanisms, split by concern boundary (the project's "Page Statements own
+browser interactions only; backend setup via backend Statements" + "No middleman delegators between
+Statements" rules forbid collapsing a cross-concern block into one Statements method):
+(a) **Compound method within one concern** — `navigateToHomePage()` + `clickUsersNavItem()` both live in
+`HomePageStatements`, so fold them into `homePage.openUsersPage()` (single page-object concern, low risk).
+(b) **Cross-concern setup (backend mock + UI nav)** — "authenticated John Doe on the dashboard" spans
+`CurrentUserBackendStatements` (route mock) and `HomePageStatements` (navigation). Do NOT merge into a
+Statements method (would mix backend into a page object AND be a middleman). Use a Playwright **fixture**
+(`test.extend`) — test-infrastructure, not Statements, so it may compose multiple injected Statements without
+violating the middleman rule — that pre-authenticates and lands on the dashboard, exposing ready
+`homePage`/`usersPage`. Analogous to a backend `@BeforeEach` / shared test base.
+**Scope:** retrofit across the 4 committed users specs (1.1, 1.2, 2.1, 2.2) in one refactor pass; re-run the
+full users e2e suite + lint. User decision (2026-06-28): defer to a dedicated refactor pass once more
+repetition accrues — keep building Scn 2.2 now. Promote when the next users scenario adds a 5th repetition,
+or at the Story Completion Gate.
+
 ## Done
 
 ### I5 — Static-analysis check for UPPER_CASE SQL/JPQL keywords (Q4) — Task #226, PR #238
