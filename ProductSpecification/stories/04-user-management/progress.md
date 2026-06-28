@@ -118,10 +118,10 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-frontend-api (counterpart of [S] red-frontend-api — no API client to implement)
 - [x] align-design (UsersPage.vue gained the loading state per mockup desktop/05-grid-loading.html: `loading` ref starts true, toggled in loadUsers() try/finally; template renders `v-if="loading"` → centered spinner (LoaderCircle :size=32 animate-spin text-accent, wrapped `flex h-90 items-center justify-center`, data-testid="users-grid-loading") in place of the grid, `v-else` → <UsersGrid>. Mockup fidelity: 32px / accent / centered / 360px panel (h-90 = 90×4px). Spinner uses bare `animate-spin` (1s) consistent with AppLoading/LoadingButton/AppVersion rather than the mockup's 0.8s — deliberate cross-component consistency. design-review PASS (no placeholder data — loading shows only a spinner; reachable state confirmed). refactor CLEAN no-op (43 lines; loading toggle is presentational orchestration, correct location; `flex h-90 …` single-use self-documenting → no CSS extraction; spinner byte-identical to AppLoading). align-design verify: build green; Playwright Scn 2.2 = "expected to fail, but passed" (impl works, marker flips in green-playwright). coverage: provider installed; UsersPage.vue uncovered lines are presentational (E2E-covered by Scn 2.2 Playwright), buildUserRows unchanged & already covered → no reachable unit gap, no new steps. lint(oxlint/eslint/prettier/type-check) exit 0; IDE inspection clean. NOTE: size-32 accent spinner now duplicated in AppLoading.vue + UsersPage.vue — extract a shared AppSpinner on the 3rd usage.)
 - [x] green-playwright (removed test.fail() + 2 stale RED comments from users-grid.spec.ts Scn 2.2; frontend-only test — /api/auth/me + /api/admin/users mocked via page.route (CurrentUserBackendStatements + AdminUsersBackendStatements held-route), no real backend; Playwright webServer auto-started Vite. Run via `--project=chromium` from frontend/; 1 passed (1.9s). Remove-marker-only, no production/Statements changes. prettier --check clean on the spec.)
-- [~] demo
+- [x] demo (recorded users-grid Scn 2.2 loading-state E2E in headless slowMo=2000 + video on; 1 passed (8.7s); recording → frontend/test-results/demo-users-grid-loading.webm (gitignored). FE-only (page.route mocks, no backend). playwright.config.ts demo edits reverted, working tree clean.)
 
 ### Scenario 3.1: Typing in a column filter narrows the rows client-side
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
