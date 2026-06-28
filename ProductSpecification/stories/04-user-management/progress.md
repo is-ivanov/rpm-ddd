@@ -81,8 +81,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 ## Frontend Scenarios (02_UI_Tests.md)
 
 ### Scenario 1.1: Sidebar shows an Admin Center group with a Users item
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (admin-center-nav.spec.ts + HomePageStatements sidebar locators/asserts: admin-center-group/users-nav-item test-ids, exact toHaveText "Admin Center"/"Users"; reuses CurrentUserBackendStatements.givenAuthenticatedUser. RED on the missing group label + Users item in DashboardShell's placeholder sidebar, prediction all-YES (locator→0 elements, toBeVisible timeout); test.fail() locked; test-review CLEAN; refactor no-op (idiomatic copy of existing page-object pattern); lint green; idea MCP get_file_problems unavailable → IDE inspection skipped.)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

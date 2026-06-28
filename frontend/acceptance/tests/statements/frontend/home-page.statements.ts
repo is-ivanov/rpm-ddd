@@ -10,6 +10,8 @@ const TEST_ID = {
   userAvatar: 'user-avatar',
   userName: 'user-name',
   dashboardSidebar: 'dashboard-sidebar',
+  adminCenterGroup: 'admin-center-group',
+  usersNavItem: 'users-nav-item',
   pageTitle: 'page-title',
   dashboardPlaceholder: 'dashboard-placeholder',
 } as const;
@@ -18,6 +20,8 @@ const BRAND_LOGO_TEXT = 'RPM';
 const WELCOME_TAGLINE = 'Remote Patient Monitoring';
 const LOGIN_BUTTON_TEXT = 'Sign in';
 const PAGE_TITLE_TEXT = 'Home';
+const ADMIN_CENTER_GROUP_TEXT = 'Admin Center';
+const USERS_NAV_ITEM_TEXT = 'Users';
 
 export class HomePageStatements {
   constructor(
@@ -87,6 +91,18 @@ export class HomePageStatements {
     await expect(this.dashboardSidebar(), 'navigation sidebar is visible').toBeVisible();
   }
 
+  async assertAdminCenterGroupIsVisible(): Promise<void> {
+    await expect(this.adminCenterGroup(), 'sidebar "Admin Center" group is visible').toBeVisible();
+    await expect(this.adminCenterGroup(), 'group label text is exactly "Admin Center"').toHaveText(
+      ADMIN_CENTER_GROUP_TEXT,
+    );
+  }
+
+  async assertUsersNavItemIsVisible(): Promise<void> {
+    await expect(this.usersNavItem(), '"Users" item is visible inside the Admin Center group').toBeVisible();
+    await expect(this.usersNavItem(), 'item text is exactly "Users"').toHaveText(USERS_NAV_ITEM_TEXT);
+  }
+
   async assertPageTitleIsVisible(): Promise<void> {
     await expect(this.pageTitle(), 'page title is visible').toBeVisible();
     await expect(this.pageTitle(), 'page title shows "Home"').toHaveText(PAGE_TITLE_TEXT);
@@ -131,6 +147,14 @@ export class HomePageStatements {
 
   private dashboardSidebar(): Locator {
     return this.page.getByTestId(TEST_ID.dashboardSidebar);
+  }
+
+  private adminCenterGroup(): Locator {
+    return this.page.getByTestId(TEST_ID.adminCenterGroup);
+  }
+
+  private usersNavItem(): Locator {
+    return this.page.getByTestId(TEST_ID.usersNavItem);
   }
 
   private pageTitle(): Locator {
