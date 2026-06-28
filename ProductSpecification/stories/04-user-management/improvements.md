@@ -48,15 +48,6 @@ normalizes all timestamp binding/reading to UTC regardless of JVM/DB zone), opti
 and container `TZ=UTC`. Note: Hibernate's setting does not cover Liquibase's own connection, so the test
 seed-load pin may still be needed for the CSV load. Candidate for a standalone task (production-impacting).
 
-### I5 — Static-analysis check for UPPER_CASE SQL/JPQL keywords (Q4) — Tracked as Task #226
-**Observed:** the new rule "SQL/JPQL keywords are UPPER_CASE" (coding-rules.md → SQL & JPQL) is currently
-convention-only.
-**Analysis:** investigate enforcing it automatically. PMD/Checkstyle cannot parse SQL semantically inside Java
-string literals; a Checkstyle `RegexpMultiline` over `@Query`/`.sql(...)`/string literals is possible but
-false-positive-prone (matches keywords appearing as identifiers or in comments). An Error Prone custom check
-could target `@Query` and `JdbcClient`/`JdbcTemplate` call sites more precisely. Candidate for a standalone
-task to prototype feasibility and pick the mechanism.
-
 ### I6 — Timezone dropdown option source is unspecified (FE Scenario 4.1)
 **Observed:** the create-user modal has a Timezone field (FE Scenario 4.1), but the spec only says it is
 "pre-filled with the app default (Central Europe)" — it does NOT define where the **option list** for the
@@ -97,3 +88,15 @@ the L1 seed has distinct `createdAt` values, so the tie path is not exercised an
 **Scope:** small `@DataJpaTest` (`red/green-adapter db`) — two users with identical `createdAt`, assert order
 by `id` DESC and stability across repeated queries. Cheap regression lock. Deferred at the Backend Extended
 Gate (user decision); promote when the read path is next touched, or leave relying on the implemented sort.
+
+## Done
+
+### I5 — Static-analysis check for UPPER_CASE SQL/JPQL keywords (Q4) — Task #226, PR #238
+**Observed:** the rule "SQL/JPQL keywords are UPPER_CASE" (coding-rules.md → SQL & JPQL) was convention-only.
+**Resolved:** prototyped two candidates (Task 226 `findings.md`). A broad lowercase-keyword regex produced ~99%
+false positives (92 matches, 1 real); an Error Prone custom check was assessed but deferred as disproportionate
+to a one-site corpus. Adopted an anchored Checkstyle `RegexpMultiline` (lowercase leading verb in
+`@Query`/`@Subselect` values and `JdbcClient`/`JdbcTemplate` `.sql(...)` arguments) — confirmed via the real
+Checkstyle engine to fire exactly the one existing violation with zero false positives. Wired into
+`my_checks.xml` and fixed that violation (`UserSummaryView` `@Subselect` → `SELECT … FROM`). Mid-query lowercase
+keywords stay review-only (broader regex coverage would re-introduce the false positives).
