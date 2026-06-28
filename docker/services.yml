@@ -1,0 +1,47 @@
+# Dev real-stack infra for the `local` Spring profile: persistent Postgres + Mailpit.
+#
+# Unlike the TEST composes (infra-tests.yml / infra-fullstack-tests.yml), this stack is for
+# hands-on local development:
+#   - data lives on a NAMED VOLUME (survives stop/start/down and across dev sessions),
+#     not tmpfs;
+#   - STOCK Postgres tuning (durable, autovacuum on) — no fsync=off / wal_level=minimal test
+#     throughput hacks.
+# Postgres is published on a non-default host port (54036) to avoid colliding with a locally
+# installed Postgres on 5432, staying in the project's 5403x container-Postgres range.
+# Do NOT run this together with the fullstack test stack — both bind Mailpit on 1025/8025.
+#
+# This configuration is intended for development; it's **your** responsibility to harden it
+# for production.
+
+name: rpm-ddd
+
+services:
+  postgres:
+    image: ${POSTGRES_TEST_IMAGE:-postgres:18.3-alpine}
+    container_name: rpm-ddd-dev-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rpm_ddd
+    ports:
+      - "54036:5432"
+    volumes:
+      - rpm-ddd-dev-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:v1.21.8
+    container_name: rpm-ddd-dev-mailpit
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  rpm-ddd-dev-pgdata:

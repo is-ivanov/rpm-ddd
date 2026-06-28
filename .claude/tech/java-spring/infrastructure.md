@@ -10,10 +10,10 @@ Tech binding for `infrastructure.md`. Load alongside the universal rules.
 
 Backend main class `by.iivanov.rpm.RpmDddApplication`, Spring profile `local`, fixed port 8080.
 
-**Prerequisite — shared real-stack infra:** the `local` profile connects to `localhost:54035/rpm_ddd` (and Mailpit at `localhost:1025`), shared with the fullstack E2E tier. Start it first (idempotent):
+**Prerequisite — dev stack:** the `local` profile connects to `localhost:54036/rpm_ddd` (and Mailpit at `localhost:1025`). This is the persistent dev stack (named volume, stock tuning), distinct from the ephemeral test stacks. Start it first (idempotent):
 
 ```bash
-docker compose --env-file docker/.env -f docker/infra-fullstack-tests.yml up -d --wait
+docker compose -f docker/services.yml up -d
 ```
 
 **Run the backend, two options:**
