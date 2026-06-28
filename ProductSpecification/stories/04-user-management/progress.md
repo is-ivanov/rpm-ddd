@@ -112,11 +112,11 @@ email is asserted as a side effect of backend Scenario 3.1)
 
 ### Scenario 2.2: Grid shows a loading state while fetching
 - [x] red-playwright (users-grid.spec.ts +Scn2.2 test in existing describe; held-route loading pattern: AdminUsersBackendStatements.givenAdminUserListInFlight() (route handler awaits a release promise — no fixed sleep) + releaseAdminUserList(); UsersPageStatements +loading testid `users-grid-loading` + assertLoadingStateIsVisible (indicator visible & rows toHaveCount(0) while in-flight) + assertRowsRenderAfterResponse (indicator gone + grid visible + rows toHaveCount(4) after release). Nav via UI (clickUsersNavItem), backend mock injected. RED: UsersPage.vue has no loading markup → getByTestId('users-grid-loading') 0 elems → toBeVisible timeout 5000ms; prediction all-YES (Type/Message/Status). test.fail() locked (1 passed expected-failure) + 2 RED-reason comments. test-review CLEAN (strict assertions confirmed; 1 prettier line-wrap fix only). refactor CLEAN no-op (mirrors Scn 2.1 siblings; fulfillAdminUserList shared, release flag mirrors current-user sessionEnded idiom). lint(oxlint/eslint/prettier/type-check) exit 0; IDE inspections clean on all 3 files; all <200. Story scenario → no issue tag.)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend (trivial-logic gate FAILED on all 4 triggers — loading state is presentational component-local state, not a `.logic.ts` seam: a `loading` boolean ref toggled true-before-fetch / false-in-finally around the existing `loadUsers()`. No branching/computation/validation/transformation; the only data transform `buildUserRows` already exists & is green from Scn 2.1. Per frontend-rules "Async Action Buttons (Loading State)" the in-flight flag is presentational state handled in the component during align-design. red-agent confirmed.)
+- [S] green-frontend (counterpart of [S] red-frontend — no `.logic.ts` to implement; the loading ref + spinner markup are built in align-design, verified E2E by red/green-playwright)
+- [S] red-frontend-api (existence/skip-validation: Scn 2.2 makes NO new API call — it reuses the existing `fetchAdminUsers()` (admin-users.api.ts) + zod schema from Scn 2.1, observed in-flight only. Zero production files in the frontend-api layer change → skip per the skip-validation rule.)
+- [S] green-frontend-api (counterpart of [S] red-frontend-api — no API client to implement)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
