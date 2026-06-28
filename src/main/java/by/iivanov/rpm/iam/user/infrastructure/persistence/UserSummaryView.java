@@ -28,8 +28,8 @@ import org.jspecify.annotations.Nullable;
  */
 @Entity
 @Immutable
-@Subselect("select id, first_name, middle_name, last_name, login, email, status,"
-        + " registered_at, updated_at, created_by, updated_by from iam_user")
+@Subselect("SELECT id, first_name, middle_name, last_name, login, email, status,"
+        + " registered_at, updated_at, created_by, updated_by FROM iam_user")
 @Synchronize("iam_user")
 class UserSummaryView {
 
