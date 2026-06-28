@@ -12,4 +12,4 @@ Type: refactoring
 
 ### Step 2: Wire the chosen check into the build (or document review-only)
 - [x] refactor (ported two anchored RegexpMultiline modules into my_checks.xml; fixed UserSummaryView @Subselect to SELECT … FROM)
-- [~] green-acceptance (build green with the check active on existing code)
+- [x] green-acceptance (checkstyle:check green with the rule active; UserGridIntegrationTest passes — @Subselect view works with UPPER_CASE keywords)
