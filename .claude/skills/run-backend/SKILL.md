@@ -9,10 +9,11 @@ Concrete commands (run command, dev Postgres prerequisite, health endpoint) live
 
 ## Prerequisite
 
-The `local` profile needs dev Postgres at `localhost:5432`. Start it first (idempotent — no-op if already up):
+The `local` profile shares the fullstack real-stack infra: Postgres at `localhost:54035`
+and Mailpit at `localhost:1025`. Start it first (idempotent — no-op if already up):
 
 ```bash
-docker compose -f docker/services.yml up -d
+docker compose --env-file docker/.env -f docker/infra-fullstack-tests.yml up -d --wait
 ```
 
 Liquibase migrations run automatically on boot.

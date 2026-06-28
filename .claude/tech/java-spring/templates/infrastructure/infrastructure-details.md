@@ -13,16 +13,17 @@ per-repo-instance port isolation and no `infrastructure/scripts/` or `infrastruc
 | Service | Port | Where |
 |---------|------|-------|
 | Backend (Spring Boot, profile `local`) | 8080 (fixed) | `by.iivanov.rpm.RpmDddApplication` |
-| Dev Postgres | 5432 | `docker/services.yml` (extends `docker/postgres.yml`) |
-| Test Postgres (shared, tmpfs) | 54034 | `docker/infra-tests.yml` |
+| Real-stack Postgres (shared, tmpfs) — `local` run + fullstack E2E | 54035 | `docker/infra-fullstack-tests.yml` |
+| Test Postgres (shared, tmpfs) — db-tagged tests | 54034 | `docker/infra-tests.yml` |
 
 ## Run the Backend (local)
 
-Profile `local` connects to `jdbc:postgresql://localhost:5432/rpm_ddd` (user/pass `postgres`/`postgres`).
-Start the dev Postgres first (idempotent), then run the app.
+Profile `local` connects to `jdbc:postgresql://localhost:54035/rpm_ddd` (user/pass `postgres`/`postgres`),
+the same shared real-stack infra the fullstack E2E tier uses. Start that infra first
+(idempotent — Postgres on `54035`, Mailpit on `1025`/`8025`), then run the app.
 
 ```bash
-docker compose -f docker/services.yml up -d
+docker compose --env-file docker/.env -f docker/infra-fullstack-tests.yml up -d --wait
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
@@ -39,7 +40,7 @@ curl http://localhost:8080/actuator/health
 
 | File | Purpose | Postgres | Notes |
 |------|---------|----------|-------|
-| `docker/services.yml` | Dev Postgres for the `local` profile | port 5432, DB `rpm_ddd`, `postgres`/`postgres` | extends `docker/postgres.yml`; persistent |
+| `docker/infra-fullstack-tests.yml` | Shared real-stack infra for the `local` run **and** fullstack E2E | port 54035, tmpfs (ephemeral) | bundles Mailpit (`1025`/`8025`); tuning vars in `docker/.env`; shared-first, never torn down |
 | `docker/infra-tests.yml` | Shared TEST Postgres for DB-tagged tests | port 54034, tmpfs (ephemeral) | tuning vars in `docker/.env`; started via the `Infra-Tests-Up` IDEA run config |
 
 Start the shared test DB (idempotent — leave it running across runs):
@@ -64,5 +65,6 @@ For the full datasource-resolution and start procedure, see the "Test Database" 
 
 ## Mail (dev)
 
-The chosen dev mail server is **Mailpit**, provisioned via Testcontainers (per
-`ProductSpecification/technology.md`). There is currently no mail service in `docker/services.yml`.
+The dev mail server is **Mailpit**, bundled in `docker/infra-fullstack-tests.yml` (SMTP on
+`1025`, web UI on `8025`). The `local` profile sends to `localhost:1025`, so starting the
+shared real-stack infra above also provisions dev mail — no separate compose is needed.
