@@ -1,13 +1,10 @@
 package by.iivanov.rpm.iam.user.infrastructure.web;
 
 import static org.instancio.Select.field;
-import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 
+import by.iivanov.rpm.testing.ConstraintViolationCases;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Stream;
 import org.hibernate.validator.testutil.ConstraintViolationAssert;
@@ -90,65 +87,38 @@ class RegisterUserRequestTest {
         String longLocalPart = "a".repeat(EMAIL_MAX) + "@example.com";
         String tooLongTimeZone = "a".repeat(TIME_ZONE_MAX + 1);
         return Stream.of(
-                blankCase("firstName", field(RegisterUserRequest::firstName), blank),
-                sizeCase("firstName", field(RegisterUserRequest::firstName), tooLongName, NAME_MAX),
-                sizeCase("middleName", field(RegisterUserRequest::middleName), tooLongName, NAME_MAX),
-                blankCase("lastName", field(RegisterUserRequest::lastName), blank),
-                sizeCase("lastName", field(RegisterUserRequest::lastName), tooLongName, NAME_MAX),
-                blankCase("login", field(RegisterUserRequest::login), blank),
-                sizeCase("login", field(RegisterUserRequest::login), tooLongLogin, LOGIN_MAX),
+                ConstraintViolationCases.blankCase("firstName", field(RegisterUserRequest::firstName), blank),
+                ConstraintViolationCases.tooLongCase(
+                        "firstName", field(RegisterUserRequest::firstName), tooLongName, NAME_MAX),
+                ConstraintViolationCases.tooLongCase(
+                        "middleName", field(RegisterUserRequest::middleName), tooLongName, NAME_MAX),
+                ConstraintViolationCases.blankCase("lastName", field(RegisterUserRequest::lastName), blank),
+                ConstraintViolationCases.tooLongCase(
+                        "lastName", field(RegisterUserRequest::lastName), tooLongName, NAME_MAX),
+                ConstraintViolationCases.blankCase("login", field(RegisterUserRequest::login), blank),
+                ConstraintViolationCases.tooLongCase(
+                        "login", field(RegisterUserRequest::login), tooLongLogin, LOGIN_MAX),
                 // A non-empty blank email is also malformed, so @NotBlank and @Email both fire.
-                argumentSet(
+                ConstraintViolationCases.invalidField(
                         "Invalid email: blank",
                         field(RegisterUserRequest::email),
                         blank,
-                        List.of(notBlank("email", blank), emailFormat(blank))),
-                argumentSet(
+                        ConstraintViolationCases.notBlank("email", blank),
+                        ConstraintViolationCases.email("email", blank)),
+                ConstraintViolationCases.invalidField(
                         "Invalid email: malformed",
                         field(RegisterUserRequest::email),
                         "not-an-email",
-                        List.of(emailFormat("not-an-email"))),
+                        ConstraintViolationCases.email("email", "not-an-email")),
                 // A 254-char local part exceeds @Size and is rejected by @Email, so both fire.
-                argumentSet(
+                ConstraintViolationCases.invalidField(
                         "Invalid email: too long",
                         field(RegisterUserRequest::email),
                         longLocalPart,
-                        List.of(size("email", longLocalPart, EMAIL_MAX), emailFormat(longLocalPart))),
-                blankCase("timeZone", field(RegisterUserRequest::timeZone), blank),
-                sizeCase("timeZone", field(RegisterUserRequest::timeZone), tooLongTimeZone, TIME_ZONE_MAX));
-    }
-
-    private static Arguments blankCase(String property, Selector field, String blankValue) {
-        return argumentSet(
-                "Invalid %s: blank".formatted(property), field, blankValue, List.of(notBlank(property, blankValue)));
-    }
-
-    private static Arguments sizeCase(String property, Selector field, String tooLongValue, int max) {
-        return argumentSet(
-                "Invalid %s: too long".formatted(property),
-                field,
-                tooLongValue,
-                List.of(size(property, tooLongValue, max)));
-    }
-
-    private static ConstraintViolationAssert.ViolationExpectation notBlank(String property, String invalidValue) {
-        return ConstraintViolationAssert.violationOf(NotBlank.class)
-                .withProperty(property)
-                .withMessage("must not be blank")
-                .withInvalidValue(invalidValue);
-    }
-
-    private static ConstraintViolationAssert.ViolationExpectation size(String property, String invalidValue, int max) {
-        return ConstraintViolationAssert.violationOf(Size.class)
-                .withProperty(property)
-                .withMessage("size must be between 0 and %d".formatted(max))
-                .withInvalidValue(invalidValue);
-    }
-
-    private static ConstraintViolationAssert.ViolationExpectation emailFormat(String invalidValue) {
-        return ConstraintViolationAssert.violationOf(Email.class)
-                .withProperty("email")
-                .withMessage("must be a well-formed email address")
-                .withInvalidValue(invalidValue);
+                        ConstraintViolationCases.size("email", longLocalPart, 0, EMAIL_MAX),
+                        ConstraintViolationCases.email("email", longLocalPart)),
+                ConstraintViolationCases.blankCase("timeZone", field(RegisterUserRequest::timeZone), blank),
+                ConstraintViolationCases.tooLongCase(
+                        "timeZone", field(RegisterUserRequest::timeZone), tooLongTimeZone, TIME_ZONE_MAX));
     }
 }
