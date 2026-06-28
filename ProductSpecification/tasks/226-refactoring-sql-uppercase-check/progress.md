@@ -8,8 +8,8 @@ Type: refactoring
 ## Fix
 
 ### Step 1: Prototype the check mechanism
-- [ ] refactor (try Checkstyle RegexpMultiline and/or Error Prone custom check; measure false positives)
+- [x] refactor (prototyped Checkstyle RegexpMultiline + assessed Error Prone; measured false positives — see findings.md; chose anchored Checkstyle rule)
 
 ### Step 2: Wire the chosen check into the build (or document review-only)
-- [ ] refactor (enable in pom/checkstyle config, or record the decision if not feasible)
+- [~] refactor (port the anchored RegexpMultiline into my_checks.xml; fix UserSummaryView @Subselect keywords to UPPER_CASE)
 - [ ] green-acceptance (build green with the check active on existing code)
