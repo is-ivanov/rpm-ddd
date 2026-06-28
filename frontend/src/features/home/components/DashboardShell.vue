@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LayoutDashboard } from '@lucide/vue';
+import { LayoutDashboard, Users } from '@lucide/vue';
 import DashboardTopBar from './DashboardTopBar.vue';
 </script>
 
@@ -7,10 +7,12 @@ import DashboardTopBar from './DashboardTopBar.vue';
   <div data-testid="dashboard-shell" class="flex min-h-screen flex-col bg-surface font-sans">
     <DashboardTopBar />
     <div class="flex min-h-0 flex-1">
-      <aside data-testid="dashboard-sidebar" class="flex w-60 shrink-0 items-center justify-center bg-sidebar p-6">
-        <div class="text-center text-[13px] leading-normal text-sidebar-muted opacity-50">
-          Sections will appear<br />as modules are connected
-        </div>
+      <aside data-testid="dashboard-sidebar" class="flex w-60 shrink-0 flex-col bg-sidebar py-4">
+        <a data-testid="home-nav-item" class="nav-item nav-item-active">
+          <LayoutDashboard :size="20" aria-hidden="true" /> Home
+        </a>
+        <div data-testid="admin-center-group" class="nav-group-label">Admin Center</div>
+        <a data-testid="users-nav-item" class="nav-item pl-8"> <Users :size="20" aria-hidden="true" /> Users </a>
       </aside>
       <main class="flex flex-1 flex-col p-8">
         <h1 data-testid="page-title" class="text-2xl font-bold text-ink">Home</h1>

@@ -9,6 +9,8 @@
   --color-accent-surface: #e7f5ff;
 
   --color-sidebar: #1a1d23;
+  --color-sidebar-hover: #2d3139;
+  --color-sidebar-active: #3b4252;
   --color-sidebar-muted: #adb5bd;
 
   --color-surface: #f8f9fa;
@@ -25,6 +27,19 @@
 @layer components {
   .auth-card {
     @apply w-full max-w-100 rounded-lg bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)];
+  }
+
+  .nav-group-label {
+    @apply px-6 pb-2 pt-4 text-[11px] font-semibold uppercase tracking-[0.04em] text-sidebar-muted opacity-60;
+  }
+
+  .nav-item {
+    @apply flex cursor-pointer items-center gap-3 border-l-[3px] border-transparent px-6 py-3;
+    @apply text-sm font-medium text-sidebar-muted no-underline hover:bg-sidebar-hover;
+  }
+
+  .nav-item-active {
+    @apply border-l-accent bg-sidebar-active text-white;
   }
 
   .btn-primary {

@@ -86,8 +86,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-frontend (no logic to implement — green counterpart of the trivial-logic [S] red-frontend)
 - [S] red-frontend-api (no API call in this scenario — the gherkin is a static nav group + item with no data fetch. Zero production files in the frontend-api layer; the shell's /me call uses the pre-existing current-user.api.ts from prior stories, no NEW API client needed. Existence/applicability skip per the skip-validation rule.)
 - [S] green-frontend-api (no API client to implement — green counterpart of the [S] red-frontend-api)
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design (DashboardShell.vue sidebar rebuilt from placeholder → real nav matching mockup 01-users-grid.html: Home nav-item (active), "Admin Center" nav-group-label, "Users" sub nav-item (pl-8). test-ids home-nav-item/admin-center-group/users-nav-item; exact-text "Admin Center"/"Users" satisfied (icon SVG contributes no text). style.css: added --color-sidebar-hover/#2d3139 + --color-sidebar-active/#3b4252 tokens + extracted .nav-group-label/.nav-item/.nav-item-active component classes (repeated/opaque-chain extraction per tailwind binding). design-review PASS (no placeholder data leaked — names/emails/dates correctly omitted). refactor no-op (clean). verify: value-level match to mockup confirmed. coverage N/A (green-frontend/green-frontend-api both [S], no testable logic — pure presentational, covered E2E at green-playwright). build+lint(oxlint/eslint/prettier/type-check)+57/57 unit green; IDE inspections clean on both files.)
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 1.2: Clicking Users navigates to the Users page inside the shell
