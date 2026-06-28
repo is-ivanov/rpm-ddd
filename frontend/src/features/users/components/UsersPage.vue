@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { Plus } from '@lucide/vue';
+import { LoaderCircle, Plus } from '@lucide/vue';
 import { fetchAdminUsers } from '../logic/admin-users.api';
 import { buildUserRows } from '../logic/users-grid.logic';
 import type { UserRow } from '../logic/users-grid.types';
 import UsersGrid from './UsersGrid.vue';
 
 const rows = ref<UserRow[]>([]);
+const loading = ref(true);
 
 async function loadUsers(): Promise<void> {
-  rows.value = buildUserRows(await fetchAdminUsers());
+  loading.value = true;
+  try {
+    rows.value = buildUserRows(await fetchAdminUsers());
+  } finally {
+    loading.value = false;
+  }
 }
 
 onMounted(() => {
@@ -29,6 +35,9 @@ onMounted(() => {
         <Plus :size="18" aria-hidden="true" /> Register user
       </button>
     </div>
-    <UsersGrid :rows="rows" />
+    <div v-if="loading" data-testid="users-grid-loading" class="flex h-90 items-center justify-center">
+      <LoaderCircle :size="32" class="animate-spin text-accent" aria-hidden="true" />
+    </div>
+    <UsersGrid v-else :rows="rows" />
   </div>
 </template>
