@@ -23,7 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
  * and {@code @Email}).
  *
  * <p>Boundary limits stay pinned as literals at the call site (the production constant named only in
- * a comment) so a limit change fails the test instead of silently following it.
+ * a comment), so a limit change fails the test instead of silently following it.
  */
 public final class ConstraintViolationCases {
 
@@ -37,12 +37,13 @@ public final class ConstraintViolationCases {
                 .withInvalidValue(invalidValue);
     }
 
-    /** A {@code @Size(max)} violation expectation: message {@code "size must be between 0 and {max}"}. */
-    public static ViolationExpectation size(String property, Object invalidValue, int max) {
-        return size(property, invalidValue, 0, max);
-    }
-
-    /** A {@code @Size(min, max)} violation expectation: message {@code "size must be between {min} and {max}"}. */
+    /**
+     * A {@code @Size} violation expectation: message {@code "size must be between {min} and {max}"}.
+     *
+     * <p>Both bounds are explicit on purpose — a single-{@code int} overload would be ambiguous at the
+     * call site ({@code min} vs {@code max}) and would permanently occupy the {@code (String, Object, int)}
+     * signature, blocking a future min-only builder. For a {@code @Size(max)} field pass {@code 0} as min.
+     */
     public static ViolationExpectation size(String property, Object invalidValue, int min, int max) {
         return ConstraintViolationAssert.violationOf(Size.class)
                 .withProperty(property)
@@ -72,6 +73,6 @@ public final class ConstraintViolationCases {
     /** A "too long" case: an over-{@code max} value reported as a single {@code @Size(max)} violation. */
     public static Arguments tooLongCase(String property, Selector field, String tooLongValue, int max) {
         return invalidField(
-                "Invalid %s: too long".formatted(property), field, tooLongValue, size(property, tooLongValue, max));
+                "Invalid %s: too long".formatted(property), field, tooLongValue, size(property, tooLongValue, 0, max));
     }
 }
