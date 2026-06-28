@@ -13,8 +13,10 @@ Backend main class `by.iivanov.rpm.RpmDddApplication`, Spring profile `local`, f
 **Prerequisite — dev stack:** the `local` profile connects to `localhost:54036/rpm_ddd` (and Mailpit at `localhost:1025`). This is the persistent dev stack (named volume, stock tuning), distinct from the ephemeral test stacks. Start it first (idempotent):
 
 ```bash
-docker compose -f docker/services.yml up -d
+docker compose -f docker/infra-local.yml up -d
 ```
+
+The IntelliJ `App-Local` run configuration starts this stack automatically via its `Infra-Local-Up` before-launch task — the manual command is only for the CLI path.
 
 **Run the backend, two options:**
 

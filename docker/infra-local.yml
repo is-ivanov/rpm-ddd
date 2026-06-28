@@ -13,12 +13,12 @@
 # This configuration is intended for development; it's **your** responsibility to harden it
 # for production.
 
-name: rpm-ddd
+name: rpm-ddd-local
 
 services:
   postgres:
     image: ${POSTGRES_TEST_IMAGE:-postgres:18.3-alpine}
-    container_name: rpm-ddd-dev-postgres
+    container_name: rpm-ddd-local-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -26,7 +26,7 @@ services:
     ports:
       - "54036:5432"
     volumes:
-      - rpm-ddd-dev-pgdata:/var/lib/postgresql/data
+      - rpm-ddd-local-pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -35,7 +35,7 @@ services:
 
   mailpit:
     image: axllent/mailpit:v1.21.8
-    container_name: rpm-ddd-dev-mailpit
+    container_name: rpm-ddd-local-mailpit
     environment:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
@@ -44,4 +44,4 @@ services:
       - "8025:8025"
 
 volumes:
-  rpm-ddd-dev-pgdata:
+  rpm-ddd-local-pgdata:

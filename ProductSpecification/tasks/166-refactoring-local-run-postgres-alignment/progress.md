@@ -11,7 +11,7 @@ Type: refactoring
 - [x] design  → Option 2 (local → :54035 fullstack infra; delete services.yml/postgres.yml). ADR: decisions/local-run-postgres-alignment-decision.md
 
 ### Step 2: implement the chosen option (compose/profile/skill alignment)
-- [x] refactor (infra + skill docs)  → REVISED to Option 1 (persistent dev stack): re-created docker/services.yml (Postgres :54036 + named volume + stock tuning + Mailpit); local→:54036; run-backend skill + infrastructure.md + infrastructure-details.md realigned. ADR header + Revised Decision record the supersession.
+- [x] refactor (infra + skill docs)  → REVISED to Option 1 (persistent dev stack): docker/infra-local.yml (renamed from services.yml; Postgres :54036 + named volume + stock tuning + Mailpit); local→:54036; new .run/Infra-Local-Up + App-Local before-launch task; run-backend skill + infrastructure.md + infrastructure-details.md realigned. ADR header + Revised Decision record the supersession.
 
 ### Step 3: verify: documented local-run path works end-to-end (backend healthy)
 - [~] refactor (verification)

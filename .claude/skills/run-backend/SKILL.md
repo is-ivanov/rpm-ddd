@@ -13,11 +13,15 @@ The `local` profile needs the dev stack: persistent Postgres at `localhost:54036
 Mailpit at `localhost:1025`. Start it first (idempotent — no-op if already up):
 
 ```bash
-docker compose -f docker/services.yml up -d
+docker compose -f docker/infra-local.yml up -d
 ```
 
 This is the persistent dev stack (named volume, stock tuning) — distinct from the ephemeral
 test stacks. Liquibase migrations run automatically on boot.
+
+When running via the IntelliJ `App-Local` run configuration (Action option 2 below), this
+step is automatic: `App-Local` has `Infra-Local-Up` as a before-launch task, so the dev
+stack is started for you. The manual command above is only needed for the CLI path.
 
 ## Action
 

@@ -82,11 +82,13 @@ Adopt **Option 2**. The local real-stack run uses the fullstack infra:
 Re-create a **dev-only** compose, separate from the test composes, with dev-appropriate
 semantics:
 
-- **`docker/services.yml`** (single file — the old `extends docker/postgres.yml` indirection
-  is dropped since nothing else referenced `postgres.yml`):
+- **`docker/infra-local.yml`** (renamed from the old `services.yml` for naming consistency
+  with the other `infra-*.yml` composes; the old `extends docker/postgres.yml` indirection is
+  dropped since nothing else referenced `postgres.yml`). Compose project name `rpm-ddd-local`,
+  containers `rpm-ddd-local-{postgres,mailpit}`, volume `rpm-ddd-local-pgdata`:
   - Postgres on host port **`54036`** (non-default — avoids colliding with a locally
     installed Postgres on 5432; stays in the project's `5403x` container-Postgres range).
-  - **Persistent named volume** (`rpm-ddd-dev-pgdata`) — data survives `stop`/`start`/`down`
+  - **Persistent named volume** (`rpm-ddd-local-pgdata`) — data survives `stop`/`start`/`down`
     and across dev sessions (unlike the tmpfs test stacks).
   - **Stock Postgres tuning** — no `fsync=off`/`autovacuum=off`/`wal_level=minimal`; a dev DB
     should be durable and self-maintaining.
@@ -95,32 +97,42 @@ semantics:
     at the same time — both bind 1025/8025; they serve different activities.)
   - Self-contained `image:` default (`postgres:18.3-alpine`) so the dev command needs no
     `--env-file`.
+- **`.run/Infra-Local-Up.run.xml`** (new) — a `docker-deploy` run config pointing at
+  `docker/infra-local.yml`, mirroring `Infra-Tests-Up` / `Infra-FullStack-Tests-Up`.
+- **`.run/App-Local.run.xml`** — add `Infra-Local-Up` as a `RunConfigurationTask`
+  before-launch step (before `Make`), so launching `App-Local` in IntelliJ brings up the dev
+  stack automatically (idempotent). The CLI path still starts it manually.
 - `application-local.yml`: datasource url → `localhost:54036`; mail stays `localhost:1025`.
 - `/run-backend` + `infrastructure.md` + `infrastructure-details.md`: dev-Postgres
-  prerequisite is `docker compose -f docker/services.yml up -d`; port `54036`; describe the
-  dev stack as persistent + stock-tuned, distinct from the ephemeral test stacks.
+  prerequisite is `docker compose -f docker/infra-local.yml up -d`; port `54036`; note the
+  `App-Local` auto before-launch; describe the dev stack as persistent + stock-tuned,
+  distinct from the ephemeral test stacks.
 
 ## Consequences (revised)
 
 - The documented local-run path works **and** has dev-correct semantics: data persists,
   autovacuum runs, durability is on.
-- Two real-stack composes coexist — `docker/services.yml` (persistent dev) and
+- Two real-stack composes coexist — `docker/infra-local.yml` (persistent dev) and
   `docker/infra-fullstack-tests.yml` (ephemeral E2E). This is a deliberate split by purpose,
   not duplication; they never need to run simultaneously.
 - No `--env-file` needed for the dev run (the compose carries its own defaults).
+- IntelliJ `App-Local` users get the dev stack started for them (before-launch task) — the
+  documented prerequisite is enforced by the run config, not just prose.
 - Resolves the #164 dependency: the local real-stack wording has a single source of truth
-  (the dev `services.yml`).
+  (the dev `infra-local.yml`).
 - Memory `project_dev-postgres-no-host-port` becomes stale once the redesign lands (dev
   Postgres now publishes `54036`); `project_mailpit-docker-intentional` stays valid (dev
   Mailpit is still intentional). Update the first after verification.
 
 ## Implementation touch-list (revised — redesign of Step 2)
 
-- Re-create `docker/services.yml` — single-file dev compose: Postgres `54036` + persistent
-  named volume + stock tuning + Mailpit; self-contained image default. (`docker/postgres.yml`
-  stays deleted.)
+- `docker/infra-local.yml` (renamed from `docker/services.yml`) — single-file dev compose:
+  Postgres `54036` + persistent named volume + stock tuning + Mailpit; self-contained image
+  default; project/container/volume names `rpm-ddd-local*`. (`docker/postgres.yml` stays deleted.)
+- `.run/Infra-Local-Up.run.xml` — new `docker-deploy` run config for `docker/infra-local.yml`.
+- `.run/App-Local.run.xml` — add `Infra-Local-Up` before-launch `RunConfigurationTask`.
 - `src/main/resources/application-local.yml` — url → `54036`.
-- `.claude/skills/run-backend/SKILL.md` — prerequisite `docker compose -f docker/services.yml up -d`, port `54036`.
-- `.claude/tech/java-spring/infrastructure.md` — "Run (local)" prerequisite + port `54036`.
+- `.claude/skills/run-backend/SKILL.md` — prerequisite `docker compose -f docker/infra-local.yml up -d`, port `54036`, App-Local auto before-launch note.
+- `.claude/tech/java-spring/infrastructure.md` — "Run (local)" prerequisite + port `54036` + before-launch note.
 - `.claude/tech/java-spring/templates/infrastructure/infrastructure-details.md` — port
-  table, run command, file table, dev-mail note: dev `services.yml` on `54036`, persistent.
+  table, run command, file table, dev-mail note: dev `infra-local.yml` on `54036`, persistent.
