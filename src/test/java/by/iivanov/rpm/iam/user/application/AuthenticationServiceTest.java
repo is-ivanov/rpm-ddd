@@ -41,7 +41,7 @@ class AuthenticationServiceTest {
         userStatements = new UserStatements();
         throttleStatements = new LoginThrottleStatements(userStatements.userRepository);
         passwordEncoder = NoOpPasswordEncoder.getInstance();
-        var fixedClock = Clock.fixed(Instant.parse("2026-06-14T12:00:00Z"), ZoneOffset.UTC);
+        var fixedClock = Clock.fixed(Instant.parse("2026-06-14T13:42:51.683Z"), ZoneOffset.UTC);
         sut = new AuthenticationService(userStatements.userRepository, passwordEncoder, fixedClock);
     }
 

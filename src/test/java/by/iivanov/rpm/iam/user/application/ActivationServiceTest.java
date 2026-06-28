@@ -29,7 +29,7 @@ class ActivationServiceTest {
 
     @BeforeEach
     void setUp() {
-        clock = MutableClock.of(Instant.parse("2026-01-01T00:00:00Z"), ZoneOffset.UTC);
+        clock = MutableClock.of(Instant.parse("2026-01-08T08:47:23.519Z"), ZoneOffset.UTC);
         userStatements = new UserStatements();
         tokenGenerator = new JwtActivationTokenGenerator(TEST_JWT_SECRET, Duration.ofHours(24), clock);
         sut = userStatements.createActivationService(tokenGenerator, passwordPolicy);

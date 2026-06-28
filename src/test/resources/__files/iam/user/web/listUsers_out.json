@@ -19,9 +19,9 @@
     "email": "throttle_victim@localhost.com",
     "status": "ACTIVE",
     "audit": {
-      "createdAt": "2026-01-01T00:00:00Z",
+      "createdAt": "2026-01-04T16:51:08.774Z",
       "createdBy": { "firstName": "System", "middleName": "", "lastName": "" },
-      "updatedAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-04T16:51:08.774Z",
       "updatedBy": { "firstName": "System", "middleName": "", "lastName": "" }
     }
   },
@@ -32,9 +32,9 @@
     "email": "inactive@localhost.com",
     "status": "INACTIVE",
     "audit": {
-      "createdAt": "2026-01-01T00:00:00Z",
+      "createdAt": "2026-01-03T14:36:19.428Z",
       "createdBy": { "firstName": "System", "middleName": "", "lastName": "" },
-      "updatedAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-03T14:36:19.428Z",
       "updatedBy": { "firstName": "System", "middleName": "", "lastName": "" }
     }
   },
@@ -45,9 +45,9 @@
     "email": "locked@localhost.com",
     "status": "LOCKED",
     "audit": {
-      "createdAt": "2026-01-01T00:00:00Z",
+      "createdAt": "2026-01-03T11:22:47.605Z",
       "createdBy": { "firstName": "System", "middleName": "", "lastName": "" },
-      "updatedAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-03T11:22:47.605Z",
       "updatedBy": { "firstName": "System", "middleName": "", "lastName": "" }
     }
   },
@@ -58,9 +58,9 @@
     "email": "pending@localhost.com",
     "status": "PENDING",
     "audit": {
-      "createdAt": "2026-01-01T00:00:00Z",
+      "createdAt": "2026-01-02T09:48:05.913Z",
       "createdBy": { "firstName": "System", "middleName": "", "lastName": "" },
-      "updatedAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-02T09:48:05.913Z",
       "updatedBy": { "firstName": "System", "middleName": "", "lastName": "" }
     }
   },
@@ -71,9 +71,9 @@
     "email": "admin@localhost.com",
     "status": "ACTIVE",
     "audit": {
-      "createdAt": "2026-01-01T00:00:00Z",
+      "createdAt": "2026-01-02T07:14:32.187Z",
       "createdBy": { "firstName": "System", "middleName": "", "lastName": "" },
-      "updatedAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-02T07:14:32.187Z",
       "updatedBy": { "firstName": "System", "middleName": "", "lastName": "" }
     }
   }

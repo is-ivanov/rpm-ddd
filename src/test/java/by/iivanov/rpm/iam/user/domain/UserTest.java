@@ -29,7 +29,7 @@ class UserTest {
         private final Login login = new Login("ivanov");
         private final Password password = new Password("$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy");
         private final UserId createdBy = new UserId(UUID.fromString("123e4567-e89b-12d3-a456-426614174023"));
-        private final Instant now = Instant.parse("2026-04-30T12:00:00Z");
+        private final Instant now = Instant.parse("2026-04-30T15:28:36.742Z");
         private final ZoneId timeZone = ZoneId.of("America/New_York");
 
         @Test
