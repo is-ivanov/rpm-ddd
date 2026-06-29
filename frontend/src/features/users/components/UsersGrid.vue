@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { filterRowsByFullName } from '../logic/users-grid.logic';
-import type { UserRow } from '../logic/users-grid.types';
+import { computed, ref, type Component } from 'vue';
+import { ArrowDown, ArrowUp, ChevronsUpDown } from '@lucide/vue';
+import { filterRowsByFullName, sortUserRows } from '../logic/users-grid.logic';
+import type { SortColumn, SortDirection, UserRow } from '../logic/users-grid.types';
 
 const props = defineProps<{ rows: readonly UserRow[] }>();
 
@@ -10,13 +11,14 @@ interface Column {
   readonly label: string;
   readonly center?: boolean;
   readonly filterTestId?: string;
+  readonly sortKey?: SortColumn;
 }
 
 const COLUMNS: readonly Column[] = [
   { testId: 'users-grid-header-name', label: 'Full name', filterTestId: 'users-filter-name' },
-  { testId: 'users-grid-header-login', label: 'Login' },
+  { testId: 'users-grid-header-login', label: 'Login', sortKey: 'login' },
   { testId: 'users-grid-header-email', label: 'Email' },
-  { testId: 'users-grid-header-status', label: 'Status', center: true },
+  { testId: 'users-grid-header-status', label: 'Status', center: true, sortKey: 'status' },
   { testId: 'users-grid-header-created', label: 'Created' },
   { testId: 'users-grid-header-created-by', label: 'Created by' },
   { testId: 'users-grid-header-updated', label: 'Updated' },
@@ -34,9 +36,51 @@ function statusBadgeClass(status: string): string {
   return STATUS_BADGE_CLASS[status] ?? 'status-inactive';
 }
 
-const nameFilter = ref('');
+interface SortState {
+  readonly column: SortColumn;
+  readonly direction: SortDirection;
+}
 
-const displayedRows = computed(() => filterRowsByFullName([...props.rows], nameFilter.value));
+const nameFilter = ref('');
+const sort = ref<SortState | null>(null);
+
+function onHeaderClick(col: Column): void {
+  if (col.sortKey === undefined) {
+    return;
+  }
+  toggleSort(col.sortKey);
+}
+
+function toggleSort(column: SortColumn): void {
+  const current = sort.value;
+  if (current?.column !== column) {
+    sort.value = { column, direction: 'asc' };
+    return;
+  }
+  sort.value = { column, direction: current.direction === 'asc' ? 'desc' : 'asc' };
+}
+
+function isActiveSort(col: Column): boolean {
+  return col.sortKey !== undefined && sort.value?.column === col.sortKey;
+}
+
+function sortIconFor(col: Column): Component {
+  if (isActiveSort(col) && sort.value?.direction === 'desc') {
+    return ArrowDown;
+  }
+  if (isActiveSort(col)) {
+    return ArrowUp;
+  }
+  return ChevronsUpDown;
+}
+
+const displayedRows = computed(() => {
+  const filtered = filterRowsByFullName([...props.rows], nameFilter.value);
+  if (sort.value === null) {
+    return filtered;
+  }
+  return sortUserRows(filtered, sort.value.column, sort.value.direction);
+});
 </script>
 
 <template>
@@ -49,9 +93,14 @@ const displayedRows = computed(() => filterRowsByFullName([...props.rows], nameF
             :key="col.testId"
             :data-testid="col.testId"
             class="grid-head-cell"
-            :class="{ 'text-center': col.center }"
+            :class="[col.center ? 'text-center' : '', col.sortKey ? 'grid-head-cell-sortable' : '']"
+            @click="onHeaderClick(col)"
           >
-            {{ col.label }}
+            <span v-if="col.sortKey" class="th-sort" :class="{ 'th-sort-sorted': isActiveSort(col) }">
+              {{ col.label }}
+              <component :is="sortIconFor(col)" :size="14" class="th-sort-icon" aria-hidden="true" />
+            </span>
+            <template v-else>{{ col.label }}</template>
           </th>
         </tr>
         <tr>
