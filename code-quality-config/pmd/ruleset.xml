@@ -14,9 +14,8 @@
 
 
   <rule ref="category/java/codestyle.xml">
-    <!-- Batch 1: no tool in the stack enforces `final` modifiers (Checkstyle has no
-         FinalParameters/FinalLocalVariable, Palantir format does not add them); the project
-         did not adopt the convention. Disabled rather than churn 800 mechanical edits. -->
+    <!-- Flag method args / locals that could be `final`. Off: no stack tool or project
+         convention enforces `final` (no Checkstyle FinalParameters, Palantir does not add it). -->
     <exclude name="MethodArgumentCouldBeFinal"/>
     <exclude name="LocalVariableCouldBeFinal"/>
   </rule>
@@ -34,9 +33,8 @@
   <rule ref="category/java/documentation.xml">
     <!-- Configured in Checkstyle -->
     <exclude name="CommentRequired"/>
-    <!-- Batch 2: comment line length is owned by Checkstyle LineLength=120 (my_checks.xml,
-         applies to comments too) and .editorconfig=120; PMD's 80-char default conflicts with the
-         adopted 120. The 6-line cap conflicts with the project rule to preserve Javadoc/comments. -->
+    <!-- Caps comment line length (80) and comment block lines (6). Off: line length is owned by
+         Checkstyle LineLength=120; the 6-line cap conflicts with preserving Javadoc/comments. -->
     <exclude name="CommentSize"/>
   </rule>
 
