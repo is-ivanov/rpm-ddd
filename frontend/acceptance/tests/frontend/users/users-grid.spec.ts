@@ -97,13 +97,6 @@ test.describe('Users Grid', () => {
       'Then the rows are sorted descending by Login, ' +
       'And the Status column sorts by lifecycle order (Pending, Active, Locked, Inactive), not alphabetically',
     async () => {
-      // RED: the grid has no column-sort behavior yet — the Login/Status headers are static,
-      // rows always render in createdAt-DESC order. So clicking the Login header is a no-op and
-      // assertLoginsSortedAscending() fails (toHaveText: expected ascending logins, received the
-      // createdAt-DESC render order). Built in green-frontend (client-side sort in .logic.ts:
-      // Login asc/desc toggle, Status by lifecycle order). assertGridIsVisible() above is the
-      // bounded precondition; test.fail() absorbs the thrown assertion, NOT a whole-test timeout.
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
