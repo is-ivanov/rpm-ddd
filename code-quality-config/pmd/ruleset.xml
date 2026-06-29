@@ -18,6 +18,9 @@
          convention enforces `final` (no Checkstyle FinalParameters, Palantir does not add it). -->
     <exclude name="MethodArgumentCouldBeFinal"/>
     <exclude name="LocalVariableCouldBeFinal"/>
+    <!-- Flag `var` declarations, wants explicit types. Off: the project adopted `var`
+         (157 usages across 54 files); no tool in the stack forbids it. -->
+    <exclude name="UseExplicitTypes"/>
   </rule>
   <!-- Override: the default cap of 4 is too low for test DSLs that lean on static imports. -->
   <rule ref="category/java/codestyle.xml/TooManyStaticImports">

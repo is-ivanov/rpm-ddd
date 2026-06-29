@@ -25,8 +25,9 @@ Discussed per-rule; disabled. Line length (352) is owned by Checkstyle `LineLeng
 - [x] refactor (documentation exclude CommentSize + ceiling 830 + pmd:check green)
 
 ### Batch 2b — remaining formatting/convention noise (to discuss per-rule)
-Candidates: `UseExplicitTypes` (157 — conflicts with project `var` usage),
-`CommentDefaultAccessModifier` (136), `LongVariable` (136),
+`UseExplicitTypes` (157 — disabled; project adopted `var`, 157 usages / 54 files, no tool forbids it),
+ceiling 830 → 673.
+Candidates remaining: `CommentDefaultAccessModifier` (136), `LongVariable` (136),
 `MethodNamingConventions` (86 — duplicates Checkstyle `MethodName`, which is already
 `@Test`-aware via SuppressionXpathSingleFilter). Triage disable vs configure per rule.
 - [ ] refactor (ruleset excludes/config + lower ceiling + verify)
