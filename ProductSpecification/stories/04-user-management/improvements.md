@@ -89,6 +89,53 @@ the L1 seed has distinct `createdAt` values, so the tie path is not exercised an
 by `id` DESC and stability across repeated queries. Cheap regression lock. Deferred at the Backend Extended
 Gate (user decision); promote when the read path is next touched, or leave relying on the implemented sort.
 
+### I9 — Deduplicate repeated given-setup across users e2e tests (fixture + compound nav)
+**Observed:** the same pre-conditions repeat verbatim across the users Playwright scenarios (1.1, 1.2, 2.1,
+2.2): `currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' })` then
+`homePage.navigateToHomePage()`, and `homePage.navigateToHomePage()` + `homePage.clickUsersNavItem()`. Pure
+test-infrastructure DRY, not a product behaviour — an improvement, not a bug.
+**Analysis:** two distinct dedup mechanisms, split by concern boundary (the project's "Page Statements own
+browser interactions only; backend setup via backend Statements" + "No middleman delegators between
+Statements" rules forbid collapsing a cross-concern block into one Statements method):
+(a) **Compound method within one concern** — `navigateToHomePage()` + `clickUsersNavItem()` both live in
+`HomePageStatements`, so fold them into `homePage.openUsersPage()` (single page-object concern, low risk).
+(b) **Cross-concern setup (backend mock + UI nav)** — "authenticated John Doe on the dashboard" spans
+`CurrentUserBackendStatements` (route mock) and `HomePageStatements` (navigation). Do NOT merge into a
+Statements method (would mix backend into a page object AND be a middleman). Use a Playwright **fixture**
+(`test.extend`) — test-infrastructure, not Statements, so it may compose multiple injected Statements without
+violating the middleman rule — that pre-authenticates and lands on the dashboard, exposing ready
+`homePage`/`usersPage`. Analogous to a backend `@BeforeEach` / shared test base.
+**Scope:** retrofit across the 4 committed users specs (1.1, 1.2, 2.1, 2.2) in one refactor pass; re-run the
+full users e2e suite + lint. User decision (2026-06-28): defer to a dedicated refactor pass once more
+repetition accrues — keep building Scn 2.2 now. Promote when the next users scenario adds a 5th repetition,
+or at the Story Completion Gate.
+
+### I10 — Single source of truth for status lifecycle order & labels (FE duplicates BE enum)
+**Observed:** the user-status lifecycle order (`Pending → Active → Locked → Inactive`) is encoded **twice**:
+once on the backend (`UserStatus` enum declaration order) and once on the frontend (`STATUS_LIFECYCLE_RANK`
+in `users-grid.logic.ts`, plus the parallel `STATUS_LABELS` code→label map). `UserSummaryResponse.status`
+ships the bare enum name string over the wire, so the FE re-encodes both the order and the display label
+locally — a domain-rule duplication. A NaN bug surfaced from this: `STATUS_LIFECYCLE_RANK` had no fallback,
+so an unknown status (a code added on the backend before the FE ships the label/rank) yielded `undefined`
+and silently broke the status sort; fixed inline in Scn 3.2 (`statusRank` → `UNKNOWN_STATUS_RANK`,
+unknown statuses sort last).
+**Analysis:** the lifecycle order is a **domain** fact whose source of truth is `UserStatus`; "sort the grid
+by it" is a presentation concern that is client-side today (no server-side paging/sort — a deliberate Story 4
+decision), forcing the FE to carry the order key. Three resolutions:
+(a) **BE is the source of truth** — add an explicit `UserStatus.order()` method (NEVER `ordinal()`, which
+silently breaks when someone reorders the constants) and expose `statusOrder: int` on
+`UserSummaryResponse`; the FE sorts by the number and drops `STATUS_LIFECYCLE_RANK`. Zero duplication; a new
+status "just works". Recommended when the backend itself ever needs the order (sorting, transitions, SLAs) or
+when statuses are added.
+(b) **Unify the two FE maps** (`STATUS_LABELS` + `STATUS_LIFECYCLE_RANK`) into one `code → { label, rank }`
+table — collapses the FE-side duplication but does not remove the BE⇄FE duplication. Local cleanup only.
+(c) **Server-side sort** (`ORDER BY` the enum order) — heaviest; justified only with server-side paging or
+large volumes, both deferred.
+**Scope:** (a) is a contract change → needs an ADR (`/architecture`) and a full TDD cycle
+(domain `order()` + `@DataJpaTest` for `ORDER BY` if pursued + adapter `statusOrder` + FE consumer). Defer
+until a new status is added or the backend needs the order; the NaN fallback is the interim safeguard.
+Decided (user, 2026-06-29): take option (c)-lite — leave client-side sort with the fallback, log this item.
+
 ## Done
 
 ### I5 — Static-analysis check for UPPER_CASE SQL/JPQL keywords (Q4) — Task #226, PR #238

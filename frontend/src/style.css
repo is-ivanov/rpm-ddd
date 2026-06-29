@@ -9,6 +9,8 @@
   --color-accent-surface: #e7f5ff;
 
   --color-sidebar: #1a1d23;
+  --color-sidebar-hover: #2d3139;
+  --color-sidebar-active: #3b4252;
   --color-sidebar-muted: #adb5bd;
 
   --color-surface: #f8f9fa;
@@ -20,11 +22,90 @@
   --color-danger: #fa5252;
   --color-danger-surface: #fff5f5;
   --color-success: #40c057;
+  --color-success-surface: #ebfbee;
+  --color-warning: #f59f00;
+  --color-warning-surface: #fff9db;
+  --color-column: #f1f3f5;
 }
 
 @layer components {
   .auth-card {
     @apply w-full max-w-100 rounded-lg bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)];
+  }
+
+  .page-title {
+    @apply text-2xl font-bold text-ink;
+  }
+
+  .nav-group-label {
+    @apply px-6 pb-2 pt-4 text-[11px] font-semibold uppercase tracking-[0.04em] text-sidebar-muted opacity-60;
+  }
+
+  .nav-item {
+    @apply flex cursor-pointer items-center gap-3 border-l-[3px] border-transparent px-6 py-3;
+    @apply text-sm font-medium text-sidebar-muted no-underline hover:bg-sidebar-hover;
+  }
+
+  .nav-item-active {
+    @apply border-l-accent bg-sidebar-active text-white;
+  }
+
+  .table-card {
+    @apply overflow-hidden rounded-lg bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08)];
+  }
+
+  .grid-head-cell {
+    @apply whitespace-nowrap border-b border-line px-4 py-3 text-left;
+    @apply text-xs font-semibold uppercase text-muted;
+  }
+
+  .grid-head-cell-sortable {
+    @apply cursor-pointer;
+  }
+
+  .th-sort {
+    @apply inline-flex items-center gap-1;
+  }
+
+  .th-sort-icon {
+    @apply h-[14px] w-[14px] opacity-60;
+  }
+
+  .th-sort-sorted .th-sort-icon {
+    @apply text-accent opacity-100;
+  }
+
+  .grid-cell {
+    @apply whitespace-nowrap border-b border-line px-4 py-3 text-sm text-ink;
+  }
+
+  .filter-cell {
+    @apply border-b border-line bg-column px-4 py-2;
+  }
+
+  .filter-input {
+    @apply h-[30px] w-full rounded-md border border-line bg-white px-2 text-[13px] outline-none;
+    @apply placeholder:text-placeholder focus:border-accent-focus focus:shadow-[0_0_0_3px_rgba(77,171,247,0.2)];
+  }
+
+  .status-badge {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-semibold;
+  }
+
+  .status-active {
+    @apply bg-success-surface text-success;
+  }
+
+  .status-pending {
+    @apply bg-warning-surface text-warning;
+  }
+
+  .status-locked {
+    @apply bg-danger-surface text-danger;
+  }
+
+  .status-inactive {
+    @apply bg-column text-muted;
   }
 
   .btn-primary {
