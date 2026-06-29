@@ -139,4 +139,19 @@ describe('Column header sort', () => {
 
     expect(sorted.map((row) => row.status)).toEqual(['Pending', 'Active', 'Locked', 'Inactive']);
   });
+
+  // An unknown status (a code the FE doesn't map yet, added on the backend) must sort to the
+  // end, not corrupt the order via undefined - number = NaN.
+  it('places an unknown status last instead of breaking the Status sort', () => {
+    const rows = buildUserRows([
+      userWith({ name: SARAH_CONNOR, login: 's.connor', status: 'ACTIVE' }),
+      userWith({ name: MICHAEL_SCOTT, login: 'm.scott', status: 'SUSPENDED' }),
+      userWith({ name: EMILY_CARTER, login: 'e.carter', status: 'PENDING' }),
+      userWith({ name: DAVID_LEE, login: 'd.lee', status: 'LOCKED' }),
+    ]);
+
+    const sorted = sortUserRows(rows, 'status', 'asc');
+
+    expect(sorted.map((row) => row.status)).toEqual(['Pending', 'Active', 'Locked', 'SUSPENDED']);
+  });
 });

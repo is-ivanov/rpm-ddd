@@ -110,6 +110,32 @@ full users e2e suite + lint. User decision (2026-06-28): defer to a dedicated re
 repetition accrues — keep building Scn 2.2 now. Promote when the next users scenario adds a 5th repetition,
 or at the Story Completion Gate.
 
+### I10 — Single source of truth for status lifecycle order & labels (FE duplicates BE enum)
+**Observed:** the user-status lifecycle order (`Pending → Active → Locked → Inactive`) is encoded **twice**:
+once on the backend (`UserStatus` enum declaration order) and once on the frontend (`STATUS_LIFECYCLE_RANK`
+in `users-grid.logic.ts`, plus the parallel `STATUS_LABELS` code→label map). `UserSummaryResponse.status`
+ships the bare enum name string over the wire, so the FE re-encodes both the order and the display label
+locally — a domain-rule duplication. A NaN bug surfaced from this: `STATUS_LIFECYCLE_RANK` had no fallback,
+so an unknown status (a code added on the backend before the FE ships the label/rank) yielded `undefined`
+and silently broke the status sort; fixed inline in Scn 3.2 (`statusRank` → `UNKNOWN_STATUS_RANK`,
+unknown statuses sort last).
+**Analysis:** the lifecycle order is a **domain** fact whose source of truth is `UserStatus`; "sort the grid
+by it" is a presentation concern that is client-side today (no server-side paging/sort — a deliberate Story 4
+decision), forcing the FE to carry the order key. Three resolutions:
+(a) **BE is the source of truth** — add an explicit `UserStatus.order()` method (NEVER `ordinal()`, which
+silently breaks when someone reorders the constants) and expose `statusOrder: int` on
+`UserSummaryResponse`; the FE sorts by the number and drops `STATUS_LIFECYCLE_RANK`. Zero duplication; a new
+status "just works". Recommended when the backend itself ever needs the order (sorting, transitions, SLAs) or
+when statuses are added.
+(b) **Unify the two FE maps** (`STATUS_LABELS` + `STATUS_LIFECYCLE_RANK`) into one `code → { label, rank }`
+table — collapses the FE-side duplication but does not remove the BE⇄FE duplication. Local cleanup only.
+(c) **Server-side sort** (`ORDER BY` the enum order) — heaviest; justified only with server-side paging or
+large volumes, both deferred.
+**Scope:** (a) is a contract change → needs an ADR (`/architecture`) and a full TDD cycle
+(domain `order()` + `@DataJpaTest` for `ORDER BY` if pursued + adapter `statusOrder` + FE consumer). Defer
+until a new status is added or the backend needs the order; the NaN fallback is the interim safeguard.
+Decided (user, 2026-06-29): take option (c)-lite — leave client-side sort with the fallback, log this item.
+
 ## Done
 
 ### I5 — Static-analysis check for UPPER_CASE SQL/JPQL keywords (Q4) — Task #226, PR #238

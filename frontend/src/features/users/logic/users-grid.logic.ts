@@ -50,11 +50,17 @@ const STATUS_LIFECYCLE_RANK: Record<string, number> = {
   Inactive: 3,
 };
 
+const UNKNOWN_STATUS_RANK = Number.MAX_SAFE_INTEGER;
+
+function statusRank(status: string): number {
+  return STATUS_LIFECYCLE_RANK[status] ?? UNKNOWN_STATUS_RANK;
+}
+
 function compareByColumn(left: UserRow, right: UserRow, column: SortColumn): number {
   if (column === 'login') {
     return left.login.localeCompare(right.login);
   }
-  return STATUS_LIFECYCLE_RANK[left.status] - STATUS_LIFECYCLE_RANK[right.status];
+  return statusRank(left.status) - statusRank(right.status);
 }
 
 export function sortUserRows(rows: UserRow[], column: SortColumn, direction: SortDirection): UserRow[] {
