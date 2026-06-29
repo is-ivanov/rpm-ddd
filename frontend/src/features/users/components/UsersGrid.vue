@@ -109,6 +109,7 @@ const displayedRows = computed(() => {
               v-if="col.filterTestId"
               v-model="nameFilter"
               :data-testid="col.filterTestId"
+              :aria-label="`Filter by ${col.label}`"
               type="text"
               class="filter-input"
               placeholder="contains"
