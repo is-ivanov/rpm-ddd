@@ -18,9 +18,14 @@ does not add it; convention not adopted):
 `MethodArgumentCouldBeFinal` (519, disabled), `LocalVariableCouldBeFinal` (277, disabled).
 - [x] refactor (codestyle excludes + ceiling 1209 + pmd:check green)
 
-### Batch 2 — remaining formatting/convention noise (to discuss per-rule)
-Candidates: `CommentSize` (379 — Checkstyle LineLength=120 already caps comment line length),
-`UseExplicitTypes` (157 — conflicts with project `var` usage),
+### Batch 2 — `CommentSize` (379) — DONE, ceiling 1209 → 830
+Discussed per-rule; disabled. Line length (352) is owned by Checkstyle `LineLength`=120
+(applies to comments) + `.editorconfig`=120 — PMD's 80-char default conflicts with the adopted
+120; the 6-line cap (27) conflicts with the project rule to preserve Javadoc/comments.
+- [x] refactor (documentation exclude CommentSize + ceiling 830 + pmd:check green)
+
+### Batch 2b — remaining formatting/convention noise (to discuss per-rule)
+Candidates: `UseExplicitTypes` (157 — conflicts with project `var` usage),
 `CommentDefaultAccessModifier` (136), `LongVariable` (136),
 `MethodNamingConventions` (86 — duplicates Checkstyle `MethodName`, which is already
 `@Test`-aware via SuppressionXpathSingleFilter). Triage disable vs configure per rule.

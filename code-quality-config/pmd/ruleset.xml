@@ -34,6 +34,10 @@
   <rule ref="category/java/documentation.xml">
     <!-- Configured in Checkstyle -->
     <exclude name="CommentRequired"/>
+    <!-- Batch 2: comment line length is owned by Checkstyle LineLength=120 (my_checks.xml,
+         applies to comments too) and .editorconfig=120; PMD's 80-char default conflicts with the
+         adopted 120. The 6-line cap conflicts with the project rule to preserve Javadoc/comments. -->
+    <exclude name="CommentSize"/>
   </rule>
 
 
