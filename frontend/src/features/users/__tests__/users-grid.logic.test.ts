@@ -122,24 +122,19 @@ describe('Column header sort', () => {
     userWith({ name: EMILY_CARTER, login: 'e.carter', status: 'LOCKED' }),
   ]);
 
-  // RED — sortUserRows is a pass-through stub; expects ascending localeCompare on Login
-  it.fails('sorts rows ascending by Login on the first header click', () => {
+  it('sorts rows ascending by Login on the first header click', () => {
     const sorted = sortUserRows(unsortedRows, 'login', 'asc');
 
     expect(sorted.map((row) => row.login)).toEqual(['d.lee', 'e.carter', 'm.scott', 's.connor']);
   });
 
-  // RED — sortUserRows is a pass-through stub; expects the descending Login order
-  it.fails('sorts rows descending by Login on the second header click', () => {
+  it('sorts rows descending by Login on the second header click', () => {
     const sorted = sortUserRows(unsortedRows, 'login', 'desc');
 
     expect(sorted.map((row) => row.login)).toEqual(['s.connor', 'm.scott', 'e.carter', 'd.lee']);
   });
 
-  // RED — sortUserRows is a pass-through stub; expects lifecycle order, NOT alphabetical.
-  // The expected sequence is hand-listed (the lifecycle order IS the business rule); an
-  // alphabetical sort would yield ['Active', 'Inactive', 'Locked', 'Pending'] and fail this.
-  it.fails('sorts the Status column by lifecycle order, not alphabetically', () => {
+  it('sorts the Status column by lifecycle order, not alphabetically', () => {
     const sorted = sortUserRows(unsortedRows, 'status', 'asc');
 
     expect(sorted.map((row) => row.status)).toEqual(['Pending', 'Active', 'Locked', 'Inactive']);

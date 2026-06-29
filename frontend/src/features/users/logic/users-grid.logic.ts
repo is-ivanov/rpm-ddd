@@ -43,8 +43,21 @@ export function filterRowsByFullName(rows: UserRow[], term: string): UserRow[] {
   return rows.filter((row) => row.name.toLowerCase().includes(needle));
 }
 
+const STATUS_LIFECYCLE_RANK: Record<string, number> = {
+  Pending: 0,
+  Active: 1,
+  Locked: 2,
+  Inactive: 3,
+};
+
+function compareByColumn(left: UserRow, right: UserRow, column: SortColumn): number {
+  if (column === 'login') {
+    return left.login.localeCompare(right.login);
+  }
+  return STATUS_LIFECYCLE_RANK[left.status] - STATUS_LIFECYCLE_RANK[right.status];
+}
+
 export function sortUserRows(rows: UserRow[], column: SortColumn, direction: SortDirection): UserRow[] {
-  void column;
-  void direction;
-  return rows;
+  const factor = direction === 'desc' ? -1 : 1;
+  return rows.toSorted((left, right) => factor * compareByColumn(left, right, column));
 }
