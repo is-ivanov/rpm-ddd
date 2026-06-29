@@ -131,8 +131,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] demo (recorded users-grid Scn 3.1 Full-name-filter E2E in headless slowMo=2000 + video on; 1 passed (7.9s); recording → frontend/test-results/demo-users-grid-name-filter.webm (gitignored). FE-only (page.route mocks, no backend). playwright.config.ts demo edits reverted, working tree clean.)
 
 ### Scenario 3.2: Clicking a column header sorts the rows
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (Scn 3.2 added to users-grid.spec.ts: click `users-grid-header-login` → strict ordered `toHaveText` login cells ascending (`LOGINS_ASCENDING`), 2nd click → descending; click `users-grid-header-status` → status badges in lifecycle order Pending→Active→Locked→Inactive (`STATUSES_IN_LIFECYCLE_ORDER`). New focused `users-grid-sort.statements.ts` (clickLoginHeader/clickStatusHeader/assertLoginsSortedAscending/Descending/assertStatusesSortedByLifecycleOrder) injected directly — kept UsersPageStatements <200 (172). Fixture gained LOGINS_ASCENDING/DESCENDING (derived plain localeCompare via toSorted/toReversed) + STATUSES_IN_LIFECYCLE_ORDER (**explicit literal** — the lifecycle order IS the business rule, never derived by replicating the sort). RED: clicking Login header is a no-op (no sort wiring in UsersGrid.vue/.logic.ts) → ascending toHaveText timeout 5000ms, Expected [d.lee,e.carter,m.scott,s.connor] vs render-order [s.connor,m.scott,e.carter,d.lee]; prediction all-YES; bounded assertGridIsVisible() fronts the test (no 30s whole-test-timeout absorption). test.fail() locked; 4 passed (3.2 = ✘ expected-fail). test-review FIXED a production-mirroring lifecycle derivation → explicit literal. refactor CLEAN no-op (sibling grid-locator dup KEPT — reuse would force a forbidden middleman/base-class for a 3-line locator). NOTE green-frontend: descending-login coincides with createdAt-DESC render order so the desc assert alone wouldn't catch RED — asc + status asserts drive RED. lint(oxlint/eslint/prettier/vue-tsc)+IDE clean; all files <200. Story scenario → no issue tag.)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

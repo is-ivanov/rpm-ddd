@@ -145,6 +145,25 @@ export const FULL_NAMES_MATCHING_FILTER: readonly string[] = EXPECTED_USER_ROWS.
   row.name.includes(FULL_NAME_FILTER_TERM),
 ).map((row) => row.name);
 
+// Expected Login-column ordering after clicking the Login header, derived from EXPECTED_USER_ROWS
+// (not hand-maintained) so the sort assertions stay in lock-step with the row data: ascending is
+// the logins sorted, descending is that same ordering reversed. The default render order is
+// createdAt DESC, so ascending differs from it — that difference is what the RED assertion catches.
+export const LOGINS_ASCENDING: readonly string[] = EXPECTED_USER_ROWS.map((row) => row.login).toSorted((left, right) =>
+  left.localeCompare(right),
+);
+
+export const LOGINS_DESCENDING: readonly string[] = LOGINS_ASCENDING.toReversed();
+
+// The Status column sorts by lifecycle order — Pending, Active, Locked, Inactive — NOT
+// alphabetically. This ordering IS the business rule under test, so the expected Status-column
+// sequence is HAND-LISTED as an explicit literal — never derived by sorting the row statuses with
+// the production lifecycle comparator. Replicating the rule to compute the expectation would make
+// the test "smart": a buggy lifecycle sort could still match an expectation produced the same buggy
+// way. The fixture holds exactly one row per status, so after the lifecycle sort the rendered Status
+// column is precisely this sequence.
+export const STATUSES_IN_LIFECYCLE_ORDER: readonly string[] = ['Pending', 'Active', 'Locked', 'Inactive'];
+
 export type AuditActorField = 'createdBy' | 'updatedBy';
 
 export interface SeedActorCell {
