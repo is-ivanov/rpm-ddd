@@ -41,12 +41,19 @@ Two sub-batches, both discussed per-rule with the user:
 
 - [x] refactor (codestyle excludes + ceiling 315 + pmd:check green)
 
-### Batch 3 — structural & naming style noise
-Candidates: `AtLeastOneConstructor` (69), `CallSuperInConstructor` (23),
-`AvoidFieldNameMatchingMethodName` (20), `LawOfDemeter` (17), `OnlyOneReturn` (16),
+### Batch 3 — structural & naming style noise (5 disabled, 5 to configure) — ceiling 315 → 170
+Discussed per-rule with the user. First five disabled:
+- `AtLeastOneConstructor` (69, codestyle) — flags stateless/static-method + Spring @Configuration classes.
+- `CallSuperInConstructor` (23, codestyle) — Java auto-inserts no-arg super(); all violations in test classes.
+- `AvoidFieldNameMatchingMethodName` (20, errorprone) — record component false positives (auto-accessor).
+- `LawOfDemeter` (17, design) — 9/17 enum-constant accesses (UserStatus.PENDING); rest fluent/library API.
+- `OnlyOneReturn` (16, codestyle) — single-return not adopted; guard clauses idiomatic.
+- [x] refactor (codestyle/design/errorprone excludes + ceiling 170 + pmd:check green)
+
+### Batch 3b — remaining 5: explore configuration (33 violations)
 `ShortVariable` (13), `LinguisticNaming` (13), `ShortMethodName` (4), `ShortClassName` (1),
-`ConfusingTernary` (2). Triage disable vs configure per rule.
-- [ ] refactor (ruleset excludes/config + lower ceiling + verify)
+`ConfusingTernary` (2). Each needs targeted config/exception instead of blanket disable.
+- [ ] refactor (configure rules + lower ceiling + verify)
 
 ### Batch 4 — test-rule tuning
 Candidates: `UnitTestShouldIncludeAssert` (46), `UnitTestContainsTooManyAsserts` (12),

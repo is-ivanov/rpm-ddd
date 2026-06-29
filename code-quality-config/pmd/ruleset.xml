@@ -32,6 +32,15 @@
     <!-- Method-naming pattern (junit5TestPattern forbids `_`). Off: duplicates Checkstyle
          `MethodName`, which already owns both prod lowerCamelCase and the @Test-aware should_ pattern. -->
     <exclude name="MethodNamingConventions"/>
+    <!-- Wants explicit `super()` in constructors. Off: Java auto-inserts no-arg super(); all 23 are test
+         classes extending a base test; forcing redundant super() is noise. -->
+    <exclude name="CallSuperInConstructor"/>
+    <!-- Mandates a single return per method. Off: the project does not adopt single-return; guard clauses
+         and early returns are idiomatic and improve readability. -->
+    <exclude name="OnlyOneReturn"/>
+    <!-- Wants at least one explicit constructor per class. Off: flags stateless/static-method classes and
+         Spring @Configuration classes with only @Bean methods; default constructor suffices. -->
+    <exclude name="AtLeastOneConstructor"/>
   </rule>
   <!-- Override: the default cap of 4 is too low for test DSLs that lean on static imports. -->
   <rule ref="category/java/codestyle.xml/TooManyStaticImports">
@@ -41,7 +50,12 @@
   </rule>
 
 
-  <rule ref="category/java/design.xml"/>
+  <rule ref="category/java/design.xml">
+    <!-- "Talk only to friends" — flags a.b().c() chains. Off: 9/17 are enum-constant accesses
+         (UserStatus.PENDING); the rest are unavoidable fluent/builder/stream API navigations and library
+         type traversal (jjwt, HTTP, Jakarta). Zero genuine object-graph navigation violations. -->
+    <exclude name="LawOfDemeter"/>
+  </rule>
 
 
   <rule ref="category/java/documentation.xml">
@@ -53,7 +67,11 @@
   </rule>
 
 
-  <rule ref="category/java/errorprone.xml"/>
+  <rule ref="category/java/errorprone.xml">
+    <!-- Flags fields matching method names. Off: every record component (email, code, id, ...) has an
+         auto-generated accessor with the same name — inherent false positive for record-heavy code. -->
+    <exclude name="AvoidFieldNameMatchingMethodName"/>
+  </rule>
 
 
   <rule ref="category/java/multithreading.xml"/>
