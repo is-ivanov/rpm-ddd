@@ -30,3 +30,7 @@ export interface UserRow {
   readonly createdAt: string;
   readonly updatedAt: string;
 }
+
+export type SortColumn = 'login' | 'status';
+
+export type SortDirection = 'asc' | 'desc';

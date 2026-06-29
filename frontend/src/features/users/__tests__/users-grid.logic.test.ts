@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildUserRows, filterRowsByFullName } from '../logic/users-grid.logic';
+import { buildUserRows, filterRowsByFullName, sortUserRows } from '../logic/users-grid.logic';
 import type { PersonName, UserSummaryResponse } from '../logic/users-grid.types';
 
 const JOHN_DOE: PersonName = { firstName: 'John', middleName: 'Robert', lastName: 'Doe' };
@@ -108,5 +108,40 @@ describe('Full name column filter', () => {
       'Emily Carter',
       'David Lee',
     ]);
+  });
+});
+
+describe('Column header sort', () => {
+  // Starting order is deliberately unsorted by both Login and Status (not ascending,
+  // not descending, not lifecycle) so each sort below is genuinely observable — a
+  // pass-through that returned the input would fail all three.
+  const unsortedRows = buildUserRows([
+    userWith({ name: MICHAEL_SCOTT, login: 'm.scott', status: 'PENDING' }),
+    userWith({ name: SARAH_CONNOR, login: 's.connor', status: 'ACTIVE' }),
+    userWith({ name: DAVID_LEE, login: 'd.lee', status: 'INACTIVE' }),
+    userWith({ name: EMILY_CARTER, login: 'e.carter', status: 'LOCKED' }),
+  ]);
+
+  // RED — sortUserRows is a pass-through stub; expects ascending localeCompare on Login
+  it.fails('sorts rows ascending by Login on the first header click', () => {
+    const sorted = sortUserRows(unsortedRows, 'login', 'asc');
+
+    expect(sorted.map((row) => row.login)).toEqual(['d.lee', 'e.carter', 'm.scott', 's.connor']);
+  });
+
+  // RED — sortUserRows is a pass-through stub; expects the descending Login order
+  it.fails('sorts rows descending by Login on the second header click', () => {
+    const sorted = sortUserRows(unsortedRows, 'login', 'desc');
+
+    expect(sorted.map((row) => row.login)).toEqual(['s.connor', 'm.scott', 'e.carter', 'd.lee']);
+  });
+
+  // RED — sortUserRows is a pass-through stub; expects lifecycle order, NOT alphabetical.
+  // The expected sequence is hand-listed (the lifecycle order IS the business rule); an
+  // alphabetical sort would yield ['Active', 'Inactive', 'Locked', 'Pending'] and fail this.
+  it.fails('sorts the Status column by lifecycle order, not alphabetically', () => {
+    const sorted = sortUserRows(unsortedRows, 'status', 'asc');
+
+    expect(sorted.map((row) => row.status)).toEqual(['Pending', 'Active', 'Locked', 'Inactive']);
   });
 });

@@ -1,4 +1,4 @@
-import type { PersonName, UserRow, UserSummaryResponse } from './users-grid.types';
+import type { PersonName, SortColumn, SortDirection, UserRow, UserSummaryResponse } from './users-grid.types';
 
 const STATUS_LABELS: Record<string, string> = {
   ACTIVE: 'Active',
@@ -41,4 +41,10 @@ export function filterRowsByFullName(rows: UserRow[], term: string): UserRow[] {
     return rows;
   }
   return rows.filter((row) => row.name.toLowerCase().includes(needle));
+}
+
+export function sortUserRows(rows: UserRow[], column: SortColumn, direction: SortDirection): UserRow[] {
+  void column;
+  void direction;
+  return rows;
 }
