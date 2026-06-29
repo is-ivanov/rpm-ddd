@@ -21,6 +21,17 @@
     <!-- Flag `var` declarations, wants explicit types. Off: the project adopted `var`
          (157 usages across 54 files); no tool in the stack forbids it. -->
     <exclude name="UseExplicitTypes"/>
+    <!-- Caps variable-name length at 17 chars. Off: the threshold forces abbreviating descriptive
+         collaborator/domain names (registrationPolicy, emailNotificationSender), contradicting the
+         project's descriptive-naming convention; no other tool caps name length. -->
+    <exclude name="LongVariable"/>
+    <!-- Wants a `/* package */` comment on every package-private member to make default access
+         explicit. Off: the access modifier is self-documenting; module boundaries are enforced by
+         Spring Modulith + ArchUnit, and forced comments clash with the no-comments-unless-asked rule. -->
+    <exclude name="CommentDefaultAccessModifier"/>
+    <!-- Method-naming pattern (junit5TestPattern forbids `_`). Off: duplicates Checkstyle
+         `MethodName`, which already owns both prod lowerCamelCase and the @Test-aware should_ pattern. -->
+    <exclude name="MethodNamingConventions"/>
   </rule>
   <!-- Override: the default cap of 4 is too low for test DSLs that lean on static imports. -->
   <rule ref="category/java/codestyle.xml/TooManyStaticImports">

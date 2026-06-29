@@ -24,13 +24,22 @@ Discussed per-rule; disabled. Line length (352) is owned by Checkstyle `LineLeng
 120; the 6-line cap (27) conflicts with the project rule to preserve Javadoc/comments.
 - [x] refactor (documentation exclude CommentSize + ceiling 830 + pmd:check green)
 
-### Batch 2b — remaining formatting/convention noise (to discuss per-rule)
-`UseExplicitTypes` (157 — disabled; project adopted `var`, 157 usages / 54 files, no tool forbids it),
-ceiling 830 → 673.
-Candidates remaining: `CommentDefaultAccessModifier` (136), `LongVariable` (136),
-`MethodNamingConventions` (86 — duplicates Checkstyle `MethodName`, which is already
-`@Test`-aware via SuppressionXpathSingleFilter). Triage disable vs configure per rule.
-- [ ] refactor (ruleset excludes/config + lower ceiling + verify)
+### Batch 2b — formatting/convention noise — DONE, ceiling 830 → 315
+Two sub-batches, both discussed per-rule with the user:
+
+* `UseExplicitTypes` (157, disabled) — project adopted `var` (157 usages / 54 files); no tool
+  forbids it. Ceiling 830 → 673.
+* Three more codestyle rules (ceiling 673 → 315), all disabled:
+  - `LongVariable` (136) — 17-char cap forces abbreviating descriptive names
+    (`registrationPolicy`, `emailNotificationSender`); contradicts naming convention; nothing else
+    caps length.
+  - `CommentDefaultAccessModifier` (136) — wants `/* package */` on package-private members; the
+    modifier is self-documenting and boundaries are enforced by Modulith + ArchUnit; forced comments
+    clash with the no-comments-unless-asked rule.
+  - `MethodNamingConventions` (86, all `should_*`/`when_*` test methods) — duplicates Checkstyle
+    `MethodName`, already `@Test`-aware via `SuppressionXpathSingleFilter`.
+
+- [x] refactor (codestyle excludes + ceiling 315 + pmd:check green)
 
 ### Batch 3 — structural & naming style noise
 Candidates: `AtLeastOneConstructor` (69), `CallSuperInConstructor` (23),
