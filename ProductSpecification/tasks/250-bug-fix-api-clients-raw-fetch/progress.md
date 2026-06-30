@@ -8,8 +8,8 @@ Type: bug
 ## Frontend
 
 ### Fix: apiFetch in admin-users + current-user API clients; error state in UsersPage
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

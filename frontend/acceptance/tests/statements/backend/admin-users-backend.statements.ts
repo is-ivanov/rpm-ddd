@@ -21,6 +21,11 @@ export class AdminUsersBackendStatements {
     await this.givenAdminUserListReturns(SEVERAL_ADMIN_USERS);
   }
 
+  /** Stubs GET /api/admin/users to return 401 (stale session after a deploy). */
+  async givenAdminUserListUnauthorized(): Promise<void> {
+    await this.page.route(ADMIN_USERS_URL_PATTERN, (route) => this.fulfillUnauthorized(route));
+  }
+
   async givenAdminUserListReturns(users: readonly AdminUser[]): Promise<void> {
     await this.page.route(ADMIN_USERS_URL_PATTERN, (route) => this.fulfillAdminUserList(route, users));
   }
@@ -47,6 +52,21 @@ export class AdminUsersBackendStatements {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(users),
+    });
+  }
+
+  private async fulfillUnauthorized(route: Route): Promise<void> {
+    this.adminUserListRequestCount += 1;
+    await route.fulfill({
+      status: 401,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({
+        type: 'https://www.rpm-ddd.my/problem/unauthorized',
+        title: 'Unauthorized',
+        status: 401,
+        detail: 'Full authentication is required to access this resource',
+        instance: '/api/admin/users',
+      }),
     });
   }
 }
