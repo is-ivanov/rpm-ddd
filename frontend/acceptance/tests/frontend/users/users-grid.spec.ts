@@ -125,12 +125,9 @@ test.describe('Users Grid', () => {
       'When the user hovers over the relative time, ' +
       'Then a tooltip shows the full absolute time rendered in the viewer profile timezone, ' +
       'And the tooltip includes the date, time, timezone label, and IANA zone id',
-    // RED: the Created cell currently renders the raw ISO timestamp (row.createdAt) and no
-    // tooltip element exists anywhere in the app, so both the relative-label assertion and the
-    // hover-tooltip assertion fail. The clock is frozen at FIXED_NOW_INSTANT before navigation
-    // so the green implementation's relative-time computation is deterministic.
+    // The clock is frozen at FIXED_NOW_INSTANT before navigation so the relative-time
+    // computation is deterministic regardless of CI wall-clock.
     async ({ page }) => {
-      test.fail();
       await page.clock.setFixedTime(FIXED_NOW_INSTANT);
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenSeveralUsers();
