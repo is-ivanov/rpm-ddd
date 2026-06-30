@@ -14,5 +14,5 @@ Type: bug
 - [x] red-frontend-api
 - [x] green-frontend-api
 - [x] align-design
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright
+- [~] demo

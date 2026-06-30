@@ -26,11 +26,6 @@ test.describe('Users Grid Load Failure', () => {
       'And it does not silently render an empty grid',
     async () => {
       await issue('250');
-      // RED: admin-users.api.ts uses raw fetch() and UsersPage.vue has try/finally with no
-      // catch, so a failed load is silently swallowed and no error UI renders. Pinned by
-      // assertErrorStateIsVisible() — getByTestId('users-grid-error') does not exist yet.
-      // (401 session-dead → redirect to /login is Task #251, not an error state.)
-      test.fail();
 
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenAdminUserListServerError();
