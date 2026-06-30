@@ -43,6 +43,14 @@ deferred to #251; pinning "401 → error state" here would directly collide with
 
 Frontend only.
 
+## Full-stack journey verdict
+
+**no-impact.** The fix adds a recoverable-error UI surface (load-failure panel + Retry)
+to the Users grid — an edge case, not the critical user-lifecycle spine. Per the
+full-stack-journey policy, edge cases stay in the fast mocked suite (covered here by
+`users-grid-error.spec.ts`), not the nightly real-stack journey. The 401→login redirect
+that *would* touch the lifecycle path is Task #251, not this task.
+
 ## Key Files
 
 - `frontend/src/features/users/logic/admin-users.api.ts`
