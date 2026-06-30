@@ -17,4 +17,4 @@ Type: refactoring
 
 ### Step 3: Story 3 (home-page) — handoff + trim
 - [x] refactor (handoff: extract why → summaries/ + carryover.md)
-- [~] refactor (trim progress.md to one-line entries)
+- [x] refactor (trim progress.md to one-line entries)
