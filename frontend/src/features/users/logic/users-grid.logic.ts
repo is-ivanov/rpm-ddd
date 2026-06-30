@@ -1,4 +1,11 @@
-import type { PersonName, SortColumn, SortDirection, UserRow, UserSummaryResponse } from './users-grid.types';
+import type {
+  AbsoluteTimeParts,
+  PersonName,
+  SortColumn,
+  SortDirection,
+  UserRow,
+  UserSummaryResponse,
+} from './users-grid.types';
 
 const STATUS_LABELS: Record<string, string> = {
   ACTIVE: 'Active',
@@ -22,17 +29,22 @@ function toActorLabel(actor: PersonName): string {
   return `${actor.firstName.charAt(0)}. ${actor.lastName}`;
 }
 
-export function buildUserRows(users: UserSummaryResponse[]): UserRow[] {
-  return users.map((user) => ({
+function toUserRow(user: UserSummaryResponse): UserRow {
+  const { audit } = user;
+  return {
     name: toFullName(user.name),
     login: user.login,
     email: user.email,
     status: toStatusLabel(user.status),
-    createdBy: toActorLabel(user.audit.createdBy),
-    updatedBy: toActorLabel(user.audit.updatedBy),
-    createdAt: user.audit.createdAt,
-    updatedAt: user.audit.updatedAt,
-  }));
+    createdBy: toActorLabel(audit.createdBy),
+    updatedBy: toActorLabel(audit.updatedBy),
+    createdAt: audit.createdAt,
+    updatedAt: audit.updatedAt,
+  };
+}
+
+export function buildUserRows(users: UserSummaryResponse[]): UserRow[] {
+  return users.map(toUserRow);
 }
 
 export function filterRowsByFullName(rows: UserRow[], term: string): UserRow[] {
@@ -66,4 +78,15 @@ function compareByColumn(left: UserRow, right: UserRow, column: SortColumn): num
 export function sortUserRows(rows: UserRow[], column: SortColumn, direction: SortDirection): UserRow[] {
   const factor = direction === 'desc' ? -1 : 1;
   return rows.toSorted((left, right) => factor * compareByColumn(left, right, column));
+}
+
+export function toRelativeTimeLabel(isoTimestamp: string, now: Date): string {
+  void now;
+  return isoTimestamp;
+}
+
+export function toAbsoluteTooltipParts(isoTimestamp: string, timeZone: string): AbsoluteTimeParts {
+  void isoTimestamp;
+  void timeZone;
+  return { date: '', time: '', tzLabel: '', ianaZone: '' };
 }

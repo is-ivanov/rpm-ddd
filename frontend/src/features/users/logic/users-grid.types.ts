@@ -34,3 +34,10 @@ export interface UserRow {
 export type SortColumn = 'login' | 'status';
 
 export type SortDirection = 'asc' | 'desc';
+
+export interface AbsoluteTimeParts {
+  readonly date: string;
+  readonly time: string;
+  readonly tzLabel: string;
+  readonly ianaZone: string;
+}
