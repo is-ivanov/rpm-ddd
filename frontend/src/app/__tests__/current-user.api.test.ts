@@ -1,12 +1,23 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { http, HttpResponse, type JsonBodyType } from 'msw';
+import { createPinia, setActivePinia } from 'pinia';
+import { issue } from 'allure-js-commons';
 import { server } from '@/test/msw-server';
+import { useAuthStore } from '../stores/auth.store';
 import { fetchCurrentUser } from '../logic/current-user.api';
-import type { CurrentUserResult } from '../logic/current-user.types';
+import type { AuthenticatedUser, CurrentUserResult } from '../logic/current-user.types';
 
 const BASE = import.meta.env.VITE_API_URL;
 
 const ME_PATH = '/api/auth/me';
+
+const SEEDED_VIEWER: AuthenticatedUser = {
+  login: 'jdoe',
+  email: 'j.doe@rpm.local',
+  firstName: 'John',
+  lastName: 'Doe',
+  timeZone: 'Europe/Berlin',
+};
 
 function stubMe(body: JsonBodyType, init: ResponseInit): void {
   server.use(http.get(`${BASE}${ME_PATH}`, () => HttpResponse.json(body, init)));
@@ -42,6 +53,29 @@ function stubMeAuthenticated(): void {
 }
 
 describe('Current User API Client', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  // RED (#250): fetchCurrentUser uses raw fetch() instead of apiFetch(). It still maps 401 to
+  // { authenticated: false }, but because it bypasses apiFetch it never runs
+  // resetSessionWhenUnauthorized(), so the auth store keeps its stale authenticated state. GREEN
+  // routes the client through apiFetch() (keeping the explicit 401 -> { authenticated: false } map),
+  // which resets the store on 401. The store assertions below are the pinned RED reason.
+  it.fails('resets the auth session when GET /api/auth/me returns 401', async () => {
+    await issue('250');
+    stubMeUnauthenticated();
+    const store = useAuthStore();
+    store.$patch({ currentUser: SEEDED_VIEWER });
+
+    const result = await fetchCurrentUser();
+
+    const expected: CurrentUserResult = { authenticated: false };
+    expect(result).toEqual(expected);
+    expect(store.currentUser).toBeNull();
+    expect(store.isAuthenticated).toBe(false);
+  });
+
   it('surfaces an unauthenticated result when GET /api/auth/me returns 401', async () => {
     stubMeUnauthenticated();
 
