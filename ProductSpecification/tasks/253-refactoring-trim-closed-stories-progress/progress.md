@@ -13,8 +13,8 @@ Type: refactoring
 
 ### Step 2: Story 2 (email-on-registration) — handoff + trim
 - [x] refactor (handoff: extract why → summaries/ + carryover.md)
-- [~] refactor (trim progress.md to one-line entries)
+- [x] refactor (trim progress.md to one-line entries)
 
 ### Step 3: Story 3 (home-page) — handoff + trim
-- [ ] refactor (handoff: extract why → summaries/ + carryover.md)
+- [~] refactor (handoff: extract why → summaries/ + carryover.md)
 - [ ] refactor (trim progress.md to one-line entries)

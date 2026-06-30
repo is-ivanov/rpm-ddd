@@ -1,10 +1,13 @@
 # Story 2: Email integration — send email on user registration — Progress
 
+> Terse entries (status + test-class/ADR ref + `see summaries/X` link). The "why" lives in
+> `summaries/` + `carryover.md`; see `.claude/rules/workflow.md` → "Updating Progress".
+
 ## Spec
 - [x] interview
 - [x] story
-- [S] mockups (backend/integration story — no UI; activation link targets Story 1's existing frontend page)
-- [S] api-spec (no new HTTP endpoints — email is an async side-effect of existing registration flow; `/activate` endpoints exist in Story 1)
+- [S] mockups (backend/integration story — no UI)
+- [S] api-spec (no new HTTP endpoints — async side-effect of existing registration flow)
 - [x] test-spec
 
 ## Backend Scenarios
@@ -12,14 +15,11 @@
 ### Scenario 1.1: Registering a user delivers an activation email
 - [x] red-acceptance
 - [x] design
-- [S] red-usecase (listener→port flow reused unchanged from Story 1; zero usecase/application files change — see ADR test-layering)
-- [S] green-usecase (no usecase/application production code — UserRegisteredEventListener already calls EmailNotificationSender.sendActivationToken)
+- [S] red-usecase (listener→port flow reused unchanged from Story 1)
+- [S] green-usecase (UserRegisteredEventListener already calls EmailNotificationSender)
 - [S] red-domain
 - [S] green-domain
-- [x] adapters-discovery
-  - Check 1 (ports): email — only NoOpEmailNotificationSender (logs, no real send); Mailpit acceptance needs SmtpEmailNotificationSender + ActivationEmailRenderer → red/green-adapter email
-  - Check 2 (exceptions): [S] — listener happy-path, no domain exceptions to map
-  - Check 3 (response shape): [S] — inbound adapter is an event listener, no HTTP response
+- [x] adapters-discovery (email: Mailpit needs SmtpEmailNotificationSender + ActivationEmailRenderer)
 - [x] red-adapter email
 - [x] green-adapter email
 - [x] green-acceptance
@@ -29,45 +29,37 @@
 ### Scenario 6.1: A successful registration delivers exactly one activation email
 - [x] red-acceptance
 - [x] design
-- [S] red-usecase (resubmit is pure Modulith infra; zero usecase/application files change — see design)
-- [S] green-usecase (no usecase/application production code — ResubmitIncompletePublicationsJob delegates to IncompleteEventPublications)
+- [S] red-usecase (resubmit is pure Modulith infra)
+- [S] green-usecase (ResubmitIncompletePublicationsJob delegates to IncompleteEventPublications)
 - [S] red-domain
 - [S] green-domain
-- [x] adapters-discovery
-  - Check 1 (ports): [S] — only collaborator is the Modulith-provided IncompleteEventPublications bean (framework infra, not our adapter); resubmit() is simple delegation
-  - Check 2 (exceptions): [S] — resubmit happy-path, no domain exceptions to map
-  - Check 3 (response shape): [S] — resubmit job invoked directly, no HTTP response; simple delegation → body created in green-acceptance
+- [x] adapters-discovery (simple delegation to Modulith IncompleteEventPublications; body in green-acceptance)
 - [x] green-acceptance
 
 ### Scenario 7.1: Incomplete publications older than 24 hours are not resubmitted
 - [x] red-acceptance
-- [x] design (see ADR resubmit-job-placement: relocate job to shared + predicate age cutoff)
-- [S] red-usecase (cutoff lives in the infra events adapter; zero usecase/application files change — mirrors 6.1)
-- [S] green-usecase (no usecase/application production code — age cutoff is in ResubmitIncompletePublicationsJob)
+- [x] design (ADR resubmit-job-placement: relocate job to shared + predicate age cutoff)
+- [S] red-usecase (cutoff lives in infra events adapter)
+- [S] green-usecase (age cutoff in ResubmitIncompletePublicationsJob)
 - [S] red-domain
 - [S] green-domain
-- [x] refactor (relocate ResubmitIncompletePublicationsJob to shared.infrastructure.events — see ADR)
-- [x] adapters-discovery
-  - Check 1 (ports): [S] — collaborators are the Modulith `IncompleteEventPublications` bean (framework infra) and the existing `Clock` (shared.time.infrastructure.ClockConfiguration); no new adapter — cutoff predicate is minimal job code created in green-acceptance
-  - Check 2 (exceptions): [S] — resubmit happy-path, no domain exceptions to map
-  - Check 3 (response shape): [S] — resubmit job invoked directly, no HTTP response; simple delegation → age-cutoff predicate created in green-acceptance
+- [x] refactor (relocate ResubmitIncompletePublicationsJob to shared.infrastructure.events)
+- [x] adapters-discovery (age-cutoff predicate created in green-acceptance)
 - [x] green-acceptance
 
 ### Scenario 8.1: The resubmit scheduler is wired, scheduled, and lock-guarded in production
-> Reopened: 6.1/7.1 invoked `resubmitJob.resubmit()` directly, so the `@Scheduled` wiring was never under test and is missing in production — the job never fires on the deployed app. Verified by a fast `ApplicationContextRunner` wiring test (NOT an awaited tick). Decisions in ADR `resubmit-scheduling-wiring`: `@Scheduled(fixedDelayString="${rpm.events.resubmit.interval}")`; app-wide `SchedulingConfiguration` gated by `rpm.scheduler.enabled` (false in `test`); ShedLock for multi-instance. **Design ran before red here** — the wiring test references production types whose shape is an architectural decision.
-- [x] design (ADR `resubmit-scheduling-wiring`: fixedDelay + required interval property, app-wide gated `SchedulingConfiguration`, ShedLock `@SchedulerLock`/`LockProvider` + `shedlock` migration, add shedlock deps to `pom.xml`)
-- [S] red-acceptance (no black-box/HTTP acceptance for scheduler wiring; realized as `red-adapter scheduling` — the `ApplicationContextRunner` wiring test, mirroring how Security 5.1 realized its check at adapter level)
-- [S] red-usecase (scheduler wiring is pure infra — zero usecase/application files change, mirrors 6.1/7.1)
+> Reopened: 6.1/7.1 invoked the job directly, so `@Scheduled` wiring was never under test and the
+> job never fired in production. ADR resubmit-scheduling-wiring. See summaries/8-1-scheduler-wiring.md.
+- [x] design (ADR resubmit-scheduling-wiring: fixedDelay + required interval, gated SchedulingConfiguration, ShedLock)
+- [S] red-acceptance (realized as red-adapter scheduling)
+- [S] red-usecase (scheduler wiring is pure infra)
 - [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [x] adapters-discovery
-  - Check 1 (ports): scheduling — the job's scheduling wiring (`SchedulingConfiguration` with `@EnableScheduling`/`@EnableSchedulerLock`/`LockProvider`, `@Scheduled(fixedDelayString)`/`@SchedulerLock` on the job, `EventResubmitProperties`) does not exist → red/green-adapter scheduling. Existing collaborators `IncompleteEventPublications` (Modulith) + `Clock` (shared.time) are provided.
-  - Check 2 (exceptions): [S] — resubmit happy-path, no domain exceptions to map
-  - Check 3 (response shape): [S] — scheduled trigger, no HTTP response
-- [x] red-adapter scheduling (`EventResubmitSchedulingTest` — `ApplicationContextRunner` wiring test; RED confirmed: AssertionError on missing `LockProvider` bean. Stubs: empty `SchedulingConfiguration`, unbound `EventResubmitProperties` record; ShedLock 7.7.0 deps added to `pom.xml` (inert without `@EnableSchedulerLock`). Build stays green.)
-- [x] green-adapter scheduling (per ADR `resubmit-scheduling-wiring` + amendment: job keeps `@Scheduled(fixedDelayString="${rpm.events.resubmit.interval}")`+`@SchedulerLock`; gated `SchedulingConfiguration` (`@EnableScheduling`/`@EnableSchedulerLock`/`@ConditionalOnProperty(rpm.scheduler.enabled, matchIfMissing=true)`/`LockProvider`/`@EnableConfigurationProperties`); `EventResubmitProperties` (`@ConfigurationProperties`/`@Validated`/`@NotNull`); `application.yml` interval `5s`; `application-test.yml` `rpm.scheduler.enabled: false`; `shedlock` Liquibase changeset. **Root fix:** excluded `spring-modulith-moments` from `spring-modulith-starter-core` — its `MomentsAutoConfiguration` (`@EnableScheduling`) was the hidden app-wide scheduling source defeating the gating (NOT the staleness monitor). Added guard `SchedulingDisabledInTestsIntegrationTest`. Tests: wiring + 6.1/7.1/5.1 + guard = **5/5 green**.)
-- [S] green-acceptance (wiring covered at adapter level; no separate acceptance test)
+- [x] adapters-discovery (scheduling: SchedulingConfiguration + EventResubmitProperties)
+- [x] red-adapter scheduling (EventResubmitSchedulingTest — ApplicationContextRunner wiring test)
+- [x] green-adapter scheduling (see summaries/8-1-scheduler-wiring.md)
+- [S] green-acceptance (wiring covered at adapter level)
 
 ## Frontend Scenarios
 (none — no UI in this story)
@@ -75,19 +67,16 @@
 ## Security Scenarios
 
 ### Scenario 5.1: User-controlled login is escaped in the rendered email
-- [S] red-acceptance (rendered-content verification → fast renderer test, NOT e2e/Mailpit — see tdd-rules "rendered-content verification" + 05_Security_Tests.md §5 note; realized as red-adapter email)
-- [S] design (no architectural change — extends existing ActivationEmailRenderer; fix is HTML-escaping user-controlled login on HTML fill, anticipated by email-render-boundary ADR)
-- [S] red-usecase (no usecase/application files — escaping lives in the notification adapter renderer)
-- [S] green-usecase (no usecase/application production code — fix is in ActivationEmailRenderer)
+- [S] red-acceptance (rendered-content verification → fast renderer test, not e2e; realized as red-adapter email)
+- [S] design (extends existing ActivationEmailRenderer, anticipated by email-render-boundary ADR)
+- [S] red-usecase (escaping lives in the notification adapter renderer)
+- [S] green-usecase (fix is in ActivationEmailRenderer)
 - [S] red-domain
 - [S] green-domain
-- [x] adapters-discovery
-  - Check 1 (ports): [S] — no new port; existing email adapter `ActivationEmailRenderer` (notification) gains escaping; test extends `ActivationEmailRendererTest` → red/green-adapter email
-  - Check 2 (exceptions): [S] — pure rendering, no domain exceptions to map
-  - Check 3 (response shape): [S] — renderer returns `ActivationEmailContent` value, no HTTP response
+- [x] adapters-discovery (extends ActivationEmailRendererTest)
 - [x] red-adapter email
 - [x] green-adapter email
-- [S] green-acceptance (rendered-content verified at adapter level; spec forbids pinning rendered content into e2e)
+- [S] green-acceptance (rendered-content verified at adapter level)
 
 ## Load Scenarios
 (none — negligible email volume, async send; see tests/03_Load_Tests.md)
@@ -95,38 +84,36 @@
 ## Infrastructure Scenarios
 
 ### Scenario 4.1: SMTP unavailable does not fail registration
-- [S] red-acceptance (behavior already covered by `StaleIncompletePublicationIntegrationTest` (7.1): with the SMTP spy armed to fail, that test already asserts registration returns 201 + no email delivered + the publication stays incomplete. The async `@ApplicationModuleListener` never propagates the send failure to the HTTP response — zero production code needed. Avoid a second slow full-context test for behavior already asserted.)
-- [S] design (no architectural change — resilience emerges from the existing async listener; see resubmit-job-placement ADR)
-- [S] red-usecase (no usecase/application files — async send failure is swallowed by the Modulith listener)
-- [S] green-usecase (no usecase/application production code)
+- [S] red-acceptance (covered by StaleIncompletePublicationIntegrationTest 7.1 — see summaries/4-1-smtp-unavailable.md)
+- [S] design (resilience emerges from existing async listener; see resubmit-job-placement ADR)
+- [S] red-usecase (async send failure swallowed by the Modulith listener)
+- [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [S] adapters-discovery (no new ports — existing `SmtpEmailNotificationSender` + Modulith publication registry already cover the behavior)
-- [S] green-acceptance (covered by 7.1; no separate acceptance test added)
+- [S] adapters-discovery (existing SmtpEmailNotificationSender + Modulith publication registry cover it)
+- [S] green-acceptance (covered by 7.1)
 
 ### Scenario 5.1: Activation email is delivered after SMTP recovers
-- [S] red-acceptance (feature already implemented — resubmit pipeline proven by 6.1/7.1; zero production files change. New acceptance test `SmtpRecoveryEmailDeliveryIntegrationTest` passes on first run, so there is no red state to capture. The behavior — a *young* (< 24h) failed publication is redelivered on resubmit after SMTP recovery — is NOT asserted by any existing test, so the test is genuine non-redundant coverage and is retained, committed under green-acceptance.)
-- [S] design (no architectural change — recovery emerges from the existing resubmit scheduler within the 24h window; see resubmit-job-placement ADR)
-- [S] red-usecase (no usecase/application files — resubmit + listener redelivery is Modulith infra reused unchanged)
-- [S] green-usecase (no usecase/application production code)
+- [S] red-acceptance (resubmit pipeline already proven by 6.1/7.1; SmtpRecoveryEmailDeliveryIntegrationTest passes first run)
+- [S] design (recovery emerges from existing resubmit scheduler within 24h window; see resubmit-job-placement ADR)
+- [S] red-usecase (resubmit + listener redelivery is Modulith infra reused unchanged)
+- [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [S] adapters-discovery (no new ports — existing `ResubmitIncompletePublicationsJob` + `SmtpEmailNotificationSender` + Modulith registry cover the behavior)
-- [x] green-acceptance (`SmtpRecoveryEmailDeliveryIntegrationTest` committed; passes 1/1)
+- [S] adapters-discovery (existing ResubmitIncompletePublicationsJob + SmtpEmailNotificationSender + Modulith registry cover it)
+- [x] green-acceptance (SmtpRecoveryEmailDeliveryIntegrationTest committed; 1/1)
 
 ### Scenario 7.1: The application context starts with the production mail configuration
-> Reopened: tests run under the `test` profile (Mailpit supplies `JavaMailSender`); `prod` had no `spring.mail.*`, so the unconditional `@Primary SmtpEmailNotificationSender` cannot construct and the context fails to start on Render. **Design ran before red here** — the bootstrap test references production types (conditional sender, prod mail bindings) whose shape is an architectural decision (mirrors 8.1).
-- [x] design (ADR `production-mail-bootstrap`: prod fail-fast with required `${SPRING_MAIL_*}` env bindings; `SmtpEmailNotificationSender` `@ConditionalOnProperty(spring.mail.host)` as the sole sender; remove `NoOpEmailNotificationSender`; local Mailpit via `docker/services.yml` + `application-local.yml`; **MVP provider = Gmail SMTP** (`smtp.gmail.com:587`, App Password, no domain; SMTP2GO is the with-domain upgrade), env-var-driven/agnostic. Local-dev choice weighed against GreenMail-for-tests #98 + transport-extraction #97.)
-- [x] red-acceptance (sliced `ApplicationContextRunner` `ProductionMailBootstrapTest`, mirrors `EventResubmitSchedulingTest`, does not fork the shared full context; RED confirmed: `AssertionError` on `hasSingleBean(EmailNotificationSender)` — `smtpEmailNotificationSender` + `noOpEmailNotificationSender` both register, found 2. `hasNotFailed`/single `JavaMailSender`/`EmailProperties` binding pass. `@Disabled` marker added.)
+> Reopened: tests run under `test` profile (Mailpit supplies JavaMailSender); `prod` had no
+> `spring.mail.*`, so context failed to start on Render. See summaries/7-1-prod-mail-bootstrap.md.
+- [x] design (ADR production-mail-bootstrap: prod fail-fast SPRING_MAIL_* env, sole conditional sender, MVP = Gmail SMTP)
+- [x] red-acceptance (sliced ApplicationContextRunner ProductionMailBootstrapTest, mirrors EventResubmitSchedulingTest)
 - [S] red-usecase (context/config bootstrap — no usecase/application change)
 - [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [x] adapters-discovery
-  - Check 1 (ports): email — config/wiring scenario, no usecase/ports. GREEN implementation (drop `@Primary` + add `@ConditionalOnProperty(prefix="spring.mail", name="host")` on `SmtpEmailNotificationSender`; remove `NoOpEmailNotificationSender` — no production injector references it, only the wiring test; add `spring.mail.*` to `application-prod.yml`+`application-local.yml`, add Mailpit to `docker/services.yml`) does not exist. RED already covered by the committed `ProductionMailBootstrapTest` (red-acceptance). Not simple delegation/endpoint plumbing → exceeds green-acceptance remove-marker scope → `green-adapter email`.
-  - Check 2 (exceptions): [S] — config bootstrap, no domain exceptions to map
-  - Check 3 (response shape): [S] — sliced `ApplicationContextRunner` wiring test, no HTTP response
-- [x] green-adapter email (per ADR `production-mail-bootstrap`: gated `SmtpEmailNotificationSender` with `@ConditionalOnProperty(spring.mail.host)` + dropped `@Primary` as sole `EmailNotificationSender`; deleted `NoOpEmailNotificationSender`; `application-prod.yml` `spring.mail.{host,port,username,password}`←required `${SPRING_MAIL_*}` + STARTTLS props; `application-local.yml` Mailpit `localhost:1025`; `docker/services.yml` `mailpit` service (`axllent/mailpit:v1.21.8`, 1025/8025); removed `@Disabled` from `ProductionMailBootstrapTest`. REFACTOR extracted `populateMessage(...)` from `buildMessage(...)`. Wiring test 1/1 green; notification 3/3; email integration tests pass individually.)
-- [x] red-adapter email (coverage: buildMessage wraps MessagingException as IllegalStateException — `SmtpEmailNotificationSenderTest`: real `JavaMailSenderImpl` + malformed recipient → strict address parsing throws `AddressException`, rewrapped as `IllegalStateException`. Already-implemented branch, so test passes on first run; no `@Disabled` — green is a no-op pass. test-review tightened message assertion to exact `hasMessage`. 1/1 green.)
-- [x] green-adapter email (coverage: buildMessage wraps MessagingException as IllegalStateException — no-op pass: branch already implemented, no `@Disabled` to remove and no production code to write. Coverage verified: `SmtpEmailNotificationSender` 100% line/instruction, catch branch covered.)
-- [S] green-acceptance (wiring covered at adapter level; no separate acceptance test — mirrors 8.1)
+- [x] adapters-discovery (email: config/wiring scenario, no usecase/ports → green-adapter email)
+- [x] green-adapter email (per ADR production-mail-bootstrap — see summaries/7-1-prod-mail-bootstrap.md)
+- [x] red-adapter email (coverage: buildMessage wraps MessagingException as IllegalStateException)
+- [x] green-adapter email (coverage: already-implemented branch, no-op pass; SmtpEmailNotificationSender 100% covered)
+- [S] green-acceptance (wiring covered at adapter level)
