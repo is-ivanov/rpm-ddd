@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { LoaderCircle, Plus } from '@lucide/vue';
+import { useAuthStore } from '@/app/stores/auth.store';
 import { fetchAdminUsers } from '../logic/admin-users.api';
 import { buildUserRows } from '../logic/users-grid.logic';
 import type { UserRow } from '../logic/users-grid.types';
 import UsersGrid from './UsersGrid.vue';
+
+const auth = useAuthStore();
+const viewerTimeZone = computed(() => auth.currentUser?.timeZone ?? 'UTC');
 
 const rows = ref<UserRow[]>([]);
 const loading = ref(true);
@@ -38,6 +42,6 @@ onMounted(() => {
     <div v-if="loading" data-testid="users-grid-loading" class="flex h-90 items-center justify-center">
       <LoaderCircle :size="32" class="animate-spin text-accent" aria-hidden="true" />
     </div>
-    <UsersGrid v-else :rows="rows" />
+    <UsersGrid v-else :rows="rows" :viewer-time-zone="viewerTimeZone" />
   </div>
 </template>
