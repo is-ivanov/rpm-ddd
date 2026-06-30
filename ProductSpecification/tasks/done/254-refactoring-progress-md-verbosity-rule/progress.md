@@ -11,4 +11,4 @@ Type: refactoring
 - [x] refactor (prompt-update: classify + write rule to workflow.md / progress-format.md)
 
 ### Step 2: Verify via /prompt-refactor
-- [~] refactor (prompt-refactor: scan touched files for layer violations)
+- [x] refactor (prompt-refactor: scan touched files for layer violations)

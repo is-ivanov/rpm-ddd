@@ -1,6 +1,6 @@
 # Progress File Format
 
-**Entries are terse — one line each: status + (optional) a short test-class/ADR ref or `see summaries/<scenario-slug>.md` link.** No phase reports, no lint/refactor/PREDICT noise, no file lists — the "why" lives in `summaries/` (via `/handoff`) and `carryover.md`, mechanical noise lives in git/commit messages. See `rules/workflow.md` → "Updating Progress".
+**Entries are terse — one line each: status + (optional) a short test-class/ADR ref or `see summaries/<scenario-slug>.md` link** (see the examples below). For the full norm — what to omit, and where the "why" and mechanical phase noise go instead — see `rules/workflow.md` → "Updating Progress".
 
 ```markdown
 - [x] green-usecase                        <- terse: status only
