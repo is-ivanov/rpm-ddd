@@ -8,8 +8,8 @@ Type: refactoring
 ## Fix
 
 ### Step 1: Story 1 (user-login) — handoff + trim
-- [ ] refactor (handoff: extract why → summaries/ + carryover.md)
-- [ ] refactor (trim progress.md to one-line entries)
+- [x] refactor (handoff: extract why → summaries/ + carryover.md)
+- [~] refactor (trim progress.md to one-line entries)
 
 ### Step 2: Story 2 (email-on-registration) — handoff + trim
 - [ ] refactor (handoff: extract why → summaries/ + carryover.md)
