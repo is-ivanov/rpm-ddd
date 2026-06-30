@@ -169,8 +169,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-usecase
 - [S] red-domain (User.timeZone already exists and is covered from Scn 3.1)
 - [S] green-domain
-- [~] adapters-discovery (REST response DTO mapping only: CurrentUserResponse.from is simple delegation, no validation/error logic → [S] adapter test; the field + mapping are created in green-acceptance under the simple-delegation plumbing exception. No db/usecase ports change. Verified no web-slice collateral — activate uses ActivationTokenResponse.)
-- [ ] green-acceptance (add `String timeZone` to the CurrentUserResponse record + map `user.getTimeZone().getId()` in from(); remove @ExpectedToFail. Simple-delegation plumbing exception. Run CurrentUserInfoIntegrationTest + full suite.)
+- [x] adapters-discovery (REST response DTO mapping only: CurrentUserResponse.from is simple delegation, no validation/error logic → [S] adapter test; the field + mapping are created in green-acceptance under the simple-delegation plumbing exception. No db/usecase ports change. Verified no web-slice collateral — activate uses ActivationTokenResponse. CODE-VERIFIED all 3 checks: Check 1 ports [S] — AuthResource.me calls authenticationService.getCurrentUser(userId) which already returns the full User carrying ZoneId timeZone (User.getTimeZone(), persisted since Scn 3.1); no usecase/storage port change. Check 2 exceptions [S] — read-only /me, no new domain exception. Check 3 response shape [S] — CurrentUserResponse.from(user) omits timeZone the acceptance test now asserts, but /me is simple delegation (@AuthenticationPrincipal → usecase → DTO, no @Valid body, no error-mapping) → pyramid filter [S], record field + mapping created in green-acceptance. NO new red/green-adapter steps inserted.)
+- [~] green-acceptance (add `String timeZone` to the CurrentUserResponse record + map `user.getTimeZone().getId()` in from(); remove @ExpectedToFail. Simple-delegation plumbing exception. Run CurrentUserInfoIntegrationTest + full suite.)
 
 ### Scenario 4.1: Register user opens a modal with the timezone pre-filled
 - [ ] red-playwright
