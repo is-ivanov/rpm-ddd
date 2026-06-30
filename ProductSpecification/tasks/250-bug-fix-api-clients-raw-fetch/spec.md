@@ -23,8 +23,21 @@ raw `fetch()` instead of `apiFetch()`:
 1. Replace raw `fetch()` with `apiFetch()` in `admin-users.api.ts` and
    `current-user.api.ts`
 2. Add error state to `UsersPage.vue` (`error` ref + error message display with a
-   retry button)
+   retry button) — the page must no longer silently swallow a failed load
 3. Verify the existing `apiFetch()` 401-session-reset path activates correctly
+
+## Design decision — error state targets *recoverable* failures, not 401
+
+The user-observed trigger was a 401 (backend redeploy → dead session). However, the
+correct UX for a 401 is **redirect to /login**, which is owned by **Task #251** (the
+reactive `isAuthenticated` watcher). A retry button is meaningless on a 401 — re-fetching
+just 401s again.
+
+Therefore #250's error state is for **recoverable failures** (5xx, network errors, malformed
+body) where **Retry is genuinely useful**, and the E2E test triggers it with a **500**, not
+a 401. The core defect #250 fixes is the *silent swallow* (`try/finally` with no `catch`),
+which hides every error class — exercised here via a 500. The 401-specific redirect is
+deferred to #251; pinning "401 → error state" here would directly collide with #251.
 
 ## Affected Layers
 

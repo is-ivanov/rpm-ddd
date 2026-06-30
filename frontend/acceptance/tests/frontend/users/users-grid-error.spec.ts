@@ -19,20 +19,21 @@ test.describe('Users Grid Load Failure', () => {
   });
 
   test(
-    'UI Bug #250: Users page shows an error state with a retry button when the list request returns 401 - ' +
+    'UI Bug #250: Users page shows an error state with a retry button when the list request fails - ' +
       'Given the user is signed in and on the Users page, ' +
-      'When the backend session has expired so GET /api/admin/users returns 401, ' +
+      'When GET /api/admin/users fails with a 500 server error, ' +
       'Then the Users page shows an error state with a message and a retry button, ' +
       'And it does not silently render an empty grid',
     async () => {
       await issue('250');
       // RED: admin-users.api.ts uses raw fetch() and UsersPage.vue has try/finally with no
-      // catch, so a 401 is silently swallowed and no error UI renders. Pinned by
+      // catch, so a failed load is silently swallowed and no error UI renders. Pinned by
       // assertErrorStateIsVisible() — getByTestId('users-grid-error') does not exist yet.
+      // (401 session-dead → redirect to /login is Task #251, not an error state.)
       test.fail();
 
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
-      await adminUsersBackend.givenAdminUserListUnauthorized();
+      await adminUsersBackend.givenAdminUserListServerError();
       await homePage.navigateToHomePage();
 
       await homePage.clickUsersNavItem();
