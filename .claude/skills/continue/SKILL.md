@@ -40,7 +40,7 @@ See `.claude/templates/workflow/continue-dispatch.md` for the dispatch tables, p
 
 1. **Search branches**: `git branch -a --list "*N*"` (or `git branch -a | grep N`) — look for a `task/N-*` branch, local or remote (run `git fetch` first if remote branches may be stale).
 2. **Search history**: `git log --all --oneline --grep "Task N"` and `git log --all -- "ProductSpecification/tasks/N-*"` — the folder may exist on an unmerged branch.
-3. **If a task branch exists**: report it to the user and switch to it (after confirming the working tree is clean), then resume the normal workflow.
+3. **If a task branch exists**: report it to the user and switch to it (after confirming the working tree is clean). **Then, if the branch is local, check how far it lags `main`** — `git rev-list --count HEAD..main` (fetch first if `main` may be stale). If the count is > 0, report how many commits behind it is and **offer to rebase the branch onto `main` before resuming** (`git rebase main`); proceed with the rebase only after the user confirms. If it is 0 (up to date) or the user declines, resume the normal workflow as-is.
 4. **Only if neither a folder nor a branch nor history mentions task N**: check the GitHub issue #N; if it exists, offer to bootstrap the task from it via `/task` (reusing the issue, never opening a duplicate). Do not silently create a new task without this git search first.
 
 ## Stop and Report

@@ -1,12 +1,32 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { http, HttpResponse, type JsonBodyType } from 'msw';
+import { createPinia, setActivePinia } from 'pinia';
+import { issue } from 'allure-js-commons';
 import { server } from '@/test/msw-server';
+import { useAuthStore } from '@/app/stores/auth.store';
 import { fetchAdminUsers } from '../logic/admin-users.api';
 import type { UserSummaryResponse } from '../logic/users-grid.types';
+import type { AuthenticatedUser } from '@/app/logic/current-user.types';
 
 const BASE = import.meta.env.VITE_API_URL;
 
 const ADMIN_USERS_PATH = '/api/admin/users';
+
+const SEEDED_VIEWER: AuthenticatedUser = {
+  login: 'jdoe',
+  email: 'j.doe@rpm.local',
+  firstName: 'John',
+  lastName: 'Doe',
+  timeZone: 'Europe/Berlin',
+};
+
+const UNAUTHORIZED_PROBLEM = {
+  type: 'https://www.rpm-ddd.my/problem/unauthorized',
+  title: 'Unauthorized',
+  status: 401,
+  detail: 'Full authentication is required to access this resource',
+  instance: ADMIN_USERS_PATH,
+};
 
 const ADMIN_USERS: UserSummaryResponse[] = [
   {
@@ -42,11 +62,34 @@ function stubAdminUsers(body: JsonBodyType, init: ResponseInit): void {
 }
 
 describe('Admin Users API Client', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   it('returns the parsed user summaries when GET /api/admin/users returns 200', async () => {
     stubAdminUsers(ADMIN_USERS, { status: 200 });
 
     const result = await fetchAdminUsers().catch((error: unknown) => error);
 
     expect(result).toEqual(ADMIN_USERS);
+  });
+
+  // RED (#250): fetchAdminUsers uses raw fetch() instead of apiFetch(), so a 401 never runs
+  // resetSessionWhenUnauthorized() and the auth store keeps its stale authenticated state. GREEN
+  // routes the client through apiFetch(), which resets the store on 401. The store assertion below
+  // is the pinned RED reason (the ZodError thrown while parsing the problem body is swallowed).
+  it('resets the auth session when GET /api/admin/users returns 401', async () => {
+    await issue('250');
+    stubAdminUsers(UNAUTHORIZED_PROBLEM, {
+      status: 401,
+      headers: { 'Content-Type': 'application/problem+json' },
+    });
+    const store = useAuthStore();
+    store.$patch({ currentUser: SEEDED_VIEWER });
+
+    await fetchAdminUsers().catch(() => {});
+
+    expect(store.currentUser).toBeNull();
+    expect(store.isAuthenticated).toBe(false);
   });
 });

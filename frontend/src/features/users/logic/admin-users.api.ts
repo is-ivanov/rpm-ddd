@@ -1,11 +1,11 @@
 import type { UserSummaryResponse } from './users-grid.types';
 import { adminUsersSchema } from '@/features/users/schemas/admin-users.schema';
-import { apiUrl } from '@/app/logic/fetch.api';
+import { apiFetch } from '@/app/logic/fetch.api';
 
 const ADMIN_USERS_PATH = '/api/admin/users';
 
 export async function fetchAdminUsers(): Promise<UserSummaryResponse[]> {
-  const response = await fetch(apiUrl(ADMIN_USERS_PATH), {
+  const response = await apiFetch(ADMIN_USERS_PATH, {
     method: 'GET',
     credentials: 'include',
   });

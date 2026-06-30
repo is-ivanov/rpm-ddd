@@ -6,17 +6,22 @@ import { fetchAdminUsers } from '../logic/admin-users.api';
 import { buildUserRows } from '../logic/users-grid.logic';
 import type { UserRow } from '../logic/users-grid.types';
 import UsersGrid from './UsersGrid.vue';
+import UsersGridError from './UsersGridError.vue';
 
 const auth = useAuthStore();
 const viewerTimeZone = computed(() => auth.currentUser?.timeZone ?? 'UTC');
 
 const rows = ref<UserRow[]>([]);
 const loading = ref(true);
+const error = ref(false);
 
 async function loadUsers(): Promise<void> {
   loading.value = true;
+  error.value = false;
   try {
     rows.value = buildUserRows(await fetchAdminUsers());
+  } catch {
+    error.value = true;
   } finally {
     loading.value = false;
   }
@@ -42,6 +47,7 @@ onMounted(() => {
     <div v-if="loading" data-testid="users-grid-loading" class="flex h-90 items-center justify-center">
       <LoaderCircle :size="32" class="animate-spin text-accent" aria-hidden="true" />
     </div>
+    <UsersGridError v-else-if="error" @retry="loadUsers" />
     <UsersGrid v-else :rows="rows" :viewer-time-zone="viewerTimeZone" />
   </div>
 </template>

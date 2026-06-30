@@ -21,6 +21,11 @@ export class AdminUsersBackendStatements {
     await this.givenAdminUserListReturns(SEVERAL_ADMIN_USERS);
   }
 
+  /** Stubs GET /api/admin/users to return 500 (a recoverable server error). */
+  async givenAdminUserListServerError(): Promise<void> {
+    await this.page.route(ADMIN_USERS_URL_PATTERN, (route) => this.fulfillServerError(route));
+  }
+
   async givenAdminUserListReturns(users: readonly AdminUser[]): Promise<void> {
     await this.page.route(ADMIN_USERS_URL_PATTERN, (route) => this.fulfillAdminUserList(route, users));
   }
@@ -47,6 +52,21 @@ export class AdminUsersBackendStatements {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(users),
+    });
+  }
+
+  private async fulfillServerError(route: Route): Promise<void> {
+    this.adminUserListRequestCount += 1;
+    await route.fulfill({
+      status: 500,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({
+        type: 'https://www.rpm-ddd.my/problem/internal-server-error',
+        title: 'Internal Server Error',
+        status: 500,
+        detail: 'An unexpected error occurred while loading users',
+        instance: '/api/admin/users',
+      }),
     });
   }
 }
