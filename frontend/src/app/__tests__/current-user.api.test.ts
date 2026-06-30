@@ -58,12 +58,12 @@ describe('Current User API Client', () => {
   // below fails. GREEN adds `timeZone` to the schema (+ AuthenticatedUser type / auth store). The
   // value 'Europe/Berlin' is lock-step with VIEWER_TIME_ZONE_ID in the E2E
   // users-grid-time.fixture, keeping the unit contract and the browser contract identical.
-  it.fails('maps an authenticated result carrying the viewer timeZone when GET /api/auth/me returns 200', async () => {
+  it('maps an authenticated result carrying the viewer timeZone when GET /api/auth/me returns 200', async () => {
     stubMeAuthenticated();
 
     const result = await fetchCurrentUser();
 
-    expect(result).toEqual({
+    const expected: CurrentUserResult = {
       authenticated: true,
       user: {
         login: 'jdoe',
@@ -72,6 +72,7 @@ describe('Current User API Client', () => {
         lastName: 'Doe',
         timeZone: 'Europe/Berlin',
       },
-    });
+    };
+    expect(result).toEqual(expected);
   });
 });
