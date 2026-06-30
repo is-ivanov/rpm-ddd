@@ -5,6 +5,7 @@ import by.iivanov.rpm.iam.user.fixtures.AuthSessionFactory;
 import by.iivanov.rpm.testing.AbstractApplicationIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.ExpectedToFail;
 
 class CurrentUserInfoIntegrationTest extends AbstractApplicationIntegrationTest {
 
@@ -18,6 +19,9 @@ class CurrentUserInfoIntegrationTest extends AbstractApplicationIntegrationTest 
 
     @Test
     @DisplayName("Authenticated user retrieves own info")
+    @ExpectedToFail(
+            value = "RED: CurrentUserResponse has no timeZone field yet (green-acceptance adds it)",
+            withExceptions = AssertionError.class)
     void should_returnOwnUserInfo_when_authenticated() {
         // GIVEN: an authenticated user with ACTIVE status
         var adminSession = authSessionFactory.loginAsAdmin();
@@ -32,6 +36,7 @@ class CurrentUserInfoIntegrationTest extends AbstractApplicationIntegrationTest 
                   "firstName": "System",
                   "lastName": "System",
                   "status": "ACTIVE",
+                  "timeZone": "UTC",
                   "roles": []
                 }
                 """);
