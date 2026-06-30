@@ -13,6 +13,6 @@ Type: bug
 - [S] green-frontend (counterpart of skipped red-frontend)
 - [x] red-frontend-api
 - [x] green-frontend-api
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design
+- [~] green-playwright
 - [ ] demo
