@@ -1,5 +1,13 @@
 # Progress File Format
 
+**Entries are terse — one line each: status + (optional) a short test-class/ADR ref or `see summaries/<scenario-slug>.md` link** (see the examples below). For the full norm — what to omit, and where the "why" and mechanical phase noise go instead — see `rules/workflow.md` → "Updating Progress".
+
+```markdown
+- [x] green-usecase                        <- terse: status only
+- [x] design (ADR: 0003-token-storage)     <- status + short ref
+- [x] red-acceptance (see summaries/create-task.md)   <- status + summary link for the "why"
+```
+
 ## Story
 
 ```markdown

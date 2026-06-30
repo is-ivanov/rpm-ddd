@@ -135,6 +135,10 @@ After completing a work unit:
 2. Change the next `[ ]` to `[~]` if continuing
 3. Commit the progress file with the work unit commit
 
+**Progress entries are TERSE — one line each.** A checkbox carries only its status plus, at most, a short reference: the test class/ADR it produced and a link to the scenario's summary file (`see summaries/<scenario-slug>.md`). Nothing more. `progress.md` tracks *state* (which work unit runs next), not narrative.
+
+The "why" — decisions reached in discussion, surprises, prediction mismatches, quirks a future scenario will hit — belongs in the scenario summary (written by `/handoff`) and, when enduring, in `carryover.md`; never in a checkbox parenthetical. Mechanical phase noise — lint/static-analysis status, refactor steps applied, RED prediction tables, lists of files created — is NOT recorded in `progress.md` at all; it lives in git history and the commit message. Do not copy a phase agent's full report into the checkbox line. If an entry grows past one line, the detail belongs in a summary or the commit, not here.
+
 ### Bootstrapping
 
 If no `progress.md` exists, create one by:
