@@ -1,4 +1,11 @@
-import type { PersonName, SortColumn, SortDirection, UserRow, UserSummaryResponse } from './users-grid.types';
+import type {
+  AbsoluteTimeParts,
+  PersonName,
+  SortColumn,
+  SortDirection,
+  UserRow,
+  UserSummaryResponse,
+} from './users-grid.types';
 
 const STATUS_LABELS: Record<string, string> = {
   ACTIVE: 'Active',
@@ -22,17 +29,22 @@ function toActorLabel(actor: PersonName): string {
   return `${actor.firstName.charAt(0)}. ${actor.lastName}`;
 }
 
-export function buildUserRows(users: UserSummaryResponse[]): UserRow[] {
-  return users.map((user) => ({
+function toUserRow(user: UserSummaryResponse): UserRow {
+  const { audit } = user;
+  return {
     name: toFullName(user.name),
     login: user.login,
     email: user.email,
     status: toStatusLabel(user.status),
-    createdBy: toActorLabel(user.audit.createdBy),
-    updatedBy: toActorLabel(user.audit.updatedBy),
-    createdAt: user.audit.createdAt,
-    updatedAt: user.audit.updatedAt,
-  }));
+    createdBy: toActorLabel(audit.createdBy),
+    updatedBy: toActorLabel(audit.updatedBy),
+    createdAt: audit.createdAt,
+    updatedAt: audit.updatedAt,
+  };
+}
+
+export function buildUserRows(users: UserSummaryResponse[]): UserRow[] {
+  return users.map(toUserRow);
 }
 
 export function filterRowsByFullName(rows: UserRow[], term: string): UserRow[] {
@@ -66,4 +78,57 @@ function compareByColumn(left: UserRow, right: UserRow, column: SortColumn): num
 export function sortUserRows(rows: UserRow[], column: SortColumn, direction: SortDirection): UserRow[] {
   const factor = direction === 'desc' ? -1 : 1;
   return rows.toSorted((left, right) => factor * compareByColumn(left, right, column));
+}
+
+function timeAgo(count: number, unit: string): string {
+  return `${count} ${unit}${count === 1 ? '' : 's'} ago`;
+}
+
+export function toRelativeTimeLabel(isoTimestamp: string, now: Date): string {
+  const elapsedSeconds = Math.floor((now.getTime() - new Date(isoTimestamp).getTime()) / 1000);
+  if (elapsedSeconds < 60) {
+    return 'just now';
+  }
+  const minutes = Math.floor(elapsedSeconds / 60);
+  if (minutes < 60) {
+    return timeAgo(minutes, 'minute');
+  }
+  const hours = Math.floor(elapsedSeconds / 3600);
+  if (hours < 24) {
+    return timeAgo(hours, 'hour');
+  }
+  const days = Math.floor(elapsedSeconds / 86400);
+  if (days < 7) {
+    return timeAgo(days, 'day');
+  }
+  if (days < 30) {
+    return timeAgo(Math.floor(days / 7), 'week');
+  }
+  if (days < 365) {
+    return timeAgo(Math.floor(days / 30), 'month');
+  }
+  return timeAgo(Math.floor(days / 365), 'year');
+}
+
+function partValue(parts: Intl.DateTimeFormatPart[], type: Intl.DateTimeFormatPartTypes): string {
+  return parts.find((part) => part.type === type)?.value ?? '';
+}
+
+export function toAbsoluteTooltipParts(isoTimestamp: string, timeZone: string): AbsoluteTimeParts {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZoneName: 'short',
+  }).formatToParts(new Date(isoTimestamp));
+  return {
+    date: `${partValue(parts, 'year')}-${partValue(parts, 'month')}-${partValue(parts, 'day')}`,
+    time: `${partValue(parts, 'hour')}:${partValue(parts, 'minute')}`,
+    tzLabel: partValue(parts, 'timeZoneName'),
+    ianaZone: timeZone,
+  };
 }

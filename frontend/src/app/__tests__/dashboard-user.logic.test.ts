@@ -7,6 +7,7 @@ const JOHN_DOE: AuthenticatedUser = {
   email: 'j.doe@rpm.local',
   firstName: 'John',
   lastName: 'Doe',
+  timeZone: 'Europe/Berlin',
 };
 
 const LOWERCASE_NAME: AuthenticatedUser = {
@@ -14,6 +15,7 @@ const LOWERCASE_NAME: AuthenticatedUser = {
   email: 'j.smith@rpm.local',
   firstName: 'jane',
   lastName: 'smith',
+  timeZone: 'Europe/Berlin',
 };
 
 describe('Dashboard User View Model', () => {

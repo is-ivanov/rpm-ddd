@@ -32,6 +32,7 @@ function stubAuthenticated(): void {
         email: 'j.doe@rpm.local',
         firstName: 'John',
         lastName: 'Doe',
+        timeZone: 'Europe/Berlin',
       }),
     ),
   );

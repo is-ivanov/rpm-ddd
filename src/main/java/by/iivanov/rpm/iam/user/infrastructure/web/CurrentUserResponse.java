@@ -11,6 +11,7 @@ public record CurrentUserResponse(
         String firstName,
         String lastName,
         UserStatus status,
+        String timeZone,
         List<String> roles) {
 
     public CurrentUserResponse {
@@ -25,6 +26,7 @@ public record CurrentUserResponse(
                 user.getPersonName().firstName(),
                 user.getPersonName().lastName(),
                 user.getStatus(),
+                user.getTimeZone().getId(),
                 List.of());
     }
 }

@@ -88,6 +88,22 @@
     @apply placeholder:text-placeholder focus:border-accent-focus focus:shadow-[0_0_0_3px_rgba(77,171,247,0.2)];
   }
 
+  .ts-rel {
+    @apply cursor-help text-muted underline decoration-line decoration-dotted underline-offset-2;
+  }
+
+  .ts-tooltip {
+    @apply fixed z-50 rounded-md bg-sidebar px-3 py-2 text-xs leading-tight text-white shadow-[0_4px_16px_rgba(0,0,0,0.16)];
+  }
+
+  .ts-tooltip-time {
+    @apply flex gap-2 font-medium;
+  }
+
+  .ts-tooltip-zone {
+    @apply mt-1 flex gap-1.5 text-sidebar-muted;
+  }
+
   .status-badge {
     @apply inline-block rounded-full px-2 py-0.5 text-xs font-semibold;
   }

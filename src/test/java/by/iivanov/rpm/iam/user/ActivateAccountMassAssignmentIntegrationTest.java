@@ -63,6 +63,7 @@ class ActivateAccountMassAssignmentIntegrationTest extends AbstractApplicationIn
                   "firstName": "%s",
                   "lastName": "%s",
                   "status": "ACTIVE",
+                  "timeZone": "UTC",
                   "roles": []
                 }
                 """.formatted(

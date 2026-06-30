@@ -1,5 +1,6 @@
 import { type Page, type Route } from '@playwright/test';
 import { fulfillCsrfRoute } from '../support/csrf-route';
+import { VIEWER_TIME_ZONE_ID } from '../support/users-grid-time.fixture';
 
 const ME_URL_PATTERN = '**/api/auth/me';
 const CSRF_URL_PATTERN = '**/api/auth/csrf';
@@ -9,6 +10,7 @@ interface AuthenticatedUser {
   readonly firstName: string;
   readonly lastName: string;
   readonly email?: string;
+  readonly timeZone?: string;
 }
 
 const CURRENT_USER_LOGIN = 'ivan.petrov';
@@ -71,6 +73,7 @@ export class CurrentUserBackendStatements {
         lastName: user.lastName,
         status: 'ACTIVE',
         roles: [],
+        timeZone: user.timeZone ?? VIEWER_TIME_ZONE_ID,
       }),
     });
   }

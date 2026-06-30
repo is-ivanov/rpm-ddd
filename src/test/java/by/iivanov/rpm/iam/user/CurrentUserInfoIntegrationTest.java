@@ -32,6 +32,7 @@ class CurrentUserInfoIntegrationTest extends AbstractApplicationIntegrationTest 
                   "firstName": "System",
                   "lastName": "System",
                   "status": "ACTIVE",
+                  "timeZone": "UTC",
                   "roles": []
                 }
                 """);

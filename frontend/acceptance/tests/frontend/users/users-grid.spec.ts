@@ -2,13 +2,16 @@ import { test } from '@playwright/test';
 import { HomePageStatements } from '../../statements/frontend/home-page.statements';
 import { UsersPageStatements } from '../../statements/frontend/users-page.statements';
 import { UsersGridSortStatements } from '../../statements/frontend/users-grid-sort.statements';
+import { UsersGridTimeStatements } from '../../statements/frontend/users-grid-time.statements';
 import { CurrentUserBackendStatements } from '../../statements/backend/current-user-backend.statements';
 import { AdminUsersBackendStatements } from '../../statements/backend/admin-users-backend.statements';
+import { FIXED_NOW_INSTANT } from '../../statements/support/users-grid-time.fixture';
 
 test.describe('Users Grid', () => {
   let homePage: HomePageStatements;
   let usersPage: UsersPageStatements;
   let usersSort: UsersGridSortStatements;
+  let usersTime: UsersGridTimeStatements;
   let currentUserBackend: CurrentUserBackendStatements;
   let adminUsersBackend: AdminUsersBackendStatements;
 
@@ -16,6 +19,7 @@ test.describe('Users Grid', () => {
     homePage = new HomePageStatements(page, baseURL);
     usersPage = new UsersPageStatements(page);
     usersSort = new UsersGridSortStatements(page);
+    usersTime = new UsersGridTimeStatements(page);
     currentUserBackend = new CurrentUserBackendStatements(page);
     adminUsersBackend = new AdminUsersBackendStatements(page);
   });
@@ -111,6 +115,27 @@ test.describe('Users Grid', () => {
 
       await usersSort.clickStatusHeader();
       await usersSort.assertStatusesSortedByLifecycleOrder();
+    },
+  );
+
+  test(
+    'UI Test Scenario 3.3: Created column shows relative time with an absolute-time hover tooltip - ' +
+      'Given the Users page shows a user created in the past, ' +
+      'Then the Created column shows a relative time (e.g. "7 days ago"), ' +
+      'When the user hovers over the relative time, ' +
+      'Then a tooltip shows the full absolute time rendered in the viewer profile timezone, ' +
+      'And the tooltip includes the date, time, timezone label, and IANA zone id',
+    // The clock is frozen at FIXED_NOW_INSTANT before navigation so the relative-time
+    // computation is deterministic regardless of CI wall-clock.
+    async ({ page }) => {
+      await page.clock.setFixedTime(FIXED_NOW_INSTANT);
+      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await adminUsersBackend.givenSeveralUsers();
+      await homePage.navigateToHomePage();
+      await homePage.clickUsersNavItem();
+      await usersPage.assertGridIsVisible();
+
+      await usersTime.assertCreatedCellRelativeLabelAndTooltip();
     },
   );
 });

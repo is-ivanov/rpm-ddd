@@ -16,6 +16,7 @@ const JOHN_DOE: AuthenticatedUser = {
   email: 'j.doe@rpm.local',
   firstName: 'John',
   lastName: 'Doe',
+  timeZone: 'Europe/Berlin',
 };
 
 function stubMe(body: JsonBodyType, init: ResponseInit): void {
@@ -32,6 +33,7 @@ function stubMeAuthenticated(): void {
       lastName: 'Doe',
       status: 'ACTIVE',
       roles: [],
+      timeZone: 'Europe/Berlin',
     },
     { status: 200 },
   );

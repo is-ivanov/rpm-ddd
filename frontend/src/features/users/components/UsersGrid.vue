@@ -3,8 +3,11 @@ import { computed, ref, type Component } from 'vue';
 import { ArrowDown, ArrowUp, ChevronsUpDown } from '@lucide/vue';
 import { filterRowsByFullName, sortUserRows } from '../logic/users-grid.logic';
 import type { SortColumn, SortDirection, UserRow } from '../logic/users-grid.types';
+import TimeCell from './TimeCell.vue';
 
-const props = defineProps<{ rows: readonly UserRow[] }>();
+const props = defineProps<{ rows: readonly UserRow[]; viewerTimeZone: string }>();
+
+const now = new Date();
 
 interface Column {
   readonly testId: string;
@@ -127,9 +130,21 @@ const displayedRows = computed(() => {
               {{ row.status }}
             </span>
           </td>
-          <td data-testid="users-cell-created" class="grid-cell text-muted">{{ row.createdAt }}</td>
+          <TimeCell
+            :iso="row.createdAt"
+            :now="now"
+            :time-zone="viewerTimeZone"
+            cell-test-id="users-cell-created"
+            tooltip-test-id="users-created-tooltip"
+          />
           <td data-testid="users-cell-created-by" class="grid-cell">{{ row.createdBy }}</td>
-          <td data-testid="users-cell-updated" class="grid-cell text-muted">{{ row.updatedAt }}</td>
+          <TimeCell
+            :iso="row.updatedAt"
+            :now="now"
+            :time-zone="viewerTimeZone"
+            cell-test-id="users-cell-updated"
+            tooltip-test-id="users-updated-tooltip"
+          />
           <td data-testid="users-cell-updated-by" class="grid-cell">{{ row.updatedBy }}</td>
         </tr>
       </tbody>

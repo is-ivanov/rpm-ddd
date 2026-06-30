@@ -3,6 +3,7 @@ export interface AuthenticatedUser {
   readonly email: string;
   readonly firstName: string;
   readonly lastName: string;
+  readonly timeZone: string;
 }
 
 export type CurrentUserResult =
