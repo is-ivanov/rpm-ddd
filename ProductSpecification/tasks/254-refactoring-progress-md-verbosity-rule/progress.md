@@ -8,7 +8,7 @@ Type: refactoring
 ## Fix
 
 ### Step 1: Add the terse-progress norm via /prompt-update
-- [ ] refactor (prompt-update: classify + write rule to workflow.md / progress-format.md)
+- [x] refactor (prompt-update: classify + write rule to workflow.md / progress-format.md)
 
 ### Step 2: Verify via /prompt-refactor
-- [ ] refactor (prompt-refactor: scan touched files for layer violations)
+- [~] refactor (prompt-refactor: scan touched files for layer violations)
