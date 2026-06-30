@@ -78,7 +78,7 @@ describe('Admin Users API Client', () => {
   // resetSessionWhenUnauthorized() and the auth store keeps its stale authenticated state. GREEN
   // routes the client through apiFetch(), which resets the store on 401. The store assertion below
   // is the pinned RED reason (the ZodError thrown while parsing the problem body is swallowed).
-  it.fails('resets the auth session when GET /api/admin/users returns 401', async () => {
+  it('resets the auth session when GET /api/admin/users returns 401', async () => {
     await issue('250');
     stubAdminUsers(UNAUTHORIZED_PROBLEM, {
       status: 401,

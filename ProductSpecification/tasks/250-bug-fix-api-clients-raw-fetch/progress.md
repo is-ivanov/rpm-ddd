@@ -12,7 +12,7 @@ Type: bug
 - [S] red-frontend (trivial: error state is presentational — boolean ref + constant message + try/catch in UsersPage.vue, no .logic.ts function)
 - [S] green-frontend (counterpart of skipped red-frontend)
 - [x] red-frontend-api
-- [~] green-frontend-api
-- [ ] align-design
+- [x] green-frontend-api
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo

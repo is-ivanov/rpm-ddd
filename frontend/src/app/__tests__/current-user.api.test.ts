@@ -62,7 +62,7 @@ describe('Current User API Client', () => {
   // resetSessionWhenUnauthorized(), so the auth store keeps its stale authenticated state. GREEN
   // routes the client through apiFetch() (keeping the explicit 401 -> { authenticated: false } map),
   // which resets the store on 401. The store assertions below are the pinned RED reason.
-  it.fails('resets the auth session when GET /api/auth/me returns 401', async () => {
+  it('resets the auth session when GET /api/auth/me returns 401', async () => {
     await issue('250');
     stubMeUnauthenticated();
     const store = useAuthStore();

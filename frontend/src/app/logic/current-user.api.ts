@@ -1,12 +1,12 @@
 import type { CurrentUserResult } from './current-user.types';
 import { currentUserResponseSchema } from '@/app/schemas/current-user.schema';
-import { apiUrl } from './fetch.api';
+import { apiFetch } from './fetch.api';
 
 const CURRENT_USER_PATH = '/api/auth/me';
 const UNAUTHORIZED_STATUS = 401;
 
 export async function fetchCurrentUser(): Promise<CurrentUserResult> {
-  const response = await fetch(apiUrl(CURRENT_USER_PATH), {
+  const response = await apiFetch(CURRENT_USER_PATH, {
     method: 'GET',
     credentials: 'include',
   });
