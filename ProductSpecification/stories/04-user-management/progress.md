@@ -150,6 +150,28 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [ ] green-playwright
 - [ ] demo
 
+### Backend Foundation (deferred): GET /api/auth/me returns the viewer's timeZone (L1 acceptance)
+> WHY DEFERRED & PLACED HERE: endpoints.md declares `GET /api/auth/me` MODIFIED → response carries
+> `timeZone` (viewer's profile zone), but no Story 4 backend scenario ever drove it — the create/grid
+> scenarios don't touch /me, so the foundation line stayed declarative and CurrentUserResponse was never
+> extended. Scn 3.3 green-frontend-api made the FE schema REQUIRE timeZone from /me, so against the LIVE
+> backend `currentUserResponseSchema.parse` now THROWS (auth.store.loadMe fails → dashboard bootstrap
+> breaks); FE-mocked E2E hides it, but the real app + full-stack journey break. USER DECISION (2026-06-30):
+> close the gap AFTER Scn 3.3 (align-design+demo), before Scn 4.1 — hence this block's position so
+> /continue picks it up next once Scn 3.3 demo is [x].
+> SCOPE (verified isolated): User domain already has timeZone (Scn 3.1) and AuthenticationService already
+> returns the User → ONLY the REST response DTO mapping is missing. activate returns ActivationTokenResponse
+> (login+email), NOT CurrentUserResponse, so there is NO web-slice collateral; only CurrentUserInfoIntegrationTest
+> (the /me whole-response acceptance test) asserts the body. Admin seed zone = `UTC` (user.csv).
+- [ ] red-acceptance (extend CurrentUserInfoIntegrationTest.should_returnOwnUserInfo_when_authenticated: add `"timeZone": "UTC"` to the whole-response expected JSON → @ExpectedToFail; today CurrentUserResponse has no timeZone field so the response omits it. Predict 200 + JSON-missing-field assertion failure.)
+- [S] design (trivial REST DTO field; serialized as the IANA id string via ZoneId.getId() per the create-user-timezone ADR; no new ADR)
+- [S] red-usecase (no usecase logic — AuthenticationService already loads & returns the User carrying timeZone)
+- [S] green-usecase
+- [S] red-domain (User.timeZone already exists and is covered from Scn 3.1)
+- [S] green-domain
+- [ ] adapters-discovery (REST response DTO mapping only: CurrentUserResponse.from is simple delegation, no validation/error logic → [S] adapter test; the field + mapping are created in green-acceptance under the simple-delegation plumbing exception. No db/usecase ports change. Verified no web-slice collateral — activate uses ActivationTokenResponse.)
+- [ ] green-acceptance (add `String timeZone` to the CurrentUserResponse record + map `user.getTimeZone().getId()` in from(); remove @ExpectedToFail. Simple-delegation plumbing exception. Run CurrentUserInfoIntegrationTest + full suite.)
+
 ### Scenario 4.1: Register user opens a modal with the timezone pre-filled
 - [ ] red-playwright
 - [ ] red-frontend
