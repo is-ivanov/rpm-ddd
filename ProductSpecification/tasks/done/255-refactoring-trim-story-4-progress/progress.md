@@ -11,4 +11,4 @@ Type: refactoring
 - [x] refactor (handoff: extract why → summaries/ + carryover.md)
 
 ### Step 2: trim story 4 progress.md
-- [~] refactor (trim progress.md to one-line entries)
+- [x] refactor (trim progress.md to one-line entries)
