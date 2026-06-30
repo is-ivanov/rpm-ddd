@@ -80,13 +80,55 @@ export function sortUserRows(rows: UserRow[], column: SortColumn, direction: Sor
   return rows.toSorted((left, right) => factor * compareByColumn(left, right, column));
 }
 
+function timeAgo(count: number, unit: string): string {
+  return `${count} ${unit}${count === 1 ? '' : 's'} ago`;
+}
+
 export function toRelativeTimeLabel(isoTimestamp: string, now: Date): string {
-  void now;
-  return isoTimestamp;
+  const elapsedSeconds = Math.floor((now.getTime() - new Date(isoTimestamp).getTime()) / 1000);
+  if (elapsedSeconds < 60) {
+    return 'just now';
+  }
+  const minutes = Math.floor(elapsedSeconds / 60);
+  if (minutes < 60) {
+    return timeAgo(minutes, 'minute');
+  }
+  const hours = Math.floor(elapsedSeconds / 3600);
+  if (hours < 24) {
+    return timeAgo(hours, 'hour');
+  }
+  const days = Math.floor(elapsedSeconds / 86400);
+  if (days < 7) {
+    return timeAgo(days, 'day');
+  }
+  if (days < 30) {
+    return timeAgo(Math.floor(days / 7), 'week');
+  }
+  if (days < 365) {
+    return timeAgo(Math.floor(days / 30), 'month');
+  }
+  return timeAgo(Math.floor(days / 365), 'year');
+}
+
+function partValue(parts: Intl.DateTimeFormatPart[], type: Intl.DateTimeFormatPartTypes): string {
+  return parts.find((part) => part.type === type)?.value ?? '';
 }
 
 export function toAbsoluteTooltipParts(isoTimestamp: string, timeZone: string): AbsoluteTimeParts {
-  void isoTimestamp;
-  void timeZone;
-  return { date: '', time: '', tzLabel: '', ianaZone: '' };
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZoneName: 'short',
+  }).formatToParts(new Date(isoTimestamp));
+  return {
+    date: `${partValue(parts, 'year')}-${partValue(parts, 'month')}-${partValue(parts, 'day')}`,
+    time: `${partValue(parts, 'hour')}:${partValue(parts, 'minute')}`,
+    tzLabel: partValue(parts, 'timeZoneName'),
+    ianaZone: timeZone,
+  };
 }
