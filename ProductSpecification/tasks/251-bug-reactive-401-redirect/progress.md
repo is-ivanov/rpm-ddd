@@ -8,8 +8,8 @@ Type: bug
 ## Frontend
 
 ### Fix: watch isAuthenticated → false → router.push(/login)
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
