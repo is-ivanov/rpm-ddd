@@ -168,10 +168,10 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] green-frontend-api (createUser POST via postJsonWithCsrf; it.fails→it)
 - [x] align-design (RegisterUserModal submitting ref + submitRegister→createUser; shared LoadingButton (w-auto override) + register-user-submit-spinner; fields v-model+disabled; also completed RED-infra CSRF stub in CreateUserBackendStatements)
 - [x] green-playwright (test.fail() removed; register-user-modal.spec 2 passed — Scn 4.2 loading state + 4.1 still green)
-- [~] demo
+- [x] demo (test-results/demo-register-user-modal-4.2-loading.webm)
 
 ### Scenario 5.1: Successful create closes the modal and refreshes the grid
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
