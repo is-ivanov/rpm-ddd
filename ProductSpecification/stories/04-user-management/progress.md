@@ -151,8 +151,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] green-acceptance (CurrentUserResponse.timeZone = user.getTimeZone().getId(); ActivateAccountMassAssignment collateral fixed)
 
 ### Scenario 4.1: Register user opens a modal with the timezone pre-filled
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (register-user-modal.spec.ts + register-user-modal.statements.ts; UsersPageStatements.clickRegisterUserButton; timezone pre-fill exact-value assert)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

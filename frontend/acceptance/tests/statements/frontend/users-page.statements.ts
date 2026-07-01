@@ -60,6 +60,10 @@ export class UsersPageStatements {
     );
   }
 
+  async clickRegisterUserButton(): Promise<void> {
+    await this.registerUserButton().click();
+  }
+
   async assertGridIsVisible(): Promise<void> {
     await expect(this.grid(), 'users grid is visible').toBeVisible();
     await expect(this.rows(), 'grid shows one row per user from the API').toHaveCount(EXPECTED_USER_ROWS.length);
