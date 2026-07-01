@@ -1,4 +1,5 @@
 import { expect, type Locator, type Page } from '@playwright/test';
+import { NEW_USER_INPUT } from '../support/create-user-fixture';
 
 const TEST_ID = {
   modal: 'register-user-modal',
@@ -22,11 +23,11 @@ const FIELDS = [
 ] as const;
 
 const VALID_INPUT_VALUES = [
-  { control: 'register-user-first-name', value: 'Grace' },
-  { control: 'register-user-middle-name', value: 'Brewster' },
-  { control: 'register-user-last-name', value: 'Hopper' },
-  { control: 'register-user-login', value: 'g.hopper' },
-  { control: 'register-user-email', value: 'g.hopper@rpm.local' },
+  { control: 'register-user-first-name', value: NEW_USER_INPUT.firstName },
+  { control: 'register-user-middle-name', value: NEW_USER_INPUT.middleName },
+  { control: 'register-user-last-name', value: NEW_USER_INPUT.lastName },
+  { control: 'register-user-login', value: NEW_USER_INPUT.login },
+  { control: 'register-user-email', value: NEW_USER_INPUT.email },
 ] as const;
 
 export class RegisterUserModalStatements {
@@ -34,6 +35,12 @@ export class RegisterUserModalStatements {
 
   async assertModalIsOpen(): Promise<void> {
     await expect(this.modal(), 'the Register user modal is open').toBeVisible({ timeout: 5000 });
+  }
+
+  async assertModalIsClosed(): Promise<void> {
+    await expect(this.modal(), 'the Register user modal closes after a successful create').toHaveCount(0, {
+      timeout: 5000,
+    });
   }
 
   async assertAllFieldsAreVisible(): Promise<void> {

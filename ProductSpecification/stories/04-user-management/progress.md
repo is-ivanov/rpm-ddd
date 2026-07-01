@@ -171,8 +171,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] demo (test-results/demo-register-user-modal-4.2-loading.webm)
 
 ### Scenario 5.1: Successful create closes the modal and refreshes the grid
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (register-user-modal.spec.ts Scn 5.1 — success closes modal + grid refetch shows new Pending row; create-user-fixture.ts)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

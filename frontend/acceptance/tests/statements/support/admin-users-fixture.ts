@@ -31,7 +31,7 @@ export interface ExpectedUserRow {
 
 export const SEED_ACTOR_DISPLAY = 'System';
 
-const JOHN_DOE: ActorName = { firstName: 'John', middleName: 'Robert', lastName: 'Doe' };
+export const JOHN_DOE: ActorName = { firstName: 'John', middleName: 'Robert', lastName: 'Doe' };
 const SARAH_CONNOR: ActorName = { firstName: 'Sarah', middleName: 'Jane', lastName: 'Connor' };
 const SYSTEM_ACTOR: ActorName = { firstName: 'System', middleName: null, lastName: '' };
 

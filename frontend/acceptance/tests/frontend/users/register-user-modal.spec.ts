@@ -68,4 +68,32 @@ test.describe('Register User Modal', () => {
       await modal.assertFormFieldsAreDisabled();
     },
   );
+
+  test(
+    'UI Test Scenario 5.1: Successful create closes the modal and refreshes the grid - ' +
+      'Given the Register user modal is filled with valid values, ' +
+      'When the user clicks "Register" and the request succeeds, ' +
+      'Then the modal closes, ' +
+      'And the grid refreshes and shows the newly created user with status Pending',
+    async () => {
+      // RED: RegisterUserModal only toggles `submitting` on a successful create — it does not
+      // emit `close`, and UsersPage never refetches the grid. assertModalIsClosed fails
+      // (modal locator count stays 1). Remove test.fail() in green-frontend once the modal
+      // closes on success and the grid reloads to show the new Pending row.
+      test.fail();
+      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await adminUsersBackend.givenListRefreshesWithNewUserAfterCreate();
+      await createUserBackend.givenCreateUserSucceeds();
+      await homePage.navigateToHomePage();
+      await homePage.clickUsersNavItem();
+      await usersPage.clickRegisterUserButton();
+      await modal.assertModalIsOpen();
+      await modal.fillWithValidValues();
+
+      await modal.clickRegister();
+
+      await modal.assertModalIsClosed();
+      await usersPage.assertNewPendingUserRowIsVisible();
+    },
+  );
 });

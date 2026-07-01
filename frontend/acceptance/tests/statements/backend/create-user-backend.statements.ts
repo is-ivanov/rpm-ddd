@@ -11,15 +11,10 @@ export class CreateUserBackendStatements {
 
   /** Holds POST /api/admin/users in flight until releaseCreateUser(); non-POST requests fall through. */
   async givenCreateUserInFlight(): Promise<void> {
-    await this.page.route(CSRF_URL_PATTERN, fulfillCsrfRoute);
     const held = new Promise<void>((resolve) => {
       this.releaseInFlightCreate = resolve;
     });
-    await this.page.route(ADMIN_USERS_URL_PATTERN, async (route) => {
-      if (route.request().method() !== 'POST') {
-        await route.fallback();
-        return;
-      }
+    await this.routeCreateUser(async (route) => {
       await held;
       await this.fulfillCreated(route);
     });
@@ -28,6 +23,22 @@ export class CreateUserBackendStatements {
   /** Releases the in-flight create so the held 201 response is delivered. */
   releaseCreateUser(): void {
     this.releaseInFlightCreate?.();
+  }
+
+  /** Stubs POST /api/admin/users to succeed immediately with 201; non-POST requests fall through. */
+  async givenCreateUserSucceeds(): Promise<void> {
+    await this.routeCreateUser((route) => this.fulfillCreated(route));
+  }
+
+  private async routeCreateUser(onPost: (route: Route) => Promise<void>): Promise<void> {
+    await this.page.route(CSRF_URL_PATTERN, fulfillCsrfRoute);
+    await this.page.route(ADMIN_USERS_URL_PATTERN, async (route) => {
+      if (route.request().method() !== 'POST') {
+        await route.fallback();
+        return;
+      }
+      await onPost(route);
+    });
   }
 
   private async fulfillCreated(route: Route): Promise<void> {
