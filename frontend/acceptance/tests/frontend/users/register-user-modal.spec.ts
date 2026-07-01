@@ -27,13 +27,7 @@ test.describe('Register User Modal', () => {
       'Then a modal opens with fields: First name, Middle name, Last name, Login, Email, Timezone, ' +
       'And the Timezone field is pre-filled with the app default (Central Europe), ' +
       'And the modal shows a "Register" submit button and a "Cancel" button',
-    // RED: the Register user modal is not implemented yet — the click has no
-    // effect, so assertModalIsOpen() (bounded 5s) throws and is absorbed by
-    // test.fail(). The click targets the existing "Register user" button, so no
-    // whole-test timeout hang.
     async () => {
-      test.fail();
-
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();

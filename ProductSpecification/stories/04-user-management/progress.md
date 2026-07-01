@@ -157,8 +157,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] red-frontend-api (Scn 4.1 fires no network request — modal open + prefill only; the create-user POST client is built at Scn 5.1)
 - [S] green-frontend-api
 - [x] align-design (RegisterUserModal.vue + RegisterUserTextField.vue per mockup 03-create-modal.html; UsersPage modalOpen wiring; .modal-overlay/.modal-card/.select-control theme classes; coverage N/A — presentational, no .logic.ts, E2E-covered)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (test.fail() removed; register-user-modal.spec.ts passes green)
+- [~] demo
 
 ### Scenario 4.2: Modal shows a loading state during submission
 - [ ] red-playwright
