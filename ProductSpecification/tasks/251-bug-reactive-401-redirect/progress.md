@@ -11,8 +11,8 @@ Type: bug
 - [x] red-playwright
 - [x] red-frontend
 - [x] green-frontend
-- [~] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend-api (no API-client change: 401→reset lives in apiFetch/fetch.api.ts from #250; no new endpoint)
+- [S] green-frontend-api (no API-client change: see red-frontend-api)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
