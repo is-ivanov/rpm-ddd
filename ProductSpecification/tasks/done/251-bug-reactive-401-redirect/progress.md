@@ -15,4 +15,4 @@ Type: bug
 - [S] green-frontend-api (no API-client change: see red-frontend-api)
 - [S] align-design (no visual change: fix is an invisible App.vue redirect watcher; no new component/mockup; notification descoped)
 - [x] green-playwright
-- [~] demo
+- [x] demo
