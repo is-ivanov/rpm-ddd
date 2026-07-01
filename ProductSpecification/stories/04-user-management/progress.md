@@ -15,22 +15,22 @@
 > Implementation order: List users (GET) → Create user validation (POST) → Create user happy path (POST).
 
 ### Scenario 1.1: Authenticated user lists all users with resolved actor names
-- [x] red-acceptance (UserGridIntegrationTest — GET /api/admin/users; see summaries/1.1-list-users.md)
-- [x] design (Option A read-model view-entity + ORM-resolved actors + Null-Object "System"; ADR; see summaries/1.1-list-users.md)
+- [x] red-acceptance (UserGridIntegrationTest; see summaries/1.1-list-users.md)
+- [x] design (ADR read-model view-entity; see summaries/1.1-list-users.md)
 - [S] red-usecase (ListUsersService pure pass-through — covered by L1 + L3 db adapter)
 - [S] green-usecase
 - [S] red-domain
 - [S] green-domain
-- [x] adapters-discovery (db: UserSummaryQuery.findAllForGrid non-trivial view query → red/green-adapter db; rest/usecase [S])
-- [x] red-adapter db (JpaUserSummaryQueryTest @DataJpaTest — @Subselect view + self-join; see summaries/1.1-list-users.md)
-- [x] green-adapter db (UserSummaryView + findAllForGrid; later DELETED as L1-duplicate per ADR; see summaries/1.1-list-users.md)
-- [x] green-acceptance (ListUsersService + UserResource.listUsers + UserSummaryResponse.from; see summaries/1.1-list-users.md)
+- [x] adapters-discovery (db: UserSummaryQuery view query → red/green-adapter db; rest/usecase [S])
+- [x] red-adapter db (JpaUserSummaryQueryTest; see summaries/1.1-list-users.md)
+- [x] green-adapter db (UserSummaryView; later deleted L1-dup; see summaries/1.1-list-users.md)
+- [x] green-acceptance (see summaries/1.1-list-users.md)
 
 ### Scenario 2.1: Create with a duplicate login returns a field-level 422 (web-slice, Level 2)
 > Level: L2 web-slice — duplicate login → 422 field error; domain rule already covered at application level. see summaries/2.1-duplicate-login-422.md
-- [x] red-adapter rest (UserResourceTest @WebTest — 422 + ProblemDetail + fieldErrors[login])
+- [x] red-adapter rest (UserResourceTest @WebTest — 422 + fieldErrors[login])
 - [x] design (Option A validation-failed field error — no ADR)
-- [x] green-adapter rest (LoginAlreadyExistsExceptionHandler → 422 VALIDATION_FAILED; see summaries/2.1-duplicate-login-422.md)
+- [x] green-adapter rest (LoginAlreadyExistsExceptionHandler → 422; see summaries/2.1-duplicate-login-422.md)
 - [S] red-usecase (duplicate-login already covered at application level — UserRegistrationPolicy)
 - [S] green-usecase
 - [S] red-domain
@@ -40,20 +40,20 @@
 ### Scenario 3.1: Create user with a timezone succeeds and appears in the grid (L1 acceptance)
 > Level: L1 acceptance — threads the timeZone foundation through DTO/command/User.register + persistence.
 > Extends UserRegistrationIntegrationTest (no parallel class). see summaries/3.1-create-user-timezone.md
-- [x] red-acceptance (no RED — feature pre-existing; strengthened UserRegistrationIntegrationTest to assert new user flows into grid; see summaries/3.1-create-user-timezone.md)
-- [x] design (ADR create-user-timezone — ZoneId domain type, time_zone varchar(64) migration; see decisions/)
+- [x] red-acceptance (UserRegistrationIntegrationTest — no RED, feature pre-existing; see summaries/3.1-create-user-timezone.md)
+- [x] design (ADR create-user-timezone; see decisions/)
 - [x] red-usecase (UserRegistrationServiceTest.when_commandHasTimeZone_expect_storedUserKeepsZone)
 - [x] green-usecase (User stores command.timeZone)
 - [S] red-domain
 - [S] green-domain
-- [x] adapters-discovery (UserRepository.save built-in → [S] db; migration + DTO plumbing in green-acceptance)
-- [x] green-acceptance (2026.06.27-02 time_zone migration + RegisterUserRequest.timeZone @NotBlank + ZoneId.of; web-slice collateral fixed)
+- [x] adapters-discovery (UserRepository.save built-in → [S] db; migration + DTO in green-acceptance)
+- [x] green-acceptance (time_zone migration + RegisterUserRequest.timeZone; see summaries/3.1-create-user-timezone.md)
 
 ### Scenario E1 (promoted from Extended): Create with a duplicate email returns a field-level 422 (web-slice, L2)
 > Level: L2 web-slice — promoted from Extended; mirrors Scenario 2.1 for the email field.
 - [x] red-adapter rest (UserResourceTest.should_return422WithEmailFieldError_when_emailAlreadyExists)
 - [S] design (mirrors 2.1 — no ADR)
-- [x] green-adapter rest (EmailAlreadyExistsExceptionHandler → 422 VALIDATION_FAILED + fieldErrors[email])
+- [x] green-adapter rest (EmailAlreadyExistsExceptionHandler → 422 + fieldErrors[email])
 - [S] red-usecase (duplicate-email already covered at application level — UserRegistrationPolicy)
 - [S] green-usecase
 - [S] red-domain
@@ -67,71 +67,71 @@ email is asserted as a side effect of backend Scenario 3.1)
 ## Frontend Scenarios (02_UI_Tests.md)
 
 ### Scenario 1.1: Sidebar shows an Admin Center group with a Users item
-- [x] red-playwright (admin-center-nav.spec.ts + HomePageStatements sidebar locators)
+- [x] red-playwright (admin-center-nav.spec.ts)
 - [S] red-frontend (static nav group — no .logic.ts seam)
 - [S] green-frontend
 - [S] red-frontend-api (no API call)
 - [S] green-frontend-api
-- [x] align-design (DashboardShell.vue sidebar — Admin Center group + Users item per mockup)
+- [x] align-design (DashboardShell.vue sidebar — Admin Center group + Users item)
 - [x] green-playwright
 - [x] demo
 
 ### Scenario 1.2: Clicking Users navigates to the Users page inside the shell
-- [x] red-playwright (users-navigation.spec.ts + UsersPageStatements; UI-nav only)
+- [x] red-playwright (users-navigation.spec.ts; UI-nav only)
 - [S] red-frontend (declarative routing — no .logic.ts seam; see summaries/1.2-users-navigation.md)
 - [S] green-frontend
 - [S] red-frontend-api (no API call)
 - [S] green-frontend-api
-- [x] align-design (nested-route layout: /users child route, DashboardShell RouterView + DashboardHome + UsersPage; see summaries/1.2-users-navigation.md)
+- [x] align-design (nested-route layout: /users child route; see summaries/1.2-users-navigation.md)
 - [x] green-playwright
 - [x] demo
 
 ### Scenario 2.1: Grid renders all columns and rows from the API
-- [x] red-playwright (users-grid.spec.ts + AdminUsersBackendStatements + admin-users-fixture.ts; 8 headers + per-row asserts)
-- [x] red-frontend (users-grid.logic.ts buildUserRows — status label, actor abbrev + System case, full-name; users-grid.logic.test.ts)
+- [x] red-playwright (users-grid.spec.ts — 8 headers + per-row asserts)
+- [x] red-frontend (users-grid.logic.test.ts — buildUserRows: status label, actor abbrev, full-name)
 - [x] green-frontend (buildUserRows implemented)
-- [x] red-frontend-api (admin-users.api.ts fetchAdminUsers + admin-users.schema.ts zod boundary; MSW happy-path test)
+- [x] red-frontend-api (admin-users.api.ts fetchAdminUsers + admin-users.schema.ts zod boundary)
 - [x] green-frontend-api (fetchAdminUsers implemented)
-- [x] align-design (UsersGrid.vue table-card grid per mockup; UsersPage orchestrator)
+- [x] align-design (UsersGrid.vue table-card grid; UsersPage orchestrator)
 - [x] green-playwright
 - [x] demo
 
 ### Scenario 2.2: Grid shows a loading state while fetching
-- [x] red-playwright (users-grid.spec.ts Scn 2.2 — held-route loading pattern; users-grid-loading testid)
+- [x] red-playwright (users-grid.spec.ts Scn 2.2 — held-route loading pattern)
 - [S] red-frontend (presentational loading ref — no .logic.ts seam)
 - [S] green-frontend
 - [S] red-frontend-api (reuses fetchAdminUsers)
 - [S] green-frontend-api
-- [x] align-design (UsersPage loading ref + centered spinner per mockup)
+- [x] align-design (UsersPage loading ref + centered spinner)
 - [x] green-playwright
 - [x] demo
 
 ### Scenario 3.1: Typing in a column filter narrows the rows client-side
-- [x] red-playwright (users-grid.spec.ts Scn 3.1 — Full name filter narrows + fetched-once; see summaries/3.1-column-filter.md)
+- [x] red-playwright (users-grid.spec.ts Scn 3.1 — Full name filter; see summaries/3.1-column-filter.md)
 - [x] red-frontend (filterRowsByFullName — case-insensitive contains + blank guard)
 - [x] green-frontend (filterRowsByFullName implemented)
 - [S] red-frontend-api (client-side filter — reuses fetchAdminUsers)
 - [S] green-frontend-api
-- [x] align-design (Full name filter input in UsersGrid; displayedRows = filterRowsByFullName)
+- [x] align-design (Full name filter input; displayedRows = filterRowsByFullName)
 - [x] green-playwright
 - [x] demo
 
 ### Scenario 3.2: Clicking a column header sorts the rows
-- [x] red-playwright (users-grid.spec.ts Scn 3.2 + users-grid-sort.statements.ts — login asc/desc + status lifecycle order)
+- [x] red-playwright (users-grid.spec.ts Scn 3.2 — login asc/desc + status lifecycle sort)
 - [x] red-frontend (sortUserRows — login localeCompare + status lifecycle rank)
-- [x] green-frontend (sortUserRows + statusRank MAX_SAFE_INTEGER fallback; FE owns lifecycle order; see summaries/3.2-column-sort.md)
+- [x] green-frontend (sortUserRows + statusRank; see summaries/3.2-column-sort.md)
 - [S] red-frontend-api (client-side sort — reuses fetchAdminUsers)
 - [S] green-frontend-api
-- [x] align-design (sortable Login/Status headers + lucide sort icons; displayedRows chains filter→sort)
+- [x] align-design (sortable Login/Status headers; displayedRows chains filter→sort)
 - [x] green-playwright
 - [x] demo
 
 ### Scenario 3.3: Timestamps show relative time with an absolute-on-hover tooltip
-- [x] red-playwright (users-grid.spec.ts Scn 3.3 + users-grid-time.statements.ts + fixture; page.clock.setFixedTime determinism; see summaries/3.3-relative-time-tooltip.md)
-- [x] red-frontend (toRelativeTimeLabel + toAbsoluteTooltipParts; B1 fixed-scale floor contract; en-GB tz quirk; see summaries/3.3-relative-time-tooltip.md)
+- [x] red-playwright (users-grid.spec.ts Scn 3.3; see summaries/3.3-relative-time-tooltip.md)
+- [x] red-frontend (toRelativeTimeLabel + toAbsoluteTooltipParts; see summaries/3.3-relative-time-tooltip.md)
 - [x] green-frontend (both implemented — floor cascade + Intl en-GB formatToParts)
 - [x] red-frontend-api (current-user schema gains required timeZone; see summaries/3.3-relative-time-tooltip.md)
-- [x] green-frontend-api (timeZone: z.string() + AuthenticatedUser.timeZone; 4 stub sites updated)
+- [x] green-frontend-api (timeZone: z.string() + AuthenticatedUser.timeZone)
 - [x] align-design (TimeCell.vue relative label + Teleport tooltip; UsersGrid viewerTimeZone prop)
 - [x] green-playwright
 - [x] demo
@@ -141,38 +141,38 @@ email is asserted as a side effect of backend Scenario 3.1)
 > requires timeZone; live /me must emit it). USER DECISION: close after Scn 3.3, before 4.1.
 > Scope: only the CurrentUserResponse DTO mapping (User already carries timeZone from 3.1).
 > see summaries/3.3-relative-time-tooltip.md
-- [x] red-acceptance (CurrentUserInfoIntegrationTest — added "timeZone":"UTC" to whole-response expected)
+- [x] red-acceptance (CurrentUserInfoIntegrationTest — "timeZone":"UTC" in whole-response expected)
 - [S] design (trivial REST DTO field via ZoneId.getId())
 - [S] red-usecase (AuthenticationService already returns User with timeZone)
 - [S] green-usecase
 - [S] red-domain (User.timeZone covered from 3.1)
 - [S] green-domain
-- [x] adapters-discovery (CurrentUserResponse.from simple delegation → [S] adapter; field + mapping in green-acceptance)
-- [x] green-acceptance (CurrentUserResponse.timeZone = user.getTimeZone().getId(); ActivateAccountMassAssignment collateral fixed)
+- [x] adapters-discovery (CurrentUserResponse.from simple delegation → [S] adapter)
+- [x] green-acceptance (CurrentUserResponse.timeZone = user.getTimeZone().getId())
 
 ### Scenario 4.1: Register user opens a modal with the timezone pre-filled
-- [x] red-playwright (register-user-modal.spec.ts + register-user-modal.statements.ts; UsersPageStatements.clickRegisterUserButton; timezone pre-fill exact-value assert)
-- [S] red-frontend (purely presentational — modal open + fixed app-default timezone; no .logic.ts seam, no input-varying behavior; handled in the component during align-design)
+- [x] red-playwright (register-user-modal.spec.ts Scn 4.1 — modal opens + timezone pre-fill exact-value)
+- [S] red-frontend (presentational — modal open + fixed timezone; no .logic.ts seam; align-design)
 - [S] green-frontend
-- [S] red-frontend-api (Scn 4.1 fires no network request — modal open + prefill only; the create-user POST client is built at Scn 5.1)
+- [S] red-frontend-api (no network request — modal open/prefill only; POST client at 5.1)
 - [S] green-frontend-api
-- [x] align-design (RegisterUserModal.vue + RegisterUserTextField.vue per mockup 03-create-modal.html; UsersPage modalOpen wiring; .modal-overlay/.modal-card/.select-control theme classes; coverage N/A — presentational, no .logic.ts, E2E-covered)
-- [x] green-playwright (test.fail() removed; register-user-modal.spec.ts passes green)
-- [x] demo (test-results/demo-register-user-modal.webm)
+- [x] align-design (RegisterUserModal.vue + RegisterUserTextField.vue per mockup; UsersPage modalOpen wiring)
+- [x] green-playwright
+- [x] demo
 
 ### Scenario 4.2: Modal shows a loading state during submission
-- [x] red-playwright (register-user-modal.spec.ts Scn 4.2 + create-user-backend.statements.ts held-POST; submit spinner + all-fields-disabled asserts)
-- [S] red-frontend (presentational loading state — submitting ref toggled around the async submit per Async Action Buttons rule; no .logic.ts seam, no input-varying logic; handled in align-design)
+- [x] red-playwright (register-user-modal.spec.ts Scn 4.2 — submit spinner + all-fields-disabled)
+- [S] red-frontend (presentational loading state — submitting ref; no .logic.ts seam; align-design)
 - [S] green-frontend
-- [x] red-frontend-api (create-user.api.ts createUser POST + create-user.types.ts CreateUserRequest; MSW happy-path test — CSRF handshake order + X-XSRF-TOKEN + 6-field body; it.fails())
-- [x] green-frontend-api (createUser POST via postJsonWithCsrf; it.fails→it)
-- [x] align-design (RegisterUserModal submitting ref + submitRegister→createUser; shared LoadingButton (w-auto override) + register-user-submit-spinner; fields v-model+disabled; also completed RED-infra CSRF stub in CreateUserBackendStatements)
-- [x] green-playwright (test.fail() removed; register-user-modal.spec 2 passed — Scn 4.2 loading state + 4.1 still green)
-- [x] demo (test-results/demo-register-user-modal-4.2-loading.webm)
+- [x] red-frontend-api (create-user.api.ts createUser POST — MSW happy-path; CSRF handshake + 6-field body)
+- [x] green-frontend-api (createUser POST via postJsonWithCsrf)
+- [x] align-design (RegisterUserModal submitting ref + shared LoadingButton spinner; fields disabled)
+- [x] green-playwright
+- [x] demo
 
 ### Scenario 5.1: Successful create closes the modal and refreshes the grid
-- [x] red-playwright (register-user-modal.spec.ts Scn 5.1 — success closes modal + grid refetch shows new Pending row; create-user-fixture.ts)
-- [S] red-frontend (purely presentational orchestration — modal emits on success, UsersPage closes modal + re-calls loadUsers; request-building + grid mapping already exist; no .logic.ts seam; handled in align-design)
+- [x] red-playwright (register-user-modal.spec.ts Scn 5.1 — success closes modal + grid refetch shows Pending row)
+- [S] red-frontend (presentational orchestration — success closes modal + grid refresh; no .logic.ts seam; align-design)
 - [S] green-frontend
 - [~] red-frontend-api
 - [ ] green-frontend-api
