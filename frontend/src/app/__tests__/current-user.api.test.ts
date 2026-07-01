@@ -5,51 +5,26 @@ import { issue } from 'allure-js-commons';
 import { server } from '@/test/msw-server';
 import { useAuthStore } from '../stores/auth.store';
 import { fetchCurrentUser } from '../logic/current-user.api';
-import type { AuthenticatedUser, CurrentUserResult } from '../logic/current-user.types';
+import type { CurrentUserResult } from '../logic/current-user.types';
+import { anAuthenticatedUser } from '@/test/builders/authenticated-user';
+import { aCurrentUserResponse, anUnauthenticatedProblem } from '@/test/builders/current-user-response';
 
 const BASE = import.meta.env.VITE_API_URL;
 
 const ME_PATH = '/api/auth/me';
 
-const SEEDED_VIEWER: AuthenticatedUser = {
-  login: 'jdoe',
-  email: 'j.doe@rpm.local',
-  firstName: 'John',
-  lastName: 'Doe',
-  timeZone: 'Europe/Berlin',
-};
+const SEEDED_VIEWER = anAuthenticatedUser();
 
 function stubMe(body: JsonBodyType, init: ResponseInit): void {
   server.use(http.get(`${BASE}${ME_PATH}`, () => HttpResponse.json(body, init)));
 }
 
 function stubMeUnauthenticated(): void {
-  stubMe(
-    {
-      type: 'https://www.rpm-ddd.my/problem/authentication-failed',
-      title: 'Unauthorized',
-      status: 401,
-      detail: 'Full authentication is required to access this resource.',
-      instance: ME_PATH,
-    },
-    { status: 401, headers: { 'Content-Type': 'application/problem+json' } },
-  );
+  stubMe(anUnauthenticatedProblem(), { status: 401, headers: { 'Content-Type': 'application/problem+json' } });
 }
 
 function stubMeAuthenticated(): void {
-  stubMe(
-    {
-      userId: '11111111-1111-1111-1111-111111111111',
-      login: 'jdoe',
-      email: 'j.doe@rpm.local',
-      firstName: 'John',
-      lastName: 'Doe',
-      status: 'ACTIVE',
-      roles: [],
-      timeZone: 'Europe/Berlin',
-    },
-    { status: 200 },
-  );
+  stubMe(aCurrentUserResponse(), { status: 200 });
 }
 
 describe('Current User API Client', () => {
@@ -97,16 +72,7 @@ describe('Current User API Client', () => {
 
     const result = await fetchCurrentUser();
 
-    const expected: CurrentUserResult = {
-      authenticated: true,
-      user: {
-        login: 'jdoe',
-        email: 'j.doe@rpm.local',
-        firstName: 'John',
-        lastName: 'Doe',
-        timeZone: 'Europe/Berlin',
-      },
-    };
+    const expected: CurrentUserResult = { authenticated: true, user: anAuthenticatedUser() };
     expect(result).toEqual(expected);
   });
 });

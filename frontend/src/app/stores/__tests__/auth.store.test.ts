@@ -4,39 +4,22 @@ import { http, HttpResponse, type JsonBodyType } from 'msw';
 import { server } from '@/test/msw-server';
 import { CSRF_PATH, stubCsrfSetsCookie, type CsrfCapture } from '@/test/csrf-stub';
 import { useAuthStore } from '../auth.store';
-import type { AuthenticatedUser } from '@/app/logic/current-user.types';
+import { anAuthenticatedUser } from '@/test/builders/authenticated-user';
+import { aCurrentUserResponse, anUnauthenticatedProblem } from '@/test/builders/current-user-response';
 
 const BASE = import.meta.env.VITE_API_URL;
 
 const ME_PATH = '/api/auth/me';
 const LOGOUT_PATH = '/api/auth/logout';
 
-const JOHN_DOE: AuthenticatedUser = {
-  login: 'jdoe',
-  email: 'j.doe@rpm.local',
-  firstName: 'John',
-  lastName: 'Doe',
-  timeZone: 'Europe/Berlin',
-};
+const JOHN_DOE = anAuthenticatedUser();
 
 function stubMe(body: JsonBodyType, init: ResponseInit): void {
   server.use(http.get(`${BASE}${ME_PATH}`, () => HttpResponse.json(body, init)));
 }
 
 function stubMeAuthenticated(): void {
-  stubMe(
-    {
-      userId: '11111111-1111-1111-1111-111111111111',
-      login: 'jdoe',
-      email: 'j.doe@rpm.local',
-      firstName: 'John',
-      lastName: 'Doe',
-      status: 'ACTIVE',
-      roles: [],
-      timeZone: 'Europe/Berlin',
-    },
-    { status: 200 },
-  );
+  stubMe(aCurrentUserResponse(), { status: 200 });
 }
 
 function stubLogoutCapturing(captured: CsrfCapture): void {
@@ -49,16 +32,7 @@ function stubLogoutCapturing(captured: CsrfCapture): void {
 }
 
 function stubMeUnauthenticated(): void {
-  stubMe(
-    {
-      type: 'https://www.rpm-ddd.my/problem/authentication-failed',
-      title: 'Unauthorized',
-      status: 401,
-      detail: 'Full authentication is required to access this resource.',
-      instance: ME_PATH,
-    },
-    { status: 401, headers: { 'Content-Type': 'application/problem+json' } },
-  );
+  stubMe(anUnauthenticatedProblem(), { status: 401, headers: { 'Content-Type': 'application/problem+json' } });
 }
 
 describe('Auth Store', () => {

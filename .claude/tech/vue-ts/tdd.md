@@ -5,6 +5,18 @@
 - Logic tests: Vitest, pure functions, no DOM, no Vue.
 - API client tests: Vitest + MSW (Mock Service Worker).
 
+## Test Data Builders (Object Mother)
+
+Shared test data lives in **`frontend/src/test/builders/`** as `{ ...DEFAULTS, ...overrides }` object-mothers — the FE analog of the backend `UserBuilder` / 3-tier `Scope`. Never re-inline the same literal across test files.
+
+- **One builder per shape, named `aX(overrides?)` / `anX(overrides?)`**, returning private `DEFAULTS` merged with the caller's `overrides` (e.g. `anAuthenticatedUser`, `aCurrentUserResponse`, `anUnauthenticatedProblem`). `userWith()` in `users-grid.logic.test.ts` is the same pattern kept inline.
+- **Defaults are the canonical, byte-equal body.** Reproduce the exact values consumers previously inlined (ids, emails, timezones) so swapping a literal for the builder changes no assertion — a whole-object `toEqual(...)` still holds.
+- **Override only the fields the assertion depends on.** In the given, pass just what drives the checked behavior — `anAuthenticatedUser({ firstName: 'jane', lastName: 'smith' })` when only the name→initials mapping is under test; the rest stay at defaults and are irrelevant. Stating only what matters is the point of the mother.
+- **Given variable vs shared fixture — pick by role:**
+  - *Direct SUT input* (each test has its own subject) → a **local** `const` in the given, named for the concept (`const authenticatedUser = anAuthenticatedUser({ ... })`), passed straight into the SUT.
+  - *Canonical fixture reused as both seed and expected value across several tests, compared whole* → a **shared module-level** `const` (e.g. `const JOHN_DOE = anAuthenticatedUser()`); localizing it per test would duplicate it and misrepresent the expected value.
+- **AAA layout:** separate arrange / act / assert with a **blank line**, not `// given` / `// when` / `// then` label comments — matches the existing suite.
+
 ## Content / Snapshot Approval (Native Vitest)
 
 For approval/snapshot verification — the universal "rendered-content verification" rule. Use Vitest's **built-in** snapshots; do NOT add an external approval library (selfie has no released JS port).

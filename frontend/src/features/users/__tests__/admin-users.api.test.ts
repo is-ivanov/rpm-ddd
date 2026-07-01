@@ -6,19 +6,13 @@ import { server } from '@/test/msw-server';
 import { useAuthStore } from '@/app/stores/auth.store';
 import { fetchAdminUsers } from '../logic/admin-users.api';
 import type { UserSummaryResponse } from '../logic/users-grid.types';
-import type { AuthenticatedUser } from '@/app/logic/current-user.types';
+import { anAuthenticatedUser } from '@/test/builders/authenticated-user';
 
 const BASE = import.meta.env.VITE_API_URL;
 
 const ADMIN_USERS_PATH = '/api/admin/users';
 
-const SEEDED_VIEWER: AuthenticatedUser = {
-  login: 'jdoe',
-  email: 'j.doe@rpm.local',
-  firstName: 'John',
-  lastName: 'Doe',
-  timeZone: 'Europe/Berlin',
-};
+const SEEDED_VIEWER = anAuthenticatedUser();
 
 const UNAUTHORIZED_PROBLEM = {
   type: 'https://www.rpm-ddd.my/problem/unauthorized',
