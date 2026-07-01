@@ -12,5 +12,5 @@ export function shouldRedirectToLogin(requiresAuth: boolean, isAuthenticated: bo
 
 /** True when an authenticated session is lost mid-page (authenticated -> unauthenticated). */
 export function shouldRedirectOnSessionLoss(wasAuthenticated: boolean, isAuthenticated: boolean): boolean {
-  return isAuthenticated && !wasAuthenticated;
+  return wasAuthenticated && !isAuthenticated;
 }

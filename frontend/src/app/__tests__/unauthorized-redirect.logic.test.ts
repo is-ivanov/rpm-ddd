@@ -33,9 +33,7 @@ describe('Protected Route Redirect Decision', () => {
 });
 
 describe('Session Loss Redirect Decision', () => {
-  // RED (#251) — shouldRedirectOnSessionLoss not implemented yet: only an
-  // authenticated -> unauthenticated transition must redirect.
-  it.fails('redirects only on an authenticated -> unauthenticated transition', async () => {
+  it('redirects only on an authenticated -> unauthenticated transition', async () => {
     await issue('251');
     expect(shouldRedirectOnSessionLoss(true, false)).toBe(true);
     expect(shouldRedirectOnSessionLoss(true, true)).toBe(false);
