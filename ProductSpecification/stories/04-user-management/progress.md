@@ -172,9 +172,9 @@ email is asserted as a side effect of backend Scenario 3.1)
 
 ### Scenario 5.1: Successful create closes the modal and refreshes the grid
 - [x] red-playwright (register-user-modal.spec.ts Scn 5.1 — success closes modal + grid refetch shows new Pending row; create-user-fixture.ts)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
+- [S] red-frontend (purely presentational orchestration — modal emits on success, UsersPage closes modal + re-calls loadUsers; request-building + grid mapping already exist; no .logic.ts seam; handled in align-design)
+- [S] green-frontend
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
