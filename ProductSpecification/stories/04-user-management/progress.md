@@ -166,8 +166,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-frontend
 - [x] red-frontend-api (create-user.api.ts createUser POST + create-user.types.ts CreateUserRequest; MSW happy-path test — CSRF handshake order + X-XSRF-TOKEN + 6-field body; it.fails())
 - [x] green-frontend-api (createUser POST via postJsonWithCsrf; it.fails→it)
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design (RegisterUserModal submitting ref + submitRegister→createUser; shared LoadingButton (w-auto override) + register-user-submit-spinner; fields v-model+disabled; also completed RED-infra CSRF stub in CreateUserBackendStatements)
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 5.1: Successful create closes the modal and refreshes the grid

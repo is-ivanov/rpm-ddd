@@ -1,20 +1,50 @@
 <script setup lang="ts">
+import { reactive, ref } from 'vue';
 import { ChevronDown, X } from '@lucide/vue';
 import RegisterUserTextField from './RegisterUserTextField.vue';
+import LoadingButton from '@/app/components/LoadingButton.vue';
+import { createUser } from '../logic/create-user.api';
 
 const APP_DEFAULT_TIMEZONE_LABEL = '(UTC+01:00) Central European Time — Europe/Berlin';
+const APP_DEFAULT_TIMEZONE = 'Europe/Berlin';
 
-type TextFieldConfig = { fieldId: string; label: string; placeholder: string; optional?: boolean };
+type FieldKey = 'firstName' | 'middleName' | 'lastName' | 'login' | 'email';
+type TextFieldConfig = { fieldId: string; key: FieldKey; label: string; placeholder: string; optional?: boolean };
 
 const TEXT_FIELDS: readonly TextFieldConfig[] = [
-  { fieldId: 'register-user-first-name', label: 'First name', placeholder: 'e.g. Sarah' },
-  { fieldId: 'register-user-middle-name', label: 'Middle name', placeholder: 'e.g. Jane', optional: true },
-  { fieldId: 'register-user-last-name', label: 'Last name', placeholder: 'e.g. Connor' },
-  { fieldId: 'register-user-login', label: 'Login', placeholder: 's.connor' },
-  { fieldId: 'register-user-email', label: 'Email', placeholder: 's.connor@rpm.local' },
+  { fieldId: 'register-user-first-name', key: 'firstName', label: 'First name', placeholder: 'e.g. Sarah' },
+  {
+    fieldId: 'register-user-middle-name',
+    key: 'middleName',
+    label: 'Middle name',
+    placeholder: 'e.g. Jane',
+    optional: true,
+  },
+  { fieldId: 'register-user-last-name', key: 'lastName', label: 'Last name', placeholder: 'e.g. Connor' },
+  { fieldId: 'register-user-login', key: 'login', label: 'Login', placeholder: 's.connor' },
+  { fieldId: 'register-user-email', key: 'email', label: 'Email', placeholder: 's.connor@rpm.local' },
 ];
 
+const values = reactive<Record<FieldKey, string>>({
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  login: '',
+  email: '',
+});
+
+const submitting = ref(false);
+
 defineEmits<{ close: [] }>();
+
+async function submitRegister(): Promise<void> {
+  submitting.value = true;
+  try {
+    await createUser({ ...values, timeZone: APP_DEFAULT_TIMEZONE });
+  } finally {
+    submitting.value = false;
+  }
+}
 </script>
 
 <template>
@@ -33,45 +63,50 @@ defineEmits<{ close: [] }>();
         </button>
       </div>
 
-      <div class="flex flex-col gap-4 px-6 pb-6 pt-4">
-        <RegisterUserTextField
-          v-for="field in TEXT_FIELDS"
-          :key="field.fieldId"
-          :field-id="field.fieldId"
-          :label="field.label"
-          :placeholder="field.placeholder"
-          :optional="field.optional"
-        />
+      <form @submit.prevent="submitRegister">
+        <div class="flex flex-col gap-4 px-6 pb-6 pt-4">
+          <RegisterUserTextField
+            v-for="field in TEXT_FIELDS"
+            :key="field.fieldId"
+            v-model="values[field.key]"
+            :field-id="field.fieldId"
+            :label="field.label"
+            :placeholder="field.placeholder"
+            :optional="field.optional"
+            :disabled="submitting"
+          />
 
-        <div class="flex flex-col gap-1.5">
-          <label data-testid="register-user-timezone-label" class="text-sm font-medium"> Timezone </label>
-          <div data-testid="register-user-timezone" class="select-control">
-            <span>{{ APP_DEFAULT_TIMEZONE_LABEL }}</span>
-            <ChevronDown :size="16" class="shrink-0 text-muted" aria-hidden="true" />
+          <div class="flex flex-col gap-1.5">
+            <label data-testid="register-user-timezone-label" class="text-sm font-medium"> Timezone </label>
+            <div data-testid="register-user-timezone" class="select-control">
+              <span>{{ APP_DEFAULT_TIMEZONE_LABEL }}</span>
+              <ChevronDown :size="16" class="shrink-0 text-muted" aria-hidden="true" />
+            </div>
+            <span class="text-xs text-muted"
+              >Used to display dates for this user. Defaults to the application timezone.</span
+            >
           </div>
-          <span class="text-xs text-muted"
-            >Used to display dates for this user. Defaults to the application timezone.</span
-          >
         </div>
-      </div>
 
-      <div class="flex justify-end gap-3 px-6 pb-6">
-        <button
-          data-testid="register-user-cancel"
-          type="button"
-          class="h-10 cursor-pointer rounded-md border border-line px-4 text-sm font-medium text-ink"
-          @click="$emit('close')"
-        >
-          Cancel
-        </button>
-        <button
-          data-testid="register-user-submit"
-          type="button"
-          class="inline-flex h-10 cursor-pointer items-center rounded-md bg-accent px-4 text-sm font-medium text-white hover:bg-accent-hover"
-        >
-          Register
-        </button>
-      </div>
+        <div class="flex justify-end gap-3 px-6 pb-6">
+          <button
+            data-testid="register-user-cancel"
+            type="button"
+            class="h-10 cursor-pointer rounded-md border border-line px-4 text-sm font-medium text-ink"
+            @click="$emit('close')"
+          >
+            Cancel
+          </button>
+          <LoadingButton
+            test-id="register-user-submit"
+            loading-test-id="register-user-submit-spinner"
+            label="Register"
+            loading-label="Registering…"
+            :loading="submitting"
+            class="w-auto cursor-pointer px-4"
+          />
+        </div>
+      </form>
     </div>
   </div>
 </template>

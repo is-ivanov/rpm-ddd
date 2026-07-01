@@ -1,6 +1,8 @@
 import { type Page, type Route } from '@playwright/test';
+import { fulfillCsrfRoute } from '../support/csrf-route';
 
 const ADMIN_USERS_URL_PATTERN = '**/api/admin/users';
+const CSRF_URL_PATTERN = '**/api/auth/csrf';
 
 export class CreateUserBackendStatements {
   private releaseInFlightCreate: (() => void) | null = null;
@@ -9,6 +11,7 @@ export class CreateUserBackendStatements {
 
   /** Holds POST /api/admin/users in flight until releaseCreateUser(); non-POST requests fall through. */
   async givenCreateUserInFlight(): Promise<void> {
+    await this.page.route(CSRF_URL_PATTERN, fulfillCsrfRoute);
     const held = new Promise<void>((resolve) => {
       this.releaseInFlightCreate = resolve;
     });
