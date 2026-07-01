@@ -9,8 +9,8 @@ Type: bug
 
 ### Fix: watch isAuthenticated → false → router.push(/login)
 - [x] red-playwright
-- [~] red-frontend
-- [ ] green-frontend
+- [x] red-frontend
+- [~] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
