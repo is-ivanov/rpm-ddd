@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { isUnauthorized, shouldRedirectToLogin } from '../logic/unauthorized-redirect.logic';
+import { issue } from 'allure-js-commons';
+import {
+  isUnauthorized,
+  shouldRedirectOnSessionLoss,
+  shouldRedirectToLogin,
+} from '../logic/unauthorized-redirect.logic';
 
 describe('Unauthorized Response Decision', () => {
   it.each([
@@ -24,5 +29,15 @@ describe('Protected Route Redirect Decision', () => {
     { name: 'allows a public route for an authenticated user', requiresAuth: false, authed: true, redirect: false },
   ])('$name', ({ requiresAuth, authed, redirect }) => {
     expect(shouldRedirectToLogin(requiresAuth, authed)).toBe(redirect);
+  });
+});
+
+describe('Session Loss Redirect Decision', () => {
+  it('redirects only on an authenticated -> unauthenticated transition', async () => {
+    await issue('251');
+    expect(shouldRedirectOnSessionLoss(true, false)).toBe(true);
+    expect(shouldRedirectOnSessionLoss(true, true)).toBe(false);
+    expect(shouldRedirectOnSessionLoss(false, false)).toBe(false);
+    expect(shouldRedirectOnSessionLoss(false, true)).toBe(false);
   });
 });

@@ -2,6 +2,15 @@ import { expect, type Page, type Route } from '@playwright/test';
 import { type AdminUser, SEVERAL_ADMIN_USERS } from '../support/admin-users-fixture';
 
 const ADMIN_USERS_URL_PATTERN = '**/api/admin/users';
+const ADMIN_USERS_INSTANCE = '/api/admin/users';
+const PROBLEM_TYPE_BASE_URL = 'https://www.rpm-ddd.my/problem/';
+
+interface ProblemDetail {
+  status: number;
+  typeSuffix: string;
+  title: string;
+  detail: string;
+}
 
 export class AdminUsersBackendStatements {
   private releaseInFlightList: (() => void) | null = null;
@@ -24,6 +33,11 @@ export class AdminUsersBackendStatements {
   /** Stubs GET /api/admin/users to return 500 (a recoverable server error). */
   async givenAdminUserListServerError(): Promise<void> {
     await this.page.route(ADMIN_USERS_URL_PATTERN, (route) => this.fulfillServerError(route));
+  }
+
+  /** Stubs GET /api/admin/users to return 401 (the session was lost mid-page). */
+  async givenAdminUserListUnauthorized(): Promise<void> {
+    await this.page.route(ADMIN_USERS_URL_PATTERN, (route) => this.fulfillUnauthorized(route));
   }
 
   async givenAdminUserListReturns(users: readonly AdminUser[]): Promise<void> {
@@ -56,16 +70,34 @@ export class AdminUsersBackendStatements {
   }
 
   private async fulfillServerError(route: Route): Promise<void> {
+    await this.fulfillProblemDetail(route, {
+      status: 500,
+      typeSuffix: 'internal-server-error',
+      title: 'Internal Server Error',
+      detail: 'An unexpected error occurred while loading users',
+    });
+  }
+
+  private async fulfillUnauthorized(route: Route): Promise<void> {
+    await this.fulfillProblemDetail(route, {
+      status: 401,
+      typeSuffix: 'unauthorized',
+      title: 'Unauthorized',
+      detail: 'Full authentication is required to access this resource',
+    });
+  }
+
+  private async fulfillProblemDetail(route: Route, problem: ProblemDetail): Promise<void> {
     this.adminUserListRequestCount += 1;
     await route.fulfill({
-      status: 500,
+      status: problem.status,
       contentType: 'application/problem+json',
       body: JSON.stringify({
-        type: 'https://www.rpm-ddd.my/problem/internal-server-error',
-        title: 'Internal Server Error',
-        status: 500,
-        detail: 'An unexpected error occurred while loading users',
-        instance: '/api/admin/users',
+        type: `${PROBLEM_TYPE_BASE_URL}${problem.typeSuffix}`,
+        title: problem.title,
+        status: problem.status,
+        detail: problem.detail,
+        instance: ADMIN_USERS_INSTANCE,
       }),
     });
   }

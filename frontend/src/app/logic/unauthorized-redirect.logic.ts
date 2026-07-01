@@ -9,3 +9,8 @@ export function isUnauthorized(status: number): boolean {
 export function shouldRedirectToLogin(requiresAuth: boolean, isAuthenticated: boolean): boolean {
   return requiresAuth && !isAuthenticated;
 }
+
+/** True when an authenticated session is lost mid-page (authenticated -> unauthenticated). */
+export function shouldRedirectOnSessionLoss(wasAuthenticated: boolean, isAuthenticated: boolean): boolean {
+  return wasAuthenticated && !isAuthenticated;
+}
