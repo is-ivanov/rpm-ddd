@@ -50,7 +50,7 @@ describe('Create User API Client', () => {
   // stay undefined. GREEN wires createUser through postJsonWithCsrf(CREATE_USER_PATH, request) so
   // the CSRF handshake runs and the request resolves on 201. The resolve + strict body/header
   // equality below is the pinned RED reason so an incidental failure isn't absorbed by it.fails().
-  it.fails('performs the CSRF handshake and POSTs the create-user body with the X-XSRF-TOKEN header', async () => {
+  it('performs the CSRF handshake and POSTs the create-user body with the X-XSRF-TOKEN header', async () => {
     const captured: CapturedRequest = { order: [] };
     stubCsrfSetsCookie(captured);
     stubCreateUserCapturing(captured);

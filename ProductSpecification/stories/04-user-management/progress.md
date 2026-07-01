@@ -165,8 +165,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] red-frontend (presentational loading state — submitting ref toggled around the async submit per Async Action Buttons rule; no .logic.ts seam, no input-varying logic; handled in align-design)
 - [S] green-frontend
 - [x] red-frontend-api (create-user.api.ts createUser POST + create-user.types.ts CreateUserRequest; MSW happy-path test — CSRF handshake order + X-XSRF-TOKEN + 6-field body; it.fails())
-- [~] green-frontend-api
-- [ ] align-design
+- [x] green-frontend-api (createUser POST via postJsonWithCsrf; it.fails→it)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
