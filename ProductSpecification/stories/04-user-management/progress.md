@@ -162,9 +162,9 @@ email is asserted as a side effect of backend Scenario 3.1)
 
 ### Scenario 4.2: Modal shows a loading state during submission
 - [x] red-playwright (register-user-modal.spec.ts Scn 4.2 + create-user-backend.statements.ts held-POST; submit spinner + all-fields-disabled asserts)
-- [~] red-frontend
-- [ ] green-frontend
-- [ ] red-frontend-api
+- [S] red-frontend (presentational loading state — submitting ref toggled around the async submit per Async Action Buttons rule; no .logic.ts seam, no input-varying logic; handled in align-design)
+- [S] green-frontend
+- [~] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
