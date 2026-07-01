@@ -76,11 +76,6 @@ test.describe('Register User Modal', () => {
       'Then the modal closes, ' +
       'And the grid refreshes and shows the newly created user with status Pending',
     async () => {
-      // RED: RegisterUserModal only toggles `submitting` on a successful create — it does not
-      // emit `close`, and UsersPage never refetches the grid. assertModalIsClosed fails
-      // (modal locator count stays 1). Remove test.fail() in green-frontend once the modal
-      // closes on success and the grid reloads to show the new Pending row.
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenListRefreshesWithNewUserAfterCreate();
       await createUserBackend.givenCreateUserSucceeds();
