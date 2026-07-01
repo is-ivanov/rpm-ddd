@@ -53,11 +53,6 @@ test.describe('Register User Modal', () => {
       'Then the Register button shows a loading indicator, ' +
       'And the form fields become disabled during submission',
     async () => {
-      // RED: the submit loading affordance does not exist yet — `register-user-submit-spinner` is not
-      // rendered and clicking "Register" wires no in-flight `submitting` state, so the bounded 5s
-      // visibility assertion throws (fast, absorbable by test.fail — not a 30s whole-test timeout).
-      // The submit handler + spinner + disabled state are built in red/green-frontend-api + align-design.
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenSeveralUsers();
       await createUserBackend.givenCreateUserInFlight();
