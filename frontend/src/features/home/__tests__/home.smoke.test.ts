@@ -5,6 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/test/msw-server';
 import App from '@/App.vue';
+import { aCurrentUserResponse, anUnauthenticatedProblem } from '@/test/builders/current-user-response';
 import HomePage from '../components/HomePage.vue';
 import DashboardHome from '../components/DashboardHome.vue';
 
@@ -16,26 +17,16 @@ const ME_PATH = '/api/auth/me';
 function stubUnauthenticated(): void {
   server.use(
     http.get(`${BASE}${ME_PATH}`, () =>
-      HttpResponse.json(
-        { type: 'about:blank', title: 'Unauthorized', status: 401 },
-        { status: 401, headers: { 'Content-Type': 'application/problem+json' } },
-      ),
+      HttpResponse.json(anUnauthenticatedProblem(), {
+        status: 401,
+        headers: { 'Content-Type': 'application/problem+json' },
+      }),
     ),
   );
 }
 
 function stubAuthenticated(): void {
-  server.use(
-    http.get(`${BASE}${ME_PATH}`, () =>
-      HttpResponse.json({
-        login: 'jdoe',
-        email: 'j.doe@rpm.local',
-        firstName: 'John',
-        lastName: 'Doe',
-        timeZone: 'Europe/Berlin',
-      }),
-    ),
-  );
+  server.use(http.get(`${BASE}${ME_PATH}`, () => HttpResponse.json(aCurrentUserResponse())));
 }
 
 async function mountHomePage() {
