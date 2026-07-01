@@ -174,9 +174,9 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] red-playwright (register-user-modal.spec.ts Scn 5.1 — success closes modal + grid refetch shows Pending row)
 - [S] red-frontend (presentational orchestration — success closes modal + grid refresh; no .logic.ts seam; align-design)
 - [S] green-frontend
-- [~] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend-api (createUser POST + grid refetch both pre-exist — Scn 4.2 / Scn 2.1; no new client)
+- [S] green-frontend-api
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
