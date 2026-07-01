@@ -1,0 +1,37 @@
+import { type Page, type Route } from '@playwright/test';
+
+const ADMIN_USERS_URL_PATTERN = '**/api/admin/users';
+
+export class CreateUserBackendStatements {
+  private releaseInFlightCreate: (() => void) | null = null;
+
+  constructor(private readonly page: Page) {}
+
+  /** Holds POST /api/admin/users in flight until releaseCreateUser(); non-POST requests fall through. */
+  async givenCreateUserInFlight(): Promise<void> {
+    const held = new Promise<void>((resolve) => {
+      this.releaseInFlightCreate = resolve;
+    });
+    await this.page.route(ADMIN_USERS_URL_PATTERN, async (route) => {
+      if (route.request().method() !== 'POST') {
+        await route.fallback();
+        return;
+      }
+      await held;
+      await this.fulfillCreated(route);
+    });
+  }
+
+  /** Releases the in-flight create so the held 201 response is delivered. */
+  releaseCreateUser(): void {
+    this.releaseInFlightCreate?.();
+  }
+
+  private async fulfillCreated(route: Route): Promise<void> {
+    await route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: '{}',
+    });
+  }
+}

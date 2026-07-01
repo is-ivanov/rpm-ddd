@@ -161,8 +161,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] demo (test-results/demo-register-user-modal.webm)
 
 ### Scenario 4.2: Modal shows a loading state during submission
-- [ ] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (register-user-modal.spec.ts Scn 4.2 + create-user-backend.statements.ts held-POST; submit spinner + all-fields-disabled asserts)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api

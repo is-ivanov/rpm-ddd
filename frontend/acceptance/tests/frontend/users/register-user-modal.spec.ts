@@ -4,6 +4,7 @@ import { UsersPageStatements } from '../../statements/frontend/users-page.statem
 import { RegisterUserModalStatements } from '../../statements/frontend/register-user-modal.statements';
 import { CurrentUserBackendStatements } from '../../statements/backend/current-user-backend.statements';
 import { AdminUsersBackendStatements } from '../../statements/backend/admin-users-backend.statements';
+import { CreateUserBackendStatements } from '../../statements/backend/create-user-backend.statements';
 
 test.describe('Register User Modal', () => {
   let homePage: HomePageStatements;
@@ -11,6 +12,7 @@ test.describe('Register User Modal', () => {
   let modal: RegisterUserModalStatements;
   let currentUserBackend: CurrentUserBackendStatements;
   let adminUsersBackend: AdminUsersBackendStatements;
+  let createUserBackend: CreateUserBackendStatements;
 
   test.beforeEach(({ page, baseURL }) => {
     homePage = new HomePageStatements(page, baseURL);
@@ -18,6 +20,7 @@ test.describe('Register User Modal', () => {
     modal = new RegisterUserModalStatements(page);
     currentUserBackend = new CurrentUserBackendStatements(page);
     adminUsersBackend = new AdminUsersBackendStatements(page);
+    createUserBackend = new CreateUserBackendStatements(page);
   });
 
   test(
@@ -40,6 +43,34 @@ test.describe('Register User Modal', () => {
       await modal.assertAllFieldsAreVisible();
       await modal.assertTimezonePrefilledWithAppDefault();
       await modal.assertRegisterAndCancelButtonsAreVisible();
+    },
+  );
+
+  test(
+    'UI Test Scenario 4.2: Modal shows a loading state during submission - ' +
+      'Given the Register user modal is filled with valid values, ' +
+      'When the user clicks "Register", ' +
+      'Then the Register button shows a loading indicator, ' +
+      'And the form fields become disabled during submission',
+    async () => {
+      // RED: the submit loading affordance does not exist yet — `register-user-submit-spinner` is not
+      // rendered and clicking "Register" wires no in-flight `submitting` state, so the bounded 5s
+      // visibility assertion throws (fast, absorbable by test.fail — not a 30s whole-test timeout).
+      // The submit handler + spinner + disabled state are built in red/green-frontend-api + align-design.
+      test.fail();
+      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await adminUsersBackend.givenSeveralUsers();
+      await createUserBackend.givenCreateUserInFlight();
+      await homePage.navigateToHomePage();
+      await homePage.clickUsersNavItem();
+      await usersPage.clickRegisterUserButton();
+      await modal.assertModalIsOpen();
+      await modal.fillWithValidValues();
+
+      await modal.clickRegister();
+
+      await modal.assertSubmitButtonShowsLoadingIndicator();
+      await modal.assertFormFieldsAreDisabled();
     },
   );
 });

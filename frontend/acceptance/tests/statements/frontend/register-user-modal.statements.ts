@@ -3,6 +3,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 const TEST_ID = {
   modal: 'register-user-modal',
   submitButton: 'register-user-submit',
+  submitSpinner: 'register-user-submit-spinner',
   cancelButton: 'register-user-cancel',
   timezoneControl: 'register-user-timezone',
 } as const;
@@ -18,6 +19,14 @@ const FIELDS = [
   { control: 'register-user-login', label: 'register-user-login-label', text: 'Login' },
   { control: 'register-user-email', label: 'register-user-email-label', text: 'Email' },
   { control: TEST_ID.timezoneControl, label: 'register-user-timezone-label', text: 'Timezone' },
+] as const;
+
+const VALID_INPUT_VALUES = [
+  { control: 'register-user-first-name', value: 'Grace' },
+  { control: 'register-user-middle-name', value: 'Brewster' },
+  { control: 'register-user-last-name', value: 'Hopper' },
+  { control: 'register-user-login', value: 'g.hopper' },
+  { control: 'register-user-email', value: 'g.hopper@rpm.local' },
 ] as const;
 
 export class RegisterUserModalStatements {
@@ -50,8 +59,39 @@ export class RegisterUserModalStatements {
     await expect(this.cancelButton(), 'the cancel button text is exactly "Cancel"').toHaveText(CANCEL_BUTTON_TEXT);
   }
 
+  async fillWithValidValues(): Promise<void> {
+    for (const field of VALID_INPUT_VALUES) {
+      await this.page.getByTestId(field.control).fill(field.value);
+    }
+  }
+
+  async clickRegister(): Promise<void> {
+    await this.submitButton().click();
+  }
+
+  async assertSubmitButtonShowsLoadingIndicator(): Promise<void> {
+    await expect(
+      this.submitSpinner(),
+      'the "Register" button shows a loading indicator while the create request is in flight',
+    ).toBeVisible({ timeout: 5000 });
+  }
+
+  async assertFormFieldsAreDisabled(): Promise<void> {
+    for (const field of VALID_INPUT_VALUES) {
+      await expect(
+        this.page.getByTestId(field.control),
+        `the "${field.control}" field is disabled during submission`,
+      ).toBeDisabled();
+    }
+    await expect(this.submitButton(), 'the "Register" submit button is disabled during submission').toBeDisabled();
+  }
+
   private modal(): Locator {
     return this.page.getByTestId(TEST_ID.modal);
+  }
+
+  private submitSpinner(): Locator {
+    return this.page.getByTestId(TEST_ID.submitSpinner);
   }
 
   private timezoneControl(): Locator {
