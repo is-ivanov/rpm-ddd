@@ -17,7 +17,7 @@ Type: refactoring
 - [x] refactor (replace the inline `stubMeAuthenticated()` / `stubMeUnauthenticated()` bodies in current-user.api.test.ts, auth.store.test.ts, home.smoke.test.ts with `aCurrentUserResponse()` + the problem-detail builder; the it.fails RED markers and assertions are untouched. Full FE unit suite green, lint green.)
 
 ### Step 4: Final sweep + verify
-- [~] refactor (cleanup) (verify no remaining inline AuthenticatedUser / `/me` duplication across the unit suite, all touched files <200 lines, full FE unit suite green, `npm run lint` green, IDE inspections clean on changed files.)
+- [x] refactor (cleanup) (verify no remaining inline AuthenticatedUser / `/me` duplication across the unit suite, all touched files <200 lines, full FE unit suite green, `npm run lint` green, IDE inspections clean on changed files.)
 
 ### Step 5: Document the FE test-data convention
-- [ ] refactor (doc) (record the FE object-mother/builder convention in `.claude/tech/vue-ts/tdd.md` — the binding is currently silent on test-data builders: `{...DEFAULTS, ...overrides}` mothers under `frontend/src/test/builders/`, express only fields relevant to the assertion, explicit given variable for a direct SUT input vs shared module fixture for a whole-object given+expected comparison, blank-line AAA separation without `// given/when/then` labels. Last commit of the task.)
+- [~] refactor (doc) (record the FE object-mother/builder convention in `.claude/tech/vue-ts/tdd.md` — the binding is currently silent on test-data builders: `{...DEFAULTS, ...overrides}` mothers under `frontend/src/test/builders/`, express only fields relevant to the assertion, explicit given variable for a direct SUT input vs shared module fixture for a whole-object given+expected comparison, blank-line AAA separation without `// given/when/then` labels. Last commit of the task.)
