@@ -158,7 +158,7 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-frontend-api
 - [x] align-design (RegisterUserModal.vue + RegisterUserTextField.vue per mockup 03-create-modal.html; UsersPage modalOpen wiring; .modal-overlay/.modal-card/.select-control theme classes; coverage N/A — presentational, no .logic.ts, E2E-covered)
 - [x] green-playwright (test.fail() removed; register-user-modal.spec.ts passes green)
-- [~] demo
+- [x] demo (test-results/demo-register-user-modal.webm)
 
 ### Scenario 4.2: Modal shows a loading state during submission
 - [ ] red-playwright
