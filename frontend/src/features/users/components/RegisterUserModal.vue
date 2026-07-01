@@ -35,12 +35,13 @@ const values = reactive<Record<FieldKey, string>>({
 
 const submitting = ref(false);
 
-defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: []; created: [] }>();
 
 async function submitRegister(): Promise<void> {
   submitting.value = true;
   try {
     await createUser({ ...values, timeZone: APP_DEFAULT_TIMEZONE });
+    emit('created');
   } finally {
     submitting.value = false;
   }

@@ -29,6 +29,11 @@ async function loadUsers(): Promise<void> {
   }
 }
 
+function onUserCreated(): void {
+  modalOpen.value = false;
+  void loadUsers();
+}
+
 onMounted(() => {
   void loadUsers();
 });
@@ -52,6 +57,6 @@ onMounted(() => {
     </div>
     <UsersGridError v-else-if="error" @retry="loadUsers" />
     <UsersGrid v-else :rows="rows" :viewer-time-zone="viewerTimeZone" />
-    <RegisterUserModal v-if="modalOpen" @close="modalOpen = false" />
+    <RegisterUserModal v-if="modalOpen" @close="modalOpen = false" @created="onUserCreated" />
   </div>
 </template>

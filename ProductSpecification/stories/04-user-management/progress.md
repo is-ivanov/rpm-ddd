@@ -176,8 +176,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-frontend
 - [S] red-frontend-api (createUser POST + grid refetch both pre-exist — Scn 4.2 / Scn 2.1; no new client)
 - [S] green-frontend-api
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design (RegisterUserModal emits `created` on success; UsersPage closes modal + refetches grid)
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 5.2: Duplicate login or email shows a field-level error
