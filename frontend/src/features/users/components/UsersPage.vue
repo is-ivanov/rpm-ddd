@@ -7,6 +7,7 @@ import { buildUserRows } from '../logic/users-grid.logic';
 import type { UserRow } from '../logic/users-grid.types';
 import UsersGrid from './UsersGrid.vue';
 import UsersGridError from './UsersGridError.vue';
+import RegisterUserModal from './RegisterUserModal.vue';
 
 const auth = useAuthStore();
 const viewerTimeZone = computed(() => auth.currentUser?.timeZone ?? 'UTC');
@@ -14,6 +15,7 @@ const viewerTimeZone = computed(() => auth.currentUser?.timeZone ?? 'UTC');
 const rows = ref<UserRow[]>([]);
 const loading = ref(true);
 const error = ref(false);
+const modalOpen = ref(false);
 
 async function loadUsers(): Promise<void> {
   loading.value = true;
@@ -40,6 +42,7 @@ onMounted(() => {
         data-testid="register-user-button"
         type="button"
         class="inline-flex h-10 items-center gap-2 rounded-md bg-accent px-4 text-sm font-medium text-white hover:bg-accent-hover"
+        @click="modalOpen = true"
       >
         <Plus :size="18" aria-hidden="true" /> Register user
       </button>
@@ -49,5 +52,6 @@ onMounted(() => {
     </div>
     <UsersGridError v-else-if="error" @retry="loadUsers" />
     <UsersGrid v-else :rows="rows" :viewer-time-zone="viewerTimeZone" />
+    <RegisterUserModal v-if="modalOpen" @close="modalOpen = false" />
   </div>
 </template>
