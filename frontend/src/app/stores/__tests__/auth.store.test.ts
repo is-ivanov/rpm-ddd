@@ -4,20 +4,14 @@ import { http, HttpResponse, type JsonBodyType } from 'msw';
 import { server } from '@/test/msw-server';
 import { CSRF_PATH, stubCsrfSetsCookie, type CsrfCapture } from '@/test/csrf-stub';
 import { useAuthStore } from '../auth.store';
-import type { AuthenticatedUser } from '@/app/logic/current-user.types';
+import { anAuthenticatedUser } from '@/test/builders/authenticated-user';
 
 const BASE = import.meta.env.VITE_API_URL;
 
 const ME_PATH = '/api/auth/me';
 const LOGOUT_PATH = '/api/auth/logout';
 
-const JOHN_DOE: AuthenticatedUser = {
-  login: 'jdoe',
-  email: 'j.doe@rpm.local',
-  firstName: 'John',
-  lastName: 'Doe',
-  timeZone: 'Europe/Berlin',
-};
+const JOHN_DOE = anAuthenticatedUser();
 
 function stubMe(body: JsonBodyType, init: ResponseInit): void {
   server.use(http.get(`${BASE}${ME_PATH}`, () => HttpResponse.json(body, init)));

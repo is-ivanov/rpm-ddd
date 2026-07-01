@@ -4,19 +4,13 @@ import { createPinia, setActivePinia } from 'pinia';
 import { server } from '@/test/msw-server';
 import { apiFetch } from '@/app/logic/fetch.api';
 import { useAuthStore } from '@/app/stores/auth.store';
-import type { AuthenticatedUser } from '@/app/logic/current-user.types';
+import { anAuthenticatedUser } from '@/test/builders/authenticated-user';
 
 const BASE = import.meta.env.VITE_API_URL;
 
 const PROTECTED_PATH = '/api/auth/me';
 
-const JOHN_DOE: AuthenticatedUser = {
-  login: 'jdoe',
-  email: 'j.doe@rpm.local',
-  firstName: 'John',
-  lastName: 'Doe',
-  timeZone: 'Europe/Berlin',
-};
+const JOHN_DOE = anAuthenticatedUser();
 
 interface Problem {
   type: string;
