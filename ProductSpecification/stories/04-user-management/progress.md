@@ -154,9 +154,9 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] red-playwright (register-user-modal.spec.ts + register-user-modal.statements.ts; UsersPageStatements.clickRegisterUserButton; timezone pre-fill exact-value assert)
 - [S] red-frontend (purely presentational — modal open + fixed app-default timezone; no .logic.ts seam, no input-varying behavior; handled in the component during align-design)
 - [S] green-frontend
-- [~] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend-api (Scn 4.1 fires no network request — modal open + prefill only; the create-user POST client is built at Scn 5.1)
+- [S] green-frontend-api
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
