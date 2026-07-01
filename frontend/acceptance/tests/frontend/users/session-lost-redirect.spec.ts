@@ -25,10 +25,6 @@ test.describe('Session Lost Mid-Page Redirect', () => {
       'Then the app reactively redirects to the /login page',
     async () => {
       await issue('251');
-      // RED (#251): no reactive watcher on isAuthenticated exists yet. The 401 resets the
-      // auth store but the app stays on /users instead of redirecting to /login, so the URL
-      // assertion below times out (Received .../users, Expected .../login).
-      test.fail();
 
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenAdminUserListUnauthorized();
