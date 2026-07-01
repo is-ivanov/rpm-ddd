@@ -178,10 +178,10 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-frontend-api
 - [x] align-design (RegisterUserModal emits `created` on success; UsersPage closes modal + refetches grid)
 - [x] green-playwright (register-user-modal.spec.ts Scn 5.1 GREEN — 3/3 pass)
-- [~] demo
+- [x] demo (register-user-modal.spec.ts Scn 5.1)
 
 ### Scenario 5.2: Duplicate login or email shows a field-level error
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
