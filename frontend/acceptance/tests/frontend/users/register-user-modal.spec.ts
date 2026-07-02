@@ -91,4 +91,32 @@ test.describe('Register User Modal', () => {
       await usersPage.assertNewPendingUserRowIsVisible();
     },
   );
+
+  test(
+    'UI Test Scenario 5.2: Duplicate login or email shows a field-level error - ' +
+      'Given the Register user modal is filled with a login that already exists, ' +
+      'When the user clicks "Register" and the server returns a duplicate-login error, ' +
+      'Then a field-level error message is shown under the Login field, ' +
+      'And the modal stays open with the entered values preserved',
+    async () => {
+      // RED: RegisterUserModal renders no field-level Login error element
+      // (register-user-login-error) and create-user.api ignores the 422 response,
+      // so no duplicate-login error is shown after a rejected submit.
+      test.fail();
+      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await adminUsersBackend.givenSeveralUsers();
+      await createUserBackend.givenCreateUserRejectsDuplicateLogin();
+      await homePage.navigateToHomePage();
+      await homePage.clickUsersNavItem();
+      await usersPage.clickRegisterUserButton();
+      await modal.assertModalIsOpen();
+      await modal.fillWithValidValues();
+
+      await modal.clickRegister();
+
+      await modal.assertLoginFieldErrorIsShown();
+      await modal.assertModalStaysOpen();
+      await modal.assertEnteredValuesArePreserved();
+    },
+  );
 });

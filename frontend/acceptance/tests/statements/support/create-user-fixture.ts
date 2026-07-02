@@ -11,6 +11,11 @@ export const NEW_USER_INPUT = {
   email: 'g.hopper@rpm.local',
 } as const;
 
+// The exact field-level message the real backend's LoginAlreadyExistsExceptionHandler emits
+// for a duplicate login (surfaced under the Login field). Single source for the mock body and
+// the E2E assertion so they never drift.
+export const DUPLICATE_LOGIN_ERROR_MESSAGE = 'Login already exists';
+
 // The acting admin who registers the new user — reuses the seed's John Doe actor so it
 // matches the authenticated current user and the new row's audit actors abbreviate to "J. Doe".
 const REGISTERING_ADMIN = JOHN_DOE;

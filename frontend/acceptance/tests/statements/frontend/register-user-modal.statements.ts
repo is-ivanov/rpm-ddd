@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from '@playwright/test';
-import { NEW_USER_INPUT } from '../support/create-user-fixture';
+import { DUPLICATE_LOGIN_ERROR_MESSAGE, NEW_USER_INPUT } from '../support/create-user-fixture';
 
 const TEST_ID = {
   modal: 'register-user-modal',
@@ -7,6 +7,7 @@ const TEST_ID = {
   submitSpinner: 'register-user-submit-spinner',
   cancelButton: 'register-user-cancel',
   timezoneControl: 'register-user-timezone',
+  loginFieldError: 'register-user-login-error',
 } as const;
 
 const SUBMIT_BUTTON_TEXT = 'Register';
@@ -91,6 +92,34 @@ export class RegisterUserModalStatements {
       ).toBeDisabled();
     }
     await expect(this.submitButton(), 'the "Register" submit button is disabled during submission').toBeDisabled();
+  }
+
+  async assertLoginFieldErrorIsShown(): Promise<void> {
+    await expect(
+      this.loginFieldError(),
+      'a field-level error is shown under the Login field after a duplicate-login rejection',
+    ).toBeVisible({ timeout: 5000 });
+    await expect(
+      this.loginFieldError(),
+      `the Login field error text is exactly "${DUPLICATE_LOGIN_ERROR_MESSAGE}"`,
+    ).toHaveText(DUPLICATE_LOGIN_ERROR_MESSAGE);
+  }
+
+  async assertModalStaysOpen(): Promise<void> {
+    await expect(this.modal(), 'the Register user modal stays open after the rejected submit').toBeVisible();
+  }
+
+  async assertEnteredValuesArePreserved(): Promise<void> {
+    for (const field of VALID_INPUT_VALUES) {
+      await expect(
+        this.page.getByTestId(field.control),
+        `the "${field.control}" field still holds the submitted value after the rejection`,
+      ).toHaveValue(field.value);
+    }
+  }
+
+  private loginFieldError(): Locator {
+    return this.page.getByTestId(TEST_ID.loginFieldError);
   }
 
   private modal(): Locator {

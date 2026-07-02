@@ -181,8 +181,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] demo (register-user-modal.spec.ts Scn 5.1)
 
 ### Scenario 5.2: Duplicate login or email shows a field-level error
-- [~] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (register-user-modal.spec.ts Scn 5.2 — duplicate-login 422 → login field error, modal stays open, values preserved)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
