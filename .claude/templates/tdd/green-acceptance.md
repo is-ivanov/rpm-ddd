@@ -14,8 +14,8 @@
 ## Prerequisites
 
 Before enabling acceptance test, ensure:
-- Use-case implemented (`/green-usecase`)
-- All required adapters implemented (`/green-adapter {adapter}` for each)
+- Use-case implemented (`green-usecase` phase)
+- All required adapters implemented (`green-adapter {adapter}` phase for each)
 - All module tests pass
 
 ## Allowed Changes

@@ -50,17 +50,19 @@ This gate is the owner and trigger for the *"implement after core"* instruction.
 
 This sequence is for a scenario tagged **`Level: L1 acceptance`** (a happy-path, full-context behavior). A scenario tagged **`Level: L2 web-slice`** (a validation / error / business-exception→HTTP-status category) does NOT use this sequence — its domain rule is already covered at a lower level, so it is driven by a `@WebTest` web-slice test, not an acceptance test: `red-adapter rest` → `design` → `green-adapter rest`, with `red/green-usecase`, `red/green-domain` and `green-acceptance` marked `[S]` (already covered / no Level-1 test for an error category). The `**Level:**` tag is authored in the test spec (`test-spec-format.md`) and consumed by Bootstrapping below.
 
+**Dispatch note — `red-*`/`green-*` are NOT slash-command skills.** A `red-*` or `green-*` phase step (`red-acceptance`, `red-usecase`, `red-adapter`, `red-playwright`, `red-frontend`, `red-frontend-api`, and their `green-*` counterparts) is dispatched via the **Agent tool** — `subagent_type: red-agent` for red phases, `green-agent` for green phases — passing the layer derived from the checkbox (`red-adapter db` → layer `db`). There is no `Skill(red-playwright)` / `Skill(green-usecase)` etc.: those skills do not exist, and calling them fails with "Unknown skill". `green-acceptance` and `green-playwright` are run by the main agent **inline** (remove-marker-only), not as a subagent. Only the genuine skills named below with a leading slash — `/test-review`, `/refactor`, `/design-preview`, `/architecture`, `/test-coverage`, `/align-design`, `/design-review`, `/run-backend`, `/run-frontend`, `/demo` — are invoked via the Skill tool. In the sequences below, `→ red-agent` / `→ green-agent` means "dispatch that phase via the Agent tool"; see `.claude/templates/workflow/continue-dispatch.md` → "Sub-Skill Dispatch" for the authoritative table.
+
 For each scenario in `tests/01_API_Tests.md`:
 
-1. `red-acceptance` → `/red-acceptance` → `/test-review` → `/refactor` (MANDATORY) → commit
+1. `red-acceptance` → `red-agent` → `/test-review` → `/refactor` (MANDATORY) → commit
 2. `design` → `/design-preview` → user approves (optionally with ADR) or escalates to `/architecture` → commit (if ADR produced)
-3. `red-usecase` → `/red-usecase` → `/test-review` → `/refactor` (MANDATORY) → commit
-4. `green-usecase` → `/green-usecase` → `/refactor` (MANDATORY) → `/test-coverage usecase --focus` → commit
-4a. `red-domain` / `green-domain` (OPTIONAL) — only when coverage-agent finds uncovered domain branches after step 4, OR when design-preview identifies domain objects with testable logic (value object validation, entity state transitions, domain policies). Follows same TDD cycle: `red-domain` → `/test-review` → `/refactor` → `green-domain` → `/refactor` → commit. Otherwise `[S]`.
+3. `red-usecase` → `red-agent` → `/test-review` → `/refactor` (MANDATORY) → commit
+4. `green-usecase` → `green-agent` → `/refactor` (MANDATORY) → `/test-coverage usecase --focus` → commit
+4a. `red-domain` / `green-domain` (OPTIONAL) — only when coverage-agent finds uncovered domain branches after step 4, OR when design-preview identifies domain objects with testable logic (value object validation, entity state transitions, domain policies). Follows same TDD cycle: `red-domain` (red-agent) → `/test-review` → `/refactor` → `green-domain` (green-agent) → `/refactor` → commit. Otherwise `[S]`.
 5. `adapters-discovery` → adapter discovery: identify ports and map to adapters, mark `[x] adapters-discovery`, insert concrete `red-adapter X` / `green-adapter X` steps below it (or `[S]` if no new adapters), commit progress.md
-6. `red-adapter X` → `/red-adapter X` → `/test-review` → `/refactor` (MANDATORY) → commit (one per port)
-7. `green-adapter X` → `/green-adapter X` → `/refactor` (MANDATORY) → `/test-coverage {adapter} --focus` → commit (one per port)
-8. `green-acceptance` → `/green-acceptance` → commit
+6. `red-adapter X` → `red-agent` (layer `X`) → `/test-review` → `/refactor` (MANDATORY) → commit (one per port)
+7. `green-adapter X` → `green-agent` (layer `X`) → `/refactor` (MANDATORY) → `/test-coverage {adapter} --focus` → commit (one per port)
+8. `green-acceptance` → run inline (green-agent workflow, remove-marker-only) → commit
 
 The `[ ] adapters-discovery` checkbox is a gate — it must be resolved before any subsequent step executes. The full procedure is in `.claude/templates/workflow/adapter-discovery-checklist.md`.
 
@@ -74,13 +76,13 @@ For each scenario in `tests/06_Integration_Tests.md` (if exists): same TDD cycle
 
 For each scenario in `tests/02_UI_Tests.md`:
 
-1. `red-playwright` → `/red-playwright` → `/test-review` → `/refactor` (MANDATORY) → commit
-2. `red-frontend` → `/red-frontend` → `/test-review` → `/refactor` (MANDATORY) → commit
-3. `green-frontend` → `/green-frontend` → `/refactor` (MANDATORY) → commit
-4. `red-frontend-api` → `/red-frontend-api` → `/test-review` → `/refactor` (MANDATORY) → commit
-5. `green-frontend-api` → `/green-frontend-api` → `/refactor` (MANDATORY) → commit
+1. `red-playwright` → `red-agent` → `/test-review` → `/refactor` (MANDATORY) → commit
+2. `red-frontend` → `red-agent` → `/test-review` → `/refactor` (MANDATORY) → commit
+3. `green-frontend` → `green-agent` → `/refactor` (MANDATORY) → commit
+4. `red-frontend-api` → `red-agent` → `/test-review` → `/refactor` (MANDATORY) → commit
+5. `green-frontend-api` → `green-agent` → `/refactor` (MANDATORY) → commit
 6. `align-design` → Build component → `/align-design` → `/design-review` (MANDATORY) → `/refactor` (MANDATORY) → `/align-design` verify-only → `/test-coverage frontend --focus` → commit
-7. `green-playwright` → `/run-backend` → `/run-frontend` → `/green-playwright` → commit
+7. `green-playwright` → `/run-backend` → `/run-frontend` → run inline (green-agent workflow, remove-marker-only) → commit
 8. `demo` → `/demo {test_class}` → progress-only commit
 
 
