@@ -9,8 +9,7 @@ describe('Register User Error View Mapping', () => {
     expect(fieldErrors).toEqual({});
   });
 
-  // RED — mapRegisterUserErrorToFieldErrors not implemented (stub returns {})
-  it.fails('maps a duplicate-login error to the login control', () => {
+  it('maps a duplicate-login error to the login control', () => {
     const fieldErrors = mapRegisterUserErrorToFieldErrors(
       new RegisterUserError('Validation failed', [{ property: 'login', message: 'Login already exists' }]),
     );
@@ -18,8 +17,7 @@ describe('Register User Error View Mapping', () => {
     expect(fieldErrors).toEqual({ login: 'Login already exists' });
   });
 
-  // RED — mapRegisterUserErrorToFieldErrors not implemented (stub returns {})
-  it.fails('maps a duplicate-email error to the email control', () => {
+  it('maps a duplicate-email error to the email control', () => {
     const fieldErrors = mapRegisterUserErrorToFieldErrors(
       new RegisterUserError('Validation failed', [{ property: 'email', message: 'Email already exists' }]),
     );
