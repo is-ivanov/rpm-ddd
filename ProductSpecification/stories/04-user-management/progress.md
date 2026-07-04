@@ -185,8 +185,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] red-frontend (create-user-error-view.logic.test.ts — mapCreateUserErrorToFieldErrors {login?,email?}; CreateUserError plumbing)
 - [x] green-frontend (mapRegisterUserErrorToFieldErrors — login/email dispatch, unknown ignored)
 - [x] red-frontend-api (register-user.api.test.ts — registerUser rejects RegisterUserError w/ fieldErrors on 422)
-- [~] green-frontend-api
-- [ ] align-design
+- [x] green-frontend-api (registerUser parses 422 problem+json → throws RegisterUserError; mirrors login.api)
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 

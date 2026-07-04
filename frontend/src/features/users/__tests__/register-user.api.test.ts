@@ -88,13 +88,7 @@ describe('Register User API Client', () => {
     expect(captured.body).toEqual(NEW_USER);
   });
 
-  // RED (Scn 5.2): register-user.api.ts::registerUser awaits postJsonWithCsrf but IGNORES the
-  // response, so a 422 duplicate-login ProblemDetail resolves silently instead of throwing.
-  // captureRejection then rejects with a plain Error ('call resolved but should have rejected...'),
-  // which is not a RegisterUserError. GREEN adds an `if (!response.ok)` branch that parses the
-  // problem+json body and throws a RegisterUserError carrying fieldErrors. The toBeInstanceOf
-  // assertion below is the pinned RED reason so an incidental failure isn't absorbed by it.fails().
-  it.fails('rejects with a RegisterUserError carrying parsed fieldErrors on 422 duplicate login', async () => {
+  it('rejects with a RegisterUserError carrying parsed fieldErrors on 422 duplicate login', async () => {
     stubCsrfSetsCookie({ order: [] });
     stubRegisterUserValidationProblem([{ property: 'login', message: 'Login already exists' }]);
 
