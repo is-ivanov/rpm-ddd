@@ -3,14 +3,14 @@ import { http, HttpResponse } from 'msw';
 import { createPinia, setActivePinia } from 'pinia';
 import { server } from '@/test/msw-server';
 import { CSRF_PATH, XSRF_TOKEN, stubCsrfSetsCookie } from '@/test/csrf-stub';
-import { createUser } from '../logic/create-user.api';
-import type { CreateUserRequest } from '../logic/create-user.types';
+import { registerUser } from '../logic/register-user.api';
+import type { RegisterUserRequest } from '../logic/register-user.types';
 
 const BASE = import.meta.env.VITE_API_URL;
 
-const CREATE_USER_PATH = '/api/admin/users';
+const REGISTER_USER_PATH = '/api/admin/users';
 
-const NEW_USER: CreateUserRequest = {
+const NEW_USER: RegisterUserRequest = {
   firstName: 'Sarah',
   middleName: 'Jane',
   lastName: 'Connor',
@@ -25,10 +25,10 @@ interface CapturedRequest {
   body?: unknown;
 }
 
-function stubCreateUserCapturing(captured: CapturedRequest): void {
+function stubRegisterUserCapturing(captured: CapturedRequest): void {
   server.use(
-    http.post(`${BASE}${CREATE_USER_PATH}`, async ({ request }) => {
-      captured.order.push(`POST ${CREATE_USER_PATH}`);
+    http.post(`${BASE}${REGISTER_USER_PATH}`, async ({ request }) => {
+      captured.order.push(`POST ${REGISTER_USER_PATH}`);
       captured.csrfHeader = request.headers.get('X-XSRF-TOKEN');
       captured.body = await request.json();
       return new HttpResponse(null, { status: 201 });
@@ -36,7 +36,7 @@ function stubCreateUserCapturing(captured: CapturedRequest): void {
   );
 }
 
-describe('Create User API Client', () => {
+describe('Register User API Client', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
   });
@@ -45,19 +45,19 @@ describe('Create User API Client', () => {
     document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
   });
 
-  // RED (Scn 4.2): create-user.api.ts::createUser is an unimplemented stub that throws
-  // ('createUser not implemented'), so the POST never goes in flight and the captured body/header
-  // stay undefined. GREEN wires createUser through postJsonWithCsrf(CREATE_USER_PATH, request) so
-  // the CSRF handshake runs and the request resolves on 201. The resolve + strict body/header
+  // RED (Scn 4.2): register-user.api.ts::registerUser was an unimplemented stub that threw
+  // ('registerUser not implemented'), so the POST never went in flight and the captured body/header
+  // stayed undefined. GREEN wires registerUser through postJsonWithCsrf(REGISTER_USER_PATH, request)
+  // so the CSRF handshake runs and the request resolves on 201. The resolve + strict body/header
   // equality below is the pinned RED reason so an incidental failure isn't absorbed by it.fails().
-  it('performs the CSRF handshake and POSTs the create-user body with the X-XSRF-TOKEN header', async () => {
+  it('performs the CSRF handshake and POSTs the register-user body with the X-XSRF-TOKEN header', async () => {
     const captured: CapturedRequest = { order: [] };
     stubCsrfSetsCookie(captured);
-    stubCreateUserCapturing(captured);
+    stubRegisterUserCapturing(captured);
 
-    await createUser(NEW_USER);
+    await registerUser(NEW_USER);
 
-    expect(captured.order).toEqual([`GET ${CSRF_PATH}`, `POST ${CREATE_USER_PATH}`]);
+    expect(captured.order).toEqual([`GET ${CSRF_PATH}`, `POST ${REGISTER_USER_PATH}`]);
     expect(captured.csrfHeader).toBe(XSRF_TOKEN);
     expect(captured.body).toEqual(NEW_USER);
   });

@@ -3,7 +3,7 @@ import { reactive, ref } from 'vue';
 import { ChevronDown, X } from '@lucide/vue';
 import RegisterUserTextField from './RegisterUserTextField.vue';
 import LoadingButton from '@/app/components/LoadingButton.vue';
-import { createUser } from '../logic/create-user.api';
+import { registerUser } from '../logic/register-user.api';
 
 const APP_DEFAULT_TIMEZONE_LABEL = '(UTC+01:00) Central European Time — Europe/Berlin';
 const APP_DEFAULT_TIMEZONE = 'Europe/Berlin';
@@ -40,7 +40,7 @@ const emit = defineEmits<{ close: []; created: [] }>();
 async function submitRegister(): Promise<void> {
   submitting.value = true;
   try {
-    await createUser({ ...values, timeZone: APP_DEFAULT_TIMEZONE });
+    await registerUser({ ...values, timeZone: APP_DEFAULT_TIMEZONE });
     emit('created');
   } finally {
     submitting.value = false;

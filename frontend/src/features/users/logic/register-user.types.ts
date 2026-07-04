@@ -2,7 +2,7 @@ import type { ProblemFieldError } from '@/app/schemas/problem-detail.schema';
 
 export type { ProblemFieldError };
 
-export interface CreateUserRequest {
+export interface RegisterUserRequest {
   readonly firstName: string;
   readonly middleName: string | null;
   readonly lastName: string;
@@ -11,7 +11,7 @@ export interface CreateUserRequest {
   readonly timeZone: string;
 }
 
-export class CreateUserError extends Error {
+export class RegisterUserError extends Error {
   readonly fieldErrors: ReadonlyArray<ProblemFieldError>;
 
   constructor(message: string | undefined, fieldErrors: ReadonlyArray<ProblemFieldError> = []) {
