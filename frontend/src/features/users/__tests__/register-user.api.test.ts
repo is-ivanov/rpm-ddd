@@ -2,9 +2,11 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { createPinia, setActivePinia } from 'pinia';
 import { server } from '@/test/msw-server';
+import { captureRejection } from '@/test/capture-rejection';
 import { CSRF_PATH, XSRF_TOKEN, stubCsrfSetsCookie } from '@/test/csrf-stub';
 import { registerUser } from '../logic/register-user.api';
-import type { RegisterUserRequest } from '../logic/register-user.types';
+import { RegisterUserError } from '../logic/register-user.types';
+import type { ProblemFieldError, RegisterUserRequest } from '../logic/register-user.types';
 
 const BASE = import.meta.env.VITE_API_URL;
 
@@ -36,6 +38,30 @@ function stubRegisterUserCapturing(captured: CapturedRequest): void {
   );
 }
 
+function stubRegisterUserValidationProblem(fieldErrors: ProblemFieldError[]): void {
+  server.use(
+    http.post(`${BASE}${REGISTER_USER_PATH}`, () =>
+      HttpResponse.json(
+        {
+          type: 'https://www.rpm-ddd.my/problem/validation-failed',
+          title: 'Unprocessable Content',
+          status: 422,
+          detail: `Validation failed for object='registerUserRequest'. Error count: ${fieldErrors.length}.`,
+          instance: REGISTER_USER_PATH,
+          fieldErrors: fieldErrors.map((fieldError) => ({
+            code: 'DuplicateKey',
+            property: fieldError.property,
+            message: fieldError.message,
+            rejectedValue: '',
+            path: fieldError.property,
+          })),
+        },
+        { status: 422, headers: { 'Content-Type': 'application/problem+json' } },
+      ),
+    ),
+  );
+}
+
 describe('Register User API Client', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -60,5 +86,21 @@ describe('Register User API Client', () => {
     expect(captured.order).toEqual([`GET ${CSRF_PATH}`, `POST ${REGISTER_USER_PATH}`]);
     expect(captured.csrfHeader).toBe(XSRF_TOKEN);
     expect(captured.body).toEqual(NEW_USER);
+  });
+
+  // RED (Scn 5.2): register-user.api.ts::registerUser awaits postJsonWithCsrf but IGNORES the
+  // response, so a 422 duplicate-login ProblemDetail resolves silently instead of throwing.
+  // captureRejection then rejects with a plain Error ('call resolved but should have rejected...'),
+  // which is not a RegisterUserError. GREEN adds an `if (!response.ok)` branch that parses the
+  // problem+json body and throws a RegisterUserError carrying fieldErrors. The toBeInstanceOf
+  // assertion below is the pinned RED reason so an incidental failure isn't absorbed by it.fails().
+  it.fails('rejects with a RegisterUserError carrying parsed fieldErrors on 422 duplicate login', async () => {
+    stubCsrfSetsCookie({ order: [] });
+    stubRegisterUserValidationProblem([{ property: 'login', message: 'Login already exists' }]);
+
+    const error = await captureRejection(registerUser(NEW_USER));
+
+    expect(error).toBeInstanceOf(RegisterUserError);
+    expect((error as RegisterUserError).fieldErrors).toEqual([{ property: 'login', message: 'Login already exists' }]);
   });
 });

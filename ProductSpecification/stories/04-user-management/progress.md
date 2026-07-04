@@ -184,8 +184,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] red-playwright (register-user-modal.spec.ts Scn 5.2 — duplicate-login 422 → login field error, modal stays open, values preserved)
 - [x] red-frontend (create-user-error-view.logic.test.ts — mapCreateUserErrorToFieldErrors {login?,email?}; CreateUserError plumbing)
 - [x] green-frontend (mapRegisterUserErrorToFieldErrors — login/email dispatch, unknown ignored)
-- [~] red-frontend-api
-- [ ] green-frontend-api
+- [x] red-frontend-api (register-user.api.test.ts — registerUser rejects RegisterUserError w/ fieldErrors on 422)
+- [~] green-frontend-api
 - [ ] align-design
 - [ ] green-playwright
 - [ ] demo
