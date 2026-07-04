@@ -4,7 +4,7 @@ import { UsersPageStatements } from '../../statements/frontend/users-page.statem
 import { RegisterUserModalStatements } from '../../statements/frontend/register-user-modal.statements';
 import { CurrentUserBackendStatements } from '../../statements/backend/current-user-backend.statements';
 import { AdminUsersBackendStatements } from '../../statements/backend/admin-users-backend.statements';
-import { CreateUserBackendStatements } from '../../statements/backend/create-user-backend.statements';
+import { RegisterUserBackendStatements } from '../../statements/backend/register-user-backend.statements';
 
 test.describe('Register User Modal', () => {
   let homePage: HomePageStatements;
@@ -12,7 +12,7 @@ test.describe('Register User Modal', () => {
   let modal: RegisterUserModalStatements;
   let currentUserBackend: CurrentUserBackendStatements;
   let adminUsersBackend: AdminUsersBackendStatements;
-  let createUserBackend: CreateUserBackendStatements;
+  let registerUserBackend: RegisterUserBackendStatements;
 
   test.beforeEach(({ page, baseURL }) => {
     homePage = new HomePageStatements(page, baseURL);
@@ -20,7 +20,7 @@ test.describe('Register User Modal', () => {
     modal = new RegisterUserModalStatements(page);
     currentUserBackend = new CurrentUserBackendStatements(page);
     adminUsersBackend = new AdminUsersBackendStatements(page);
-    createUserBackend = new CreateUserBackendStatements(page);
+    registerUserBackend = new RegisterUserBackendStatements(page);
   });
 
   test(
@@ -55,7 +55,7 @@ test.describe('Register User Modal', () => {
     async () => {
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenSeveralUsers();
-      await createUserBackend.givenCreateUserInFlight();
+      await registerUserBackend.givenRegisterUserInFlight();
       await homePage.navigateToHomePage();
       await homePage.clickUsersNavItem();
       await usersPage.clickRegisterUserButton();
@@ -78,7 +78,7 @@ test.describe('Register User Modal', () => {
     async () => {
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenListRefreshesWithNewUserAfterCreate();
-      await createUserBackend.givenCreateUserSucceeds();
+      await registerUserBackend.givenRegisterUserSucceeds();
       await homePage.navigateToHomePage();
       await homePage.clickUsersNavItem();
       await usersPage.clickRegisterUserButton();
@@ -100,12 +100,12 @@ test.describe('Register User Modal', () => {
       'And the modal stays open with the entered values preserved',
     async () => {
       // RED: RegisterUserModal renders no field-level Login error element
-      // (register-user-login-error) and create-user.api ignores the 422 response,
+      // (register-user-login-error) and register-user.api ignores the 422 response,
       // so no duplicate-login error is shown after a rejected submit.
       test.fail();
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenSeveralUsers();
-      await createUserBackend.givenCreateUserRejectsDuplicateLogin();
+      await registerUserBackend.givenRegisterUserRejectsDuplicateLogin();
       await homePage.navigateToHomePage();
       await homePage.clickUsersNavItem();
       await usersPage.clickRegisterUserButton();

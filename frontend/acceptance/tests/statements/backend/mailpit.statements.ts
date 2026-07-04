@@ -33,7 +33,7 @@ export class MailpitStatements {
   }
 
   // Polling wait (never sleep): the activation email is delivered asynchronously
-  // after the create-user call, so poll the Mailpit search API until it appears.
+  // after the register-user call, so poll the Mailpit search API until it appears.
   private async waitForActivationMessage(api: APIRequestContext, email: string): Promise<string> {
     let messageId = '';
     await expect

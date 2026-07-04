@@ -7,7 +7,7 @@ import {
   SEED_ACTOR_CELLS,
   SEED_ACTOR_DISPLAY,
 } from '../support/admin-users-fixture';
-import { NEW_PENDING_USER_ROW } from '../support/create-user-fixture';
+import { NEW_PENDING_USER_ROW } from '../support/register-user-fixture';
 
 const TEST_ID = {
   usersPage: 'users-page',

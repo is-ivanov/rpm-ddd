@@ -1,6 +1,6 @@
 import { expect, type Page, type Route } from '@playwright/test';
 import { type AdminUser, SEVERAL_ADMIN_USERS } from '../support/admin-users-fixture';
-import { NEW_PENDING_USER } from '../support/create-user-fixture';
+import { NEW_PENDING_USER } from '../support/register-user-fixture';
 
 const ADMIN_USERS_URL_PATTERN = '**/api/admin/users';
 const ADMIN_USERS_INSTANCE = '/api/admin/users';

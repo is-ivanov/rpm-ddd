@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from '@playwright/test';
-import { DUPLICATE_LOGIN_ERROR_MESSAGE, NEW_USER_INPUT } from '../support/create-user-fixture';
+import { DUPLICATE_LOGIN_ERROR_MESSAGE, NEW_USER_INPUT } from '../support/register-user-fixture';
 
 const TEST_ID = {
   modal: 'register-user-modal',
