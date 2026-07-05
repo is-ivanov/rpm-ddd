@@ -5,6 +5,7 @@ defineProps<{
   placeholder: string;
   optional?: boolean;
   disabled?: boolean;
+  error?: string;
 }>();
 
 const model = defineModel<string>({ required: true });
@@ -20,8 +21,10 @@ const model = defineModel<string>({ required: true });
       v-model="model"
       :data-testid="fieldId"
       class="form-input"
+      :class="{ 'border-danger': error }"
       :placeholder="placeholder"
       :disabled="disabled"
     />
+    <p v-if="error" :data-testid="`${fieldId}-error`" class="field-error">{{ error }}</p>
   </div>
 </template>

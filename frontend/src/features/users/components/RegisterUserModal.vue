@@ -4,6 +4,10 @@ import { ChevronDown, X } from '@lucide/vue';
 import RegisterUserTextField from './RegisterUserTextField.vue';
 import LoadingButton from '@/app/components/LoadingButton.vue';
 import { registerUser } from '../logic/register-user.api';
+import {
+  mapRegisterUserErrorToFieldErrors,
+  type RegisterUserFieldErrors,
+} from '../logic/register-user-error-view.logic';
 
 const APP_DEFAULT_TIMEZONE_LABEL = '(UTC+01:00) Central European Time — Europe/Berlin';
 const APP_DEFAULT_TIMEZONE = 'Europe/Berlin';
@@ -35,16 +39,40 @@ const values = reactive<Record<FieldKey, string>>({
 
 const submitting = ref(false);
 
+const fieldErrors = reactive<Record<FieldKey, string>>({
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  login: '',
+  email: '',
+});
+
 const emit = defineEmits<{ close: []; created: [] }>();
 
 async function submitRegister(): Promise<void> {
   submitting.value = true;
+  clearFieldErrors();
   try {
     await registerUser({ ...values, timeZone: APP_DEFAULT_TIMEZONE });
     emit('created');
+  } catch (error) {
+    showFieldErrors(error);
   } finally {
     submitting.value = false;
   }
+}
+
+function clearFieldErrors(): void {
+  applyFieldErrors({});
+}
+
+function showFieldErrors(error: unknown): void {
+  applyFieldErrors(mapRegisterUserErrorToFieldErrors(error));
+}
+
+function applyFieldErrors(mapped: RegisterUserFieldErrors): void {
+  fieldErrors.login = mapped.login ?? '';
+  fieldErrors.email = mapped.email ?? '';
 }
 </script>
 
@@ -75,6 +103,7 @@ async function submitRegister(): Promise<void> {
             :placeholder="field.placeholder"
             :optional="field.optional"
             :disabled="submitting"
+            :error="fieldErrors[field.key]"
           />
 
           <div class="flex flex-col gap-1.5">
