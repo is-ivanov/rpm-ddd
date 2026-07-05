@@ -109,8 +109,17 @@ Discussed per-rule with the user. Two disabled (incompatible/conflicting), two c
   *containing* Test (the `*TestExecutionListener` infra). Same suffix-anchored `testClassPattern`.
 - [x] refactor (2 disable + 2 testClassPattern config + ceiling 72 + pmd:check green)
 
+### Batch 4 hotfix — `GuardLogStatement` (disabled, ceiling 72 → 65)
+The PR #268 CI (Linux) counted 73 vs local (Windows) 72: `GuardLogStatement` is the one rule that
+resolves logger types differently across platforms (CI 10 / local 7), breaking the gate. Discussed with
+the user; disabled. The project logs only with SLF4J parameterized placeholders (`log.info("... {}", arg)`)
+where the level-guard is redundant — SLF4J defers message assembly past its own level check; the rule
+targets the old `log.debug("x" + expensive())` concat pattern the project does not use. Removing it drops
+local 72 → 65 and CI 73 → 63; ceiling set to 65 (the higher env, local), ratcheting down.
+- [x] refactor (exclude GuardLogStatement + ceiling 65 + pmd:check green)
+
 ### Batch 5 — real fixes + long tail
-Fix genuine findings: `SystemPrintln` (5), `PreserveStackTrace` (1), `GuardLogStatement` (10),
+Fix genuine findings: `SystemPrintln` (5), `PreserveStackTrace` (1),
 `MissingSerialVersionUID` (7), `AvoidDuplicateLiterals` (4), and the remaining long-tail rules.
 Fix in code where small/in-scope; defer larger ones to follow-up issues; disable true noise.
 - [ ] refactor (fix code / curate ruleset + lower ceiling + verify)

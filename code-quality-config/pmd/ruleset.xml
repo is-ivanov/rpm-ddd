@@ -24,6 +24,13 @@
          observable consequence in multiple then blocks; all 12 hits are such L1 tests. No meaningful
          ceiling exists for "assert all consequences". -->
     <exclude name="UnitTestContainsTooManyAsserts"/>
+    <!-- Wants log calls wrapped in an isXxxEnabled() guard. Off: the project logs only with SLF4J
+         parameterized placeholders (log.info("... {}", arg)), where the guard is redundant — SLF4J defers
+         message assembly past its own level check; the rule targets the old string-concatenation pattern
+         (log.debug("x" + expensive())), which the project does not use. It is also the one rule that
+         resolves logger types differently on Windows vs Linux, producing a non-deterministic count that
+         broke the CI gate. -->
+    <exclude name="GuardLogStatement"/>
   </rule>
   <!-- "Test method without @Test" heuristic. Its testClassPattern default is the unanchored regex "Test",
        so it treats any class whose name merely *contains* "Test" as a test class — flagging the
