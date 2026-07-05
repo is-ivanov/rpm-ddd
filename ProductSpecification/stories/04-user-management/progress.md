@@ -188,7 +188,7 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] green-frontend-api (registerUser parses 422 problem+json → throws RegisterUserError; mirrors login.api)
 - [x] align-design (RegisterUserTextField `error` prop → border-danger + .field-error; modal applyFieldErrors from mapper)
 - [x] green-playwright (register-user-modal.spec.ts Scn 5.2 GREEN — 4/4 spec pass)
-- [~] demo
+- [x] demo (register-user-modal.spec.ts Scn 5.2)
 
 ### Scenario 6.1: Collapse toggle persists across reload
 - [ ] red-playwright
