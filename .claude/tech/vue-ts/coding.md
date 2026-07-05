@@ -26,8 +26,10 @@ Tech binding for `frontend-rules.md`. Shared section structure: `.claude/templat
   is fully available to an exported function above it. (Applies to `function foo() {}` declarations,
   not `const foo = () => {}` arrow assignments, which are not hoisted — declare those before use.)
 - When several exports share one helper, the helper goes at the **bottom** of the module.
-- No linter enforces this (no `no-use-before-define` configured), so it is a convention, not a
-  tooling gate — keep it consistent across the `.api.ts`/`.logic.ts` layer.
+- No linter enforces this, so it is a convention, not a tooling gate — keep it consistent across
+  the `.api.ts`/`.logic.ts` layer. Note `no-use-before-define` enforces the **opposite** direction
+  (define-before-use → helper-first/bottom-up) and would flag every newspaper-ordered file; it is
+  intentionally **not** enabled. There is no mainstream rule that enforces the export-first direction.
 
 ## Shared UI Components
 
