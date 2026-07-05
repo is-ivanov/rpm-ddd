@@ -126,6 +126,7 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
   - [x] 5a·3: LiteralsFirstInComparisons disabled (Yoda notation; NPE owned by NullAway), ceiling 55→52
   - [x] 5a·4: AbstractClassWithoutAbstractMethod/AnyMethod kept ON, 3 abstract bases point-wise suppressed, ceiling 52→49
   - [x] 5a·5: UseProperClassLoader disabled (J2EE premise N/A to fat-jar), ceiling 49→47
+  - [x] 5a·6: AvoidSynchronizedAtMethodLevel kept ON, 2 test-infra singleton starts point-wise suppressed, ceiling 47→45
 
 ## Final
 - [ ] green-acceptance (`./mvnw verify -B` green; ceiling at its final value, ideally 0)

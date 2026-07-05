@@ -41,7 +41,9 @@ public final class GreenMailServer {
      */
     // Negation-first is intentional: the "start if not already running" idiom keeps the meaningful
     // action (start) in the main branch; flipping it would bury start() in the else.
-    @SuppressWarnings("PMD.ConfusingTernary")
+    // Method-level synchronized is intentional: a one-shot idempotent singleton start whose whole body is
+    // the critical section — not a hot path, no virtual threads; a ReentrantLock would add only boilerplate.
+    @SuppressWarnings({"PMD.ConfusingTernary", "PMD.AvoidSynchronizedAtMethodLevel"})
     public static synchronized GreenMail start() {
         if (!GREEN_MAIL.isRunning()) {
             GREEN_MAIL.start();
