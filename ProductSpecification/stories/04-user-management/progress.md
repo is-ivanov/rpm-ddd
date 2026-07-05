@@ -211,8 +211,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 > Generalize the Full-name-only filter to per-column state (Login, Email, Created by, Updated by), combined
 > AND. Same "contains" category as core Scn 3.1; new logic = multi-column composition.
 - [x] red-playwright (users-grid.spec.ts Scn 3.4 + users-grid-filter.statements.ts — Login∧Updated-by AND)
-- [~] red-frontend (per-column filter state + AND combine)
-- [ ] green-frontend
+- [x] red-frontend (users-grid.logic.test.ts — filterRowsByColumns AND over Login+Full-name; TextFilterColumn type)
+- [~] green-frontend
 - [S] red-frontend-api (client-side filter — reuses fetchAdminUsers)
 - [S] green-frontend-api
 - [ ] align-design (filter inputs on all text columns per mockup)

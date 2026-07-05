@@ -33,6 +33,8 @@ export interface UserRow {
 
 export type SortColumn = 'login' | 'status';
 
+export type TextFilterColumn = 'name' | 'login' | 'email' | 'createdBy' | 'updatedBy';
+
 export type SortDirection = 'asc' | 'desc';
 
 export interface AbsoluteTimeParts {

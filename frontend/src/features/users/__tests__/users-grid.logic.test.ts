@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildUserRows, filterRowsByFullName, sortUserRows } from '../logic/users-grid.logic';
+import { buildUserRows, filterRowsByColumns, filterRowsByFullName, sortUserRows } from '../logic/users-grid.logic';
 import type { PersonName, UserSummaryResponse } from '../logic/users-grid.types';
 
 const JOHN_DOE: PersonName = { firstName: 'John', middleName: 'Robert', lastName: 'Doe' };
@@ -108,6 +108,43 @@ describe('Full name column filter', () => {
       'Emily Carter',
       'David Lee',
     ]);
+  });
+});
+
+describe('Multi-column text filter (AND-combined)', () => {
+  // Login 'c' matches {s.connor, m.scott, e.carter} (not d.lee); name 'i' matches
+  // {Michael Scott, Emily Carter, David Lee} (not Sarah Jane Connor). The two 3-row sets overlap
+  // in exactly {m.scott, e.carter}, so each column excludes a row the OTHER includes — proving both
+  // participate. AND ⇒ 2 rows; OR ⇒ 4; login-only ⇒ 3; name-only ⇒ 3; pass-through ⇒ 4 — all differ.
+  const rows = buildUserRows([
+    userWith({ name: SARAH_CONNOR, login: 's.connor' }),
+    userWith({ name: MICHAEL_SCOTT, login: 'm.scott' }),
+    userWith({ name: EMILY_CARTER, login: 'e.carter' }),
+    userWith({ name: DAVID_LEE, login: 'd.lee' }),
+  ]);
+
+  // RED — filterRowsByColumns stub returns every row unchanged; expects only rows contained by
+  // BOTH the Login and Full-name terms (AND). Pinned to ['m.scott', 'e.carter'] so an OR /
+  // single-column / pass-through impl fails for the predicted reason, not an incidental one.
+  it.fails('keeps only rows matching EVERY active column filter (AND, not OR), preserving order', () => {
+    const filtered = filterRowsByColumns(rows, { login: 'c', name: 'i' });
+
+    expect(filtered.map((row) => row.login)).toEqual(['m.scott', 'e.carter']);
+  });
+
+  // RED — stub does not treat a blank term as "match everything"; expects the whitespace Login
+  // term ignored and only the Full-name term ('i' ⇒ Michael, Emily, David) applied.
+  it.fails('ignores a blank/whitespace term, applying only the other active column filter', () => {
+    const filtered = filterRowsByColumns(rows, { login: '   ', name: 'i' });
+
+    expect(filtered.map((row) => row.login)).toEqual(['m.scott', 'e.carter', 'd.lee']);
+  });
+
+  // RED — stub does not lowercase-compare; expects the uppercase terms to match case-insensitively.
+  it.fails('matches each column term case-insensitively', () => {
+    const filtered = filterRowsByColumns(rows, { login: 'C', name: 'I' });
+
+    expect(filtered.map((row) => row.login)).toEqual(['m.scott', 'e.carter']);
   });
 });
 

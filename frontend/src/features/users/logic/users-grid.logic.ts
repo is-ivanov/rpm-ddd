@@ -3,6 +3,7 @@ import type {
   PersonName,
   SortColumn,
   SortDirection,
+  TextFilterColumn,
   UserRow,
   UserSummaryResponse,
 } from './users-grid.types';
@@ -53,6 +54,11 @@ export function filterRowsByFullName(rows: UserRow[], term: string): UserRow[] {
     return rows;
   }
   return rows.filter((row) => row.name.toLowerCase().includes(needle));
+}
+
+export function filterRowsByColumns(rows: UserRow[], filters: Partial<Record<TextFilterColumn, string>>): UserRow[] {
+  void filters;
+  return rows;
 }
 
 const STATUS_LIFECYCLE_RANK: Record<string, number> = {
