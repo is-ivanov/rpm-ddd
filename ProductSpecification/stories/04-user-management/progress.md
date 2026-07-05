@@ -197,8 +197,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] red-frontend-api (no network — collapse state persists client-side in localStorage)
 - [S] green-frontend-api
 - [x] align-design (DashboardTopBar collapse toggle + DashboardSidebar rail; localStorage persist; style.css split → styles/components.css)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (sidebar-collapse.spec.ts GREEN — 1/1; home suite 9/9)
+- [~] demo
 
 ## Full-Stack Journey (07_FullStack_Journey.md)
 > Verdict: **extend** — weave the real Story 4 create-user UI into

@@ -22,11 +22,6 @@ test.describe('Sidebar Collapse', () => {
       'When the user reloads the page, ' +
       'Then the sidebar is still collapsed',
     async () => {
-      // RED: the sidebar collapse toggle (data-testid="sidebar-collapse-toggle") does not exist
-      // yet in DashboardTopBar.vue, so assertCollapseToggleIsVisible() fails fast (5s toBeVisible).
-      // Removed in GREEN once the toggle + collapsed-state persistence are implemented.
-      test.fail();
-
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await homePage.navigateToHomePage();
 
