@@ -194,9 +194,9 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] red-playwright (sidebar-collapse.spec.ts + sidebar-collapse.statements.ts — data-collapsed toggle + reload persistence)
 - [x] red-frontend (sidebar-collapse.logic.test.ts — parseSidebarCollapsedState parse + safe default)
 - [x] green-frontend (parseSidebarCollapsedState = raw === 'true'; test parameterized via it.each)
-- [~] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend-api (no network — collapse state persists client-side in localStorage)
+- [S] green-frontend-api
+- [~] align-design
 - [ ] green-playwright
 - [ ] demo
 
