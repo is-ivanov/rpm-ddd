@@ -2,7 +2,7 @@
 
 | # | Story | Spec | Back | Intg | Front | Sec | Load | Infra | Tests | % |
 |---|-------|------|------|------|-------|-----|------|-------|-------|----|
-| 4 | User management: admin user grid & create user | ✅ | ✅ | n/a | 🔧 | — | — | — | 15/28 | 54% |
+| 4 | User management: admin user grid & create user | ✅ | ✅ | n/a | ✅ | — | — | — | 17/28 | 61% |
 
 # Backlog
 
