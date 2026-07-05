@@ -192,8 +192,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 
 ### Scenario 6.1: Collapse toggle persists across reload
 - [x] red-playwright (sidebar-collapse.spec.ts + sidebar-collapse.statements.ts — data-collapsed toggle + reload persistence)
-- [~] red-frontend
-- [ ] green-frontend
+- [x] red-frontend (sidebar-collapse.logic.test.ts — parseSidebarCollapsedState parse + safe default)
+- [~] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
 - [ ] align-design
