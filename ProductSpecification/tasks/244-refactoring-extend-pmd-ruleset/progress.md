@@ -53,7 +53,17 @@ Discussed per-rule with the user. First five disabled:
 ### Batch 3b — remaining 5: explore configuration (33 violations)
 `ShortVariable` (13), `LinguisticNaming` (13), `ShortMethodName` (4), `ShortClassName` (1),
 `ConfusingTernary` (2). Each needs targeted config/exception instead of blanket disable.
-- [ ] refactor (configure rules + lower ceiling + verify)
+
+* `ShortVariable` (13 → 0, ceiling 170 → 157) — configured `violationSuppressRegex` to allow-list
+  conventional short names `(id|bd)` (name appears in the message; precise vs lowering `minimum`);
+  renamed the one genuine 1-char smell `p` → `parser` in StringTrimmerJacksonDeserializer.
+- [x] refactor: ShortVariable (violationSuppressRegex allow-list + rename p→parser, ceiling 157)
+
+Remaining candidates (config approach chosen per rule, still to apply):
+`LinguisticNaming` (13 — narrow via checkBooleanMethod/checkGetters=false), `ShortMethodName`
+(4 — `minimum=2`, name not in message so regex can't target), `ShortClassName` (1 —
+violationSuppressRegex allow `User`), `ConfusingTernary` (2 — no useful property; exclude).
+- [ ] refactor (configure remaining 4 + lower ceiling + verify)
 
 ### Batch 4 — test-rule tuning
 Candidates: `UnitTestShouldIncludeAssert` (46), `UnitTestContainsTooManyAsserts` (12),

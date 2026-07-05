@@ -48,6 +48,13 @@
       <property name="maximumStaticImports" value="7"/>
     </properties>
   </rule>
+  <!-- Allow a curated list of conventional short names rather than lowering the length threshold:
+       `id` (entity/DTO identifier) and `bd` (Spring BeanDefinition). Any other short name still flags. -->
+  <rule ref="category/java/codestyle.xml/ShortVariable">
+    <properties>
+      <property name="violationSuppressRegex" value="Avoid variables with short names like (id|bd)"/>
+    </properties>
+  </rule>
 
 
   <rule ref="category/java/design.xml">
