@@ -165,6 +165,12 @@
     <!-- Flags fields matching method names. Off: every record component (email, code, id, ...) has an
          auto-generated accessor with the same name — inherent false positive for record-heavy code. -->
     <exclude name="AvoidFieldNameMatchingMethodName"/>
+    <!-- Prefers Thread.currentThread().getContextClassLoader() over X.class.getClassLoader(). Off: the
+         rule's premise is J2EE app servers with a multi-classloader hierarchy. In a Spring Boot fat-jar
+         (single app classloader) both hits load a resource co-packaged with the loading class
+         (ActivationEmailRenderer + its email template; TestResources + test resources) — the class's own
+         classloader is the correct, deterministic choice, and TCCL (mutable per thread) would be a regression. -->
+    <exclude name="UseProperClassLoader"/>
   </rule>
   <!-- "Looks like a test class but has no test cases" heuristic. Its default pattern flags names that
        *start or end* with Test/Tests/TestCase, catching Test-prefixed infrastructure that is not a test

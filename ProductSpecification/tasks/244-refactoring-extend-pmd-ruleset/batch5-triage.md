@@ -20,7 +20,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 | `ImplicitFunctionalInterface` | 3 | Domain ports + a **Spring Data repository** (`SpringDataUserSummaryRepository`). `@FunctionalInterface` is semantically wrong and freezes them at one method. | DISABLE | ✅ **DECIDED** — excluded (bestpractices). Applied in 5a·1. |
 | `ClassWithOnlyPrivateConstructorsShouldBeFinal` | 3 | User keeps rule ON. `User` is a JPA aggregate (`@Table`) → can't be `final`. The 2 test classes (`ViolationAssert`, `EmailAddressGenerator`) are leaves → made `final`. | CONFIGURE (@Table) + FIX | ✅ **DECIDED** — suppress `@Table` via `violationSuppressXPath` + `final` on the 2 test leaves; verified 3→0, `test-compile` green. Applied in 5a·2. |
 | `AbstractClassWithoutAbstractMethod` + `AbstractClassWithoutAnyMethod` | 2+1 | User keeps both rules ON (useful). The 3 hits are legit abstract base classes (`AbstractApplicationIntegrationTest`, `AbstractApi` — 4 subclasses + protected ctor + shared helpers, `AbstractMailIntegrationTest`). Rule ignores constructors (verified in PMD source: only `extends`/`implements` exempts), so the doc's protected-ctor note is explanatory, not an exemption. | POINT-WISE SUPPRESS | ✅ **DECIDED** — `@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")` on the first two, `@SuppressWarnings("PMD.AbstractClassWithoutAnyMethod")` on the mail base. Applied in 5a·4. |
-| `UseProperClassLoader` | 2 | Rule's premise is J2EE app servers; N/A to Spring Boot fat-jar (`getClass().getClassLoader()` for bundled resources is correct). Sites: `ActivationEmailRenderer:41`, `TestResources:26`. | DISABLE | — |
+| `UseProperClassLoader` | 2 | Rule's premise is J2EE app servers; N/A to Spring Boot fat-jar (`getClass().getClassLoader()` for co-packaged resources is correct; TCCL would be a regression). Sites: `ActivationEmailRenderer:41`, `TestResources:26`. | DISABLE | ✅ **DECIDED** — excluded (errorprone). Applied in 5a·5. |
 | `AvoidSynchronizedAtMethodLevel` | 2 | Method-level sync on test-infra singletons (`GreenMailServer:45`, `PostgresContainersLifecycleManager:130`) is a legitimate choice; rule is stylistic. | DISABLE | — |
 | `DataClass` | 1 | `UserSummaryView` is a read projection; being a data class is by design. | DISABLE | — |
 | `ImmutableField` | 1 | `User.login` is a JPA entity field (active-persistence); entity fields not forced `final`. | DISABLE | — |
@@ -68,3 +68,6 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
   explicit null checks; 3→0). pmd:check green. NOTE: `LoosePackageCoupling` flaps 0/1 locally — pending disable.
 - **5a·4** (ceiling 52 → 49): `AbstractClassWithoutAbstractMethod`/`AbstractClassWithoutAnyMethod` — rules kept
   ON, 3 legit abstract bases suppressed point-wise via `@SuppressWarnings` (3→0). pmd:check green.
+  (doc follow-up: moved the suppression rationale from line comments to Javadoc.)
+- **5a·5** (ceiling 49 → 47): `UseProperClassLoader` disabled (J2EE premise N/A to Spring Boot fat-jar;
+  co-packaged resources load correctly via the class's own classloader; 2→0). pmd:check green.
