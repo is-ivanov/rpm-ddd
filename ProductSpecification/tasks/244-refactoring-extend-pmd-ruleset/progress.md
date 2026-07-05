@@ -123,6 +123,7 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
 - [~] refactor (curate ruleset + fix code, part by part)
   - [x] 5a·1: AvoidUncheckedExceptionsInSignatures (suppress @Override) + ImplicitFunctionalInterface (disable), ceiling 65→58
   - [x] 5a·2: ClassWithOnlyPrivateConstructorsShouldBeFinal (suppress @Table + final on 2 test leaves), ceiling 58→55
+  - [x] 5a·3: LiteralsFirstInComparisons disabled (Yoda notation; NPE owned by NullAway), ceiling 55→52
 
 ## Final
 - [ ] green-acceptance (`./mvnw verify -B` green; ceiling at its final value, ideally 0)

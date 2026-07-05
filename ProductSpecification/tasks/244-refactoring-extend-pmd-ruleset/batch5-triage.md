@@ -40,7 +40,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 
 | Rule | N | Fix | Rec | Decision |
 |------|---|-----|-----|----------|
-| `LiteralsFirstInComparisons` | 3 | Swap operands (`"x".equals(y)`) — NPE safety. Sites: `DbContainerTestExecutionListener:48`, `GreenMailServerTestExecutionListener:43`, `PostgresContainersLifecycleManager:80`. | FIX | — |
+| `LiteralsFirstInComparisons` | 3 | User: DISABLE — Yoda notation hurts readability; NPE-safety (its only benefit) is owned by explicit null checks + NullAway. Also a cross-platform-variant rule. | DISABLE | ✅ **DECIDED** — excluded (bestpractices). Applied in 5a·3. |
 | `PreserveStackTrace` + `AvoidThrowingRawExceptionTypes` | 1+2 | `DbContainerTestExecutionListener:72/88` — throw a specific type carrying the cause `e`. | FIX | — |
 | `UnnecessaryAnnotationValueElement` | 1 | `SpaForwardingController:20` — `@GetMapping(value="…")` → `@GetMapping("…")`. | FIX | — |
 | `SimplifyBooleanReturns` | 1 | `GreenMailServerTestExecutionListener:40` — collapse `if/return` into one `return`. | FIX | — |
@@ -64,3 +64,5 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
   `ImplicitFunctionalInterface` disabled (3→0). pmd:check green.
 - **5a·2** (ceiling 58 → 55): `ClassWithOnlyPrivateConstructorsShouldBeFinal` — suppress `@Table` (JPA `User`)
   + `final` on `ViolationAssert` and `EmailAddressGenerator` (3→0). pmd:check + test-compile green.
+- **5a·3** (ceiling 55 → 52): `LiteralsFirstInComparisons` disabled (Yoda notation; NPE owned by NullAway +
+  explicit null checks; 3→0). pmd:check green. NOTE: `LoosePackageCoupling` flaps 0/1 locally — pending disable.

@@ -36,6 +36,11 @@
          (SpringDataUserSummaryRepository) — role interfaces that happen to have one method today, not
          lambda targets. @FunctionalInterface would misdescribe their intent and freeze them at one method. -->
     <exclude name="ImplicitFunctionalInterface"/>
+    <!-- Wants the literal first in String comparisons ("x".equals(y)) — Yoda notation. Off: it hurts
+         readability, and its only benefit (NPE-safety when the left operand is null) is already owned by
+         explicit null checks + NullAway static analysis. Also one of the rules whose count differs across
+         Windows/Linux. -->
+    <exclude name="LiteralsFirstInComparisons"/>
   </rule>
   <!-- "Test method without @Test" heuristic. Its testClassPattern default is the unanchored regex "Test",
        so it treats any class whose name merely *contains* "Test" as a test class — flagging the
