@@ -145,7 +145,7 @@ class AuthenticationServiceTest {
         void when_userNotFound_expect_userNotFoundException() {
             // GIVEN:
             // WHEN:
-            userStatements.getCurrentUser(sut, userStatements.givenUnknownUserId());
+            userStatements.whenGettingCurrentUser(sut, userStatements.givenUnknownUserId());
 
             // THEN:
             userStatements.assertUserNotFound();
