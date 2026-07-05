@@ -8,6 +8,10 @@ package by.iivanov.rpm.testing;
  * failures is declared on {@link AbstractApplicationIntegrationTest} through {@link SharedSpies}, not
  * here — the {@code mail} tag does not affect the Spring context cache key, so mail and non-mail
  * integration tests stay on a single cached context.
+ *
+ * <p>Empty by design: a tag-only base that adds {@link MailTest} to the inherited full-context
+ * setup; abstract to prevent direct instantiation.
  */
+@SuppressWarnings("PMD.AbstractClassWithoutAnyMethod")
 @MailTest
 public abstract class AbstractMailIntegrationTest extends AbstractApplicationIntegrationTest {}
