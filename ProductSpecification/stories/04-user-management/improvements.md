@@ -136,6 +136,37 @@ large volumes, both deferred.
 until a new status is added or the backend needs the order; the NaN fallback is the interim safeguard.
 Decided (user, 2026-06-29): take option (c)-lite — leave client-side sort with the fallback, log this item.
 
+### I11 — Keep the dashboard shell hand-rolled; do not adopt a full Vue UI kit (Scn 6.1)
+**Observed:** the app shell (top bar + collapsible sidebar rail, Scn 6.1) is hand-rolled across
+`DashboardShell.vue`/`DashboardTopBar.vue`/`DashboardSidebar.vue`. The "header + collapse-to-icon-rail"
+layout is a common pattern that several Vue UI kits ship ready-made (Vuetify `v-navigation-drawer` `rail`,
+Quasar `q-drawer` `mini`, Ant Design Vue `a-layout-sider` `collapsible`, Naive `n-layout-sider`, Element
+Plus `el-menu` `collapse`, PrimeVue Drawer). Question raised (user, 2026-07-05): are we reinventing a wheel?
+**Analysis:** a full UI kit is a **styling system**, not a component — adopting one conflicts with the
+deliberately-built stack: Tailwind v4 as the single style source, the `align-design` → `design-review`
+pixel-vs-mockup workflow, Playwright-by-`data-testid`, Humble Object, and the 200-line file cap. It would
+displace the mockup-alignment process, not slot into it. Same reasoning as the grid-library decision (Scn
+3.1, kept hand-rolled). The shell itself is genuinely small (~100 lines, collapse = one boolean + `w-60`↔
+`w-16`) — not a wheel worth importing a framework for. Persistence is the only real duplication → see I12.
+**Scope:** decision item, not code work — record so "why not Vuetify/Quasar" doesn't resurface. Revisit only
+on a project-scale re-platform of the frontend styling approach. Decided (user, 2026-07-05): keep hand-rolled.
+
+### I12 — Replace hand-rolled sidebar persistence with VueUse `useStorage` (Scn 6.1)
+**Observed:** `DashboardShell.vue` persists the collapsed state with a manual `ref` + `watch` +
+`localStorage.getItem/setItem`, and `sidebar-collapse.logic.ts` (`parseSidebarCollapsedState`) hand-parses the
+stored string. This exact concern is provided by VueUse (`@vueuse/core`) `useStorage('key', false)`, which
+returns a reactive `RemovableRef<boolean>` that auto-serializes, writes the default, and syncs across tabs.
+VueUse is a composable-utility library (not a UI kit) — stack-neutral, brings no styles, does not conflict
+with I11. Not currently a dependency.
+**Analysis:** adopting `useStorage` collapses the persistence to one line and removes the `ref`+`watch`
+plumbing; `parseSidebarCollapsedState` and its unit test disappear (the library owns parsing — the logic seam
+is gone). It still uses `localStorage` under the hood, so the jsdom `installInMemoryLocalStorage` polyfill
+(`src/test/local-storage.ts`, from Scn 6.1) stays required. Trade-off: a new runtime dependency for a small
+code win.
+**Scope:** add `@vueuse/core`, swap the manual persistence in `DashboardShell.vue` for `useStorage`, delete
+`sidebar-collapse.logic.ts` + its unit test, re-run the sidebar e2e + full lint. Decided (user, 2026-07-05):
+defer to after Story 4 closes — don't add a dependency mid-story; promote to a refactor task then.
+
 ## Done
 
 ### I5 — Static-analysis check for UPPER_CASE SQL/JPQL keywords (Q4) — Task #226, PR #238
