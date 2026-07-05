@@ -66,7 +66,7 @@ class ActivationServiceTest {
             clock.add(Duration.ofHours(25));
 
             // WHEN:
-            userStatements.validateToken(sut, token);
+            userStatements.whenValidatingToken(sut, token);
 
             // THEN:
             userStatements.assertThrownExpiredJwtException();
@@ -75,7 +75,7 @@ class ActivationServiceTest {
         @Test
         @DisplayName("WHEN malformed activation token EXPECT throws MalformedJwtException")
         void when_malformedActivationToken_expect_throwsMalformedJwtException() {
-            userStatements.validateToken(sut, "not-a-valid-jwt");
+            userStatements.whenValidatingToken(sut, "not-a-valid-jwt");
             userStatements.assertThrownMalformedJwtException();
         }
     }
@@ -90,7 +90,7 @@ class ActivationServiceTest {
             var user = userStatements.givenPendingUserWithLoginAndEmail(VALID_LOGIN, VALID_EMAIL);
             var token = userStatements.generateActivationToken(tokenGenerator, user);
             // WHEN:
-            userStatements.activate(sut, token, "passwordwithoutuppercase");
+            userStatements.whenActivatingAccount(sut, token, "passwordwithoutuppercase");
 
             // THEN:
             userStatements.assertThrownInvalidPasswordException();

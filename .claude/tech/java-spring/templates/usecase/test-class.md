@@ -28,6 +28,7 @@
 - Plain Java class (no annotation needed)
 - Exposes in-memory fakes as public fields
 - Setup methods named `given*()` — create and save domain objects
+- Action methods named `when*()` — invoke the SUT and capture the result/exception for a later `assert*()` (never `get*()`, which reads as a getter and trips PMD `LinguisticNaming`)
 - Uses Instancio to generate default-filled domain objects, overriding only relevant fields
 
 ## InMemory Fakes

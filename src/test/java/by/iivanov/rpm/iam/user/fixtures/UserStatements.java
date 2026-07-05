@@ -93,12 +93,12 @@ public class UserStatements {
     }
 
     /** Calls getCurrentUser on the given service, capturing any thrown exception. */
-    public void getCurrentUser(AuthenticationService service, UserId userId) {
+    public void whenGettingCurrentUser(AuthenticationService service, UserId userId) {
         thrownException = catchThrowable(() -> service.getCurrentUser(userId));
     }
 
     /** Calls validateToken on the given service, capturing any thrown exception. */
-    public void validateToken(ActivationService service, String token) {
+    public void whenValidatingToken(ActivationService service, String token) {
         thrownException = catchThrowable(() -> service.validateToken(token));
     }
 
@@ -117,7 +117,7 @@ public class UserStatements {
     }
 
     /** Calls activate on the given service, capturing any thrown exception. */
-    public void activate(ActivationService service, String token, String plainPassword) {
+    public void whenActivatingAccount(ActivationService service, String token, String plainPassword) {
         thrownException = catchThrowable(() -> service.activate(token, plainPassword));
     }
 

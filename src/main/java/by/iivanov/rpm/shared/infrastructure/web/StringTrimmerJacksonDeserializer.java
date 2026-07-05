@@ -23,7 +23,7 @@ import tools.jackson.databind.ValueDeserializer;
 class StringTrimmerJacksonDeserializer extends ValueDeserializer<String> {
 
     @Override
-    public @Nullable String deserialize(JsonParser p, DeserializationContext ctxt) throws JacksonException {
-        return StringUtils.trimToNull(p.getValueAsString());
+    public @Nullable String deserialize(JsonParser parser, DeserializationContext ctxt) throws JacksonException {
+        return StringUtils.trimToNull(parser.getValueAsString());
     }
 }

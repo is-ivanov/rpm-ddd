@@ -4,17 +4,158 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
-    <description>
-        Project PMD ruleset: the maven-pmd-plugin default rules with a few project overrides.
-    </description>
+  <description>
+    Project PMD ruleset: all 8 PMD Java categories enabled. Violations are burned down in batches
+    (see Task 244) — rules owned by Spotless/Checkstyle/SpotBugs or contradicting project conventions
+    are excluded/configured below; the pom.xml maxAllowedViolations ceiling ratchets down per batch.
+  </description>
 
-    <!-- All the rules the plugin enforces by default when no ruleset is configured. -->
-    <rule ref="rulesets/java/maven-pmd-plugin-default.xml" />
+  <rule ref="category/java/bestpractices.xml">
+    <!-- Wants assert*()/fail() in every test body. Off: the 3-tier DSL (tdd-rules.md) delegates
+         verification to Statements assert* and custom AssertJ *Assert *instance* methods (plus BDD then(),
+         catchThrowable) — PMD's assert detection recognizes only static method names, so it can't follow
+         the delegation and flags honest tests (PasswordPolicyTest, UserTest, ...). extraAssertMethodNames
+         covers static methods only, so it can't reach the Statements-delegated asserts either. The value
+         (a test with no verification) is already guaranteed by the RED discipline (@ExpectedToFail +
+         predicted failure per test). -->
+    <exclude name="UnitTestShouldIncludeAssert"/>
+    <!-- Caps a test at 1 assert. Off: direct conflict with the project rule "one action, assert all
+         consequences (Level 1)" (tdd-rules.md) — an acceptance test triggers one action and asserts every
+         observable consequence in multiple then blocks; all 12 hits are such L1 tests. No meaningful
+         ceiling exists for "assert all consequences". -->
+    <exclude name="UnitTestContainsTooManyAsserts"/>
+    <!-- Wants log calls wrapped in an isXxxEnabled() guard. Off: the project logs only with SLF4J
+         parameterized placeholders (log.info("... {}", arg)), where the guard is redundant — SLF4J defers
+         message assembly past its own level check; the rule targets the old string-concatenation pattern
+         (log.debug("x" + expensive())), which the project does not use. It is also the one rule that
+         resolves logger types differently on Windows vs Linux, producing a non-deterministic count that
+         broke the CI gate. -->
+    <exclude name="GuardLogStatement"/>
+  </rule>
+  <!-- "Test method without @Test" heuristic. Its testClassPattern default is the unanchored regex "Test",
+       so it treats any class whose name merely *contains* "Test" as a test class — flagging the
+       *TestExecutionListener infra. Anchor it to the project's test-suffix convention (AGENTS.md:
+       *Test / *IntegrationTest — both end in Test) so only real *Test classes are checked. -->
+  <rule ref="category/java/bestpractices.xml/UnitTestShouldUseTestAnnotation">
+    <properties>
+      <property name="testClassPattern" value="^(?:.*\.)?[^.]*Tests?$"/>
+    </properties>
+  </rule>
 
-    <!-- Override: the default cap of 4 is too low for test DSLs that lean on static imports. -->
-    <rule ref="category/java/codestyle.xml/TooManyStaticImports">
-        <properties>
-            <property name="maximumStaticImports" value="7" />
-        </properties>
-    </rule>
+
+  <rule ref="category/java/codestyle.xml">
+    <!-- Flag method args / locals that could be `final`. Off: no stack tool or project
+         convention enforces `final` (no Checkstyle FinalParameters, Palantir does not add it). -->
+    <exclude name="MethodArgumentCouldBeFinal"/>
+    <exclude name="LocalVariableCouldBeFinal"/>
+    <!-- Flag `var` declarations, wants explicit types. Off: the project adopted `var`
+         (157 usages across 54 files); no tool in the stack forbids it. -->
+    <exclude name="UseExplicitTypes"/>
+    <!-- Caps variable-name length at 17 chars. Off: the threshold forces abbreviating descriptive
+         collaborator/domain names (registrationPolicy, emailNotificationSender), contradicting the
+         project's descriptive-naming convention; no other tool caps name length. -->
+    <exclude name="LongVariable"/>
+    <!-- Wants a `/* package */` comment on every package-private member to make default access
+         explicit. Off: the access modifier is self-documenting; module boundaries are enforced by
+         Spring Modulith + ArchUnit, and forced comments clash with the no-comments-unless-asked rule. -->
+    <exclude name="CommentDefaultAccessModifier"/>
+    <!-- Method-naming pattern (junit5TestPattern forbids `_`). Off: duplicates Checkstyle
+         `MethodName`, which already owns both prod lowerCamelCase and the @Test-aware should_ pattern. -->
+    <exclude name="MethodNamingConventions"/>
+    <!-- Wants explicit `super()` in constructors. Off: Java auto-inserts no-arg super(); all 23 are test
+         classes extending a base test; forcing redundant super() is noise. -->
+    <exclude name="CallSuperInConstructor"/>
+    <!-- Mandates a single return per method. Off: the project does not adopt single-return; guard clauses
+         and early returns are idiomatic and improve readability. -->
+    <exclude name="OnlyOneReturn"/>
+    <!-- Wants at least one explicit constructor per class. Off: flags stateless/static-method classes and
+         Spring @Configuration classes with only @Bean methods; default constructor suffices. -->
+    <exclude name="AtLeastOneConstructor"/>
+  </rule>
+  <!-- Override: the default cap of 4 is too low for test DSLs that lean on static imports. -->
+  <rule ref="category/java/codestyle.xml/TooManyStaticImports">
+    <properties>
+      <property name="maximumStaticImports" value="7"/>
+    </properties>
+  </rule>
+  <!-- Allow a curated list of conventional short names rather than lowering the length threshold:
+       `id` (entity/DTO identifier) and `bd` (Spring BeanDefinition). Any other short name still flags. -->
+  <rule ref="category/java/codestyle.xml/ShortVariable">
+    <properties>
+      <property name="violationSuppressRegex" value="Avoid variables with short names like (id|bd)"/>
+    </properties>
+  </rule>
+  <!-- Allow-list conventional short method names via XPath on the AST node (the message carries no
+       name, so a regex can't target them): `on` (Spring @EventListener handler), `me` (/me endpoint),
+       `id` (record-style accessor). Any other short method name still flags. -->
+  <rule ref="category/java/codestyle.xml/ShortMethodName">
+    <properties>
+      <property name="violationSuppressXPath" value="./ancestor-or-self::MethodDeclaration[@Name = ('on', 'me', 'id')]"/>
+    </properties>
+  </rule>
+  <!-- Allow the domain aggregate name `User` (the message carries the name, so a regex targets it —
+       consistent with ShortVariable). Any other short class name still flags. -->
+  <rule ref="category/java/codestyle.xml/ShortClassName">
+    <properties>
+      <property name="violationSuppressRegex" value="Avoid short class names like User"/>
+    </properties>
+  </rule>
+
+
+  <!-- Two orthogonal allow-lists, both keeping the rule active for real production code:
+       - ignoredAnnotations: exempt @Test/@ParameterizedTest methods whose names start with an HTTP
+         verb ("getRequest..."), a false positive vs the get*->void getter check;
+       - violationSuppressXPath: exempt methods inside *Assert classes — custom AssertJ asserts name
+         has* methods that return the assert type for chaining (idiomatic), not a boolean.
+       A has*-returns-non-boolean method in a non-Assert prod class, or a real get*->void getter, still flags. -->
+  <rule ref="category/java/codestyle.xml/LinguisticNaming">
+    <properties>
+      <property name="ignoredAnnotations" value="org.junit.jupiter.api.Test,org.junit.jupiter.params.ParameterizedTest"/>
+      <property name="violationSuppressXPath" value="./ancestor::ClassDeclaration[ends-with(@SimpleName, 'Assert')]"/>
+    </properties>
+  </rule>
+
+
+  <rule ref="category/java/design.xml">
+    <!-- "Talk only to friends" — flags a.b().c() chains. Off: 9/17 are enum-constant accesses
+         (UserStatus.PENDING); the rest are unavoidable fluent/builder/stream API navigations and library
+         type traversal (jjwt, HTTP, Jakarta). Zero genuine object-graph navigation violations. -->
+    <exclude name="LawOfDemeter"/>
+  </rule>
+
+
+  <rule ref="category/java/documentation.xml">
+    <!-- Configured in Checkstyle -->
+    <exclude name="CommentRequired"/>
+    <!-- Caps comment line length (80) and comment block lines (6). Off: line length is owned by
+         Checkstyle LineLength=120; the 6-line cap conflicts with preserving Javadoc/comments. -->
+    <exclude name="CommentSize"/>
+  </rule>
+
+
+  <rule ref="category/java/errorprone.xml">
+    <!-- Flags fields matching method names. Off: every record component (email, code, id, ...) has an
+         auto-generated accessor with the same name — inherent false positive for record-heavy code. -->
+    <exclude name="AvoidFieldNameMatchingMethodName"/>
+  </rule>
+  <!-- "Looks like a test class but has no test cases" heuristic. Its default pattern flags names that
+       *start or end* with Test/Tests/TestCase, catching Test-prefixed infrastructure that is not a test
+       (TestRpmDddApplication, TestcontainersConfiguration, TestContextValidator, TestResources). Anchor
+       it to the project's test-suffix convention (AGENTS.md: *Test / *IntegrationTest) so only real *Test
+       classes are checked; the Test-prefixed infra is exempt. -->
+  <rule ref="category/java/errorprone.xml/TestClassWithoutTestCases">
+    <properties>
+      <property name="testClassPattern" value="^(?:.*\.)?[^.]*Tests?$"/>
+    </properties>
+  </rule>
+
+
+  <rule ref="category/java/multithreading.xml"/>
+
+
+  <rule ref="category/java/performance.xml"/>
+
+
+  <rule ref="category/java/security.xml"/>
+
 </ruleset>
