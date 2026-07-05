@@ -55,6 +55,14 @@
       <property name="violationSuppressRegex" value="Avoid variables with short names like (id|bd)"/>
     </properties>
   </rule>
+  <!-- Allow-list conventional short method names via XPath on the AST node (the message carries no
+       name, so a regex can't target them): `on` (Spring @EventListener handler), `me` (/me endpoint),
+       `id` (record-style accessor). Any other short method name still flags. -->
+  <rule ref="category/java/codestyle.xml/ShortMethodName">
+    <properties>
+      <property name="violationSuppressXPath" value="./ancestor-or-self::MethodDeclaration[@Name = ('on', 'me', 'id')]"/>
+    </properties>
+  </rule>
 
 
   <rule ref="category/java/design.xml">

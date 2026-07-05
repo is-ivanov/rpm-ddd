@@ -59,11 +59,15 @@ Discussed per-rule with the user. First five disabled:
   renamed the one genuine 1-char smell `p` → `parser` in StringTrimmerJacksonDeserializer.
 - [x] refactor: ShortVariable (violationSuppressRegex allow-list + rename p→parser, ceiling 157)
 
+* `ShortMethodName` (4 → 0, ceiling 157 → 153) — the message carries no name, so used
+  `violationSuppressXPath` to allow-list AST method nodes `on`/`me`/`id` (Spring @EventListener,
+  /me endpoint, record-style accessor). Precise allow-list beats lowering `minimum`.
+- [x] refactor: ShortMethodName (violationSuppressXPath allow-list, ceiling 153)
+
 Remaining candidates (config approach chosen per rule, still to apply):
-`LinguisticNaming` (13 — narrow via checkBooleanMethod/checkGetters=false), `ShortMethodName`
-(4 — `minimum=2`, name not in message so regex can't target), `ShortClassName` (1 —
+`LinguisticNaming` (13 — narrow via checkBooleanMethod/checkGetters=false), `ShortClassName` (1 —
 violationSuppressRegex allow `User`), `ConfusingTernary` (2 — no useful property; exclude).
-- [ ] refactor (configure remaining 4 + lower ceiling + verify)
+- [ ] refactor (configure remaining 3 + lower ceiling + verify)
 
 ### Batch 4 — test-rule tuning
 Candidates: `UnitTestShouldIncludeAssert` (46), `UnitTestContainsTooManyAsserts` (12),
