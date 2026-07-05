@@ -72,6 +72,20 @@
   </rule>
 
 
+  <!-- Two orthogonal allow-lists, both keeping the rule active for real production code:
+       - ignoredAnnotations: exempt @Test/@ParameterizedTest methods whose names start with an HTTP
+         verb ("getRequest..."), a false positive vs the get*->void getter check;
+       - violationSuppressXPath: exempt methods inside *Assert classes — custom AssertJ asserts name
+         has* methods that return the assert type for chaining (idiomatic), not a boolean.
+       A has*-returns-non-boolean method in a non-Assert prod class, or a real get*->void getter, still flags. -->
+  <rule ref="category/java/codestyle.xml/LinguisticNaming">
+    <properties>
+      <property name="ignoredAnnotations" value="org.junit.jupiter.api.Test,org.junit.jupiter.params.ParameterizedTest"/>
+      <property name="violationSuppressXPath" value="./ancestor::ClassDeclaration[ends-with(@SimpleName, 'Assert')]"/>
+    </properties>
+  </rule>
+
+
   <rule ref="category/java/design.xml">
     <!-- "Talk only to friends" — flags a.b().c() chains. Off: 9/17 are enum-constant accesses
          (UserStatus.PENDING); the rest are unavoidable fluent/builder/stream API navigations and library

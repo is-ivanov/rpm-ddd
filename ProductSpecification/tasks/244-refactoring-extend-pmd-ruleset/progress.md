@@ -77,9 +77,21 @@ Discussed per-rule with the user. First five disabled:
   `PMD.AvoidUsingHardCodedIP` suppression convention in GreenMailServer) rather than a blanket exclude.
 - [x] refactor: ConfusingTernary (point-wise @SuppressWarnings on 2 test-infra methods, ceiling 150)
 
-Remaining candidate (config approach chosen, still to apply):
-`LinguisticNaming` (13 — narrow via checkBooleanMethod/checkGetters=false).
-- [ ] refactor (configure LinguisticNaming + lower ceiling + verify)
+* `LinguisticNaming` (13 → 0, ceiling 150 → 135) — split into three precise levers instead of a blanket
+  checkBooleanMethod/checkGetters disable, keeping the rule active for real prod code:
+  1. Renamed the 3 UserStatements exception-catching action methods to the `when*` DSL prefix
+     (getCurrentUser→whenGettingCurrentUser, validateToken→whenValidatingToken,
+     activate→whenActivatingAccount) — removes the get*→void getter false positive at the source
+     (separate refactoring commit 48ecdfa). Aligns with the `when*` convention already in
+     LoginThrottleStatements. Incidentally let PMD recognize an assert in one test (UnitTestShouldIncludeAssert
+     46→45), hence 135 not 137.
+  2. `ignoredAnnotations=Test,ParameterizedTest` — exempts 2 @Test methods whose names start with the
+     HTTP verb "get" (getRequest…), not getters.
+  3. `violationSuppressXPath` on `*Assert` classes — exempts the 10 custom-AssertJ `has*` methods that
+     return the assert type for chaining (idiomatic), keeping checkBooleanMethod active for non-Assert code.
+- [x] refactor: LinguisticNaming (rename to when* + ignoredAnnotations + Assert-scoped XPath, ceiling 135)
+
+Batch 3b COMPLETE — all 5 remaining rules configured/renamed, ceiling 170 → 135.
 
 ### Batch 4 — test-rule tuning
 Candidates: `UnitTestShouldIncludeAssert` (46), `UnitTestContainsTooManyAsserts` (12),
