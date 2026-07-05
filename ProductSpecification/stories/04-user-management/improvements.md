@@ -167,6 +167,24 @@ code win.
 `sidebar-collapse.logic.ts` + its unit test, re-run the sidebar e2e + full lint. Decided (user, 2026-07-05):
 defer to after Story 4 closes — don't add a dependency mid-story; promote to a refactor task then.
 
+### I14 — Collapsed sidebar restores without an expand flicker on reload (UI Extended E5)
+**Observed:** E5 asks that a collapsed sidebar render collapsed immediately on reload with no brief flash of
+the expanded state.
+**Analysis:** largely already satisfied — `DashboardShell` initializes `collapsed` synchronously from
+`localStorage` in `setup()`, so the first paint is already collapsed, and core Scn 6.1 asserts "still
+collapsed after reload". The remaining nuance (no intermediate expanded frame) is timing-sensitive and
+flaky to assert reliably in Playwright. Low added value over 6.1.
+**Scope:** if pursued, a first-paint assertion on `data-collapsed` immediately after reload. Deferred at the
+Frontend Extended Gate (user, 2026-07-05).
+
+### I15 — Mobile viewport layout for the grid and register modal (UI Extended E6)
+**Observed:** E6 asks that the Users grid and register modal be usable on a mobile viewport.
+**Analysis:** the story's mockups are desktop-only (`meta viewport width=1400`); mobile responsiveness is a
+separate design concern never specified for the core scenarios. A real responsive pass (breakpoints, grid
+overflow, modal sizing) is its own body of work, not a grid-parity fix.
+**Scope:** a dedicated responsive-design pass (own mockups + scenarios). Deferred at the Frontend Extended
+Gate (user, 2026-07-05) — candidate for a separate improvement story.
+
 ## Done
 
 ### I5 — Static-analysis check for UPPER_CASE SQL/JPQL keywords (Q4) — Task #226, PR #238
