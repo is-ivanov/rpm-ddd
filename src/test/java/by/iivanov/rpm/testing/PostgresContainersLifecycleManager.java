@@ -124,6 +124,9 @@ public final class PostgresContainersLifecycleManager {
      *
      * @return an instance of {@code PostgreSQLContainer} representing the initialized container.
      */
+    // Negation-first is intentional: the "start if not already running" idiom keeps the meaningful
+    // action (start) in the main branch; flipping it would bury start() in the else.
+    @SuppressWarnings("PMD.ConfusingTernary")
     public static synchronized PostgreSQLContainer init() {
         if (!POSTGRES_CONTAINER.isRunning()) {
             log.info("[testing-support] Starting Postgres container: image={}", POSTGRES_IMAGE);

@@ -39,6 +39,9 @@ public final class GreenMailServer {
      *
      * @return the running GreenMail instance
      */
+    // Negation-first is intentional: the "start if not already running" idiom keeps the meaningful
+    // action (start) in the main branch; flipping it would bury start() in the else.
+    @SuppressWarnings("PMD.ConfusingTernary")
     public static synchronized GreenMail start() {
         if (!GREEN_MAIL.isRunning()) {
             GREEN_MAIL.start();

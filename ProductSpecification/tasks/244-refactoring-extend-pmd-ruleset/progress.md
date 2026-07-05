@@ -70,10 +70,16 @@ Discussed per-rule with the user. First five disabled:
   readability is the criterion). Any other short class name still flags.
 - [x] refactor: ShortClassName (violationSuppressRegex allow-list, ceiling 152)
 
-Remaining candidates (config approach chosen per rule, still to apply):
-`LinguisticNaming` (13 — narrow via checkBooleanMethod/checkGetters=false), `ConfusingTernary` (2 —
-no useful property; exclude).
-- [ ] refactor (configure remaining 2 + lower ceiling + verify)
+* `ConfusingTernary` (2 → 0, ceiling 152 → 150) — the rule is sound, kept active project-wide;
+  the two negation-first sites are the intentional "start-if-not-running" idiom in test infra
+  (GreenMailServer.start, PostgresContainersLifecycleManager.init). Suppressed point-wise with
+  `@SuppressWarnings("PMD.ConfusingTernary")` + a rationale comment (matches the existing
+  `PMD.AvoidUsingHardCodedIP` suppression convention in GreenMailServer) rather than a blanket exclude.
+- [x] refactor: ConfusingTernary (point-wise @SuppressWarnings on 2 test-infra methods, ceiling 150)
+
+Remaining candidate (config approach chosen, still to apply):
+`LinguisticNaming` (13 — narrow via checkBooleanMethod/checkGetters=false).
+- [ ] refactor (configure LinguisticNaming + lower ceiling + verify)
 
 ### Batch 4 — test-rule tuning
 Candidates: `UnitTestShouldIncludeAssert` (46), `UnitTestContainsTooManyAsserts` (12),
