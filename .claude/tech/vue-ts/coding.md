@@ -16,6 +16,19 @@ Tech binding for `frontend-rules.md`. Shared section structure: `.claude/templat
   - `schemas/` -- zod schemas `{thing}.schema.ts` (see "Schema Validation").
   - `__tests__/` -- Vitest tests: `{feature}.logic.test.ts`, `{feature}.api.test.ts`.
 
+## Module Function Ordering (newspaper order)
+
+- Within a `.ts` module, place **exported functions first**, then the private (non-exported)
+  helpers they call **below** them — read top-down from the public API to the details (Clean Code
+  "newspaper order"). A function is "private" simply by not being `export`ed; there is no `private`
+  keyword at module scope.
+- This is safe because `function` **declarations are hoisted** — a helper defined lower in the file
+  is fully available to an exported function above it. (Applies to `function foo() {}` declarations,
+  not `const foo = () => {}` arrow assignments, which are not hoisted — declare those before use.)
+- When several exports share one helper, the helper goes at the **bottom** of the module.
+- No linter enforces this (no `no-use-before-define` configured), so it is a convention, not a
+  tooling gate — keep it consistent across the `.api.ts`/`.logic.ts` layer.
+
 ## Shared UI Components
 
 - Reusable components live in `frontend/src/app/components/ui/`.
