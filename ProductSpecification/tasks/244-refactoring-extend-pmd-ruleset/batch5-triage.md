@@ -18,7 +18,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 |------|---|----------|-----|----------|
 | `AvoidUncheckedExceptionsInSignatures` | 4 | User keeps the rule ON (agrees with it). All 4 sites are `@Override` (framework-imposed signatures we don't own). | CONFIGURE — suppress `@Override` | ✅ **DECIDED** — `violationSuppressXPath="./ancestor::MethodDeclaration[ModifierList/Annotation[@SimpleName='Override']]"`; verified 4→0, rule stays active for non-override methods. Apply in 5a. |
 | `ImplicitFunctionalInterface` | 3 | Domain ports + a **Spring Data repository** (`SpringDataUserSummaryRepository`). `@FunctionalInterface` is semantically wrong and freezes them at one method. | DISABLE | ✅ **DECIDED** — excluded (bestpractices). Applied in 5a·1. |
-| `ClassWithOnlyPrivateConstructorsShouldBeFinal` | 3 | `User` is a JPA/Hibernate aggregate (`@Table`, `AbstractAggregateRoot`, jMolecules, `@Version`) → cannot be `final` (proxying/weaving). Rule fights persistence. Also 2 test classes. | DISABLE | — |
+| `ClassWithOnlyPrivateConstructorsShouldBeFinal` | 3 | User keeps rule ON. `User` is a JPA aggregate (`@Table`) → can't be `final`. The 2 test classes (`ViolationAssert`, `EmailAddressGenerator`) are leaves → made `final`. | CONFIGURE (@Table) + FIX | ✅ **DECIDED** — suppress `@Table` via `violationSuppressXPath` + `final` on the 2 test leaves; verified 3→0, `test-compile` green. Applied in 5a·2. |
 | `AbstractClassWithoutAbstractMethod` + `AbstractClassWithoutAnyMethod` | 2+1 | Abstract base **test** classes (`AbstractApplicationIntegrationTest`, `AbstractApi`, `AbstractMailIntegrationTest`) are abstract to share setup / prevent instantiation. Idiomatic. | DISABLE | — |
 | `UseProperClassLoader` | 2 | Rule's premise is J2EE app servers; N/A to Spring Boot fat-jar (`getClass().getClassLoader()` for bundled resources is correct). Sites: `ActivationEmailRenderer:41`, `TestResources:26`. | DISABLE | — |
 | `AvoidSynchronizedAtMethodLevel` | 2 | Method-level sync on test-infra singletons (`GreenMailServer:45`, `PostgresContainersLifecycleManager:130`) is a legitimate choice; rule is stylistic. | DISABLE | — |
@@ -62,3 +62,5 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 
 - **5a·1** (ceiling 65 → 58): `AvoidUncheckedExceptionsInSignatures` configured (suppress `@Override`, 4→0) +
   `ImplicitFunctionalInterface` disabled (3→0). pmd:check green.
+- **5a·2** (ceiling 58 → 55): `ClassWithOnlyPrivateConstructorsShouldBeFinal` — suppress `@Table` (JPA `User`)
+  + `final` on `ViolationAssert` and `EmailAddressGenerator` (3→0). pmd:check + test-compile green.

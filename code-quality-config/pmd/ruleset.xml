@@ -137,6 +137,14 @@
       <property name="violationSuppressXPath" value="./ancestor::MethodDeclaration[ModifierList/Annotation[@SimpleName='Override']]"/>
     </properties>
   </rule>
+  <!-- Keep the rule ON (final-by-default for private-constructor classes is useful), but suppress it on
+       @Table-annotated classes: JPA/Hibernate entities cannot be final (proxying/weaving). Genuine test
+       helpers flagged by this rule are fixed in code with `final`, not suppressed. -->
+  <rule ref="category/java/design.xml/ClassWithOnlyPrivateConstructorsShouldBeFinal">
+    <properties>
+      <property name="violationSuppressXPath" value="./ancestor-or-self::ClassDeclaration[ModifierList/Annotation[@SimpleName='Table']]"/>
+    </properties>
+  </rule>
 
 
   <rule ref="category/java/documentation.xml">

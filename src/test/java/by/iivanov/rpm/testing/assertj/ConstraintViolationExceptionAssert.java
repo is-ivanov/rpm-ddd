@@ -112,7 +112,7 @@ public class ConstraintViolationExceptionAssert
     /**
      * Fluent assertions for a single constraint violation.
      */
-    public static class ViolationAssert extends AbstractAssert<ViolationAssert, ConstraintViolation<?>> {
+    public static final class ViolationAssert extends AbstractAssert<ViolationAssert, ConstraintViolation<?>> {
 
         private ViolationAssert(ConstraintViolation<?> actual) {
             super(actual, ViolationAssert.class);
