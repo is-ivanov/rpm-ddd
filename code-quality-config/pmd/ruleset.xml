@@ -31,6 +31,11 @@
          resolves logger types differently on Windows vs Linux, producing a non-deterministic count that
          broke the CI gate. -->
     <exclude name="GuardLogStatement"/>
+    <!-- Wants a single-abstract-method interface annotated @FunctionalInterface. Off: the 3 hits are
+         domain ports (UserSummaryQuery, EmailNotificationSender) and a Spring Data repository
+         (SpringDataUserSummaryRepository) — role interfaces that happen to have one method today, not
+         lambda targets. @FunctionalInterface would misdescribe their intent and freeze them at one method. -->
+    <exclude name="ImplicitFunctionalInterface"/>
   </rule>
   <!-- "Test method without @Test" heuristic. Its testClassPattern default is the unanchored regex "Test",
        so it treats any class whose name merely *contains* "Test" as a test class — flagging the
@@ -121,6 +126,16 @@
          (UserStatus.PENDING); the rest are unavoidable fluent/builder/stream API navigations and library
          type traversal (jjwt, HTTP, Jakarta). Zero genuine object-graph navigation violations. -->
     <exclude name="LawOfDemeter"/>
+  </rule>
+  <!-- Keep the rule ON (we agree unchecked exceptions don't belong in signatures we own), but suppress it
+       on @Override methods — there the throws clause is dictated by the framework interface we implement,
+       not by us (Spring UserDetailsService.loadUserByUsername throws UsernameNotFoundException, Jackson
+       deserialize throws JacksonException, Spring BeanDefinitionRegistryPostProcessor throws BeansException).
+       A non-@Override method that declares an unchecked exception still flags. -->
+  <rule ref="category/java/design.xml/AvoidUncheckedExceptionsInSignatures">
+    <properties>
+      <property name="violationSuppressXPath" value="./ancestor::MethodDeclaration[ModifierList/Annotation[@SimpleName='Override']]"/>
+    </properties>
   </rule>
 
 

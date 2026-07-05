@@ -118,11 +118,10 @@ targets the old `log.debug("x" + expensive())` concat pattern the project does n
 local 72 → 65 and CI 73 → 63; ceiling set to 65 (the higher env, local), ratcheting down.
 - [x] refactor (exclude GuardLogStatement + ceiling 65 + pmd:check green)
 
-### Batch 5 — real fixes + long tail
-Fix genuine findings: `SystemPrintln` (5), `PreserveStackTrace` (1),
-`MissingSerialVersionUID` (7), `AvoidDuplicateLiterals` (4), and the remaining long-tail rules.
-Fix in code where small/in-scope; defer larger ones to follow-up issues; disable true noise.
-- [ ] refactor (fix code / curate ruleset + lower ceiling + verify)
+### Batch 5 — real fixes + long tail (in parts; full triage + decisions in `batch5-triage.md`)
+Discussed per-rule with the user, applied in slices; ceiling ratchets down per slice.
+- [~] refactor (curate ruleset + fix code, part by part)
+  - [x] 5a·1: AvoidUncheckedExceptionsInSignatures (suppress @Override) + ImplicitFunctionalInterface (disable), ceiling 65→58
 
 ## Final
 - [ ] green-acceptance (`./mvnw verify -B` green; ceiling at its final value, ideally 0)
