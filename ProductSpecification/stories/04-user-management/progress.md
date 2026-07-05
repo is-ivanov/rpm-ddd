@@ -196,8 +196,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] green-frontend (parseSidebarCollapsedState = raw === 'true'; test parameterized via it.each)
 - [S] red-frontend-api (no network — collapse state persists client-side in localStorage)
 - [S] green-frontend-api
-- [~] align-design
-- [ ] green-playwright
+- [x] align-design (DashboardTopBar collapse toggle + DashboardSidebar rail; localStorage persist; style.css split → styles/components.css)
+- [~] green-playwright
 - [ ] demo
 
 ## Full-Stack Journey (07_FullStack_Journey.md)

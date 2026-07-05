@@ -1,0 +1,176 @@
+@layer components {
+  .auth-card {
+    @apply w-full max-w-100 rounded-lg bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)];
+  }
+
+  .page-title {
+    @apply text-2xl font-bold text-ink;
+  }
+
+  .nav-group-label {
+    @apply px-6 pb-2 pt-4 text-[11px] font-semibold uppercase tracking-[0.04em] text-sidebar-muted opacity-60;
+  }
+
+  .nav-item {
+    @apply flex cursor-pointer items-center gap-3 border-l-[3px] border-transparent px-6 py-3;
+    @apply text-sm font-medium text-sidebar-muted no-underline hover:bg-sidebar-hover;
+  }
+
+  .nav-item-active {
+    @apply border-l-accent bg-sidebar-active text-white;
+  }
+
+  .nav-item-rail {
+    @apply justify-center px-0;
+  }
+
+  .rail-divider {
+    @apply mx-4 my-2 h-px bg-sidebar-hover;
+  }
+
+  .icon-btn {
+    @apply flex h-8 w-8 cursor-pointer items-center justify-center rounded border-none bg-transparent text-muted;
+    @apply hover:bg-column hover:text-ink;
+  }
+
+  .table-card {
+    @apply overflow-hidden rounded-lg bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08)];
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50;
+  }
+
+  .modal-card {
+    @apply w-120 rounded-xl bg-white shadow-[0_8px_32px_rgba(0,0,0,0.16)];
+  }
+
+  .select-control {
+    @apply flex h-10 cursor-pointer items-center justify-between gap-2 rounded-md border border-line px-3 text-sm;
+  }
+
+  .grid-head-cell {
+    @apply whitespace-nowrap border-b border-line px-4 py-3 text-left;
+    @apply text-xs font-semibold uppercase text-muted;
+  }
+
+  .grid-head-cell-sortable {
+    @apply cursor-pointer;
+  }
+
+  .th-sort {
+    @apply inline-flex items-center gap-1;
+  }
+
+  .th-sort-icon {
+    @apply h-[14px] w-[14px] opacity-60;
+  }
+
+  .th-sort-sorted .th-sort-icon {
+    @apply text-accent opacity-100;
+  }
+
+  .grid-cell {
+    @apply whitespace-nowrap border-b border-line px-4 py-3 text-sm text-ink;
+  }
+
+  .filter-cell {
+    @apply border-b border-line bg-column px-4 py-2;
+  }
+
+  .filter-input {
+    @apply h-[30px] w-full rounded-md border border-line bg-white px-2 text-[13px] outline-none;
+    @apply placeholder:text-placeholder focus:border-accent-focus focus:shadow-[0_0_0_3px_rgba(77,171,247,0.2)];
+  }
+
+  .ts-rel {
+    @apply cursor-help text-muted underline decoration-line decoration-dotted underline-offset-2;
+  }
+
+  .ts-tooltip {
+    @apply fixed z-50 rounded-md bg-sidebar px-3 py-2 text-xs leading-tight text-white shadow-[0_4px_16px_rgba(0,0,0,0.16)];
+  }
+
+  .ts-tooltip-time {
+    @apply flex gap-2 font-medium;
+  }
+
+  .ts-tooltip-zone {
+    @apply mt-1 flex gap-1.5 text-sidebar-muted;
+  }
+
+  .status-badge {
+    @apply inline-block rounded-full px-2 py-0.5 text-xs font-semibold;
+  }
+
+  .status-active {
+    @apply bg-success-surface text-success;
+  }
+
+  .status-pending {
+    @apply bg-warning-surface text-warning;
+  }
+
+  .status-locked {
+    @apply bg-danger-surface text-danger;
+  }
+
+  .status-inactive {
+    @apply bg-column text-muted;
+  }
+
+  .btn-primary {
+    @apply h-10 w-full rounded-md text-sm font-medium transition-colors;
+    @apply bg-accent text-white hover:bg-accent-hover;
+    @apply disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-accent;
+  }
+
+  .form-input {
+    @apply h-10 w-full rounded-md border border-line px-3;
+    @apply text-sm text-ink outline-none;
+    @apply placeholder:text-placeholder focus:border-accent-focus;
+    @apply disabled:cursor-not-allowed disabled:bg-surface disabled:opacity-60;
+  }
+
+  .form-input::-ms-reveal,
+  .form-input::-ms-clear {
+    display: none;
+  }
+
+  .field-error {
+    @apply mt-1.5 text-[13px] text-danger;
+  }
+
+  .error-banner {
+    @apply mb-4 flex items-start gap-2 rounded-md bg-danger-surface px-3 py-2.5;
+    @apply text-[13px] leading-[1.4] text-danger;
+  }
+
+  .link-primary {
+    @apply text-accent hover:underline;
+  }
+
+  .icon-button {
+    @apply flex cursor-pointer items-center border-none bg-transparent;
+  }
+
+  .dropdown-panel {
+    @apply overflow-hidden rounded-lg bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)];
+  }
+
+  .dropdown-anchor {
+    @apply absolute right-0 top-[calc(100%+8px)];
+  }
+
+  .complexity-rule {
+    @apply mb-1 flex items-center gap-2 text-[13px];
+  }
+
+  .complexity-rule[data-met='false'] {
+    @apply text-muted;
+  }
+
+  .complexity-rule[data-met='true'] {
+    @apply text-success;
+  }
+}
