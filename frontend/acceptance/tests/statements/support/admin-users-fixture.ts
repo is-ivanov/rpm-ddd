@@ -145,6 +145,15 @@ export const FULL_NAMES_MATCHING_FILTER: readonly string[] = EXPECTED_USER_ROWS.
   row.name.includes(FULL_NAME_FILTER_TERM),
 ).map((row) => row.name);
 
+// Scenario 3.4 — multi-column AND filtering. Two "contains" probes on TWO DIFFERENT text columns,
+// chosen so neither term alone isolates the target — only their AND does:
+//   • 'e' on Login keeps Emily Carter + David Lee;  'connor' on Updated-by keeps Sarah + David.
+//   • David Lee is the only row in both sets, so the AND survivor is exactly [David Lee].
+// Survivor is HAND-LISTED, not computed via the AND under test — same reason as STATUSES_IN_LIFECYCLE_ORDER.
+export const LOGIN_FILTER_TERM = 'e';
+export const UPDATED_BY_FILTER_TERM = 'connor';
+export const FULL_NAMES_MATCHING_LOGIN_AND_UPDATED_BY: readonly string[] = ['David Lee'];
+
 // Expected Login-column ordering after clicking the Login header, derived from EXPECTED_USER_ROWS
 // (not hand-maintained) so the sort assertions stay in lock-step with the row data: ascending is
 // the logins sorted, descending is that same ordering reversed. The default render order is
