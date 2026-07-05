@@ -191,8 +191,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] demo (register-user-modal.spec.ts Scn 5.2)
 
 ### Scenario 6.1: Collapse toggle persists across reload
-- [ ] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (sidebar-collapse.spec.ts + sidebar-collapse.statements.ts — data-collapsed toggle + reload persistence)
+- [~] red-frontend
 - [ ] green-frontend
 - [ ] red-frontend-api
 - [ ] green-frontend-api
