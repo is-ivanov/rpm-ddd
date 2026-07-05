@@ -99,10 +99,6 @@ test.describe('Register User Modal', () => {
       'Then a field-level error message is shown under the Login field, ' +
       'And the modal stays open with the entered values preserved',
     async () => {
-      // RED: RegisterUserModal renders no field-level Login error element
-      // (register-user-login-error) and register-user.api ignores the 422 response,
-      // so no duplicate-login error is shown after a rejected submit.
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenSeveralUsers();
       await registerUserBackend.givenRegisterUserRejectsDuplicateLogin();
