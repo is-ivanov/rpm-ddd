@@ -1,5 +1,6 @@
 import { expect, type Page, type Route } from '@playwright/test';
 import { type AdminUser, SEVERAL_ADMIN_USERS } from '../support/admin-users-fixture';
+import { NEW_PENDING_USER } from '../support/register-user-fixture';
 
 const ADMIN_USERS_URL_PATTERN = '**/api/admin/users';
 const ADMIN_USERS_INSTANCE = '/api/admin/users';
@@ -28,6 +29,23 @@ export class AdminUsersBackendStatements {
 
   async givenSeveralUsers(): Promise<void> {
     await this.givenAdminUserListReturns(SEVERAL_ADMIN_USERS);
+  }
+
+  /**
+   * Stubs GET /api/admin/users so the initial load returns the seed list, and the
+   * post-create refresh (the second GET) returns that list plus the newly-created
+   * Pending user prepended (newest-first, matching the backend's createdAt-DESC order).
+   */
+  async givenListRefreshesWithNewUserAfterCreate(): Promise<void> {
+    await this.page.route(ADMIN_USERS_URL_PATTERN, async (route) => {
+      if (route.request().method() !== 'GET') {
+        await route.fallback();
+        return;
+      }
+      const users =
+        this.adminUserListRequestCount === 0 ? SEVERAL_ADMIN_USERS : [NEW_PENDING_USER, ...SEVERAL_ADMIN_USERS];
+      await this.fulfillAdminUserList(route, users);
+    });
   }
 
   /** Stubs GET /api/admin/users to return 500 (a recoverable server error). */

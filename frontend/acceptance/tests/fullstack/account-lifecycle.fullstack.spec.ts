@@ -31,7 +31,7 @@ test.describe('Account Lifecycle Full-Stack E2E (real backend + Postgres + Mailp
       const newUser: CreatedUser = realAuthBackend.uniqueUserIdentity();
 
       await adminLogsInViaUi();
-      await realAuthBackend.createUserAsAdmin(newUser);
+      await realAuthBackend.registerUserAsAdmin(newUser);
 
       const activationToken = await mailpit.readActivationTokenFor(newUser.email);
 

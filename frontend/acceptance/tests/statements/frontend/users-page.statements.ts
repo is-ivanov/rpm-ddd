@@ -7,6 +7,7 @@ import {
   SEED_ACTOR_CELLS,
   SEED_ACTOR_DISPLAY,
 } from '../support/admin-users-fixture';
+import { NEW_PENDING_USER_ROW } from '../support/register-user-fixture';
 
 const TEST_ID = {
   usersPage: 'users-page',
@@ -58,6 +59,10 @@ export class UsersPageStatements {
     await expect(this.registerUserButton(), 'button text is exactly "Register user"').toHaveText(
       REGISTER_USER_BUTTON_TEXT,
     );
+  }
+
+  async clickRegisterUserButton(): Promise<void> {
+    await this.registerUserButton().click();
   }
 
   async assertGridIsVisible(): Promise<void> {
@@ -136,6 +141,25 @@ export class UsersPageStatements {
     await expect(this.nameCells(), 'remaining rows are exactly the full names that contain the filter text').toHaveText(
       [...FULL_NAMES_MATCHING_FILTER],
     );
+  }
+
+  async assertNewPendingUserRowIsVisible(): Promise<void> {
+    const expected = NEW_PENDING_USER_ROW;
+    await expect(this.rows(), 'grid refreshed with one extra row').toHaveCount(EXPECTED_USER_ROWS.length + 1);
+    const newRow = this.newUserRow();
+    await expect(newRow, 'exactly one new-user row is visible').toHaveCount(1);
+    await expect(newRow.getByTestId(CELL.name), 'new row full name').toHaveText(expected.name);
+    await expect(newRow.getByTestId(CELL.login), 'new row login').toHaveText(expected.login);
+    await expect(newRow.getByTestId(CELL.email), 'new row email').toHaveText(expected.email);
+    const badge = newRow.getByTestId(CELL.statusBadge);
+    await expect(badge, 'new row status badge is visible').toBeVisible();
+    await expect(badge, 'new row status badge reads "Pending"').toHaveText(expected.status);
+    await expect(newRow.getByTestId(CELL.createdBy), 'new row created-by actor').toHaveText(expected.createdBy);
+    await expect(newRow.getByTestId(CELL.updatedBy), 'new row updated-by actor').toHaveText(expected.updatedBy);
+  }
+
+  private newUserRow(): Locator {
+    return this.rows().filter({ hasText: NEW_PENDING_USER_ROW.login });
   }
 
   private fullNameFilter(): Locator {

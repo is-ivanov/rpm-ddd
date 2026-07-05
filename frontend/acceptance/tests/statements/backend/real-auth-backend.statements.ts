@@ -43,9 +43,9 @@ export class RealAuthBackendStatements {
   // already-authenticated admin session (JSESSIONID set by the UI login) plus a
   // freshly primed CSRF token. The created user is PENDING and is activated via
   // the real email flow later in the journey.
-  // NOTE: This step uses the API because no admin-create-user UI exists yet.
+  // NOTE: This step uses the API because no admin-register-user UI exists yet.
   // When that UI ships, migrate this to UI actions (see the ADR edge-case table).
-  async createUserAsAdmin(user: CreatedUser): Promise<void> {
+  async registerUserAsAdmin(user: CreatedUser): Promise<void> {
     const csrfToken = await this.primeCsrfToken();
     const response = await this.page.request.post(REGISTER_USERS_PATH, {
       headers: { 'Content-Type': 'application/json', 'X-XSRF-TOKEN': csrfToken },
@@ -54,7 +54,7 @@ export class RealAuthBackendStatements {
     expect(response.status(), 'admin creates the new user via the real backend (201 Created)').toBe(201);
     expect(
       response.headers()['location'],
-      'create-user 201 carries a Location pointing at the new user resource',
+      'register-user 201 carries a Location pointing at the new user resource',
     ).toMatch(CREATED_USER_LOCATION_PATTERN);
   }
 
