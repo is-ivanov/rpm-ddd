@@ -10,7 +10,30 @@
     are excluded/configured below; the pom.xml maxAllowedViolations ceiling ratchets down per batch.
   </description>
 
-  <rule ref="category/java/bestpractices.xml"/>
+  <rule ref="category/java/bestpractices.xml">
+    <!-- Wants assert*()/fail() in every test body. Off: the 3-tier DSL (tdd-rules.md) delegates
+         verification to Statements assert* and custom AssertJ *Assert *instance* methods (plus BDD then(),
+         catchThrowable) — PMD's assert detection recognizes only static method names, so it can't follow
+         the delegation and flags honest tests (PasswordPolicyTest, UserTest, ...). extraAssertMethodNames
+         covers static methods only, so it can't reach the Statements-delegated asserts either. The value
+         (a test with no verification) is already guaranteed by the RED discipline (@ExpectedToFail +
+         predicted failure per test). -->
+    <exclude name="UnitTestShouldIncludeAssert"/>
+    <!-- Caps a test at 1 assert. Off: direct conflict with the project rule "one action, assert all
+         consequences (Level 1)" (tdd-rules.md) — an acceptance test triggers one action and asserts every
+         observable consequence in multiple then blocks; all 12 hits are such L1 tests. No meaningful
+         ceiling exists for "assert all consequences". -->
+    <exclude name="UnitTestContainsTooManyAsserts"/>
+  </rule>
+  <!-- "Test method without @Test" heuristic. Its testClassPattern default is the unanchored regex "Test",
+       so it treats any class whose name merely *contains* "Test" as a test class — flagging the
+       *TestExecutionListener infra. Anchor it to the project's test-suffix convention (AGENTS.md:
+       *Test / *IntegrationTest — both end in Test) so only real *Test classes are checked. -->
+  <rule ref="category/java/bestpractices.xml/UnitTestShouldUseTestAnnotation">
+    <properties>
+      <property name="testClassPattern" value="^(?:.*\.)?[^.]*Tests?$"/>
+    </properties>
+  </rule>
 
 
   <rule ref="category/java/codestyle.xml">
@@ -107,6 +130,16 @@
     <!-- Flags fields matching method names. Off: every record component (email, code, id, ...) has an
          auto-generated accessor with the same name — inherent false positive for record-heavy code. -->
     <exclude name="AvoidFieldNameMatchingMethodName"/>
+  </rule>
+  <!-- "Looks like a test class but has no test cases" heuristic. Its default pattern flags names that
+       *start or end* with Test/Tests/TestCase, catching Test-prefixed infrastructure that is not a test
+       (TestRpmDddApplication, TestcontainersConfiguration, TestContextValidator, TestResources). Anchor
+       it to the project's test-suffix convention (AGENTS.md: *Test / *IntegrationTest) so only real *Test
+       classes are checked; the Test-prefixed infra is exempt. -->
+  <rule ref="category/java/errorprone.xml/TestClassWithoutTestCases">
+    <properties>
+      <property name="testClassPattern" value="^(?:.*\.)?[^.]*Tests?$"/>
+    </properties>
   </rule>
 
 

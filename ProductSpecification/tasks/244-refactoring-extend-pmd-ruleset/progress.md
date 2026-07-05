@@ -93,11 +93,21 @@ Discussed per-rule with the user. First five disabled:
 
 Batch 3b COMPLETE — all 5 remaining rules configured/renamed, ceiling 170 → 135.
 
-### Batch 4 — test-rule tuning
-Candidates: `UnitTestShouldIncludeAssert` (46), `UnitTestContainsTooManyAsserts` (12),
-`TestClassWithoutTestCases` (4), `UnitTestShouldUseTestAnnotation` (2). Configure for the
-project's Statements/DSL test style or disable where duplicated by convention.
-- [ ] refactor (ruleset excludes/config + lower ceiling + verify)
+### Batch 4 — test-rule tuning (63 → 0, ceiling 135 → 72) — DONE
+Discussed per-rule with the user. Two disabled (incompatible/conflicting), two configured:
+- `UnitTestShouldIncludeAssert` (45, disabled) — the 3-tier DSL delegates verification to Statements
+  `assert*` and custom AssertJ `*Assert` *instance* methods (+ BDD `then()`/`catchThrowable`); PMD's
+  assert detection knows static method names only (`extraAssertMethodNames` is static-only), so it can't
+  follow the delegation and flags honest tests. Value already guaranteed by RED discipline.
+- `UnitTestContainsTooManyAsserts` (12, disabled) — direct conflict with "one action, assert all
+  consequences (Level 1)"; all 12 hits are such L1 acceptance tests.
+- `TestClassWithoutTestCases` (4 → 0) — Java rule in **errorprone** (not bestpractices); default pattern
+  flags names starting/ending with Test, catching Test-prefixed infra (TestRpmDddApplication,
+  TestcontainersConfiguration, TestContextValidator, TestResources). Configured `testClassPattern` to the
+  project suffix convention `^(?:.*\.)?[^.]*Tests?$` (real `*Test` still checked).
+- `UnitTestShouldUseTestAnnotation` (2 → 0) — default pattern `"Test"` is unanchored, matching any name
+  *containing* Test (the `*TestExecutionListener` infra). Same suffix-anchored `testClassPattern`.
+- [x] refactor (2 disable + 2 testClassPattern config + ceiling 72 + pmd:check green)
 
 ### Batch 5 — real fixes + long tail
 Fix genuine findings: `SystemPrintln` (5), `PreserveStackTrace` (1), `GuardLogStatement` (10),
