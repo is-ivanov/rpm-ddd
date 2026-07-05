@@ -64,10 +64,16 @@ Discussed per-rule with the user. First five disabled:
   /me endpoint, record-style accessor). Precise allow-list beats lowering `minimum`.
 - [x] refactor: ShortMethodName (violationSuppressXPath allow-list, ceiling 153)
 
+* `ShortClassName` (1 → 0, ceiling 153 → 152) — the message carries the name, so used
+  `violationSuppressRegex` to allow-list the domain aggregate `User` (consistent with ShortVariable;
+  regex chosen over XPath because the name is in the message — speed is indistinguishable, precision/
+  readability is the criterion). Any other short class name still flags.
+- [x] refactor: ShortClassName (violationSuppressRegex allow-list, ceiling 152)
+
 Remaining candidates (config approach chosen per rule, still to apply):
-`LinguisticNaming` (13 — narrow via checkBooleanMethod/checkGetters=false), `ShortClassName` (1 —
-violationSuppressRegex allow `User`), `ConfusingTernary` (2 — no useful property; exclude).
-- [ ] refactor (configure remaining 3 + lower ceiling + verify)
+`LinguisticNaming` (13 — narrow via checkBooleanMethod/checkGetters=false), `ConfusingTernary` (2 —
+no useful property; exclude).
+- [ ] refactor (configure remaining 2 + lower ceiling + verify)
 
 ### Batch 4 — test-rule tuning
 Candidates: `UnitTestShouldIncludeAssert` (46), `UnitTestContainsTooManyAsserts` (12),

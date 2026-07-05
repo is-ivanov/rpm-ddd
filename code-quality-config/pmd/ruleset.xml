@@ -63,6 +63,13 @@
       <property name="violationSuppressXPath" value="./ancestor-or-self::MethodDeclaration[@Name = ('on', 'me', 'id')]"/>
     </properties>
   </rule>
+  <!-- Allow the domain aggregate name `User` (the message carries the name, so a regex targets it —
+       consistent with ShortVariable). Any other short class name still flags. -->
+  <rule ref="category/java/codestyle.xml/ShortClassName">
+    <properties>
+      <property name="violationSuppressRegex" value="Avoid short class names like User"/>
+    </properties>
+  </rule>
 
 
   <rule ref="category/java/design.xml">
