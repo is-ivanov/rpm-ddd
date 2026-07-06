@@ -14,4 +14,4 @@ Type: refactoring
 - [x] refactor (call sites → givenAuthenticatedUser(); keep dashboard-page / login-to-dashboard / user-menu explicit)
 
 ### Step 3: Verify green — frontend lint + affected Playwright specs
-- [~] verify (npm run lint + affected Playwright specs pass)
+- [x] verify (npm run lint + affected Playwright specs pass)
