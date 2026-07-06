@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { buildUserRows, filterRowsByColumns, filterRowsByFullName } from '../logic/users-grid.logic';
+import {
+  buildUserRows,
+  filterRowsByColumns,
+  filterRowsByFullName,
+  filterRowsByStatuses,
+} from '../logic/users-grid.logic';
 import {
   DAVID_LEE,
   EMILY_CARTER,
@@ -125,5 +130,37 @@ describe('Multi-column text filter (AND-combined)', () => {
     const filtered = filterRowsByColumns(rows, { login: 'C', name: 'I' });
 
     expect(filtered.map((row) => row.login)).toEqual(['m.scott', 'e.carter']);
+  });
+});
+
+describe('Status column filter (multi-select, set membership)', () => {
+  // Four rows in a deliberately MIXED status order so a subset filter is observable (not equal to a
+  // pass-through): buildUserRows maps ACTIVE→'Active', PENDING→'Pending', LOCKED→'Locked',
+  // INACTIVE→'Inactive'. Selecting {Pending, Locked} must keep exactly {m.scott, e.carter} in render
+  // order — a pass-through keeps all 4, an OR-with-everything keeps all 4, a single-status impl keeps 1.
+  const rows = buildUserRows([
+    aUserSummary({ login: 's.connor', status: 'ACTIVE' }),
+    aUserSummary({ login: 'm.scott', status: 'PENDING' }),
+    aUserSummary({ login: 'e.carter', status: 'LOCKED' }),
+    aUserSummary({ login: 'd.lee', status: 'INACTIVE' }),
+  ]);
+
+  it.fails('keeps only rows whose status is in the selected set, preserving render order', () => {
+    const filtered = filterRowsByStatuses(rows, ['Pending', 'Locked']);
+
+    expect(
+      filtered.map((row) => row.login),
+      'set membership over {Pending, Locked} — a pass-through / single-status / OR-with-all impl would differ',
+    ).toEqual(['m.scott', 'e.carter']);
+    expect(filtered.map((row) => row.status)).toEqual(['Pending', 'Locked']);
+  });
+
+  it('returns all rows unchanged for an empty selection (no active status filter)', () => {
+    const filtered = filterRowsByStatuses(rows, []);
+
+    expect(
+      filtered.map((row) => row.login),
+      'empty selection is the no-filter pass-through guard, mirroring a blank text term',
+    ).toEqual(['s.connor', 'm.scott', 'e.carter', 'd.lee']);
   });
 });

@@ -235,8 +235,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 > Status filter = multi-select dropdown listing statuses in lifecycle order (Pending, Active, Locked,
 > Inactive); selecting a subset keeps only those rows. New control + set-membership filter logic.
 - [x] red-playwright (users-grid-status-filter.spec.ts + .statements.ts — options in lifecycle order + Pending∧Locked subset)
-- [~] red-frontend (multi-select status filter — set membership + lifecycle-ordered options)
-- [ ] green-frontend
+- [x] red-frontend (users-grid.logic.test.ts — filterRowsByStatuses set-membership + empty-selection guard)
+- [~] green-frontend
 - [S] red-frontend-api (client-side filter)
 - [S] green-frontend-api
 - [ ] align-design (status multi-select dropdown per mockup)
