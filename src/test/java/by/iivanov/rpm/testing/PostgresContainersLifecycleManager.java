@@ -46,6 +46,7 @@ public final class PostgresContainersLifecycleManager {
     private static final DataSize DEFAULT_SHARED_MEMORY = DataSize.ofMegabytes(256);
     private static final String[] POSTGRES_COMMAND;
     private static final DataSize SHARED_MEMORY_SIZE;
+    private static final PostgreSQLContainer POSTGRES_CONTAINER;
 
     private static final Logger log = LoggerFactory.getLogger(PostgresContainersLifecycleManager.class);
 
@@ -54,6 +55,21 @@ public final class PostgresContainersLifecycleManager {
         POSTGRES_IMAGE = env.getProperty(IMAGE_PROPERTY, "postgres:18.3-alpine");
         POSTGRES_COMMAND = buildPostgresCommand(env);
         SHARED_MEMORY_SIZE = parseMemory(env.getProperty(SHARED_MEMORY_PROPERTY, "256MB"));
+        POSTGRES_CONTAINER = new PostgreSQLContainer(POSTGRES_IMAGE)
+                .withDatabaseName(Constants.TARGET_DB_NAME)
+                .withUsername(Constants.DB_USER)
+                .withPassword(Constants.DB_PASSWORD)
+                .withCommand(POSTGRES_COMMAND)
+                .withTmpFs(Map.of("/var/lib/postgresql", "rw"))
+                .withSharedMemorySize(SHARED_MEMORY_SIZE.toBytes())
+                .withReuse(true)
+                .withCreateContainerCmdModifier(cmd -> {
+                    HostConfig hostConfig = cmd.getHostConfig();
+                    log.debug("HostConfig: {}", hostConfig != null);
+                    if (hostConfig != null) {
+                        hostConfig.withAutoRemove(true);
+                    }
+                });
     }
 
     private static Properties loadEnvFile() {
@@ -96,26 +112,6 @@ public final class PostgresContainersLifecycleManager {
             log.warn("[testing-support] Failed to parse shared memory value: {}. Using default value.", value);
             return DEFAULT_SHARED_MEMORY;
         }
-    }
-
-    private static final PostgreSQLContainer POSTGRES_CONTAINER;
-
-    static {
-        POSTGRES_CONTAINER = new PostgreSQLContainer(POSTGRES_IMAGE)
-                .withDatabaseName(Constants.TARGET_DB_NAME)
-                .withUsername(Constants.DB_USER)
-                .withPassword(Constants.DB_PASSWORD)
-                .withCommand(POSTGRES_COMMAND)
-                .withTmpFs(Map.of("/var/lib/postgresql", "rw"))
-                .withSharedMemorySize(SHARED_MEMORY_SIZE.toBytes())
-                .withReuse(true)
-                .withCreateContainerCmdModifier(cmd -> {
-                    HostConfig hostConfig = cmd.getHostConfig();
-                    log.debug("HostConfig: {}", hostConfig != null);
-                    if (hostConfig != null) {
-                        hostConfig.withAutoRemove(true);
-                    }
-                });
     }
 
     /**

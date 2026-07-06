@@ -121,6 +121,9 @@ public class AssertionResponse {
         return this;
     }
 
+    // PMD UseVarargs false positive: this private helper operates ON an array (returns all-but-first);
+    // varargs would wrongly invite tail(a, b, c), which is meaningless for a tail() operation.
+    @SuppressWarnings("PMD.UseVarargs")
     private static Option[] tail(Option[] arr) {
         if (arr.length <= 1) {
             return new Option[0];

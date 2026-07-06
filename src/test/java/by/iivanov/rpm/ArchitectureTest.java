@@ -40,6 +40,8 @@ class ArchitectureTest {
     static final ArchRule classesShouldBeNullSafe =
             classes().should(be(nullSafe())).because("every class must be null safe");
 
+    static final ApplicationModules modules = ApplicationModules.of(RpmDddApplication.class);
+
     /**
      * Evaluates the predicate on the class's package.
      */
@@ -61,8 +63,6 @@ class ArchitectureTest {
                 .or(annotatedWith(NullMarked.class))
                 .as("null safe (reside in a @NullMarked package or be annotated with @NullMarked)");
     }
-
-    static final ApplicationModules modules = ApplicationModules.of(RpmDddApplication.class);
 
     @Test
     void verifyModulithModules() {
