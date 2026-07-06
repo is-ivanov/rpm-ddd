@@ -126,6 +126,16 @@
   </rule>
 
 
+  <!-- Keep the rule ON (it catches anemic domain objects — a core DDD concern), but suppress it on
+       *View classes: by project convention a `{Name}View` is a read-only persistence projection
+       (@Subselect / read model) whose whole purpose is to be a dumb typed row carrier the ORM populates
+       and the adapter maps to a DTO — behavior lives in the write aggregate. Same suffix-allow-list
+       approach as LinguisticNaming/*Assert. A data-only class NOT named *View still flags. -->
+  <rule ref="category/java/design.xml/DataClass">
+    <properties>
+      <property name="violationSuppressXPath" value="./ancestor-or-self::ClassDeclaration[ends-with(@SimpleName, 'View')]"/>
+    </properties>
+  </rule>
   <rule ref="category/java/design.xml">
     <!-- "Talk only to friends" — flags a.b().c() chains. Off: 9/17 are enum-constant accesses
          (UserStatus.PENDING); the rest are unavoidable fluent/builder/stream API navigations and library

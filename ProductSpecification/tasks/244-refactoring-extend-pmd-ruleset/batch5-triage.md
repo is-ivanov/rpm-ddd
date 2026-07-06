@@ -22,7 +22,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 | `AbstractClassWithoutAbstractMethod` + `AbstractClassWithoutAnyMethod` | 2+1 | User keeps both rules ON (useful). The 3 hits are legit abstract base classes (`AbstractApplicationIntegrationTest`, `AbstractApi` — 4 subclasses + protected ctor + shared helpers, `AbstractMailIntegrationTest`). Rule ignores constructors (verified in PMD source: only `extends`/`implements` exempts), so the doc's protected-ctor note is explanatory, not an exemption. | POINT-WISE SUPPRESS | ✅ **DECIDED** — `@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")` on the first two, `@SuppressWarnings("PMD.AbstractClassWithoutAnyMethod")` on the mail base. Applied in 5a·4. |
 | `UseProperClassLoader` | 2 | Rule's premise is J2EE app servers; N/A to Spring Boot fat-jar (`getClass().getClassLoader()` for co-packaged resources is correct; TCCL would be a regression). Sites: `ActivationEmailRenderer:41`, `TestResources:26`. | DISABLE | ✅ **DECIDED** — excluded (errorprone). Applied in 5a·5. |
 | `AvoidSynchronizedAtMethodLevel` | 2 | Rule kept ON (valuable for prod / virtual-thread era). The 2 hits are one-shot idempotent test-infra singleton starts (`GreenMailServer.start`, `PostgresContainersLifecycleManager.init`) whose whole body is the critical section — not a hot path, vthreads off, no prod `synchronized` methods. | POINT-WISE SUPPRESS | ✅ **DECIDED** — added `"PMD.AvoidSynchronizedAtMethodLevel"` to the existing `@SuppressWarnings` on both. Applied in 5a·6. |
-| `DataClass` | 1 | `UserSummaryView` is a read projection; being a data class is by design. | DISABLE | — |
+| `DataClass` | 1 | `UserSummaryView` is a read projection; being a data class is by design. Rule kept ON (catches anemic domain objects — a core DDD concern). | POINT-WISE / SUFFIX SUPPRESS | ✅ **DECIDED** — suppress via `violationSuppressXPath` on the `*View` suffix (project convention: `{Name}View` = read-only projection; recorded in `coding-rules.md` Naming). Same approach as LinguisticNaming/`*Assert`; verified 1→0. Applied in 5a·7. |
 | `ImmutableField` | 1 | `User.login` is a JPA entity field (active-persistence); entity fields not forced `final`. | DISABLE | — |
 | `LoosePackageCoupling` | 1 | Needs a hand-maintained package list we don't keep; boundaries enforced by Modulith + ArchUnit. Also the cross-platform-flaky 0/1 rule. | DISABLE | — |
 
@@ -73,3 +73,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
   co-packaged resources load correctly via the class's own classloader; 2→0). pmd:check green.
 - **5a·6** (ceiling 47 → 45): `AvoidSynchronizedAtMethodLevel` — rule kept ON, the 2 one-shot test-infra
   singleton starts suppressed point-wise (added to their existing `@SuppressWarnings`; 2→0). pmd:check green.
+- **5a·7** (ceiling 45 → 44): `DataClass` — rule kept ON, suppressed via `violationSuppressXPath` on the
+  `*View` suffix (`UserSummaryView`; 1→0). Recorded the `{Name}View` = read-only projection convention in
+  `.claude/rules/coding-rules.md` (Naming). Same suffix-allow-list approach as LinguisticNaming/`*Assert`.
+  pmd:check green.
