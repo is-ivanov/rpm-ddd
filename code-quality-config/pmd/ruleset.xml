@@ -151,6 +151,15 @@
          (UserStatus.PENDING); the rest are unavoidable fluent/builder/stream API navigations and library
          type traversal (jjwt, HTTP, Jakarta). Zero genuine object-graph navigation violations. -->
     <exclude name="LawOfDemeter"/>
+    <!-- Caps method count per class (default 10). Off: the project already enforces a hard 200-line file
+         limit (AGENTS.md / coding-rules.md, verified with wc -l) on every file including production — that
+         is the adopted guard against class bloat, and this pure method-count heuristic duplicates it. The 4
+         hits are all legitimate method-rich patterns the count conflicts with: read-projection accessors
+         (UserSummaryView — record-style firstName() isn't recognized as a getter), the 3-tier test DSL
+         (UserStatements — one method per scenario step), a fluent assertion helper (AssertionResponse — 25
+         methods in 197 lines, already at the line cap), and transport overloads (AuthApi — login×5/activate×2
+         counted separately). A real god-class cannot exist under the 200-line cap. -->
+    <exclude name="TooManyMethods"/>
     <!-- Measures coupling between a hand-maintained list of packages, which requires a mandatory
          `packages` property. Off: unconfigured it is dead weight — PMD logs "Removed misconfigured rule:
          LoosePackageCoupling cause: No packages or classes specified" on every build and emits a

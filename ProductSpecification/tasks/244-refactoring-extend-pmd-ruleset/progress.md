@@ -131,6 +131,7 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
   - [x] 5a·8: ImmutableField — User.login made final (future editable-login is a later concern; Hibernate hydration verified), ceiling 44→43
   - [x] 5a·9: LoosePackageCoupling excluded (was a <configerror>, never counted; silences per-build misconfig warning), ceiling 43 unchanged
   - [x] 5b·1: FieldNamingConventions kept ON — log via constantPattern alt, ArchitectureTest class-wide @SuppressWarnings (9→0), ceiling 43→34
+  - [x] 5b·2: TooManyMethods disabled (duplicated by 200-line file limit; method-rich patterns legit, 4→0), ceiling 34→30
 
 ## Final
 - [ ] green-acceptance (`./mvnw verify -B` green; ceiling at its final value, ideally 0)

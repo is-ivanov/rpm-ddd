@@ -31,7 +31,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 | Rule | N | Proposal | Rec | Decision |
 |------|---|----------|-----|----------|
 | `FieldNamingConventions` | 9 | Allow lowercase `log` (SLF4J/Lombok idiom) and ArchUnit camelCase fields. NOT covered by Checkstyle (no `ConstantName`) — rule kept ON. Sites: `log` in 5 files (4 test-infra + 1 prod UserRegisteredEventListener); ArchUnit fields `dddRules`/`onion`/`classesShouldBeNullSafe`/`modules` in `ArchitectureTest`. | CONFIGURE | ✅ **DECIDED** — `log` allowed via `constantPattern="[A-Z][A-Z_0-9]*\|log"` (rule's own config, global); `ArchitectureTest` (entirely ArchUnit descriptors) suppressed class-wide with `@SuppressWarnings("PMD.FieldNamingConventions")` + Javadoc rationale. Verified 9→0. Applied in 5b·1. |
-| `TooManyMethods` | 4 | Raise threshold (default 10): test DSL (`AuthApi`, `UserStatements`, `AssertionResponse`) and projection `UserSummaryView` legitimately have many methods; the 200-line file limit already guards bloat. | CONFIGURE | — |
+| `TooManyMethods` | 4 | Pure method-count heuristic (default 10). The project's hard 200-line file limit already guards bloat on every file; the 4 hits are legit method-rich patterns (projection accessors, 3-tier test DSL, fluent asserts, transport overloads). A god-class can't exist under 200 lines. | DISABLE | ✅ **DECIDED** — excluded (design); the 200-line cap is the adopted bloat guard and this duplicates/conflicts with it. Verified 4→0. Applied in 5b·2. |
 | `AvoidDuplicateLiterals` | 4 | All test-data literals (`"Ivanovich"`, `"Ivanov"`, `"Ivan"` in `PersonNameTest`; `"email"` in `RegisterUserRequestTest`). Raise threshold or exclude tests. | CONFIGURE | — |
 | `AvoidLiteralsInIfCondition` | 3 | Test infra comparing to 0/1; add `1` to `ignoreMagicNumbers` (0 already ignored) — or disable. Sites: `ControllerDependencyAutoMockRegistrar:79`, `AssertionResponse:123`, `ConstraintViolationExceptionAssert:85`. | CONFIGURE | — |
 | `UncommentedEmptyConstructor` | 1 | `UserSummaryView:74` empty ctor required by framework; `ignoreAnnotations` or disable (conflicts with the no-comments rule vs "Document empty constructor"). | CONFIGURE | — |
@@ -87,4 +87,8 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 - **5b·1** (ceiling 43 → 34): `FieldNamingConventions` — rule kept ON, two idioms allow-listed (9→0):
   `log` via `constantPattern="[A-Z][A-Z_0-9]*|log"` (SLF4J/Lombok logger, 5 sites); `ArchitectureTest`
   suppressed class-wide via `@SuppressWarnings` + Javadoc (ArchUnit camelCase @ArchTest fields, 4 sites).
+  pmd:check green.
+- **5b·2** (ceiling 34 → 30): `TooManyMethods` disabled (4→0). Pure method-count heuristic duplicated by the
+  project's hard 200-line file limit (the adopted bloat guard, applies to prod too); the 4 hits are legit
+  method-rich patterns (projection accessors, 3-tier test DSL, fluent asserts, transport overloads).
   pmd:check green.
