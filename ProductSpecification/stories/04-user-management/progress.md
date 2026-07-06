@@ -215,8 +215,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] green-frontend (filterRowsByColumns AND-combined; filterRowsByFullName delegates)
 - [S] red-frontend-api (client-side filter — reuses fetchAdminUsers)
 - [S] green-frontend-api
-- [~] align-design (filter inputs on all text columns per mockup)
-- [ ] green-playwright
+- [x] align-design (filter inputs on all 5 text columns; per-column `filters` record → filterRowsByColumns)
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 3.5: Every column header sorts the rows (timestamps by instant)
