@@ -240,8 +240,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] red-frontend-api (client-side filter)
 - [S] green-frontend-api
 - [x] align-design (UsersStatusFilter.vue multi-select dropdown; UsersGrid statuses ref → filterRowsByStatuses)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (users-grid-status-filter.spec.ts GREEN — 1/1; users E2E 15/15)
+- [~] demo
 
 ### Scenario 3.7: Created / Updated date-range filter narrows by the underlying instant (promoted from UI Extended E3)
 > from–to date-range control on Created and Updated; filters on the absolute instant, not the relative label.

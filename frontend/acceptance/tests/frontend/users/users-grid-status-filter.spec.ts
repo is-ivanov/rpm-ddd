@@ -28,12 +28,6 @@ test.describe('Users Grid Status Filter', () => {
       'When the user selects Pending and Locked, ' +
       'Then only rows with those statuses remain visible',
     async () => {
-      // RED: the Status column multi-select filter (data-testid="users-filter-status") is not yet
-      // wired into the grid. The bounded assertStatusFilterIsVisible() below throws a fast 5s
-      // toBeVisible assertion that test.fail() absorbs — NOT a 30s whole-test timeout (see carryover:
-      // "test.fail() absorbs assertions but not a whole-test timeout"). Remove test.fail() in green.
-      test.fail();
-
       await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
