@@ -7,6 +7,7 @@ import { useAuthStore } from '@/app/stores/auth.store';
 import { fetchAdminUsers } from '../logic/admin-users.api';
 import type { UserSummaryResponse } from '../logic/users-grid.types';
 import { anAuthenticatedUser } from '@/test/builders/authenticated-user';
+import { JOHN_DOE, MICHAEL_SCOTT, SYSTEM_ACTOR, aUserSummary } from '@/test/builders/user-summary';
 
 const BASE = import.meta.env.VITE_API_URL;
 
@@ -23,32 +24,20 @@ const UNAUTHORIZED_PROBLEM = {
 };
 
 const ADMIN_USERS: UserSummaryResponse[] = [
-  {
-    userId: '00000000-0000-0000-0000-000000000001',
-    name: { firstName: 'Sarah', middleName: 'Jane', lastName: 'Connor' },
-    login: 's.connor',
-    email: 's.connor@rpm.local',
-    status: 'ACTIVE',
-    audit: {
-      createdAt: '2026-06-22T14:30:51.217Z',
-      createdBy: { firstName: 'John', middleName: 'Robert', lastName: 'Doe' },
-      updatedAt: '2026-06-24T08:11:42.905Z',
-      updatedBy: { firstName: 'Sarah', middleName: 'Jane', lastName: 'Connor' },
-    },
-  },
-  {
+  aUserSummary(),
+  aUserSummary({
     userId: '00000000-0000-0000-0000-000000000002',
-    name: { firstName: 'Michael', middleName: null, lastName: 'Scott' },
+    name: MICHAEL_SCOTT,
     login: 'm.scott',
     email: 'm.scott@rpm.local',
     status: 'PENDING',
     audit: {
       createdAt: '2026-06-20T11:02:09.310Z',
-      createdBy: { firstName: 'System', middleName: null, lastName: '' },
+      createdBy: SYSTEM_ACTOR,
       updatedAt: '2026-06-21T13:33:27.064Z',
-      updatedBy: { firstName: 'John', middleName: 'Robert', lastName: 'Doe' },
+      updatedBy: JOHN_DOE,
     },
-  },
+  }),
 ];
 
 function stubAdminUsers(body: JsonBodyType, init: ResponseInit): void {
