@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 class LoginAlreadyExistsExceptionHandler implements ApiExceptionHandler {
 
+    private static final String LOGIN_FIELD = "login";
+
     @Override
     public boolean canHandle(Throwable exception) {
         return exception instanceof LoginAlreadyExistsException;
@@ -26,7 +28,8 @@ class LoginAlreadyExistsExceptionHandler implements ApiExceptionHandler {
                 HttpStatus.UNPROCESSABLE_CONTENT,
                 "VALIDATION_FAILED",
                 "Validation failed for object='registerUserRequest'. Error count: 1");
-        response.addFieldError(new ApiFieldError("ALREADY_EXISTS", "login", "Login already exists", login, "login"));
+        response.addFieldError(
+                new ApiFieldError("ALREADY_EXISTS", LOGIN_FIELD, "Login already exists", login, LOGIN_FIELD));
         return response;
     }
 }

@@ -41,10 +41,12 @@ public final class PostgresContainersLifecycleManager {
 
     private static final String ENV_FILE_PATH = "docker/.env";
     private static final String IMAGE_PROPERTY = "POSTGRES_TEST_IMAGE";
+    private static final String POSTGRES_PROPERTY_PREFIX = "POSTGRES_";
     private static final String SHARED_MEMORY_PROPERTY = "POSTGRES_SHARED_MEMORY";
     private static final DataSize DEFAULT_SHARED_MEMORY = DataSize.ofMegabytes(256);
     private static final String[] POSTGRES_COMMAND;
     private static final DataSize SHARED_MEMORY_SIZE;
+    private static final PostgreSQLContainer POSTGRES_CONTAINER;
 
     private static final Logger log = LoggerFactory.getLogger(PostgresContainersLifecycleManager.class);
 
@@ -53,6 +55,21 @@ public final class PostgresContainersLifecycleManager {
         POSTGRES_IMAGE = env.getProperty(IMAGE_PROPERTY, "postgres:18.3-alpine");
         POSTGRES_COMMAND = buildPostgresCommand(env);
         SHARED_MEMORY_SIZE = parseMemory(env.getProperty(SHARED_MEMORY_PROPERTY, "256MB"));
+        POSTGRES_CONTAINER = new PostgreSQLContainer(POSTGRES_IMAGE)
+                .withDatabaseName(Constants.TARGET_DB_NAME)
+                .withUsername(Constants.DB_USER)
+                .withPassword(Constants.DB_PASSWORD)
+                .withCommand(POSTGRES_COMMAND)
+                .withTmpFs(Map.of("/var/lib/postgresql", "rw"))
+                .withSharedMemorySize(SHARED_MEMORY_SIZE.toBytes())
+                .withReuse(true)
+                .withCreateContainerCmdModifier(cmd -> {
+                    HostConfig hostConfig = cmd.getHostConfig();
+                    log.debug("HostConfig: {}", hostConfig != null);
+                    if (hostConfig != null) {
+                        hostConfig.withAutoRemove(true);
+                    }
+                });
     }
 
     private static Properties loadEnvFile() {
@@ -77,9 +94,9 @@ public final class PostgresContainersLifecycleManager {
         args.add("postgres");
 
         for (var key : env.stringPropertyNames()) {
-            if (key.startsWith("POSTGRES_") && !key.equals(IMAGE_PROPERTY)) {
+            if (key.startsWith(POSTGRES_PROPERTY_PREFIX) && !key.equals(IMAGE_PROPERTY)) {
                 // POSTGRES_FSYNC=off -> -c fsync=off
-                var pgParam = key.substring("POSTGRES_".length()).toLowerCase(AppConstants.DEFAULT_LOCALE);
+                var pgParam = key.substring(POSTGRES_PROPERTY_PREFIX.length()).toLowerCase(AppConstants.DEFAULT_LOCALE);
                 args.add("-c");
                 args.add(pgParam + "=" + env.getProperty(key));
             }
@@ -97,26 +114,6 @@ public final class PostgresContainersLifecycleManager {
         }
     }
 
-    private static final PostgreSQLContainer POSTGRES_CONTAINER;
-
-    static {
-        POSTGRES_CONTAINER = new PostgreSQLContainer(POSTGRES_IMAGE)
-                .withDatabaseName(Constants.TARGET_DB_NAME)
-                .withUsername(Constants.DB_USER)
-                .withPassword(Constants.DB_PASSWORD)
-                .withCommand(POSTGRES_COMMAND)
-                .withTmpFs(Map.of("/var/lib/postgresql", "rw"))
-                .withSharedMemorySize(SHARED_MEMORY_SIZE.toBytes())
-                .withReuse(true)
-                .withCreateContainerCmdModifier(cmd -> {
-                    HostConfig hostConfig = cmd.getHostConfig();
-                    log.debug("HostConfig: {}", hostConfig != null);
-                    if (hostConfig != null) {
-                        hostConfig.withAutoRemove(true);
-                    }
-                });
-    }
-
     /**
      * Initializes and starts a PostgreSQL container for testing purposes.
      * If the container is already running, it will be reused without restarting.
@@ -126,7 +123,9 @@ public final class PostgresContainersLifecycleManager {
      */
     // Negation-first is intentional: the "start if not already running" idiom keeps the meaningful
     // action (start) in the main branch; flipping it would bury start() in the else.
-    @SuppressWarnings("PMD.ConfusingTernary")
+    // Method-level synchronized is intentional: a one-shot idempotent singleton start whose whole body is
+    // the critical section — not a hot path, no virtual threads; a ReentrantLock would add only boilerplate.
+    @SuppressWarnings({"PMD.ConfusingTernary", "PMD.AvoidSynchronizedAtMethodLevel"})
     public static synchronized PostgreSQLContainer init() {
         if (!POSTGRES_CONTAINER.isRunning()) {
             log.info("[testing-support] Starting Postgres container: image={}", POSTGRES_IMAGE);

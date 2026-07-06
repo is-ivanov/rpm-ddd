@@ -13,6 +13,8 @@ import org.springframework.test.web.servlet.client.RestTestClient;
 
 class AuthLoginIntegrationTest extends AbstractApplicationIntegrationTest {
 
+    private static final String JSESSIONID = "JSESSIONID";
+
     private final RestTestClient restClient;
     private final AuthApi authApi;
     private final AuthSessionFactory authSessionFactory;
@@ -57,7 +59,7 @@ class AuthLoginIntegrationTest extends AbstractApplicationIntegrationTest {
                 .expectStatus()
                 .isOk()
                 .expectCookie()
-                .exists("JSESSIONID");
+                .exists(JSESSIONID);
     }
 
     @Test
@@ -83,7 +85,7 @@ class AuthLoginIntegrationTest extends AbstractApplicationIntegrationTest {
                 .expectStatus()
                 .isUnauthorized()
                 .expectCookie()
-                .doesNotExist("JSESSIONID")
+                .doesNotExist(JSESSIONID)
                 .expectBody()
                 .json("""
                     {

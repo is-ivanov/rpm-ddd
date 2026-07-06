@@ -14,6 +14,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class PersonNameTest {
 
+    private static final String FIRST_NAME = "Ivan";
+    private static final String MIDDLE_NAME = "Ivanovich";
+    private static final String LAST_NAME = "Ivanov";
+    private static final String BLANK = "  \t  ";
+    private static final String FIRST_NAME_BLANK = "First name must not be blank";
+    private static final String LAST_NAME_BLANK = "Last name must not be blank";
+
     @Nested
     @DisplayName("constructor")
     class ConstructorTest {
@@ -32,34 +39,27 @@ class PersonNameTest {
 
         static Stream<Arguments> invalidValues() {
             return Stream.of(
-                    argumentSet(
-                            "blank firstName, rest valid",
-                            "  \t  ",
-                            "Ivanovich",
-                            "Ivanov",
-                            "First name must not be blank"),
-                    argumentSet(
-                            "null firstName, rest valid", null, "Ivanovich", "Ivanov", "First name must not be blank"),
-                    argumentSet(
-                            "blank lastName, rest valid", "Ivan", "Ivanovich", "  \t  ", "Last name must not be blank"),
-                    argumentSet("null lastName, rest valid", "Ivan", "Ivanovich", null, "Last name must not be blank"),
+                    argumentSet("blank firstName, rest valid", BLANK, MIDDLE_NAME, LAST_NAME, FIRST_NAME_BLANK),
+                    argumentSet("null firstName, rest valid", null, MIDDLE_NAME, LAST_NAME, FIRST_NAME_BLANK),
+                    argumentSet("blank lastName, rest valid", FIRST_NAME, MIDDLE_NAME, BLANK, LAST_NAME_BLANK),
+                    argumentSet("null lastName, rest valid", FIRST_NAME, MIDDLE_NAME, null, LAST_NAME_BLANK),
                     argumentSet(
                             "firstName exceeds 255, rest valid",
                             "a".repeat(256),
-                            "Ivanovich",
-                            "Ivanov",
+                            MIDDLE_NAME,
+                            LAST_NAME,
                             "First name must not exceed 255 characters, but was 256"),
                     argumentSet(
                             "lastName exceeds 255, rest valid",
-                            "Ivan",
-                            "Ivanovich",
+                            FIRST_NAME,
+                            MIDDLE_NAME,
                             "a".repeat(256),
                             "Last name must not exceed 255 characters, but was 256"),
                     argumentSet(
                             "middleName exceeds 255, rest valid",
-                            "Ivan",
+                            FIRST_NAME,
                             "a".repeat(256),
-                            "Ivanov",
+                            LAST_NAME,
                             "Middle name must not exceed 255 characters, but was 256"));
         }
 
@@ -84,17 +84,25 @@ class PersonNameTest {
 
         static Stream<Arguments> validValues() {
             return Stream.of(
-                    argumentSet("all fields, no trim", "Ivan", "Ivanovich", "Ivanov", "Ivan", "Ivanovich", "Ivanov"),
+                    argumentSet(
+                            "all fields, no trim",
+                            FIRST_NAME,
+                            MIDDLE_NAME,
+                            LAST_NAME,
+                            FIRST_NAME,
+                            MIDDLE_NAME,
+                            LAST_NAME),
                     argumentSet(
                             "all fields, with spaces",
                             "  Ivan  ",
                             "  Ivanovich  ",
                             "  Ivanov  ",
-                            "Ivan",
-                            "Ivanovich",
-                            "Ivanov"),
-                    argumentSet("null middleName", "Ivan", null, "Ivanov", "Ivan", null, "Ivanov"),
-                    argumentSet("blank middleName becomes null", "Ivan", "  \t  ", "Ivanov", "Ivan", null, "Ivanov"),
+                            FIRST_NAME,
+                            MIDDLE_NAME,
+                            LAST_NAME),
+                    argumentSet("null middleName", FIRST_NAME, null, LAST_NAME, FIRST_NAME, null, LAST_NAME),
+                    argumentSet(
+                            "blank middleName becomes null", FIRST_NAME, BLANK, LAST_NAME, FIRST_NAME, null, LAST_NAME),
                     argumentSet(
                             "max length fields",
                             "a".repeat(255),

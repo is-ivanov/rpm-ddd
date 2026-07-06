@@ -118,11 +118,33 @@ targets the old `log.debug("x" + expensive())` concat pattern the project does n
 local 72 → 65 and CI 73 → 63; ceiling set to 65 (the higher env, local), ratcheting down.
 - [x] refactor (exclude GuardLogStatement + ceiling 65 + pmd:check green)
 
-### Batch 5 — real fixes + long tail
-Fix genuine findings: `SystemPrintln` (5), `PreserveStackTrace` (1),
-`MissingSerialVersionUID` (7), `AvoidDuplicateLiterals` (4), and the remaining long-tail rules.
-Fix in code where small/in-scope; defer larger ones to follow-up issues; disable true noise.
-- [ ] refactor (fix code / curate ruleset + lower ceiling + verify)
+### Batch 5 — real fixes + long tail (in parts; full triage + decisions in `batch5-triage.md`)
+Discussed per-rule with the user, applied in slices; ceiling ratchets down per slice.
+- [x] refactor (curate ruleset + fix code, part by part)
+  - [x] 5a·1: AvoidUncheckedExceptionsInSignatures (suppress @Override) + ImplicitFunctionalInterface (disable), ceiling 65→58
+  - [x] 5a·2: ClassWithOnlyPrivateConstructorsShouldBeFinal (suppress @Table + final on 2 test leaves), ceiling 58→55
+  - [x] 5a·3: LiteralsFirstInComparisons disabled (Yoda notation; NPE owned by NullAway), ceiling 55→52
+  - [x] 5a·4: AbstractClassWithoutAbstractMethod/AnyMethod kept ON, 3 abstract bases point-wise suppressed, ceiling 52→49
+  - [x] 5a·5: UseProperClassLoader disabled (J2EE premise N/A to fat-jar), ceiling 49→47
+  - [x] 5a·6: AvoidSynchronizedAtMethodLevel kept ON, 2 test-infra singleton starts point-wise suppressed, ceiling 47→45
+  - [x] 5a·7: DataClass kept ON, suppressed via *View suffix XPath (UserSummaryView); {Name}View convention recorded in coding-rules.md, ceiling 45→44
+  - [x] 5a·8: ImmutableField — User.login made final (future editable-login is a later concern; Hibernate hydration verified), ceiling 44→43
+  - [x] 5a·9: LoosePackageCoupling excluded (was a <configerror>, never counted; silences per-build misconfig warning), ceiling 43 unchanged
+  - [x] 5b·1: FieldNamingConventions kept ON — log via constantPattern alt, ArchitectureTest class-wide @SuppressWarnings (9→0), ceiling 43→34
+  - [x] 5b·2: TooManyMethods disabled (duplicated by 200-line file limit; method-rich patterns legit, 4→0), ceiling 34→30
+  - [x] 5b·3: AvoidDuplicateLiterals FIX — extracted name/email constants in PersonNameTest + RegisterUserRequestTest (4→0), ceiling 30→26
+  - AvoidDuplicateLiterals TIGHTEN (threshold 4→2 + skipAnnotations) — burn down 44 surfaced dups in sub-batches (Variant A: one-time ceiling bump then ratchet down):
+    - [x] 5b·4: flip maxDuplicateLiterals=2 + skipAnnotations=true; ceiling 26→70 (one-time tightening bump, documented)
+    - [x] 5b·5: PROD (3) — SecurityConfig ACTIVATE_PATH, Email/LoginAlreadyExistsExceptionHandler EMAIL_FIELD/LOGIN_FIELD → constants; ceiling 70→67. Error-code dups (VALIDATION_FAILED/ALREADY_EXISTS) split off to Task #272 (not PMD-flagged, cross-file)
+    - [x] 5b·6: AuthResourceTest (9) — token/message/field-name/JSON-body constants (test-local, values unchanged); ceiling 67→58
+    - [x] 5b·7: RegisterUserRequestTest (5) — field-name constants (extend EMAIL_FIELD scheme) + MALFORMED_EMAIL value; ceiling 58→53
+    - [x] 5b·8: validation-message tests (Email/Login/Password/PersonName/ActivateAccountRequest) — test-local message + value constants (11 dups, pin independent of prod); ceiling 53→42
+    - [x] 5b·9: remainder (16 dups) — test-local constants (JSESSIONID, SYSTEM, NOT_EXERCISED_BY_JOB, POSTGRES_PROPERTY_PREFIX, NULLAWAY_HINT, NO_EVENTS_MESSAGE, MESSAGE_FOR_PROPERTY, StringTrimmer bodies/NAME_PARAM, UserResourceTest ALREADY_EXISTS/LOGIN_FIELD/EMAIL_FIELD [ALREADY_EXISTS overlaps #272]); Constants + AuthSessionFactory point-wise @SuppressWarnings (distinct named constants sharing a value); deleted unused TestContextValidator (also cleared 5 SystemPrintln). ceiling 42→21 (5 below target 26 thanks to the deletion)
+  - [x] 5c·1: MissingSerialVersionUID (7) — @SuppressWarnings("serial") on all 7 domain exceptions (Spring's own idiom; PMD 7.26 honors the javac "serial" key — verified; rule stays ON to catch genuinely-serializable classes; exceptions serialize to RFC 9457 JSON not Java binary), ceiling 21→14
+  - [x] 5c·2: AvoidThrowingRawExceptionTypes (2) + PreserveStackTrace (1) — DbContainerTestExecutionListener: RuntimeException→IllegalStateException (real fix, cause preserved); PreserveStackTrace is a PMD FP on the nested catch (cause `ex` passed) → point-wise @SuppressWarnings("PMD.PreserveStackTrace"), ceiling 14→11
+  - [x] 5c·3: simple mechanical group (5) — UnnecessaryAnnotationValueElement (SpaForwardingController drop `value=`), SingularField (AuthenticationServiceTest passwordEncoder→local), SimplifyBooleanReturns (GreenMailServerTestExecutionListener.hasMailTag→single &&), UseUnderscoresInNumericLiterals (GreenMailServer SMTP_PORT 33_025), UncommentedEmptyConstructor (UserSummaryView JPA ctor comment), ceiling 11→6
+  - [x] 5c·4: AvoidLiteralsInIfCondition (3) — configure ignoreMagicNumbers=-1,0,1 (rule stays ON; `1` in size/length boundary checks is the same idiom PMD already exempts -1/0 for; all 3 hits are `== 1`/`<= 1`/`> 1` guards), ceiling 6→3
+  - [x] 5c·5: FieldDeclarationsShouldBeAtStartOfClass (2) + UseVarargs (1) — ArchitectureTest `modules` field moved above helper methods; PostgresContainersLifecycleManager merged the two static init blocks into one (field declared at top, container build appended to the env-loading block, init order preserved); UseVarargs is a PMD FP on private array-processing helper AssertionResponse.tail → point-wise @SuppressWarnings("PMD.UseVarargs"). ceiling 3→0
 
 ## Final
-- [ ] green-acceptance (`./mvnw verify -B` green; ceiling at its final value, ideally 0)
+- [x] green-acceptance — `./mvnw verify -B` BUILD SUCCESS (161 tests, 0 fail/err/skip; Spotless+SpotBugs green); `./mvnw pmd:check -B` exit 0 with 0 violations. Removed `<maxAllowedViolations>` from pom.xml entirely (default 0 → any new violation fails the build).

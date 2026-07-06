@@ -17,7 +17,7 @@ class SpaForwardingController {
 
     // the 'path' variable exists only to constrain the mapping to extension-less segments; its value is unused
     @SuppressWarnings("MVCPathVariableInspection")
-    @GetMapping(value = {"/", SpaRoutes.SPA_ROUTE_PATTERN})
+    @GetMapping({"/", SpaRoutes.SPA_ROUTE_PATTERN})
     String forwardSpaRoute() {
         return "forward:/index.html";
     }

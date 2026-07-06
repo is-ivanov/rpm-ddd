@@ -19,6 +19,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 /// ```
 public class AggregateRootAssert extends AbstractAssert<AggregateRootAssert, AbstractAggregateRoot<?>> {
 
+    private static final String NO_EVENTS_MESSAGE = "Expected at least one domain event but none were published";
+
     protected List<Object> events;
 
     protected AggregateRootAssert(AbstractAggregateRoot<?> actual) {
@@ -78,7 +80,7 @@ public class AggregateRootAssert extends AbstractAssert<AggregateRootAssert, Abs
     public <E> ObjectAssert<E> firstEvent(Class<E> eventType) {
         isNotNull();
         if (events.isEmpty()) {
-            failWithMessage("Expected at least one domain event but none were published");
+            failWithMessage(NO_EVENTS_MESSAGE);
         }
         var first = events.getFirst();
         if (!eventType.isInstance(first)) {
@@ -99,7 +101,7 @@ public class AggregateRootAssert extends AbstractAssert<AggregateRootAssert, Abs
     public AggregateRootAssert firstEventSatisfy(Consumer<Object> consumer) {
         isNotNull();
         if (events.isEmpty()) {
-            failWithMessage("Expected at least one domain event but none were published");
+            failWithMessage(NO_EVENTS_MESSAGE);
         }
         consumer.accept(events.getFirst());
         return this;

@@ -19,7 +19,7 @@ public class IamDomainProvider implements InstancioServiceProvider {
         return (Node node, Generators _) -> generators.get(node.getTargetClass());
     }
 
-    private static class EmailAddressGenerator implements Generator<EmailAddress> {
+    private static final class EmailAddressGenerator implements Generator<EmailAddress> {
 
         @Override
         public EmailAddress generate(Random random) {

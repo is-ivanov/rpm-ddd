@@ -32,6 +32,9 @@ class UserResourceTest {
 
         private static final String EXISTING_LOGIN = "alice";
         private static final String EXISTING_EMAIL = "alice@example.com";
+        private static final String ALREADY_EXISTS = "ALREADY_EXISTS";
+        private static final String LOGIN_FIELD = "login";
+        private static final String EMAIL_FIELD = "email";
 
         @Test
         void beanValidationTest_shouldReturn422AndProblemJson() {
@@ -47,11 +50,11 @@ class UserResourceTest {
             var response = userApi.registerUser(validRegistrationRequest());
 
             response.assertBindingError(FieldError.builder()
-                    .code("ALREADY_EXISTS")
-                    .property("login")
+                    .code(ALREADY_EXISTS)
+                    .property(LOGIN_FIELD)
                     .message("Login already exists")
                     .rejectedValue(EXISTING_LOGIN)
-                    .path("login"));
+                    .path(LOGIN_FIELD));
         }
 
         @Test
@@ -63,11 +66,11 @@ class UserResourceTest {
             var response = userApi.registerUser(validRegistrationRequest());
 
             response.assertBindingError(FieldError.builder()
-                    .code("ALREADY_EXISTS")
-                    .property("email")
+                    .code(ALREADY_EXISTS)
+                    .property(EMAIL_FIELD)
                     .message("Email already exists")
                     .rejectedValue(EXISTING_EMAIL)
-                    .path("email"));
+                    .path(EMAIL_FIELD));
         }
 
         private void givenLoginAlreadyExists() {

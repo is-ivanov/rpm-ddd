@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="PMDPlugin">
+    <option name="customRuleSets">
+      <list>
+        <option value="$PROJECT_DIR$/code-quality-config/pmd/ruleset.xml" />
+      </list>
+    </option>
+    <option name="inEditorAnnotationRules">
+      <list>
+        <option value="$PROJECT_DIR$/code-quality-config/pmd/ruleset.xml" />
+      </list>
+    </option>
+    <option name="optionKeyToValue">
+      <map>
+        <entry key="Statistics URL" value="" />
+        <entry key="Target JDK" value="25" />
+        <entry key="Target Kotlin version" value="1.8" />
+        <entry key="Threads" value="20" />
+      </map>
+    </option>
     <option name="scanFilesBeforeCheckin" value="true" />
     <option name="skipTestSources" value="false" />
   </component>

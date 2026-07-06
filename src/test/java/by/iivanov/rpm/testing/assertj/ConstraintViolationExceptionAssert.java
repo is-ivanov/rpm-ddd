@@ -26,6 +26,8 @@ import org.hibernate.validator.testutil.ConstraintViolationAssert.ViolationExpec
 public class ConstraintViolationExceptionAssert
         extends AbstractThrowableAssert<ConstraintViolationExceptionAssert, ConstraintViolationException> {
 
+    private static final String MESSAGE_FOR_PROPERTY = "message for property '%s'";
+
     protected ConstraintViolationExceptionAssert(ConstraintViolationException actual) {
         super(actual, ConstraintViolationExceptionAssert.class);
     }
@@ -112,7 +114,7 @@ public class ConstraintViolationExceptionAssert
     /**
      * Fluent assertions for a single constraint violation.
      */
-    public static class ViolationAssert extends AbstractAssert<ViolationAssert, ConstraintViolation<?>> {
+    public static final class ViolationAssert extends AbstractAssert<ViolationAssert, ConstraintViolation<?>> {
 
         private ViolationAssert(ConstraintViolation<?> actual) {
             super(actual, ViolationAssert.class);
@@ -143,7 +145,7 @@ public class ConstraintViolationExceptionAssert
         public ViolationAssert withMessage(String expectedMessage) {
             isNotNull();
             Assertions.assertThat(actual.getMessage())
-                    .as("message for property '%s'", extractPropertyName(actual.getPropertyPath()))
+                    .as(MESSAGE_FOR_PROPERTY, extractPropertyName(actual.getPropertyPath()))
                     .isEqualTo(expectedMessage);
             return this;
         }
@@ -157,7 +159,7 @@ public class ConstraintViolationExceptionAssert
         public ViolationAssert withMessageContaining(String substring) {
             isNotNull();
             Assertions.assertThat(actual.getMessage())
-                    .as("message for property '%s'", extractPropertyName(actual.getPropertyPath()))
+                    .as(MESSAGE_FOR_PROPERTY, extractPropertyName(actual.getPropertyPath()))
                     .contains(substring);
             return this;
         }

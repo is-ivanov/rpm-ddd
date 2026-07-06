@@ -25,6 +25,8 @@ import org.springframework.modulith.events.ResubmissionOptions;
 @NullMarked
 class RecordingIncompletePublications implements IncompleteEventPublications {
 
+    private static final String NOT_EXERCISED_BY_JOB = "not exercised by ResubmitIncompletePublicationsJob";
+
     private final List<LabelledPublication> candidates = new ArrayList<>();
     private final List<String> resubmittedLabels = new ArrayList<>();
 
@@ -44,12 +46,12 @@ class RecordingIncompletePublications implements IncompleteEventPublications {
 
     @Override
     public void resubmitIncompletePublications(ResubmissionOptions options) {
-        throw new UnsupportedOperationException("not exercised by ResubmitIncompletePublicationsJob");
+        throw new UnsupportedOperationException(NOT_EXERCISED_BY_JOB);
     }
 
     @Override
     public void resubmitIncompletePublicationsOlderThan(Duration duration) {
-        throw new UnsupportedOperationException("not exercised by ResubmitIncompletePublicationsJob");
+        throw new UnsupportedOperationException(NOT_EXERCISED_BY_JOB);
     }
 
     private record LabelledPublication(String label, Instant publicationDate) implements EventPublication {

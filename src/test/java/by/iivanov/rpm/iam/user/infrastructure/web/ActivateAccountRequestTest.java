@@ -29,6 +29,7 @@ class ActivateAccountRequestTest {
 
     private static final Selector TOKEN = field(ActivateAccountRequest::token);
     private static final Selector PASSWORD = field(ActivateAccountRequest::password);
+    private static final String PASSWORD_FIELD = "password";
 
     private final Validator validator =
             Validation.buildDefaultValidatorFactory().getValidator();
@@ -73,16 +74,16 @@ class ActivateAccountRequestTest {
         String longPassword = "a".repeat(PASSWORD_MAX + 1);
         return Stream.of(
                 blankCase("token", TOKEN, ConstraintViolationCases.BLANK),
-                blankCase("password", PASSWORD, blankPassword),
+                blankCase(PASSWORD_FIELD, PASSWORD, blankPassword),
                 invalidField(
                         "Invalid password: too short",
                         PASSWORD,
                         shortPassword,
-                        size("password", shortPassword, PASSWORD_MIN, PASSWORD_MAX)),
+                        size(PASSWORD_FIELD, shortPassword, PASSWORD_MIN, PASSWORD_MAX)),
                 invalidField(
                         "Invalid password: too long",
                         PASSWORD,
                         longPassword,
-                        size("password", longPassword, PASSWORD_MIN, PASSWORD_MAX)));
+                        size(PASSWORD_FIELD, longPassword, PASSWORD_MIN, PASSWORD_MAX)));
     }
 }

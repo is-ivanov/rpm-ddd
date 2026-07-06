@@ -31,6 +31,8 @@ import tools.jackson.databind.ObjectMapper;
 @EnableWebSecurity
 class SecurityConfig {
 
+    private static final String ACTIVATE_PATH = "/api/auth/activate";
+
     @Bean
     SecurityFilterChain securityFilterChain(
             HttpSecurity http, UnauthorizedEntryPoint unauthorizedEntryPoint, AccessDeniedHandler accessDeniedHandler) {
@@ -41,9 +43,9 @@ class SecurityConfig {
                                 .permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/auth/login")
                                 .permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/auth/activate")
+                                .requestMatchers(HttpMethod.GET, ACTIVATE_PATH)
                                 .permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/auth/activate")
+                                .requestMatchers(HttpMethod.POST, ACTIVATE_PATH)
                                 .permitAll()
                                 .requestMatchers("/api/**")
                                 .authenticated()

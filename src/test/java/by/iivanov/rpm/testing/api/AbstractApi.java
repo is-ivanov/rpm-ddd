@@ -5,6 +5,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import by.iivanov.rpm.testing.session.SessionContext;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
+/**
+ * Base class for the acceptance API clients (AuthApi, UserApi, ...): abstract to prevent direct
+ * instantiation, sharing protected {@code get}/{@code post} helpers; no abstract method by design.
+ */
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractApi {
 
     protected final RestTestClient restClient;

@@ -31,6 +31,16 @@
          resolves logger types differently on Windows vs Linux, producing a non-deterministic count that
          broke the CI gate. -->
     <exclude name="GuardLogStatement"/>
+    <!-- Wants a single-abstract-method interface annotated @FunctionalInterface. Off: the 3 hits are
+         domain ports (UserSummaryQuery, EmailNotificationSender) and a Spring Data repository
+         (SpringDataUserSummaryRepository) — role interfaces that happen to have one method today, not
+         lambda targets. @FunctionalInterface would misdescribe their intent and freeze them at one method. -->
+    <exclude name="ImplicitFunctionalInterface"/>
+    <!-- Wants the literal first in String comparisons ("x".equals(y)) — Yoda notation. Off: it hurts
+         readability, and its only benefit (NPE-safety when the left operand is null) is already owned by
+         explicit null checks + NullAway static analysis. Also one of the rules whose count differs across
+         Windows/Linux. -->
+    <exclude name="LiteralsFirstInComparisons"/>
   </rule>
   <!-- "Test method without @Test" heuristic. Its testClassPattern default is the unanchored regex "Test",
        so it treats any class whose name merely *contains* "Test" as a test class — flagging the
@@ -100,6 +110,16 @@
       <property name="violationSuppressRegex" value="Avoid short class names like User"/>
     </properties>
   </rule>
+  <!-- Keep the rule ON (it catches genuinely misnamed constants/fields — Checkstyle has no ConstantName).
+       A `static final` field is treated as a constant (constantPattern), which rejects the universal
+       SLF4J/Lombok logger idiom `private static final Logger log`. Allow `log` as an explicit alternative
+       in the constant pattern (global, intentional); any other lowercase constant still flags. The ArchUnit
+       camelCase @ArchTest rule fields in ArchitectureTest are handled by a class-level @SuppressWarnings. -->
+  <rule ref="category/java/codestyle.xml/FieldNamingConventions">
+    <properties>
+      <property name="constantPattern" value="[A-Z][A-Z_0-9]*|log"/>
+    </properties>
+  </rule>
 
 
   <!-- Two orthogonal allow-lists, both keeping the rule active for real production code:
@@ -116,11 +136,55 @@
   </rule>
 
 
+  <!-- Keep the rule ON (it catches anemic domain objects — a core DDD concern), but suppress it on
+       *View classes: by project convention a `{Name}View` is a read-only persistence projection
+       (@Subselect / read model) whose whole purpose is to be a dumb typed row carrier the ORM populates
+       and the adapter maps to a DTO — behavior lives in the write aggregate. Same suffix-allow-list
+       approach as LinguisticNaming/*Assert. A data-only class NOT named *View still flags. -->
+  <rule ref="category/java/design.xml/DataClass">
+    <properties>
+      <property name="violationSuppressXPath" value="./ancestor-or-self::ClassDeclaration[ends-with(@SimpleName, 'View')]"/>
+    </properties>
+  </rule>
   <rule ref="category/java/design.xml">
     <!-- "Talk only to friends" — flags a.b().c() chains. Off: 9/17 are enum-constant accesses
          (UserStatus.PENDING); the rest are unavoidable fluent/builder/stream API navigations and library
          type traversal (jjwt, HTTP, Jakarta). Zero genuine object-graph navigation violations. -->
     <exclude name="LawOfDemeter"/>
+    <!-- Caps method count per class (default 10). Off: the project already enforces a hard 200-line file
+         limit (AGENTS.md / coding-rules.md, verified with wc -l) on every file including production — that
+         is the adopted guard against class bloat, and this pure method-count heuristic duplicates it. The 4
+         hits are all legitimate method-rich patterns the count conflicts with: read-projection accessors
+         (UserSummaryView — record-style firstName() isn't recognized as a getter), the 3-tier test DSL
+         (UserStatements — one method per scenario step), a fluent assertion helper (AssertionResponse — 25
+         methods in 197 lines, already at the line cap), and transport overloads (AuthApi — login×5/activate×2
+         counted separately). A real god-class cannot exist under the 200-line cap. -->
+    <exclude name="TooManyMethods"/>
+    <!-- Measures coupling between a hand-maintained list of packages, which requires a mandatory
+         `packages` property. Off: unconfigured it is dead weight — PMD logs "Removed misconfigured rule:
+         LoosePackageCoupling cause: No packages or classes specified" on every build and emits a
+         <configerror> (never a violation, so it never counted). Configuring it would duplicate module
+         boundaries already owned and CI-enforced by Spring Modulith + ArchUnit. Excluding it silences the
+         per-build warning. -->
+    <exclude name="LoosePackageCoupling"/>
+  </rule>
+  <!-- Keep the rule ON (we agree unchecked exceptions don't belong in signatures we own), but suppress it
+       on @Override methods — there the throws clause is dictated by the framework interface we implement,
+       not by us (Spring UserDetailsService.loadUserByUsername throws UsernameNotFoundException, Jackson
+       deserialize throws JacksonException, Spring BeanDefinitionRegistryPostProcessor throws BeansException).
+       A non-@Override method that declares an unchecked exception still flags. -->
+  <rule ref="category/java/design.xml/AvoidUncheckedExceptionsInSignatures">
+    <properties>
+      <property name="violationSuppressXPath" value="./ancestor::MethodDeclaration[ModifierList/Annotation[@SimpleName='Override']]"/>
+    </properties>
+  </rule>
+  <!-- Keep the rule ON (final-by-default for private-constructor classes is useful), but suppress it on
+       @Table-annotated classes: JPA/Hibernate entities cannot be final (proxying/weaving). Genuine test
+       helpers flagged by this rule are fixed in code with `final`, not suppressed. -->
+  <rule ref="category/java/design.xml/ClassWithOnlyPrivateConstructorsShouldBeFinal">
+    <properties>
+      <property name="violationSuppressXPath" value="./ancestor-or-self::ClassDeclaration[ModifierList/Annotation[@SimpleName='Table']]"/>
+    </properties>
   </rule>
 
 
@@ -137,15 +201,40 @@
     <!-- Flags fields matching method names. Off: every record component (email, code, id, ...) has an
          auto-generated accessor with the same name — inherent false positive for record-heavy code. -->
     <exclude name="AvoidFieldNameMatchingMethodName"/>
+    <!-- Prefers Thread.currentThread().getContextClassLoader() over X.class.getClassLoader(). Off: the
+         rule's premise is J2EE app servers with a multi-classloader hierarchy. In a Spring Boot fat-jar
+         (single app classloader) both hits load a resource co-packaged with the loading class
+         (ActivationEmailRenderer + its email template; TestResources + test resources) — the class's own
+         classloader is the correct, deterministic choice, and TCCL (mutable per thread) would be a regression. -->
+    <exclude name="UseProperClassLoader"/>
   </rule>
   <!-- "Looks like a test class but has no test cases" heuristic. Its default pattern flags names that
        *start or end* with Test/Tests/TestCase, catching Test-prefixed infrastructure that is not a test
-       (TestRpmDddApplication, TestcontainersConfiguration, TestContextValidator, TestResources). Anchor
+       (TestRpmDddApplication, TestcontainersConfiguration, TestResources). Anchor
        it to the project's test-suffix convention (AGENTS.md: *Test / *IntegrationTest) so only real *Test
        classes are checked; the Test-prefixed infra is exempt. -->
+  <!-- Tightened: a String literal repeated even twice should be a named constant (default threshold is 4).
+       skipAnnotations avoids flagging repeated annotation values (@SuppressWarnings("unchecked"),
+       @DisplayName/@ParameterizedTest name templates) which cannot sensibly be constants. -->
+  <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
+    <properties>
+      <property name="maxDuplicateLiterals" value="2"/>
+      <property name="skipAnnotations" value="true"/>
+    </properties>
+  </rule>
   <rule ref="category/java/errorprone.xml/TestClassWithoutTestCases">
     <properties>
       <property name="testClassPattern" value="^(?:.*\.)?[^.]*Tests?$"/>
+    </properties>
+  </rule>
+  <!-- Keep ON (catches real magic numbers in conditions), but extend the default ignore list (-1,0)
+       with 1: a `1` in a size/length boundary check (== 1, <= 1, > 1) is the same idiomatic
+       "exactly one / at most one / more than one" guard PMD already exempts -1/0 for. All hits are
+       such checks (constructors.length == 1, arr.length <= 1, matching.size() > 1). Any other magic
+       number in an if-condition still flags. -->
+  <rule ref="category/java/errorprone.xml/AvoidLiteralsInIfCondition">
+    <properties>
+      <property name="ignoreMagicNumbers" value="-1,0,1"/>
     </properties>
   </rule>
 

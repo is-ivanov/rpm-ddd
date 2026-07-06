@@ -14,6 +14,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class LoginTest {
 
+    private static final String BLANK_MESSAGE = "Login must not be blank";
+    private static final String VALID_LOGIN = "ivanov";
+
     @Nested
     @DisplayName("constructor")
     class ConstructorTest {
@@ -31,9 +34,9 @@ class LoginTest {
 
         static Stream<Arguments> invalidValues() {
             return Stream.of(
-                    argumentSet("null value", null, "Login must not be blank"),
-                    argumentSet("blank value", "  \t  ", "Login must not be blank"),
-                    argumentSet("empty string", "", "Login must not be blank"),
+                    argumentSet("null value", null, BLANK_MESSAGE),
+                    argumentSet("blank value", "  \t  ", BLANK_MESSAGE),
+                    argumentSet("empty string", "", BLANK_MESSAGE),
                     argumentSet(
                             "exceeds max size 50", "a".repeat(51), "Login must not exceed 50 characters, but was 51"));
         }
@@ -51,8 +54,8 @@ class LoginTest {
 
         static Stream<Arguments> validValues() {
             return Stream.of(
-                    argumentSet("simple login", "ivanov", "ivanov"),
-                    argumentSet("with leading/trailing spaces", "  ivanov  ", "ivanov"),
+                    argumentSet("simple login", VALID_LOGIN, VALID_LOGIN),
+                    argumentSet("with leading/trailing spaces", "  ivanov  ", VALID_LOGIN),
                     argumentSet("max length 50 chars", "a".repeat(50), "a".repeat(50)));
         }
     }

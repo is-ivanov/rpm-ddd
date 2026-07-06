@@ -1,5 +1,8 @@
 package by.iivanov.rpm.testing;
 
+// Dedicated constants holder: distinct named constants sharing a value (DB_USER/DB_PASSWORD = "postgres")
+// is intentional, not a magic-literal smell.
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 final class Constants {
 
     static final String DB_TEST_TAG = "db";

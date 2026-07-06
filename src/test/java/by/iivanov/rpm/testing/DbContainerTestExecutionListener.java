@@ -48,6 +48,8 @@ public class DbContainerTestExecutionListener implements TestExecutionListener {
         return testIdentifier.getTags().stream().anyMatch(tag -> tag.getName().equals(Constants.DB_TEST_TAG));
     }
 
+    // PMD false positive: the nested-catch throw on line 72 passes `ex` as the cause; stack trace is preserved.
+    @SuppressWarnings("PMD.PreserveStackTrace")
     private String resolveAndPrepareDb() {
         String adminUrl = LOCAL_DB_HOST_URL + "postgres";
         String targetUrl = LOCAL_DB_HOST_URL + Constants.TARGET_DB_NAME;
@@ -69,7 +71,7 @@ public class DbContainerTestExecutionListener implements TestExecutionListener {
                     DriverManager.getConnection(containerAdminUrl, container.getUsername(), container.getPassword())) {
                 recreateDatabase(connection);
             } catch (SQLException ex) {
-                throw new RuntimeException("Failed to recreate database in testcontainer", ex);
+                throw new IllegalStateException("Failed to recreate database in testcontainer", ex);
             }
             return container.getJdbcUrl();
         }
@@ -85,7 +87,7 @@ public class DbContainerTestExecutionListener implements TestExecutionListener {
                     FROM pg_stat_activity WHERE datname = '%s'""".formatted(Constants.TARGET_DB_NAME));
             stmt.execute(initSql);
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to recreate database", e);
+            throw new IllegalStateException("Failed to recreate database", e);
         }
     }
 

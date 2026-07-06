@@ -16,6 +16,9 @@ class PasswordTest {
 
     private static final String VALID_HASH = "$2a$10$abcdefghijklmnopqrstuvwxABCDEFGHIJ1234567890abcdefghi";
     private static final String ENCODED_PASSWORD = "{bcrypt}" + VALID_HASH;
+    private static final String BLANK_MESSAGE = "Password must not be blank";
+    private static final String NOOP_PASSWORD = "{noop}admin";
+    private static final String SIMPLE_PASSWORD = "admin123";
 
     @Nested
     @DisplayName("constructor")
@@ -34,9 +37,9 @@ class PasswordTest {
 
         static Stream<Arguments> invalidValues() {
             return Stream.of(
-                    argumentSet("null value", null, "Password must not be blank"),
-                    argumentSet("blank value", "  \t  ", "Password must not be blank"),
-                    argumentSet("empty string", "", "Password must not be blank"));
+                    argumentSet("null value", null, BLANK_MESSAGE),
+                    argumentSet("blank value", "  \t  ", BLANK_MESSAGE),
+                    argumentSet("empty string", "", BLANK_MESSAGE));
         }
 
         @ParameterizedTest
@@ -54,9 +57,9 @@ class PasswordTest {
             return Stream.of(
                     argumentSet("BCrypt encoded", ENCODED_PASSWORD, ENCODED_PASSWORD),
                     argumentSet("with leading/trailing spaces", "  " + ENCODED_PASSWORD + "  ", ENCODED_PASSWORD),
-                    argumentSet("NoOpPassword in tests", "{noop}admin", "{noop}admin"),
+                    argumentSet("NoOpPassword in tests", NOOP_PASSWORD, NOOP_PASSWORD),
                     argumentSet("plain hash", VALID_HASH, VALID_HASH),
-                    argumentSet("simple password", "admin123", "admin123"));
+                    argumentSet("simple password", SIMPLE_PASSWORD, SIMPLE_PASSWORD));
         }
     }
 }
