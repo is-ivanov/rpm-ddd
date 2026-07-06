@@ -27,6 +27,15 @@ For approval/snapshot verification — the universal "rendered-content verificat
 - **Determinism (mandatory):** fix all variable inputs (no `Date.now()`/random ids) so snapshots don't flake.
 - **CI:** snapshots must be read-only on CI (fail on mismatch); never run `-u` in CI.
 
+## Assertion Messages (rationale over comments)
+
+Vitest's `expect(actual, message?)` shows `message` as the failure description in the console — the frontend analog of the backend's AssertJ `as(...)`. The precedent already exists in Playwright Statements (`.claude/tech/playwright/tdd.md`: `expect(locator, 'task form is displayed').toBeVisible()`); apply the same idea to Vitest logic / API-client tests.
+
+- **Per-assertion rationale → into the message arg.** When an assertion needs a "why THIS expected value / what a wrong impl would produce" explanation (a pinned discrimination like AND-vs-OR, an unknown-status-sorts-last invariant), attach it as `expect(actual, 'AND ⇒ 2 rows; OR ⇒ 4 — pinned so an OR impl differs').toEqual(...)` instead of a `//` comment above the assertion. It then prints on failure, when the rationale is most useful, instead of rotting in a comment only a source-reader sees.
+- **Block / setup / dataset-level context stays a comment.** Notes that explain a shared fixture, the construction of a dataset, or contract lock-step across files have no single-assertion anchor — keep them as comments above the block.
+- **Delete a comment** only when nothing but a restatement of the test title survives.
+- Behavior-preserving: the message shows only on failure; `toEqual` / `toBe` outcomes are unchanged.
+
 ## RED-Phase Marker (`it.fails`)
 
 - **Marker:** Vitest's [`it.fails` / `test.fails`](https://vitest.dev/api/#test-fails) — replaces `.skip` for committing a known-failing (RED) test. Referenced as "test skip marker" in universal rules. The frontend analog of the backend's `@ExpectedToFail`.

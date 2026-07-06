@@ -74,6 +74,10 @@ See `.claude/templates/workflow/green-output-format.md` for the summary format t
 
 The RED-phase marker name differs per concern — look it up in the **Conventions table** (`ProductSpecification/technology.md`, "Test skip marker" row for the frontend and browser-testing concerns); never hardcode one name across both. Unlike a plain skip, this marker **runs** every build. At GREEN, the only allowed test change is removing the marker (and the RED comment above it): with the marker still present, a now-passing test fails the build. For the exact marker syntax, how to strip it, and the build error a still-present marker produces, see the tech binding's RED-phase marker section (`.claude/tech/{frontend}/tdd.md` and `.claude/tech/{browser-testing}/tdd.md`).
 
+### RED-Comment Reframing
+
+When you strip the RED marker (step 5), do not silently discard the per-assertion rationale the RED comment carried. **Reframe** it — move the "why THIS expected value" explanation into the assertion's failure message so it surfaces on failure instead of rotting in a now-stranded comment. The concrete idiom (message-arg syntax, which context stays a comment, when to delete) lives in the tech binding: `.claude/tech/{frontend}/tdd.md` → "Assertion Messages (rationale over comments)".
+
 ## Context Files
 
 Before implementing, read:
