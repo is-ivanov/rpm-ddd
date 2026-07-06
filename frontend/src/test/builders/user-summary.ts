@@ -1,4 +1,4 @@
-import type { PersonName, UserSummaryResponse } from '../../logic/users-grid.types';
+import type { PersonName, UserSummaryResponse } from '@/features/users/logic/users-grid.types';
 
 export const JOHN_DOE: PersonName = { firstName: 'John', middleName: 'Robert', lastName: 'Doe' };
 export const SARAH_CONNOR: PersonName = { firstName: 'Sarah', middleName: 'Jane', lastName: 'Connor' };
@@ -7,7 +7,8 @@ export const EMILY_CARTER: PersonName = { firstName: 'Emily', middleName: null, 
 export const DAVID_LEE: PersonName = { firstName: 'David', middleName: null, lastName: 'Lee' };
 export const SYSTEM_ACTOR: PersonName = { firstName: 'System', middleName: null, lastName: '' };
 
-export function userWith(overrides: Partial<UserSummaryResponse>): UserSummaryResponse {
+/** Builds the canonical admin user summary (Sarah Connor), overriding only the fields a test cares about. */
+export function aUserSummary(overrides: Partial<UserSummaryResponse> = {}): UserSummaryResponse {
   return {
     userId: '00000000-0000-0000-0000-000000000001',
     name: SARAH_CONNOR,

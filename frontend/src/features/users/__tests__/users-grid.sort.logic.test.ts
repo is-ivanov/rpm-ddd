@@ -7,18 +7,18 @@ import {
   JOHN_DOE,
   MICHAEL_SCOTT,
   SARAH_CONNOR,
-  userWith,
-} from './support/user-summary.builder';
+  aUserSummary,
+} from '@/test/builders/user-summary';
 
 describe('Column header sort', () => {
   // Starting order is deliberately unsorted by both Login and Status (not ascending,
   // not descending, not lifecycle) so each sort below is genuinely observable — a
   // pass-through that returned the input would fail all three.
   const unsortedRows = buildUserRows([
-    userWith({ name: MICHAEL_SCOTT, login: 'm.scott', status: 'PENDING' }),
-    userWith({ name: SARAH_CONNOR, login: 's.connor', status: 'ACTIVE' }),
-    userWith({ name: DAVID_LEE, login: 'd.lee', status: 'INACTIVE' }),
-    userWith({ name: EMILY_CARTER, login: 'e.carter', status: 'LOCKED' }),
+    aUserSummary({ name: MICHAEL_SCOTT, login: 'm.scott', status: 'PENDING' }),
+    aUserSummary({ name: SARAH_CONNOR, login: 's.connor', status: 'ACTIVE' }),
+    aUserSummary({ name: DAVID_LEE, login: 'd.lee', status: 'INACTIVE' }),
+    aUserSummary({ name: EMILY_CARTER, login: 'e.carter', status: 'LOCKED' }),
   ]);
 
   it('sorts rows ascending by Login on the first header click', () => {
@@ -43,10 +43,10 @@ describe('Column header sort', () => {
   // end, not corrupt the order via undefined - number = NaN.
   it('places an unknown status last instead of breaking the Status sort', () => {
     const rows = buildUserRows([
-      userWith({ name: SARAH_CONNOR, login: 's.connor', status: 'ACTIVE' }),
-      userWith({ name: MICHAEL_SCOTT, login: 'm.scott', status: 'SUSPENDED' }),
-      userWith({ name: EMILY_CARTER, login: 'e.carter', status: 'PENDING' }),
-      userWith({ name: DAVID_LEE, login: 'd.lee', status: 'LOCKED' }),
+      aUserSummary({ name: SARAH_CONNOR, login: 's.connor', status: 'ACTIVE' }),
+      aUserSummary({ name: MICHAEL_SCOTT, login: 'm.scott', status: 'SUSPENDED' }),
+      aUserSummary({ name: EMILY_CARTER, login: 'e.carter', status: 'PENDING' }),
+      aUserSummary({ name: DAVID_LEE, login: 'd.lee', status: 'LOCKED' }),
     ]);
 
     const sorted = sortUserRows(rows, 'status', 'asc');
@@ -95,7 +95,7 @@ describe('Timestamp column sort (by the underlying Created instant)', () => {
 });
 
 function userCreatedAt(login: string, status: string, createdAt: string): UserSummaryResponse {
-  return userWith({
+  return aUserSummary({
     login,
     status,
     audit: { createdAt, createdBy: JOHN_DOE, updatedAt: '2026-06-24T08:11:42.905Z', updatedBy: SARAH_CONNOR },

@@ -7,8 +7,8 @@ import {
   MICHAEL_SCOTT,
   SARAH_CONNOR,
   SYSTEM_ACTOR,
-  userWith,
-} from './support/user-summary.builder';
+  aUserSummary,
+} from '@/test/builders/user-summary';
 
 describe('Users grid view model', () => {
   it.each([
@@ -17,13 +17,13 @@ describe('Users grid view model', () => {
     { status: 'LOCKED', label: 'Locked' },
     { status: 'INACTIVE', label: 'Inactive' },
   ])('maps status code $status to label $label', ({ status, label }) => {
-    const [row] = buildUserRows([userWith({ status })]);
+    const [row] = buildUserRows([aUserSummary({ status })]);
 
     expect(row.status).toBe(label);
   });
 
   it('abbreviates a normal audit actor as "{firstInitial}. {lastName}"', () => {
-    const [row] = buildUserRows([userWith({})]);
+    const [row] = buildUserRows([aUserSummary({})]);
 
     expect(row.createdBy).toBe('J. Doe');
     expect(row.updatedBy).toBe('S. Connor');
@@ -31,7 +31,7 @@ describe('Users grid view model', () => {
 
   // The System actor (empty last name) renders verbatim; a normal updatedBy still abbreviates.
   it('renders the seed/System actor verbatim as "System" (empty last name)', () => {
-    const seeded = userWith({
+    const seeded = aUserSummary({
       audit: {
         createdAt: '2026-06-20T11:02:09.310Z',
         createdBy: SYSTEM_ACTOR,
@@ -47,13 +47,13 @@ describe('Users grid view model', () => {
   });
 
   it('composes the full name including the middle name when present', () => {
-    const [row] = buildUserRows([userWith({ name: SARAH_CONNOR })]);
+    const [row] = buildUserRows([aUserSummary({ name: SARAH_CONNOR })]);
 
     expect(row.name).toBe('Sarah Jane Connor');
   });
 
   it('composes the full name without a middle name when absent', () => {
-    const [row] = buildUserRows([userWith({ name: MICHAEL_SCOTT })]);
+    const [row] = buildUserRows([aUserSummary({ name: MICHAEL_SCOTT })]);
 
     expect(row.name).toBe('Michael Scott');
   });
@@ -61,10 +61,10 @@ describe('Users grid view model', () => {
 
 describe('Full name column filter', () => {
   const fourRows = buildUserRows([
-    userWith({ name: SARAH_CONNOR }),
-    userWith({ name: MICHAEL_SCOTT }),
-    userWith({ name: EMILY_CARTER }),
-    userWith({ name: DAVID_LEE }),
+    aUserSummary({ name: SARAH_CONNOR }),
+    aUserSummary({ name: MICHAEL_SCOTT }),
+    aUserSummary({ name: EMILY_CARTER }),
+    aUserSummary({ name: DAVID_LEE }),
   ]);
 
   it('keeps only rows whose Full name contains the term, preserving render order', () => {
@@ -97,10 +97,10 @@ describe('Multi-column text filter (AND-combined)', () => {
   // in exactly {m.scott, e.carter}, so each column excludes a row the OTHER includes — proving both
   // participate. AND ⇒ 2 rows; OR ⇒ 4; login-only ⇒ 3; name-only ⇒ 3; pass-through ⇒ 4 — all differ.
   const rows = buildUserRows([
-    userWith({ name: SARAH_CONNOR, login: 's.connor' }),
-    userWith({ name: MICHAEL_SCOTT, login: 'm.scott' }),
-    userWith({ name: EMILY_CARTER, login: 'e.carter' }),
-    userWith({ name: DAVID_LEE, login: 'd.lee' }),
+    aUserSummary({ name: SARAH_CONNOR, login: 's.connor' }),
+    aUserSummary({ name: MICHAEL_SCOTT, login: 'm.scott' }),
+    aUserSummary({ name: EMILY_CARTER, login: 'e.carter' }),
+    aUserSummary({ name: DAVID_LEE, login: 'd.lee' }),
   ]);
 
   it('keeps only rows matching EVERY active column filter (AND, not OR), preserving order', () => {
