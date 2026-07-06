@@ -74,6 +74,10 @@ See `.claude/templates/workflow/green-output-format.md` for the summary format t
 
 The RED-phase marker name differs per concern — look it up in the **Conventions table** (`ProductSpecification/technology.md`, "Test skip marker" row for the frontend and browser-testing concerns); never hardcode one name across both. Unlike a plain skip, this marker **runs** every build. At GREEN, the only allowed test change is removing the marker (and the RED comment above it): with the marker still present, a now-passing test fails the build. For the exact marker syntax, how to strip it, and the build error a still-present marker produces, see the tech binding's RED-phase marker section (`.claude/tech/{frontend}/tdd.md` and `.claude/tech/{browser-testing}/tdd.md`).
 
+### RED-Comment Reframing
+
+When you strip the RED marker, do not silently discard the per-assertion rationale the RED comment carried. **Reframe** it: move the "why THIS expected value / what a wrong impl produces" part into the Vitest failure message — `expect(actual, 'AND ⇒ 2 rows; OR ⇒ 4 — pinned so an OR impl differs').toEqual(...)` — so it surfaces on failure instead of rotting in a now-stranded comment. Block/setup/dataset-level context stays a comment (no single-assertion anchor); delete a comment only when nothing but a restatement of the test title survives. See `.claude/tech/vue-ts/tdd.md` → "Assertion Messages (rationale over comments)".
+
 ## Context Files
 
 Before implementing, read:
