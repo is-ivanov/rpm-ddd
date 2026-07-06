@@ -27,7 +27,7 @@ test.describe('Users Grid Load Failure', () => {
     async () => {
       await issue('250');
 
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenAdminUserListServerError();
       await homePage.navigateToHomePage();
 

@@ -22,7 +22,7 @@ test.describe('Logout to Welcome Navigation', () => {
       'Then the session is ended, ' +
       'And the user is shown the welcome page with the "Sign in" button',
     async () => {
-      await currentUserBackend.givenAuthenticatedUserUntilLogout({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUserUntilLogout();
       await homePage.navigateToHomePage();
       await homePage.clickUserAvatar();
 

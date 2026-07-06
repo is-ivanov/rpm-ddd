@@ -26,7 +26,7 @@ test.describe('Session Lost Mid-Page Redirect', () => {
     async () => {
       await issue('251');
 
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenAdminUserListUnauthorized();
       await homePage.navigateToHomePage();
 

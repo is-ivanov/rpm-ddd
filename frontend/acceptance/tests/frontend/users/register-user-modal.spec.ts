@@ -31,7 +31,7 @@ test.describe('Register User Modal', () => {
       'And the Timezone field is pre-filled with the app default (Central Europe), ' +
       'And the modal shows a "Register" submit button and a "Cancel" button',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
       await homePage.clickUsersNavItem();
@@ -53,7 +53,7 @@ test.describe('Register User Modal', () => {
       'Then the Register button shows a loading indicator, ' +
       'And the form fields become disabled during submission',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await registerUserBackend.givenRegisterUserInFlight();
       await homePage.navigateToHomePage();
@@ -76,7 +76,7 @@ test.describe('Register User Modal', () => {
       'Then the modal closes, ' +
       'And the grid refreshes and shows the newly created user with status Pending',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenListRefreshesWithNewUserAfterCreate();
       await registerUserBackend.givenRegisterUserSucceeds();
       await homePage.navigateToHomePage();
@@ -99,7 +99,7 @@ test.describe('Register User Modal', () => {
       'Then a field-level error message is shown under the Login field, ' +
       'And the modal stays open with the entered values preserved',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await registerUserBackend.givenRegisterUserRejectsDuplicateLogin();
       await homePage.navigateToHomePage();

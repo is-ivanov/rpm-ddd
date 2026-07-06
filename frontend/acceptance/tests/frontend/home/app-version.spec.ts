@@ -30,7 +30,7 @@ test.describe('App Version Popover', () => {
       'And the popover displays the commit "abc1234", ' +
       'And the popover displays the build time',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await appInfoBackend.givenAppInfo({ version: VERSION, commit: COMMIT, buildTime: BUILD_TIME });
       await homePage.navigateToHomePage();
 
