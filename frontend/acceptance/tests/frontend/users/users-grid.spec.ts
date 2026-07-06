@@ -1,6 +1,7 @@
 import { test } from '@playwright/test';
 import { HomePageStatements } from '../../statements/frontend/home-page.statements';
 import { UsersPageStatements } from '../../statements/frontend/users-page.statements';
+import { UsersGridFilterStatements } from '../../statements/frontend/users-grid-filter.statements';
 import { UsersGridSortStatements } from '../../statements/frontend/users-grid-sort.statements';
 import { UsersGridTimeStatements } from '../../statements/frontend/users-grid-time.statements';
 import { CurrentUserBackendStatements } from '../../statements/backend/current-user-backend.statements';
@@ -10,6 +11,7 @@ import { FIXED_NOW_INSTANT } from '../../statements/support/users-grid-time.fixt
 test.describe('Users Grid', () => {
   let homePage: HomePageStatements;
   let usersPage: UsersPageStatements;
+  let usersFilter: UsersGridFilterStatements;
   let usersSort: UsersGridSortStatements;
   let usersTime: UsersGridTimeStatements;
   let currentUserBackend: CurrentUserBackendStatements;
@@ -18,6 +20,7 @@ test.describe('Users Grid', () => {
   test.beforeEach(({ page, baseURL }) => {
     homePage = new HomePageStatements(page, baseURL);
     usersPage = new UsersPageStatements(page);
+    usersFilter = new UsersGridFilterStatements(page);
     usersSort = new UsersGridSortStatements(page);
     usersTime = new UsersGridTimeStatements(page);
     currentUserBackend = new CurrentUserBackendStatements(page);
@@ -136,6 +139,30 @@ test.describe('Users Grid', () => {
       await usersPage.assertGridIsVisible();
 
       await usersTime.assertCreatedCellRelativeLabelAndTooltip();
+    },
+  );
+
+  test(
+    'UI Test Scenario 3.4: Every text column filters the rows client-side, combined with AND - ' +
+      'Given the Users page shows multiple users, ' +
+      'When the user types text into two different column filters (Login and Updated by), ' +
+      'Then only rows whose Login AND Updated by both contain their respective filter text remain visible, ' +
+      'And the active column filters combine with AND (a row must match every one), ' +
+      'And no additional network request is made',
+    async () => {
+      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await adminUsersBackend.givenSeveralUsers();
+      await homePage.navigateToHomePage();
+      await homePage.clickUsersNavItem();
+      await usersPage.assertGridIsVisible();
+      await usersFilter.assertLoginFilterIsVisible();
+      await usersFilter.assertUpdatedByFilterIsVisible();
+
+      await usersFilter.enterLoginFilter();
+      await usersFilter.enterUpdatedByFilter();
+
+      await usersFilter.assertOnlyRowsMatchingBothFiltersRemain();
+      adminUsersBackend.assertAdminUserListRequestedOnce();
     },
   );
 });

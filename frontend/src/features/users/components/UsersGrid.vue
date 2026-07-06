@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, type Component } from 'vue';
+import { computed, reactive, ref, type Component } from 'vue';
 import { ArrowDown, ArrowUp, ChevronsUpDown } from '@lucide/vue';
-import { filterRowsByFullName, sortUserRows } from '../logic/users-grid.logic';
-import type { SortColumn, SortDirection, UserRow } from '../logic/users-grid.types';
+import { filterRowsByColumns, sortUserRows } from '../logic/users-grid.logic';
+import type { SortColumn, SortDirection, TextFilterColumn, UserRow } from '../logic/users-grid.types';
 import TimeCell from './TimeCell.vue';
 
 const props = defineProps<{ rows: readonly UserRow[]; viewerTimeZone: string }>();
@@ -14,18 +14,35 @@ interface Column {
   readonly label: string;
   readonly center?: boolean;
   readonly filterTestId?: string;
+  readonly filterKey?: TextFilterColumn;
   readonly sortKey?: SortColumn;
 }
 
 const COLUMNS: readonly Column[] = [
-  { testId: 'users-grid-header-name', label: 'Full name', filterTestId: 'users-filter-name' },
-  { testId: 'users-grid-header-login', label: 'Login', sortKey: 'login' },
-  { testId: 'users-grid-header-email', label: 'Email' },
+  { testId: 'users-grid-header-name', label: 'Full name', filterTestId: 'users-filter-name', filterKey: 'name' },
+  {
+    testId: 'users-grid-header-login',
+    label: 'Login',
+    sortKey: 'login',
+    filterTestId: 'users-filter-login',
+    filterKey: 'login',
+  },
+  { testId: 'users-grid-header-email', label: 'Email', filterTestId: 'users-filter-email', filterKey: 'email' },
   { testId: 'users-grid-header-status', label: 'Status', center: true, sortKey: 'status' },
   { testId: 'users-grid-header-created', label: 'Created' },
-  { testId: 'users-grid-header-created-by', label: 'Created by' },
+  {
+    testId: 'users-grid-header-created-by',
+    label: 'Created by',
+    filterTestId: 'users-filter-created-by',
+    filterKey: 'createdBy',
+  },
   { testId: 'users-grid-header-updated', label: 'Updated' },
-  { testId: 'users-grid-header-updated-by', label: 'Updated by' },
+  {
+    testId: 'users-grid-header-updated-by',
+    label: 'Updated by',
+    filterTestId: 'users-filter-updated-by',
+    filterKey: 'updatedBy',
+  },
 ];
 
 const STATUS_BADGE_CLASS: Record<string, string> = {
@@ -44,7 +61,13 @@ interface SortState {
   readonly direction: SortDirection;
 }
 
-const nameFilter = ref('');
+const filters = reactive<Record<TextFilterColumn, string>>({
+  name: '',
+  login: '',
+  email: '',
+  createdBy: '',
+  updatedBy: '',
+});
 const sort = ref<SortState | null>(null);
 
 function onHeaderClick(col: Column): void {
@@ -78,7 +101,7 @@ function sortIconFor(col: Column): Component {
 }
 
 const displayedRows = computed(() => {
-  const filtered = filterRowsByFullName([...props.rows], nameFilter.value);
+  const filtered = filterRowsByColumns([...props.rows], filters);
   if (sort.value === null) {
     return filtered;
   }
@@ -109,8 +132,8 @@ const displayedRows = computed(() => {
         <tr>
           <td v-for="col in COLUMNS" :key="col.testId" class="filter-cell">
             <input
-              v-if="col.filterTestId"
-              v-model="nameFilter"
+              v-if="col.filterKey"
+              v-model="filters[col.filterKey]"
               :data-testid="col.filterTestId"
               :aria-label="`Filter by ${col.label}`"
               type="text"

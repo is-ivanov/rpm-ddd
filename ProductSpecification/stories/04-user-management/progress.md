@@ -191,12 +191,91 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] demo (register-user-modal.spec.ts Scn 5.2)
 
 ### Scenario 6.1: Collapse toggle persists across reload
-- [ ] red-playwright
-- [ ] red-frontend
+- [x] red-playwright (sidebar-collapse.spec.ts + sidebar-collapse.statements.ts — data-collapsed toggle + reload persistence)
+- [x] red-frontend (sidebar-collapse.logic.test.ts — parseSidebarCollapsedState parse + safe default)
+- [x] green-frontend (parseSidebarCollapsedState = raw === 'true'; test parameterized via it.each)
+- [S] red-frontend-api (no network — collapse state persists client-side in localStorage)
+- [S] green-frontend-api
+- [x] align-design (DashboardTopBar collapse toggle + DashboardSidebar rail; localStorage persist; style.css split → styles/components.css)
+- [x] green-playwright (sidebar-collapse.spec.ts GREEN — 1/1; home suite 9/9)
+- [x] demo (sidebar-collapse.spec.ts)
+
+## Frontend Scenarios — promoted at the Frontend Extended Gate (2026-07-05)
+
+> Grid under-matched the mockup: filter only on Full name, sort only on Login/Status, while the mockup
+> shows filters/sorts on all columns. Full mockup parity is required to close the story. New cheap
+> scenarios 3.4/3.5 close the text-filter/sort gap; 3.6/3.7/5.3 promote UI Extended E1/E3/E4. E2/E5/E6
+> deferred to improvements I13/I14/I15. Guard against silent control-omission added (commit e1d99a1).
+
+### Scenario 3.4: Every text column filters the rows client-side
+> Generalize the Full-name-only filter to per-column state (Login, Email, Created by, Updated by), combined
+> AND. Same "contains" category as core Scn 3.1; new logic = multi-column composition.
+- [x] red-playwright (users-grid.spec.ts Scn 3.4 + users-grid-filter.statements.ts — Login∧Updated-by AND)
+- [x] red-frontend (users-grid.logic.test.ts — filterRowsByColumns AND over Login+Full-name; TextFilterColumn type)
+- [x] green-frontend (filterRowsByColumns AND-combined; filterRowsByFullName delegates)
+- [S] red-frontend-api (client-side filter — reuses fetchAdminUsers)
+- [S] green-frontend-api
+- [x] align-design (filter inputs on all 5 text columns; per-column `filters` record → filterRowsByColumns)
+- [x] green-playwright (users-grid.spec.ts Scn 3.4 GREEN — 6/6 grid suite pass)
+- [x] demo (users-grid.spec.ts Scn 3.4)
+
+### Scenario 3.5: Every column header sorts the rows (timestamps by instant)
+> Sort affordance on all 8 headers. Lexical columns reuse the Login category; NEW category = timestamp
+> sort (Created/Updated) by the underlying instant, not the relative label.
+- [~] red-playwright
+- [ ] red-frontend (instant/timestamp sort comparator)
 - [ ] green-frontend
-- [ ] red-frontend-api
-- [ ] green-frontend-api
-- [ ] align-design
+- [S] red-frontend-api (client-side sort)
+- [S] green-frontend-api
+- [ ] align-design (sortable headers on all columns)
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 3.6: Status column filter is a lifecycle-ordered multi-select (promoted from UI Extended E1)
+> Status filter = multi-select dropdown listing statuses in lifecycle order (Pending, Active, Locked,
+> Inactive); selecting a subset keeps only those rows. New control + set-membership filter logic.
+- [ ] red-playwright
+- [ ] red-frontend (multi-select status filter — set membership + lifecycle-ordered options)
+- [ ] green-frontend
+- [S] red-frontend-api (client-side filter)
+- [S] green-frontend-api
+- [ ] align-design (status multi-select dropdown per mockup)
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 3.7: Created / Updated date-range filter narrows by the underlying instant (promoted from UI Extended E3)
+> from–to date-range control on Created and Updated; filters on the absolute instant, not the relative label.
+- [ ] red-playwright
+- [ ] red-frontend (date-range predicate on the instant, inclusive bounds)
+- [ ] green-frontend
+- [S] red-frontend-api (client-side filter)
+- [S] green-frontend-api
+- [ ] align-design (date-range controls per mockup)
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 3.8: Filtering with no matches shows an empty-result state (promoted from UI Extended E2)
+> When a filter matches zero rows, show an empty-result message; clearing the filter restores all rows.
+> Presentational (length check on displayedRows) — no .logic.ts seam. No mockup for the empty state →
+> simple centered message decided at align-design.
+- [ ] red-playwright
+- [S] red-frontend (presentational empty-state — length check; no .logic.ts seam)
+- [S] green-frontend
+- [S] red-frontend-api (client-side — reuses fetchAdminUsers)
+- [S] green-frontend-api
+- [ ] align-design (empty-result message block)
+- [ ] green-playwright
+- [ ] demo
+
+### Scenario 5.3: Cancelling the register modal discards input and leaves the grid unchanged (promoted from UI Extended E4)
+> Cancel closes the modal, discards entered values, adds no grid row. Presentational (emit close) — no
+> .logic.ts seam. Existence-check red-frontend: modal likely unmounts on close already → [S] if so.
+- [ ] red-playwright
+- [S] red-frontend (presentational — cancel closes modal; no .logic.ts seam)
+- [S] green-frontend
+- [S] red-frontend-api (no network on cancel)
+- [S] green-frontend-api
+- [ ] align-design (Cancel button wired to close + discard per mockup)
 - [ ] green-playwright
 - [ ] demo
 
@@ -357,13 +436,13 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] E2. Activation updates the audit fields visible in the grid (reviewed — DEFERRED to improvements I7)
 - [S] E3. List order is stable when two users share the same createdAt (reviewed — DEFERRED to improvements I8; tiebreaker already implemented)
 
-**UI (tests/extended/02_UI_Tests_Extended.md)**
-- [S] E1. Status multi-select filter lists statuses in lifecycle order (deferred — review at Story Completion Gate)
-- [S] E2. Filtering with no matches shows an empty-result state (deferred — review at Story Completion Gate)
-- [S] E3. Date-range filter on Created narrows by the underlying instant (deferred — review at Story Completion Gate)
-- [S] E4. Cancelling the modal discards input and keeps the grid unchanged (deferred — review at Story Completion Gate)
-- [S] E5. Collapsed sidebar restores without a flicker on reload (deferred — review at Story Completion Gate)
-- [S] E6. Mobile layout renders the grid and modal (deferred — review at Story Completion Gate)
+**UI (tests/extended/02_UI_Tests_Extended.md) — Frontend Extended Gate DONE (2026-07-05)**
+- [x] E1. Status multi-select filter lists statuses in lifecycle order (PROMOTED → Scenario 3.6 above)
+- [x] E2. Filtering with no matches shows an empty-result state (PROMOTED → Scenario 3.8 above)
+- [x] E3. Date-range filter on Created narrows by the underlying instant (PROMOTED → Scenario 3.7 above)
+- [x] E4. Cancelling the modal discards input and keeps the grid unchanged (PROMOTED → Scenario 5.3 above)
+- [S] E5. Collapsed sidebar restores without a flicker on reload (reviewed — DEFERRED to improvements I14)
+- [S] E6. Mobile layout renders the grid and modal (reviewed — DEFERRED to improvements I15)
 
 **Load (tests/extended/03_Load_Tests_Extended.md)**
 - [S] E1. Full list of 1000 users returns under 1s (deferred — review at Story Completion Gate)

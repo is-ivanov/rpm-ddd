@@ -1,6 +1,6 @@
 # Design Review Patterns
 
-Reference content for `design-review-agent`: BAD → GOOD examples, the review output format, and verdict examples. The agent classifies every string literal in a component as OK (same value for every user, always) or FAIL (user-, time-, or state-specific). This file shows what the fixes look like and how to report them.
+Reference content for `design-review-agent`: BAD → GOOD examples, the review output format, and verdict examples. The agent runs two checks — **Check A** classifies every string literal as OK (same value for every user, always) or FAIL (user-, time-, or state-specific), and **Check B** confirms every interactive control in the mockup is rendered in the component. This file shows what the fixes look like and how to report them.
 
 ## BAD → GOOD Examples
 
@@ -52,33 +52,62 @@ Reference content for `design-review-agent`: BAD → GOOD examples, the review o
 <button data-testid="submit">Save</button>
 ```
 
+## Check B — Missing Mockup Control (BAD → GOOD)
+
+```tsx
+// BAD — the mockup shows a filter input on every text column, but the component
+// wires one only on "Full name"; the other columns render as bare headers.
+const COLUMNS = [
+  { label: 'Full name', filterTestId: 'users-filter-name' },
+  { label: 'Login' },   // <-- mockup has a filter here; component omits it
+  { label: 'Email' },   // <-- and here
+];
+
+// GOOD — every column the mockup gives a control gets one in the component.
+const COLUMNS = [
+  { label: 'Full name', filterTestId: 'users-filter-name' },
+  { label: 'Login', filterTestId: 'users-filter-login' },
+  { label: 'Email', filterTestId: 'users-filter-email' },
+];
+```
+
+The same applies to sortable headers, dropdowns, and date pickers: if the mockup shows the affordance, the component renders it — the test spec covering only one column is NOT a licence to drop the others.
+
 ## Output Format
 
-Print one row per reviewed string literal, grouped by verdict. Quote the literal exactly; cite the source line.
+Print TWO tables — Check A (placeholder data) and Check B (control completeness) — then one combined verdict. Quote literals exactly and cite source lines; for Check B, enumerate every mockup control and mark it Present or MISSING.
 
 ```
 ## Design Review: {ComponentName}.tsx
 
+### Check A — Placeholder data
 | String literal | Line | Verdict | Category | Should come from |
 |----------------|------|---------|----------|------------------|
 | `user@example.com` | 42 | FAIL | Email | Auth context |
-| `Renews on Feb 15, 2026` | 51 | FAIL | Date | API response |
 | `Email` | 18 | OK | UI label | — |
 | `Save` | 63 | OK | Button text | — |
 
-Verdict: FAIL — 2 placeholder values must be made dynamic.
+### Check B — Mockup control completeness
+| Mockup control | Verdict | Notes |
+|----------------|---------|-------|
+| Filter input on Full name | Present | — |
+| Filter input on Login | MISSING | mockup shows it; component omits |
+| Sort on Created / Updated | MISSING | no sortable affordance rendered |
+| Register user button | Present | — |
+
+Verdict: FAIL — 1 placeholder value + 2 missing controls.
 ```
 
 ## Verdict Examples
 
-- **PASS** — every string literal is OK (UI labels, headings, button text, ARIA labels, nav paths). No user-, time-, or state-specific value is hardcoded.
+- **PASS** — every string literal is OK (Check A) AND every mockup control is rendered (Check B). No user-, time-, or state-specific value is hardcoded and no affordance is missing.
 
   ```
-  Verdict: PASS — no hardcoded placeholder data found. Proceed to /refactor.
+  Verdict: PASS — no placeholder data, all mockup controls present. Proceed to /refactor.
   ```
 
-- **FAIL** — one or more literals are user-, time-, or state-specific. List each with its category and dynamic source. The workflow must NOT proceed to `/refactor` until the flagged values are made dynamic and the review re-run.
+- **FAIL** — one or more literals are user-, time-, or state-specific, OR one or more mockup controls are missing. List each violation. The workflow must NOT proceed to `/refactor` until every flagged value is made dynamic, every missing control is rendered (or a recorded scope decision covers it), and the review is re-run.
 
   ```
-  Verdict: FAIL — 2 placeholder values must be made dynamic. Fix, then re-run /design-review.
+  Verdict: FAIL — 1 placeholder value + 2 missing controls. Fix, then re-run /design-review.
   ```

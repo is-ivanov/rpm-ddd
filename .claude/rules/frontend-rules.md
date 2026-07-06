@@ -18,6 +18,12 @@
 
 Mockups contain placeholder values (`user@example.com`, fake dates, sample prices). NEVER copy these into components as hardcoded strings. User-specific data (email, name, company) must come from auth context or API responses. If a value is different per user or per session, it must be dynamic.
 
+## Mockup Control Completeness
+
+- **Every interactive control shown in the mockup MUST be rendered in the component during align-design** — all filter inputs, all sortable column headers, all buttons, dropdowns, date pickers, and toggles. This holds even when the test spec covers only a representative subset: per the test pyramid, behaviour tests are NOT repeated for each identical control (one column's "contains" filter proves the category), so tests assert behaviour on representatives while align-design guarantees affordance completeness for the WHOLE mockup. "The test only checks one column" is never a reason to render only one column's control.
+- A control present in the mockup but absent from the component is a fidelity gap, not an intentional scope cut. Omit a mockup control only on an explicit, recorded decision (a spec note or an `improvements.md` backlog item) — never silently.
+- design-review enforces this: it enumerates every interactive control in the mockup and flags any that the component fails to render (see the design-review agent). This is a distinct check from placeholder-data — a component can be free of hardcoded data yet still be missing controls.
+
 ## Component Size
 
 - When a component file exceeds ~70-100 lines, extract sub-components (views, sections, cards) into their own files in the same `components/` directory.

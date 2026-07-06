@@ -71,11 +71,9 @@ describe('Register User API Client', () => {
     document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
   });
 
-  // RED (Scn 4.2): register-user.api.ts::registerUser was an unimplemented stub that threw
-  // ('registerUser not implemented'), so the POST never went in flight and the captured body/header
-  // stayed undefined. GREEN wires registerUser through postJsonWithCsrf(REGISTER_USER_PATH, request)
-  // so the CSRF handshake runs and the request resolves on 201. The resolve + strict body/header
-  // equality below is the pinned RED reason so an incidental failure isn't absorbed by it.fails().
+  // registerUser runs the CSRF handshake (GET csrf -> POST) via postJsonWithCsrf(REGISTER_USER_PATH,
+  // request) and resolves on 201. The strict order/body/header equality below is the pinned reason,
+  // so an incidental failure isn't mistaken for the contract holding (Scn 4.2).
   it('performs the CSRF handshake and POSTs the register-user body with the X-XSRF-TOKEN header', async () => {
     const captured: CapturedRequest = { order: [] };
     stubCsrfSetsCookie(captured);
