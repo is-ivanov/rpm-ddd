@@ -85,7 +85,7 @@
 
   .filter-control {
     @apply flex h-[30px] w-full cursor-pointer items-center gap-1.5 rounded-md border border-line bg-white px-2;
-    @apply text-[13px] text-muted;
+    @apply whitespace-nowrap text-[13px] text-muted;
   }
 
   .filter-control-between {
