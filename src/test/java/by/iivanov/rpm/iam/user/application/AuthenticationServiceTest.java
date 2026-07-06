@@ -21,7 +21,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 class AuthenticationServiceTest {
 
@@ -33,14 +32,13 @@ class AuthenticationServiceTest {
     private AuthenticationService sut;
     private UserStatements userStatements;
     private LoginThrottleStatements throttleStatements;
-    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     @SuppressWarnings("deprecation")
     void setUp() {
         userStatements = new UserStatements();
         throttleStatements = new LoginThrottleStatements(userStatements.userRepository);
-        passwordEncoder = NoOpPasswordEncoder.getInstance();
+        var passwordEncoder = NoOpPasswordEncoder.getInstance();
         var fixedClock = Clock.fixed(Instant.parse("2026-06-14T13:42:51.683Z"), ZoneOffset.UTC);
         sut = new AuthenticationService(userStatements.userRepository, passwordEncoder, fixedClock);
     }

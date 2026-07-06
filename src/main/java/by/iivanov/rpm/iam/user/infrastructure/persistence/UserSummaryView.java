@@ -71,7 +71,9 @@ class UserSummaryView {
     // JPA reflection-init exception: Hibernate instantiates this @Subselect entity via the no-arg
     // constructor and populates fields by reflection, so they are non-null after load despite NullAway.
     @SuppressWarnings("NullAway.Init")
-    protected UserSummaryView() {}
+    protected UserSummaryView() {
+        // no-arg constructor required for Hibernate reflection instantiation of this @Subselect view
+    }
 
     UUID id() {
         return id;

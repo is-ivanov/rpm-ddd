@@ -37,9 +37,8 @@ public class GreenMailServerTestExecutionListener implements TestExecutionListen
     }
 
     private boolean hasMailTag(TestIdentifier testIdentifier) {
-        if (!testIdentifier.isTest()) {
-            return false;
-        }
-        return testIdentifier.getTags().stream().anyMatch(tag -> tag.getName().equals(Constants.MAIL_TEST_TAG));
+        return testIdentifier.isTest()
+                && testIdentifier.getTags().stream()
+                        .anyMatch(tag -> tag.getName().equals(Constants.MAIL_TEST_TAG));
     }
 }
