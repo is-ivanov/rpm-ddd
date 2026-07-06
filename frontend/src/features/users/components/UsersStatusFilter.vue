@@ -28,18 +28,15 @@ function toggleStatus(status: string): void {
 
 <template>
   <div class="relative" @keydown.esc="open = false">
-    <div
+    <button
       data-testid="users-filter-status"
+      type="button"
       class="filter-control filter-control-between"
-      role="button"
-      tabindex="0"
       @click="toggleOpen"
-      @keydown.enter.prevent="toggleOpen"
-      @keydown.space.prevent="toggleOpen"
     >
       <span>{{ triggerLabel }}</span>
       <ChevronDown :size="14" class="shrink-0" aria-hidden="true" />
-    </div>
+    </button>
     <div v-if="open" class="dropdown-panel status-filter-panel">
       <button
         v-for="status in STATUS_FILTER_OPTIONS"
