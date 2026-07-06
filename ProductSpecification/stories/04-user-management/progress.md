@@ -229,7 +229,7 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-frontend-api
 - [x] align-design (sortKey on all 8 headers; compareByColumn lexical fallback + status/timestamp branches)
 - [x] green-playwright (users-grid.spec.ts Scn 3.5 GREEN — 7/7 grid suite pass)
-- [~] demo
+- [x] demo (users-grid.spec.ts Scn 3.5)
 
 ### Scenario 3.6: Status column filter is a lifecycle-ordered multi-select (promoted from UI Extended E1)
 > Status filter = multi-select dropdown listing statuses in lifecycle order (Pending, Active, Locked,
