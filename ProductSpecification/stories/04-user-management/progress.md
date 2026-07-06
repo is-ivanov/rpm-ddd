@@ -223,8 +223,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 > Sort affordance on all 8 headers. Lexical columns reuse the Login category; NEW category = timestamp
 > sort (Created/Updated) by the underlying instant, not the relative label.
 - [x] red-playwright (users-grid.spec.ts Scn 3.5 — Created-header sort by createdAt instant; admin-users-sort.fixture.ts)
-- [~] red-frontend (instant/timestamp sort comparator)
-- [ ] green-frontend
+- [x] red-frontend (users-grid.sort.logic.test.ts — timestamp sort by createdAt instant; SortColumn +created/+updated)
+- [~] green-frontend
 - [S] red-frontend-api (client-side sort)
 - [S] green-frontend-api
 - [ ] align-design (sortable headers on all columns)

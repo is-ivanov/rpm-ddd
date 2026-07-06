@@ -1,30 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { buildUserRows, filterRowsByColumns, filterRowsByFullName, sortUserRows } from '../logic/users-grid.logic';
-import type { PersonName, UserSummaryResponse } from '../logic/users-grid.types';
-
-const JOHN_DOE: PersonName = { firstName: 'John', middleName: 'Robert', lastName: 'Doe' };
-const SARAH_CONNOR: PersonName = { firstName: 'Sarah', middleName: 'Jane', lastName: 'Connor' };
-const MICHAEL_SCOTT: PersonName = { firstName: 'Michael', middleName: null, lastName: 'Scott' };
-const EMILY_CARTER: PersonName = { firstName: 'Emily', middleName: null, lastName: 'Carter' };
-const DAVID_LEE: PersonName = { firstName: 'David', middleName: null, lastName: 'Lee' };
-const SYSTEM_ACTOR: PersonName = { firstName: 'System', middleName: null, lastName: '' };
-
-function userWith(overrides: Partial<UserSummaryResponse>): UserSummaryResponse {
-  return {
-    userId: '00000000-0000-0000-0000-000000000001',
-    name: SARAH_CONNOR,
-    login: 's.connor',
-    email: 's.connor@rpm.local',
-    status: 'ACTIVE',
-    audit: {
-      createdAt: '2026-06-22T14:30:51.217Z',
-      createdBy: JOHN_DOE,
-      updatedAt: '2026-06-24T08:11:42.905Z',
-      updatedBy: SARAH_CONNOR,
-    },
-    ...overrides,
-  };
-}
+import { buildUserRows, filterRowsByColumns, filterRowsByFullName } from '../logic/users-grid.logic';
+import {
+  DAVID_LEE,
+  EMILY_CARTER,
+  JOHN_DOE,
+  MICHAEL_SCOTT,
+  SARAH_CONNOR,
+  SYSTEM_ACTOR,
+  userWith,
+} from './support/user-summary.builder';
 
 describe('Users grid view model', () => {
   it.each([
@@ -141,50 +125,5 @@ describe('Multi-column text filter (AND-combined)', () => {
     const filtered = filterRowsByColumns(rows, { login: 'C', name: 'I' });
 
     expect(filtered.map((row) => row.login)).toEqual(['m.scott', 'e.carter']);
-  });
-});
-
-describe('Column header sort', () => {
-  // Starting order is deliberately unsorted by both Login and Status (not ascending,
-  // not descending, not lifecycle) so each sort below is genuinely observable — a
-  // pass-through that returned the input would fail all three.
-  const unsortedRows = buildUserRows([
-    userWith({ name: MICHAEL_SCOTT, login: 'm.scott', status: 'PENDING' }),
-    userWith({ name: SARAH_CONNOR, login: 's.connor', status: 'ACTIVE' }),
-    userWith({ name: DAVID_LEE, login: 'd.lee', status: 'INACTIVE' }),
-    userWith({ name: EMILY_CARTER, login: 'e.carter', status: 'LOCKED' }),
-  ]);
-
-  it('sorts rows ascending by Login on the first header click', () => {
-    const sorted = sortUserRows(unsortedRows, 'login', 'asc');
-
-    expect(sorted.map((row) => row.login)).toEqual(['d.lee', 'e.carter', 'm.scott', 's.connor']);
-  });
-
-  it('sorts rows descending by Login on the second header click', () => {
-    const sorted = sortUserRows(unsortedRows, 'login', 'desc');
-
-    expect(sorted.map((row) => row.login)).toEqual(['s.connor', 'm.scott', 'e.carter', 'd.lee']);
-  });
-
-  it('sorts the Status column by lifecycle order, not alphabetically', () => {
-    const sorted = sortUserRows(unsortedRows, 'status', 'asc');
-
-    expect(sorted.map((row) => row.status)).toEqual(['Pending', 'Active', 'Locked', 'Inactive']);
-  });
-
-  // An unknown status (a code the FE doesn't map yet, added on the backend) must sort to the
-  // end, not corrupt the order via undefined - number = NaN.
-  it('places an unknown status last instead of breaking the Status sort', () => {
-    const rows = buildUserRows([
-      userWith({ name: SARAH_CONNOR, login: 's.connor', status: 'ACTIVE' }),
-      userWith({ name: MICHAEL_SCOTT, login: 'm.scott', status: 'SUSPENDED' }),
-      userWith({ name: EMILY_CARTER, login: 'e.carter', status: 'PENDING' }),
-      userWith({ name: DAVID_LEE, login: 'd.lee', status: 'LOCKED' }),
-    ]);
-
-    const sorted = sortUserRows(rows, 'status', 'asc');
-
-    expect(sorted.map((row) => row.status)).toEqual(['Pending', 'Active', 'Locked', 'SUSPENDED']);
   });
 });
