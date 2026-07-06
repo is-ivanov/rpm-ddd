@@ -227,6 +227,16 @@
       <property name="testClassPattern" value="^(?:.*\.)?[^.]*Tests?$"/>
     </properties>
   </rule>
+  <!-- Keep ON (catches real magic numbers in conditions), but extend the default ignore list (-1,0)
+       with 1: a `1` in a size/length boundary check (== 1, <= 1, > 1) is the same idiomatic
+       "exactly one / at most one / more than one" guard PMD already exempts -1/0 for. All hits are
+       such checks (constructors.length == 1, arr.length <= 1, matching.size() > 1). Any other magic
+       number in an if-condition still flags. -->
+  <rule ref="category/java/errorprone.xml/AvoidLiteralsInIfCondition">
+    <properties>
+      <property name="ignoreMagicNumbers" value="-1,0,1"/>
+    </properties>
+  </rule>
 
 
   <rule ref="category/java/multithreading.xml"/>

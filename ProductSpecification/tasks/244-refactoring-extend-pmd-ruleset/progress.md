@@ -143,6 +143,7 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
   - [x] 5c·1: MissingSerialVersionUID (7) — @SuppressWarnings("serial") on all 7 domain exceptions (Spring's own idiom; PMD 7.26 honors the javac "serial" key — verified; rule stays ON to catch genuinely-serializable classes; exceptions serialize to RFC 9457 JSON not Java binary), ceiling 21→14
   - [x] 5c·2: AvoidThrowingRawExceptionTypes (2) + PreserveStackTrace (1) — DbContainerTestExecutionListener: RuntimeException→IllegalStateException (real fix, cause preserved); PreserveStackTrace is a PMD FP on the nested catch (cause `ex` passed) → point-wise @SuppressWarnings("PMD.PreserveStackTrace"), ceiling 14→11
   - [x] 5c·3: simple mechanical group (5) — UnnecessaryAnnotationValueElement (SpaForwardingController drop `value=`), SingularField (AuthenticationServiceTest passwordEncoder→local), SimplifyBooleanReturns (GreenMailServerTestExecutionListener.hasMailTag→single &&), UseUnderscoresInNumericLiterals (GreenMailServer SMTP_PORT 33_025), UncommentedEmptyConstructor (UserSummaryView JPA ctor comment), ceiling 11→6
+  - [x] 5c·4: AvoidLiteralsInIfCondition (3) — configure ignoreMagicNumbers=-1,0,1 (rule stays ON; `1` in size/length boundary checks is the same idiom PMD already exempts -1/0 for; all 3 hits are `== 1`/`<= 1`/`> 1` guards), ceiling 6→3
 
 ## Final
 - [ ] green-acceptance (`./mvnw verify -B` green; ceiling at its final value, ideally 0)

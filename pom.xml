@@ -406,7 +406,7 @@
             <includeTests>true</includeTests>
             <printFailingErrors>true</printFailingErrors>
             <analysisCache>true</analysisCache>
-            <maxAllowedViolations>6</maxAllowedViolations>
+            <maxAllowedViolations>3</maxAllowedViolations>
             <rulesets>
               <ruleset>code-quality-config/pmd/ruleset.xml</ruleset>
             </rulesets>
