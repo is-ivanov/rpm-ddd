@@ -49,16 +49,18 @@ export function buildUserRows(users: UserSummaryResponse[]): UserRow[] {
 }
 
 export function filterRowsByFullName(rows: UserRow[], term: string): UserRow[] {
-  const needle = term.trim().toLowerCase();
-  if (needle === '') {
-    return rows;
-  }
-  return rows.filter((row) => row.name.toLowerCase().includes(needle));
+  return filterRowsByColumns(rows, { name: term });
 }
 
 export function filterRowsByColumns(rows: UserRow[], filters: Partial<Record<TextFilterColumn, string>>): UserRow[] {
-  void filters;
-  return rows;
+  const activeTerms = toActiveTerms(filters);
+  return rows.filter((row) => activeTerms.every(([column, needle]) => row[column].toLowerCase().includes(needle)));
+}
+
+function toActiveTerms(filters: Partial<Record<TextFilterColumn, string>>): [TextFilterColumn, string][] {
+  return (Object.entries(filters) as [TextFilterColumn, string][])
+    .map(([column, term]): [TextFilterColumn, string] => [column, term.trim().toLowerCase()])
+    .filter(([, needle]) => needle !== '');
 }
 
 const STATUS_LIFECYCLE_RANK: Record<string, number> = {

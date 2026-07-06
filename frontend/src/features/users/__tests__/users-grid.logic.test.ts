@@ -126,7 +126,7 @@ describe('Multi-column text filter (AND-combined)', () => {
   // RED — filterRowsByColumns stub returns every row unchanged; expects only rows contained by
   // BOTH the Login and Full-name terms (AND). Pinned to ['m.scott', 'e.carter'] so an OR /
   // single-column / pass-through impl fails for the predicted reason, not an incidental one.
-  it.fails('keeps only rows matching EVERY active column filter (AND, not OR), preserving order', () => {
+  it('keeps only rows matching EVERY active column filter (AND, not OR), preserving order', () => {
     const filtered = filterRowsByColumns(rows, { login: 'c', name: 'i' });
 
     expect(filtered.map((row) => row.login)).toEqual(['m.scott', 'e.carter']);
@@ -134,14 +134,14 @@ describe('Multi-column text filter (AND-combined)', () => {
 
   // RED — stub does not treat a blank term as "match everything"; expects the whitespace Login
   // term ignored and only the Full-name term ('i' ⇒ Michael, Emily, David) applied.
-  it.fails('ignores a blank/whitespace term, applying only the other active column filter', () => {
+  it('ignores a blank/whitespace term, applying only the other active column filter', () => {
     const filtered = filterRowsByColumns(rows, { login: '   ', name: 'i' });
 
     expect(filtered.map((row) => row.login)).toEqual(['m.scott', 'e.carter', 'd.lee']);
   });
 
   // RED — stub does not lowercase-compare; expects the uppercase terms to match case-insensitively.
-  it.fails('matches each column term case-insensitively', () => {
+  it('matches each column term case-insensitively', () => {
     const filtered = filterRowsByColumns(rows, { login: 'C', name: 'I' });
 
     expect(filtered.map((row) => row.login)).toEqual(['m.scott', 'e.carter']);
