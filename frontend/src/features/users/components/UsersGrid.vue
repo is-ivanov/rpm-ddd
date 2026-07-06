@@ -19,7 +19,13 @@ interface Column {
 }
 
 const COLUMNS: readonly Column[] = [
-  { testId: 'users-grid-header-name', label: 'Full name', filterTestId: 'users-filter-name', filterKey: 'name' },
+  {
+    testId: 'users-grid-header-name',
+    label: 'Full name',
+    sortKey: 'name',
+    filterTestId: 'users-filter-name',
+    filterKey: 'name',
+  },
   {
     testId: 'users-grid-header-login',
     label: 'Login',
@@ -27,19 +33,27 @@ const COLUMNS: readonly Column[] = [
     filterTestId: 'users-filter-login',
     filterKey: 'login',
   },
-  { testId: 'users-grid-header-email', label: 'Email', filterTestId: 'users-filter-email', filterKey: 'email' },
+  {
+    testId: 'users-grid-header-email',
+    label: 'Email',
+    sortKey: 'email',
+    filterTestId: 'users-filter-email',
+    filterKey: 'email',
+  },
   { testId: 'users-grid-header-status', label: 'Status', center: true, sortKey: 'status' },
-  { testId: 'users-grid-header-created', label: 'Created' },
+  { testId: 'users-grid-header-created', label: 'Created', sortKey: 'created' },
   {
     testId: 'users-grid-header-created-by',
     label: 'Created by',
+    sortKey: 'createdBy',
     filterTestId: 'users-filter-created-by',
     filterKey: 'createdBy',
   },
-  { testId: 'users-grid-header-updated', label: 'Updated' },
+  { testId: 'users-grid-header-updated', label: 'Updated', sortKey: 'updated' },
   {
     testId: 'users-grid-header-updated-by',
     label: 'Updated by',
+    sortKey: 'updatedBy',
     filterTestId: 'users-filter-updated-by',
     filterKey: 'updatedBy',
   },

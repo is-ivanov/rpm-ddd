@@ -76,17 +76,17 @@ function statusRank(status: string): number {
   return STATUS_LIFECYCLE_RANK[status] ?? UNKNOWN_STATUS_RANK;
 }
 
+const TIMESTAMP_FIELD = { created: 'createdAt', updated: 'updatedAt' } as const;
+
 function compareByColumn(left: UserRow, right: UserRow, column: SortColumn): number {
-  switch (column) {
-    case 'login':
-      return left.login.localeCompare(right.login);
-    case 'created':
-      return instant(left.createdAt) - instant(right.createdAt);
-    case 'updated':
-      return instant(left.updatedAt) - instant(right.updatedAt);
-    case 'status':
-      return statusRank(left.status) - statusRank(right.status);
+  if (column === 'status') {
+    return statusRank(left.status) - statusRank(right.status);
   }
+  if (column === 'created' || column === 'updated') {
+    const field = TIMESTAMP_FIELD[column];
+    return instant(left[field]) - instant(right[field]);
+  }
+  return left[column].localeCompare(right[column]);
 }
 
 function instant(isoTimestamp: string): number {
@@ -103,7 +103,7 @@ function timeAgo(count: number, unit: string): string {
 }
 
 export function toRelativeTimeLabel(isoTimestamp: string, now: Date): string {
-  const elapsedSeconds = Math.floor((now.getTime() - new Date(isoTimestamp).getTime()) / 1000);
+  const elapsedSeconds = Math.floor((now.getTime() - instant(isoTimestamp)) / 1000);
   if (elapsedSeconds < 60) {
     return 'just now';
   }

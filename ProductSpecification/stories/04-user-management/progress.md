@@ -227,8 +227,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] green-frontend (compareByColumn switch: created/updated by instant; see summaries/3.5-every-column-sort.md)
 - [S] red-frontend-api (client-side sort)
 - [S] green-frontend-api
-- [~] align-design (sortable headers on all columns)
-- [ ] green-playwright
+- [x] align-design (sortKey on all 8 headers; compareByColumn lexical fallback + status/timestamp branches)
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 3.6: Status column filter is a lifecycle-ordered multi-select (promoted from UI Extended E1)
