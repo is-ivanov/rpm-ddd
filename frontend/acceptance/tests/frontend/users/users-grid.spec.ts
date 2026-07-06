@@ -174,13 +174,6 @@ test.describe('Users Grid', () => {
       'When the user clicks the Created column header again, ' +
       'Then the rows are sorted descending by the underlying Created instant',
     async () => {
-      // RED (expected-fail): the Created column has no sortKey, so clicking its header does nothing —
-      // rows stay in the default createdAt-DESC render order. The ascending assertion reorders by the
-      // underlying createdAt instant (distinct from both the default order AND a lexical sort of the
-      // relative-time labels), so it fails within the bounded expect timeout, never a 30s whole-test
-      // timeout. Remove test.fail() in green-playwright once red-frontend/green-frontend adds the
-      // timestamp comparator and align-design gives the Created column a sortKey.
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
