@@ -138,12 +138,11 @@ export const EXPECTED_USER_ROWS: readonly ExpectedUserRow[] = [
 // so the client-side filter must keep exactly those two rows in their original render order.
 export const FULL_NAME_FILTER_TERM = 'ar';
 
-// The full names that survive FULL_NAME_FILTER_TERM, derived from EXPECTED_USER_ROWS (render
-// order preserved) so the filter assertion stays in lock-step with the row data and needs no
-// hand-maintained literal list.
-export const FULL_NAMES_MATCHING_FILTER: readonly string[] = EXPECTED_USER_ROWS.filter((row) =>
-  row.name.includes(FULL_NAME_FILTER_TERM),
-).map((row) => row.name);
+// The full names that survive FULL_NAME_FILTER_TERM, in render order. HAND-LISTED, not computed via
+// the production `.includes()` predicate — deriving the expectation by re-running the filter under
+// test is the "smart test" anti-pattern (a buggy contains-filter would produce a matching-buggy
+// expectation). Same reason as FULL_NAMES_MATCHING_LOGIN_AND_UPDATED_BY / STATUSES_IN_LIFECYCLE_ORDER.
+export const FULL_NAMES_MATCHING_FILTER: readonly string[] = ['Sarah Jane Connor', 'Emily Carter'];
 
 // Scenario 3.4 — multi-column AND filtering. Two "contains" probes on TWO DIFFERENT text columns,
 // chosen so neither term alone isolates the target — only their AND does:
