@@ -213,6 +213,15 @@
        (TestRpmDddApplication, TestcontainersConfiguration, TestContextValidator, TestResources). Anchor
        it to the project's test-suffix convention (AGENTS.md: *Test / *IntegrationTest) so only real *Test
        classes are checked; the Test-prefixed infra is exempt. -->
+  <!-- Tightened: a String literal repeated even twice should be a named constant (default threshold is 4).
+       skipAnnotations avoids flagging repeated annotation values (@SuppressWarnings("unchecked"),
+       @DisplayName/@ParameterizedTest name templates) which cannot sensibly be constants. -->
+  <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
+    <properties>
+      <property name="maxDuplicateLiterals" value="2"/>
+      <property name="skipAnnotations" value="true"/>
+    </properties>
+  </rule>
   <rule ref="category/java/errorprone.xml/TestClassWithoutTestCases">
     <properties>
       <property name="testClassPattern" value="^(?:.*\.)?[^.]*Tests?$"/>

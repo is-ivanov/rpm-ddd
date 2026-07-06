@@ -97,3 +97,8 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
   (property name). Both edited tests green (26✓). Trap: an earlier `replace_all "email"→EMAIL_FIELD` also
   rewrote the constant's own initializer into a self-reference (`EMAIL_FIELD = EMAIL_FIELD` → null); same in
   PersonNameTest — fixed both back to the literal before running. pmd:check green.
+- **5b·4** (ceiling 26 → 70): TIGHTEN `AvoidDuplicateLiterals` — `maxDuplicateLiterals=2` (a literal repeated
+  twice should be a constant) + `skipAnnotations=true` (ignore @SuppressWarnings/@DisplayName/@ParameterizedTest
+  name values — 7 annotation dups removed, 51→44). This surfaces 44 real duplicates (3 prod + 41 test).
+  **Variant A:** one-time ceiling bump 26→70 (the single legitimate up-move — a deliberate rule tightening,
+  not a regression), then burn down in sub-batches 5b·5…5b·9 ratcheting back to 26. pmd:check green at 70.
