@@ -21,7 +21,7 @@ test.describe('Users Navigation', () => {
       'Then the Users page is displayed inside the same top bar and sidebar shell, ' +
       'And the page shows a "Register user" button',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await homePage.navigateToHomePage();
 
       await homePage.clickUsersNavItem();

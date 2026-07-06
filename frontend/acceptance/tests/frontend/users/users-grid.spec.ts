@@ -37,7 +37,7 @@ test.describe('Users Grid', () => {
       'And each audit actor is shown abbreviated as "J. Doe", ' +
       'And the seed actor is shown as "System"',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
 
@@ -60,7 +60,7 @@ test.describe('Users Grid', () => {
       'Then the grid shows a loading state, ' +
       'And the rows render once the response arrives',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenAdminUserListInFlight();
       await homePage.navigateToHomePage();
 
@@ -81,7 +81,7 @@ test.describe('Users Grid', () => {
       'Then only rows whose Full name contains that text remain visible, ' +
       'And no additional network request is made',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
       await homePage.clickUsersNavItem();
@@ -104,7 +104,7 @@ test.describe('Users Grid', () => {
       'Then the rows are sorted descending by Login, ' +
       'And the Status column sorts by lifecycle order (Pending, Active, Locked, Inactive), not alphabetically',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
       await homePage.clickUsersNavItem();
@@ -132,7 +132,7 @@ test.describe('Users Grid', () => {
     // computation is deterministic regardless of CI wall-clock.
     async ({ page }) => {
       await page.clock.setFixedTime(FIXED_NOW_INSTANT);
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
       await homePage.clickUsersNavItem();
@@ -150,7 +150,7 @@ test.describe('Users Grid', () => {
       'And the active column filters combine with AND (a row must match every one), ' +
       'And no additional network request is made',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
       await homePage.clickUsersNavItem();

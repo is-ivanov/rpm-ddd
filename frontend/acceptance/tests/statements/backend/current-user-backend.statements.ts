@@ -7,8 +7,8 @@ const CSRF_URL_PATTERN = '**/api/auth/csrf';
 const LOGOUT_URL_PATTERN = '**/api/auth/logout';
 
 interface AuthenticatedUser {
-  readonly firstName: string;
-  readonly lastName: string;
+  readonly firstName?: string;
+  readonly lastName?: string;
   readonly email?: string;
   readonly timeZone?: string;
 }
@@ -18,6 +18,10 @@ const EMAIL_DOMAIN = 'rpm.local';
 // Used only when a caller omits the email (the field is not asserted by that scenario);
 // derived from the login so it stays a real, suite-consistent address, not a mockup placeholder.
 const DEFAULT_EMAIL = `${CURRENT_USER_LOGIN}@${EMAIL_DOMAIN}`;
+// Used only when a caller omits the viewer name (the field is not asserted by that scenario);
+// the 3 tests that assert the name pass it explicitly so 'John Doe' never relies on this default.
+const DEFAULT_FIRST_NAME = 'John';
+const DEFAULT_LAST_NAME = 'Doe';
 
 export class CurrentUserBackendStatements {
   private sessionEnded = false;
@@ -28,11 +32,11 @@ export class CurrentUserBackendStatements {
     await this.page.route(ME_URL_PATTERN, (route) => this.fulfillUnauthenticatedCurrentUser(route));
   }
 
-  async givenAuthenticatedUser(user: AuthenticatedUser): Promise<void> {
+  async givenAuthenticatedUser(user: AuthenticatedUser = {}): Promise<void> {
     await this.page.route(ME_URL_PATTERN, (route) => this.fulfillAuthenticatedCurrentUser(route, user));
   }
 
-  async givenAuthenticatedUserUntilLogout(user: AuthenticatedUser): Promise<void> {
+  async givenAuthenticatedUserUntilLogout(user: AuthenticatedUser = {}): Promise<void> {
     await this.page.route(ME_URL_PATTERN, (route) =>
       this.sessionEnded
         ? this.fulfillUnauthenticatedCurrentUser(route)
@@ -69,8 +73,8 @@ export class CurrentUserBackendStatements {
         userId: '11111111-1111-1111-1111-111111111111',
         login: CURRENT_USER_LOGIN,
         email: user.email ?? DEFAULT_EMAIL,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstName: user.firstName ?? DEFAULT_FIRST_NAME,
+        lastName: user.lastName ?? DEFAULT_LAST_NAME,
         status: 'ACTIVE',
         roles: [],
         timeZone: user.timeZone ?? VIEWER_TIME_ZONE_ID,

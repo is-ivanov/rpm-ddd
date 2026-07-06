@@ -17,7 +17,7 @@ test.describe('Admin Center Navigation', () => {
       'Then the sidebar displays an "Admin Center" group, ' +
       'And the group contains a "Users" item',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await homePage.navigateToHomePage();
 
       await homePage.assertSidebarIsVisible();

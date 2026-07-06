@@ -22,7 +22,7 @@ test.describe('Sidebar Collapse', () => {
       'When the user reloads the page, ' +
       'Then the sidebar is still collapsed',
     async () => {
-      await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
+      await currentUserBackend.givenAuthenticatedUser();
       await homePage.navigateToHomePage();
 
       await sidebarCollapse.assertCollapseToggleIsVisible();
