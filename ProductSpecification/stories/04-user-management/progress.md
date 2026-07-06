@@ -217,12 +217,12 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-frontend-api
 - [x] align-design (filter inputs on all 5 text columns; per-column `filters` record → filterRowsByColumns)
 - [x] green-playwright (users-grid.spec.ts Scn 3.4 GREEN — 6/6 grid suite pass)
-- [~] demo
+- [x] demo (users-grid.spec.ts Scn 3.4)
 
 ### Scenario 3.5: Every column header sorts the rows (timestamps by instant)
 > Sort affordance on all 8 headers. Lexical columns reuse the Login category; NEW category = timestamp
 > sort (Created/Updated) by the underlying instant, not the relative label.
-- [ ] red-playwright
+- [~] red-playwright
 - [ ] red-frontend (instant/timestamp sort comparator)
 - [ ] green-frontend
 - [S] red-frontend-api (client-side sort)
