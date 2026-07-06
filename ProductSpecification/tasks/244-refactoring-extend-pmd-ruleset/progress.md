@@ -134,8 +134,8 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
   - [x] 5b·2: TooManyMethods disabled (duplicated by 200-line file limit; method-rich patterns legit, 4→0), ceiling 34→30
   - [x] 5b·3: AvoidDuplicateLiterals FIX — extracted name/email constants in PersonNameTest + RegisterUserRequestTest (4→0), ceiling 30→26
   - AvoidDuplicateLiterals TIGHTEN (threshold 4→2 + skipAnnotations) — burn down 44 surfaced dups in sub-batches (Variant A: one-time ceiling bump then ratchet down):
-    - [~] 5b·4: flip maxDuplicateLiterals=2 + skipAnnotations=true; ceiling 26→70 (one-time tightening bump, documented)
-    - [ ] 5b·5: PROD (3) — SecurityConfig "/api/auth/activate", Email/LoginAlreadyExistsExceptionHandler property names → constants; ceiling 70→67
+    - [x] 5b·4: flip maxDuplicateLiterals=2 + skipAnnotations=true; ceiling 26→70 (one-time tightening bump, documented)
+    - [x] 5b·5: PROD (3) — SecurityConfig ACTIVATE_PATH, Email/LoginAlreadyExistsExceptionHandler EMAIL_FIELD/LOGIN_FIELD → constants; ceiling 70→67. Error-code dups (VALIDATION_FAILED/ALREADY_EXISTS) split off to Task #272 (not PMD-flagged, cross-file)
     - [ ] 5b·6: AuthResourceTest (9) — tokens/messages/JSON body → constants; ceiling 67→58
     - [ ] 5b·7: RegisterUserRequestTest (5) — field-name constants (extend EMAIL_FIELD scheme); ceiling 58→53
     - [ ] 5b·8: validation-message tests (PasswordTest/PersonNameTest/EmailAddressTest/LoginTest/ActivateAccountRequestTest) — test-local msg constants (pin stays independent of prod)

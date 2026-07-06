@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 class EmailAlreadyExistsExceptionHandler implements ApiExceptionHandler {
 
+    private static final String EMAIL_FIELD = "email";
+
     @Override
     public boolean canHandle(Throwable exception) {
         return exception instanceof EmailAlreadyExistsException;
@@ -26,7 +28,8 @@ class EmailAlreadyExistsExceptionHandler implements ApiExceptionHandler {
                 HttpStatus.UNPROCESSABLE_CONTENT,
                 "VALIDATION_FAILED",
                 "Validation failed for object='registerUserRequest'. Error count: 1");
-        response.addFieldError(new ApiFieldError("ALREADY_EXISTS", "email", "Email already exists", email, "email"));
+        response.addFieldError(
+                new ApiFieldError("ALREADY_EXISTS", EMAIL_FIELD, "Email already exists", email, EMAIL_FIELD));
         return response;
     }
 }
