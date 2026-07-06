@@ -27,7 +27,6 @@ function userWith(overrides: Partial<UserSummaryResponse>): UserSummaryResponse 
 }
 
 describe('Users grid view model', () => {
-  // RED — buildUserRows stub passes the raw status code through; expects the human-readable label
   it.each([
     { status: 'ACTIVE', label: 'Active' },
     { status: 'PENDING', label: 'Pending' },
@@ -39,7 +38,6 @@ describe('Users grid view model', () => {
     expect(row.status).toBe(label);
   });
 
-  // RED — buildUserRows stub emits the raw firstName; expects the "J. Doe" abbreviation
   it('abbreviates a normal audit actor as "{firstInitial}. {lastName}"', () => {
     const [row] = buildUserRows([userWith({})]);
 
@@ -47,7 +45,7 @@ describe('Users grid view model', () => {
     expect(row.updatedBy).toBe('S. Connor');
   });
 
-  // RED — stub has no seed special-case; updatedBy abbreviation ("J. Doe") is unimplemented
+  // The System actor (empty last name) renders verbatim; a normal updatedBy still abbreviates.
   it('renders the seed/System actor verbatim as "System" (empty last name)', () => {
     const seeded = userWith({
       audit: {
@@ -64,14 +62,12 @@ describe('Users grid view model', () => {
     expect(row.updatedBy).toBe('J. Doe');
   });
 
-  // RED — stub emits only firstName; expects "First Middle Last" when a middle name is present
   it('composes the full name including the middle name when present', () => {
     const [row] = buildUserRows([userWith({ name: SARAH_CONNOR })]);
 
     expect(row.name).toBe('Sarah Jane Connor');
   });
 
-  // RED — stub emits only firstName; expects "First Last" when no middle name
   it('composes the full name without a middle name when absent', () => {
     const [row] = buildUserRows([userWith({ name: MICHAEL_SCOTT })]);
 

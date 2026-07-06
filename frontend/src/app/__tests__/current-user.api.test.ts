@@ -32,11 +32,10 @@ describe('Current User API Client', () => {
     setActivePinia(createPinia());
   });
 
-  // RED (#250): fetchCurrentUser uses raw fetch() instead of apiFetch(). It still maps 401 to
-  // { authenticated: false }, but because it bypasses apiFetch it never runs
-  // resetSessionWhenUnauthorized(), so the auth store keeps its stale authenticated state. GREEN
-  // routes the client through apiFetch() (keeping the explicit 401 -> { authenticated: false } map),
-  // which resets the store on 401. The store assertions below are the pinned RED reason.
+  // GET /api/auth/me -> 401 must reset the auth session: the client maps 401 to
+  // { authenticated: false } AND routes through apiFetch(), so resetSessionWhenUnauthorized()
+  // clears a previously-authenticated store. The store assertions below are the pinned reason
+  // (regression #250, where a raw fetch() bypassed the reset and left stale authenticated state).
   it('resets the auth session when GET /api/auth/me returns 401', async () => {
     await issue('250');
     stubMeUnauthenticated();
@@ -60,13 +59,11 @@ describe('Current User API Client', () => {
     expect(result).toEqual(expected);
   });
 
-  // RED (Story 4 Scn 3.3): the Users-grid timestamp tooltip renders createdAt/updatedAt in the
-  // viewer's profile timezone, which flows from GET /api/auth/me. The current-user contract must
-  // therefore surface `timeZone` (an IANA zone id). Today currentUserResponseSchema has no
-  // `timeZone` key and z.object STRIPS unknown keys, so the parsed user drops it -- the toHaveProperty
-  // below fails. GREEN adds `timeZone` to the schema (+ AuthenticatedUser type / auth store). The
-  // value 'Europe/Berlin' is lock-step with VIEWER_TIME_ZONE_ID in the E2E
-  // users-grid-time.fixture, keeping the unit contract and the browser contract identical.
+  // The Users-grid timestamp tooltip renders createdAt/updatedAt in the viewer's profile
+  // timezone, which flows from GET /api/auth/me, so the current-user contract surfaces
+  // `timeZone` (an IANA zone id) on the schema + AuthenticatedUser type / auth store. The value
+  // 'Europe/Berlin' is lock-step with VIEWER_TIME_ZONE_ID in the E2E users-grid-time.fixture,
+  // keeping the unit contract and the browser contract identical (Story 4 Scn 3.3).
   it('maps an authenticated result carrying the viewer timeZone when GET /api/auth/me returns 200', async () => {
     stubMeAuthenticated();
 
