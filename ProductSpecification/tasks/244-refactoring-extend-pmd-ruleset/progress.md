@@ -128,6 +128,7 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
   - [x] 5a·5: UseProperClassLoader disabled (J2EE premise N/A to fat-jar), ceiling 49→47
   - [x] 5a·6: AvoidSynchronizedAtMethodLevel kept ON, 2 test-infra singleton starts point-wise suppressed, ceiling 47→45
   - [x] 5a·7: DataClass kept ON, suppressed via *View suffix XPath (UserSummaryView); {Name}View convention recorded in coding-rules.md, ceiling 45→44
+  - [x] 5a·8: ImmutableField — User.login made final (future editable-login is a later concern; Hibernate hydration verified), ceiling 44→43
 
 ## Final
 - [ ] green-acceptance (`./mvnw verify -B` green; ceiling at its final value, ideally 0)

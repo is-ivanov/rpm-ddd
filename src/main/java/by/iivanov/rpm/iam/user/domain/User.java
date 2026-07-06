@@ -25,7 +25,7 @@ public class User extends AbstractAggregateRoot<User> implements AggregateRoot<U
     private final Association<User, UserId> updatedBy;
     private final Instant updatedAt;
 
-    private Login login;
+    private final Login login;
 
     @AttributeOverride(name = "hash", column = @Column(name = "password_hash"))
     private Password password;

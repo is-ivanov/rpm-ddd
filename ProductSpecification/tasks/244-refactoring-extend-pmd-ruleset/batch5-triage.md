@@ -23,7 +23,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 | `UseProperClassLoader` | 2 | Rule's premise is J2EE app servers; N/A to Spring Boot fat-jar (`getClass().getClassLoader()` for co-packaged resources is correct; TCCL would be a regression). Sites: `ActivationEmailRenderer:41`, `TestResources:26`. | DISABLE | ✅ **DECIDED** — excluded (errorprone). Applied in 5a·5. |
 | `AvoidSynchronizedAtMethodLevel` | 2 | Rule kept ON (valuable for prod / virtual-thread era). The 2 hits are one-shot idempotent test-infra singleton starts (`GreenMailServer.start`, `PostgresContainersLifecycleManager.init`) whose whole body is the critical section — not a hot path, vthreads off, no prod `synchronized` methods. | POINT-WISE SUPPRESS | ✅ **DECIDED** — added `"PMD.AvoidSynchronizedAtMethodLevel"` to the existing `@SuppressWarnings` on both. Applied in 5a·6. |
 | `DataClass` | 1 | `UserSummaryView` is a read projection; being a data class is by design. Rule kept ON (catches anemic domain objects — a core DDD concern). | POINT-WISE / SUFFIX SUPPRESS | ✅ **DECIDED** — suppress via `violationSuppressXPath` on the `*View` suffix (project convention: `{Name}View` = read-only projection; recorded in `coding-rules.md` Naming). Same approach as LinguisticNaming/`*Assert`; verified 1→0. Applied in 5a·7. |
-| `ImmutableField` | 1 | `User.login` is a JPA entity field (active-persistence); entity fields not forced `final`. | DISABLE | — |
+| `ImmutableField` | 1 | `User.login` was left non-`final` only for a *future* "login is editable" feature; that is a later concern. Currently assigned once in the ctor, never reassigned — same as the 8 existing `final` fields on `User`. | FIX (`final`) | ✅ **DECIDED** — made `final`; Hibernate still hydrates it (UserRepositorySqlInjectionTest 2✓). Applied in 5a·8. |
 | `LoosePackageCoupling` | 1 | Needs a hand-maintained package list we don't keep; boundaries enforced by Modulith + ArchUnit. Also the cross-platform-flaky 0/1 rule. | DISABLE | — |
 
 ## 🟡 Proposed CONFIGURE — narrow to fit the project
@@ -77,3 +77,6 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
   `*View` suffix (`UserSummaryView`; 1→0). Recorded the `{Name}View` = read-only projection convention in
   `.claude/rules/coding-rules.md` (Naming). Same suffix-allow-list approach as LinguisticNaming/`*Assert`.
   pmd:check green.
+- **5a·8** (ceiling 44 → 43): `ImmutableField` — `User.login` made `final` (1→0). It was non-final only for a
+  future "editable login" feature (a later concern); assigned once in the ctor, never reassigned, like the 8
+  existing `final` fields. Hibernate hydration verified (UserRepositorySqlInjectionTest 2✓). pmd:check green.
