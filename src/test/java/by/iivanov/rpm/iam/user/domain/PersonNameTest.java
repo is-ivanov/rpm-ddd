@@ -17,6 +17,9 @@ class PersonNameTest {
     private static final String FIRST_NAME = "Ivan";
     private static final String MIDDLE_NAME = "Ivanovich";
     private static final String LAST_NAME = "Ivanov";
+    private static final String BLANK = "  \t  ";
+    private static final String FIRST_NAME_BLANK = "First name must not be blank";
+    private static final String LAST_NAME_BLANK = "Last name must not be blank";
 
     @Nested
     @DisplayName("constructor")
@@ -36,22 +39,10 @@ class PersonNameTest {
 
         static Stream<Arguments> invalidValues() {
             return Stream.of(
-                    argumentSet(
-                            "blank firstName, rest valid",
-                            "  \t  ",
-                            MIDDLE_NAME,
-                            LAST_NAME,
-                            "First name must not be blank"),
-                    argumentSet(
-                            "null firstName, rest valid", null, MIDDLE_NAME, LAST_NAME, "First name must not be blank"),
-                    argumentSet(
-                            "blank lastName, rest valid",
-                            FIRST_NAME,
-                            MIDDLE_NAME,
-                            "  \t  ",
-                            "Last name must not be blank"),
-                    argumentSet(
-                            "null lastName, rest valid", FIRST_NAME, MIDDLE_NAME, null, "Last name must not be blank"),
+                    argumentSet("blank firstName, rest valid", BLANK, MIDDLE_NAME, LAST_NAME, FIRST_NAME_BLANK),
+                    argumentSet("null firstName, rest valid", null, MIDDLE_NAME, LAST_NAME, FIRST_NAME_BLANK),
+                    argumentSet("blank lastName, rest valid", FIRST_NAME, MIDDLE_NAME, BLANK, LAST_NAME_BLANK),
+                    argumentSet("null lastName, rest valid", FIRST_NAME, MIDDLE_NAME, null, LAST_NAME_BLANK),
                     argumentSet(
                             "firstName exceeds 255, rest valid",
                             "a".repeat(256),
@@ -111,13 +102,7 @@ class PersonNameTest {
                             LAST_NAME),
                     argumentSet("null middleName", FIRST_NAME, null, LAST_NAME, FIRST_NAME, null, LAST_NAME),
                     argumentSet(
-                            "blank middleName becomes null",
-                            FIRST_NAME,
-                            "  \t  ",
-                            LAST_NAME,
-                            FIRST_NAME,
-                            null,
-                            LAST_NAME),
+                            "blank middleName becomes null", FIRST_NAME, BLANK, LAST_NAME, FIRST_NAME, null, LAST_NAME),
                     argumentSet(
                             "max length fields",
                             "a".repeat(255),

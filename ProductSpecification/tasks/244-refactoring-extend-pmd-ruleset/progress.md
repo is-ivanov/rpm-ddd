@@ -138,7 +138,7 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
     - [x] 5b·5: PROD (3) — SecurityConfig ACTIVATE_PATH, Email/LoginAlreadyExistsExceptionHandler EMAIL_FIELD/LOGIN_FIELD → constants; ceiling 70→67. Error-code dups (VALIDATION_FAILED/ALREADY_EXISTS) split off to Task #272 (not PMD-flagged, cross-file)
     - [x] 5b·6: AuthResourceTest (9) — token/message/field-name/JSON-body constants (test-local, values unchanged); ceiling 67→58
     - [x] 5b·7: RegisterUserRequestTest (5) — field-name constants (extend EMAIL_FIELD scheme) + MALFORMED_EMAIL value; ceiling 58→53
-    - [ ] 5b·8: validation-message tests (PasswordTest/PersonNameTest/EmailAddressTest/LoginTest/ActivateAccountRequestTest) — test-local msg constants (pin stays independent of prod)
+    - [x] 5b·8: validation-message tests (Email/Login/Password/PersonName/ActivateAccountRequest) — test-local message + value constants (11 dups, pin independent of prod); ceiling 53→42
     - [ ] 5b·9: remainder — UserResourceTest, StringTrimmerControllerAdviceTest, test-infra singletons/misc → ceiling to 26
 
 ## Final

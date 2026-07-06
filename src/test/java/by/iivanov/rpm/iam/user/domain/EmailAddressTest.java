@@ -14,6 +14,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class EmailAddressTest {
 
+    private static final String BLANK_MESSAGE = "Email must not be blank";
+    private static final String VALID_EMAIL = "test@example.com";
+
     @Nested
     @DisplayName("constructor")
     class ConstructorTest {
@@ -31,9 +34,9 @@ class EmailAddressTest {
 
         static Stream<Arguments> invalidValues() {
             return Stream.of(
-                    argumentSet("null value", null, "Email must not be blank"),
-                    argumentSet("blank value", "  \t  ", "Email must not be blank"),
-                    argumentSet("empty string", "", "Email must not be blank"),
+                    argumentSet("null value", null, BLANK_MESSAGE),
+                    argumentSet("blank value", "  \t  ", BLANK_MESSAGE),
+                    argumentSet("empty string", "", BLANK_MESSAGE),
                     argumentSet(
                             "missing @ symbol",
                             "notAnEmail",
@@ -59,8 +62,8 @@ class EmailAddressTest {
 
         static Stream<Arguments> validValues() {
             return Stream.of(
-                    argumentSet("simple email", "test@example.com", "test@example.com"),
-                    argumentSet("uppercase gets lowercased", "  TEST@EXAMPLE.COM  ", "test@example.com"));
+                    argumentSet("simple email", VALID_EMAIL, VALID_EMAIL),
+                    argumentSet("uppercase gets lowercased", "  TEST@EXAMPLE.COM  ", VALID_EMAIL));
         }
     }
 }
