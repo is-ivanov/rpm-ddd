@@ -153,6 +153,24 @@ export const LOGIN_FILTER_TERM = 'e';
 export const UPDATED_BY_FILTER_TERM = 'connor';
 export const FULL_NAMES_MATCHING_LOGIN_AND_UPDATED_BY: readonly string[] = ['David Lee'];
 
+// Scenario 3.6 — the Status column filter is a lifecycle-ordered multi-select (not a text "contains"
+// input). The selection under test is Pending + Locked; the fixture holds exactly one row per status,
+// so those two statuses map to exactly the two rows below.
+//   Fixture rows in render order (createdAt DESC):
+//     s.connor  ACTIVE   -> 'Active'
+//     m.scott   PENDING  -> 'Pending'   ✔ selected
+//     e.carter  LOCKED   -> 'Locked'    ✔ selected
+//     d.lee     INACTIVE -> 'Inactive'
+// Michael Scott (Pending) renders BEFORE Emily Carter (Locked) because createdAt DESC keeps the
+// original render order for the surviving rows — the multi-select filters, it does not reorder.
+export const STATUS_FILTER_SELECTION: readonly string[] = ['Pending', 'Locked'];
+
+// The full names that survive selecting Pending + Locked, in render order. HAND-LISTED, not computed by
+// running the status predicate over the fixture — deriving the expectation by re-running the filter
+// under test is the "smart test" anti-pattern (a buggy status-filter would produce a matching-buggy
+// expectation). Same reason as STATUSES_IN_LIFECYCLE_ORDER / FULL_NAMES_MATCHING_LOGIN_AND_UPDATED_BY.
+export const FULL_NAMES_MATCHING_STATUS_FILTER: readonly string[] = ['Michael Scott', 'Emily Carter'];
+
 // Column-sort expectations (LOGINS_ASCENDING/DESCENDING, LOGINS_BY_CREATED_INSTANT_*,
 // STATUSES_IN_LIFECYCLE_ORDER) live in ./admin-users-sort.fixture.ts to keep both files under the cap.
 
