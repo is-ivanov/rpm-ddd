@@ -30,7 +30,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 
 | Rule | N | Proposal | Rec | Decision |
 |------|---|----------|-----|----------|
-| `FieldNamingConventions` | 9 | Allow lowercase `log` (SLF4J/Lombok idiom) and ArchUnit `@ArchTest` fields (camelCase). NOT covered by Checkstyle (no `ConstantName`). Allow-list via regex + `ignoredAnnotations`/XPath. Sites: `log` in 5 files; ArchUnit fields `dddRules`/`onion`/`classesShouldBeNullSafe`/`modules` in `ArchitectureTest`. | CONFIGURE | — |
+| `FieldNamingConventions` | 9 | Allow lowercase `log` (SLF4J/Lombok idiom) and ArchUnit camelCase fields. NOT covered by Checkstyle (no `ConstantName`) — rule kept ON. Sites: `log` in 5 files (4 test-infra + 1 prod UserRegisteredEventListener); ArchUnit fields `dddRules`/`onion`/`classesShouldBeNullSafe`/`modules` in `ArchitectureTest`. | CONFIGURE | ✅ **DECIDED** — `log` allowed via `constantPattern="[A-Z][A-Z_0-9]*\|log"` (rule's own config, global); `ArchitectureTest` (entirely ArchUnit descriptors) suppressed class-wide with `@SuppressWarnings("PMD.FieldNamingConventions")` + Javadoc rationale. Verified 9→0. Applied in 5b·1. |
 | `TooManyMethods` | 4 | Raise threshold (default 10): test DSL (`AuthApi`, `UserStatements`, `AssertionResponse`) and projection `UserSummaryView` legitimately have many methods; the 200-line file limit already guards bloat. | CONFIGURE | — |
 | `AvoidDuplicateLiterals` | 4 | All test-data literals (`"Ivanovich"`, `"Ivanov"`, `"Ivan"` in `PersonNameTest`; `"email"` in `RegisterUserRequestTest`). Raise threshold or exclude tests. | CONFIGURE | — |
 | `AvoidLiteralsInIfCondition` | 3 | Test infra comparing to 0/1; add `1` to `ignoreMagicNumbers` (0 already ignored) — or disable. Sites: `ControllerDependencyAutoMockRegistrar:79`, `AssertionResponse:123`, `ConstraintViolationExceptionAssert:85`. | CONFIGURE | — |
@@ -84,3 +84,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
   as misconfigured (`<configerror>`, mandatory `packages` unset) and warned on every build. Cleanup only:
   silences the per-build `Removed misconfigured rule` warning; boundaries stay owned by Modulith + ArchUnit.
   Corrected the earlier "flaps 0/1" misattribution. pmd:check green at 43.
+- **5b·1** (ceiling 43 → 34): `FieldNamingConventions` — rule kept ON, two idioms allow-listed (9→0):
+  `log` via `constantPattern="[A-Z][A-Z_0-9]*|log"` (SLF4J/Lombok logger, 5 sites); `ArchitectureTest`
+  suppressed class-wide via `@SuppressWarnings` + Javadoc (ArchUnit camelCase @ArchTest fields, 4 sites).
+  pmd:check green.

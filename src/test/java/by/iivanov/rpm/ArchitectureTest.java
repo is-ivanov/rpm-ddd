@@ -20,6 +20,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.modulith.core.ApplicationModules;
 import org.springframework.modulith.docs.Documenter;
 
+/**
+ * ArchUnit + Spring Modulith architecture rules. PMD's FieldNamingConventions is suppressed
+ * class-wide: ArchUnit's idiom declares rules as camelCase {@code @ArchTest static final ArchRule}
+ * fields (and the {@code ApplicationModules} descriptor), which PMD would otherwise reject as
+ * mis-cased constants. The whole class is such descriptors, so the suppression is scoped here.
+ */
+@SuppressWarnings("PMD.FieldNamingConventions")
 @AnalyzeClasses(packagesOf = RpmDddApplication.class, importOptions = ImportOption.DoNotIncludeTests.class)
 class ArchitectureTest {
 

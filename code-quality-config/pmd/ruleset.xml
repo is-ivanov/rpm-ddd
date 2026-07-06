@@ -110,6 +110,16 @@
       <property name="violationSuppressRegex" value="Avoid short class names like User"/>
     </properties>
   </rule>
+  <!-- Keep the rule ON (it catches genuinely misnamed constants/fields — Checkstyle has no ConstantName).
+       A `static final` field is treated as a constant (constantPattern), which rejects the universal
+       SLF4J/Lombok logger idiom `private static final Logger log`. Allow `log` as an explicit alternative
+       in the constant pattern (global, intentional); any other lowercase constant still flags. The ArchUnit
+       camelCase @ArchTest rule fields in ArchitectureTest are handled by a class-level @SuppressWarnings. -->
+  <rule ref="category/java/codestyle.xml/FieldNamingConventions">
+    <properties>
+      <property name="constantPattern" value="[A-Z][A-Z_0-9]*|log"/>
+    </properties>
+  </rule>
 
 
   <!-- Two orthogonal allow-lists, both keeping the rule active for real production code:
