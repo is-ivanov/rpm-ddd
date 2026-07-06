@@ -46,22 +46,17 @@ describe('Absolute time tooltip parts', () => {
     expect(SUMMER_BERLIN.ianaZone).toBe('Europe/Berlin');
   });
 
-  // The winter instant pins the DST-aware behavior the summer case alone cannot (a hardcoded
-  // 'CEST' would pass the summer test yet break here).
   it('emits CET for a winter instant in the same zone (DST aware)', () => {
     const winter = toAbsoluteTooltipParts('2026-01-15T09:14:37.482Z', 'Europe/Berlin');
 
-    expect(winter.tzLabel).toBe('CET');
+    expect(winter.tzLabel, "DST-aware: a hardcoded 'CEST' would pass summer yet break here").toBe('CET');
     expect(winter.time).toBe('10:14');
   });
 
-  // Converting a late-evening UTC instant into Asia/Tokyo (UTC+9) rolls the calendar date forward.
-  // This pins the date-rollover behavior a same-day case cannot (an implementation that formatted
-  // the raw UTC date would show 06-29).
   it('rolls the date forward when the zone offset crosses midnight (Asia/Tokyo)', () => {
     const tokyo = toAbsoluteTooltipParts('2026-06-29T22:47:13.456Z', 'Asia/Tokyo');
 
-    expect(tokyo.date).toBe('2026-06-30');
+    expect(tokyo.date, 'zone offset crosses midnight -> 06-30; a raw-UTC impl would show 06-29').toBe('2026-06-30');
     expect(tokyo.time).toBe('07:47');
     expect(tokyo.ianaZone).toBe('Asia/Tokyo');
   });

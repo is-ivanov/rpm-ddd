@@ -68,10 +68,8 @@ describe('Admin Users API Client', () => {
     expect(result).toEqual(ADMIN_USERS);
   });
 
-  // GET /api/admin/users -> 401 must reset the auth session: the client routes through apiFetch(),
-  // so resetSessionWhenUnauthorized() clears a previously-authenticated store (the ZodError thrown
-  // while parsing the problem body is swallowed). The store assertion below is the pinned reason
-  // (regression #250, where a raw fetch() bypassed the reset and left stale authenticated state).
+  // GET /api/admin/users -> 401 routes through apiFetch(), so resetSessionWhenUnauthorized()
+  // clears a previously-authenticated store (the ZodError from parsing the problem body is swallowed).
   it('resets the auth session when GET /api/admin/users returns 401', async () => {
     await issue('250');
     stubAdminUsers(UNAUTHORIZED_PROBLEM, {
@@ -83,7 +81,10 @@ describe('Admin Users API Client', () => {
 
     await fetchAdminUsers().catch(() => {});
 
-    expect(store.currentUser).toBeNull();
+    expect(
+      store.currentUser,
+      'regression #250: a raw fetch() bypassed the reset, leaving stale authenticated state',
+    ).toBeNull();
     expect(store.isAuthenticated).toBe(false);
   });
 });

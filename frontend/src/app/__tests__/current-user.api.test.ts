@@ -32,10 +32,8 @@ describe('Current User API Client', () => {
     setActivePinia(createPinia());
   });
 
-  // GET /api/auth/me -> 401 must reset the auth session: the client maps 401 to
-  // { authenticated: false } AND routes through apiFetch(), so resetSessionWhenUnauthorized()
-  // clears a previously-authenticated store. The store assertions below are the pinned reason
-  // (regression #250, where a raw fetch() bypassed the reset and left stale authenticated state).
+  // GET /api/auth/me -> 401 routes through apiFetch(), so resetSessionWhenUnauthorized()
+  // clears a previously-authenticated store while the client maps 401 to { authenticated: false }.
   it('resets the auth session when GET /api/auth/me returns 401', async () => {
     await issue('250');
     stubMeUnauthenticated();
@@ -46,7 +44,10 @@ describe('Current User API Client', () => {
 
     const expected: CurrentUserResult = { authenticated: false };
     expect(result).toEqual(expected);
-    expect(store.currentUser).toBeNull();
+    expect(
+      store.currentUser,
+      'regression #250: a raw fetch() bypassed the reset, leaving stale authenticated state',
+    ).toBeNull();
     expect(store.isAuthenticated).toBe(false);
   });
 
