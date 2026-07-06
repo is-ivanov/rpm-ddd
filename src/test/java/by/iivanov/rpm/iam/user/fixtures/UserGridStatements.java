@@ -18,7 +18,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserGridStatements {
 
-    private static final PersonNameResponse SEEDED_ADMIN_ACTOR = new PersonNameResponse("System", "System", "System");
+    private static final String SYSTEM = "System";
+    private static final PersonNameResponse SEEDED_ADMIN_ACTOR = new PersonNameResponse(SYSTEM, SYSTEM, SYSTEM);
 
     private final UserApi userApi;
 

@@ -41,6 +41,7 @@ public final class PostgresContainersLifecycleManager {
 
     private static final String ENV_FILE_PATH = "docker/.env";
     private static final String IMAGE_PROPERTY = "POSTGRES_TEST_IMAGE";
+    private static final String POSTGRES_PROPERTY_PREFIX = "POSTGRES_";
     private static final String SHARED_MEMORY_PROPERTY = "POSTGRES_SHARED_MEMORY";
     private static final DataSize DEFAULT_SHARED_MEMORY = DataSize.ofMegabytes(256);
     private static final String[] POSTGRES_COMMAND;
@@ -77,9 +78,9 @@ public final class PostgresContainersLifecycleManager {
         args.add("postgres");
 
         for (var key : env.stringPropertyNames()) {
-            if (key.startsWith("POSTGRES_") && !key.equals(IMAGE_PROPERTY)) {
+            if (key.startsWith(POSTGRES_PROPERTY_PREFIX) && !key.equals(IMAGE_PROPERTY)) {
                 // POSTGRES_FSYNC=off -> -c fsync=off
-                var pgParam = key.substring("POSTGRES_".length()).toLowerCase(AppConstants.DEFAULT_LOCALE);
+                var pgParam = key.substring(POSTGRES_PROPERTY_PREFIX.length()).toLowerCase(AppConstants.DEFAULT_LOCALE);
                 args.add("-c");
                 args.add(pgParam + "=" + env.getProperty(key));
             }

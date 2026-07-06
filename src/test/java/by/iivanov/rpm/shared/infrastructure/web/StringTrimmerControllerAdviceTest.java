@@ -18,6 +18,17 @@ import tools.jackson.databind.ObjectMapper;
 class StringTrimmerControllerAdviceTest {
 
     private static final String PATH = "/test";
+    private static final String NAME_PARAM = "name";
+    private static final String NULL_NAME_BODY = """
+            {
+               "name": null
+            }
+            """;
+    private static final String NAME_BODY_TEMPLATE = """
+            {
+               "name": "%s"
+            }
+            """;
 
     private final MockMvcTester mockMvc;
     private final ObjectMapper objectMapper;
@@ -36,11 +47,7 @@ class StringTrimmerControllerAdviceTest {
         @DisplayName("WHEN GET request with parameter name is empty string EXPECT response with null field")
         void getRequestWithParameterNameIsEmptyString_responseWithNullField(String name) {
             // GIVEN:
-            String expectedResponseBody = """
-                {
-                   "name": null
-                }
-                """;
+            String expectedResponseBody = NULL_NAME_BODY;
             // WHEN:
             var response = sendGetRequest(name);
             // THEN:
@@ -57,11 +64,7 @@ class StringTrimmerControllerAdviceTest {
         void when_getRequestWithParameterNameWithSpaces_expect_parameterIsTrimmed(
                 String name, String expectedResponseName) {
             // GIVEN:
-            String expectedResponseBody = """
-                {
-                   "name": "%s"
-                }
-                """.formatted(expectedResponseName);
+            String expectedResponseBody = NAME_BODY_TEMPLATE.formatted(expectedResponseName);
             // WHEN:
             var response = sendGetRequest(name);
             // THEN:
@@ -69,7 +72,7 @@ class StringTrimmerControllerAdviceTest {
         }
 
         private MvcTestResult sendGetRequest(String name) {
-            return mockMvc.get().uri(PATH).queryParam("name", name).exchange();
+            return mockMvc.get().uri(PATH).queryParam(NAME_PARAM, name).exchange();
         }
     }
 
@@ -82,11 +85,7 @@ class StringTrimmerControllerAdviceTest {
         @DisplayName("WHEN POST request with empty string in body EXPECT response with null field")
         void getRequestWithParameterNameIsEmptyString_responseWithNullField(String name) {
             // GIVEN:
-            String expectedResponseBody = """
-                {
-                   "name": null
-                }
-                """;
+            String expectedResponseBody = NULL_NAME_BODY;
             // WHEN:
             var response = sendPostRequest(name);
             // THEN:
@@ -103,11 +102,7 @@ class StringTrimmerControllerAdviceTest {
         void when_getRequestWithParameterNameWithSpaces_expect_parameterIsTrimmed(
                 String name, String expectedResponseName) {
             // GIVEN:
-            String expectedResponseBody = """
-                {
-                   "name": "%s"
-                }
-                """.formatted(expectedResponseName);
+            String expectedResponseBody = NAME_BODY_TEMPLATE.formatted(expectedResponseName);
             // WHEN:
             var response = sendPostRequest(name);
             // THEN:
@@ -115,7 +110,7 @@ class StringTrimmerControllerAdviceTest {
         }
 
         private MvcTestResult sendPostRequest(String name) {
-            var payload = Map.of("name", name);
+            var payload = Map.of(NAME_PARAM, name);
             String requestBody = objectMapper.writeValueAsString(payload);
             return mockMvc.post()
                     .uri(PATH)

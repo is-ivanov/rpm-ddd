@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.client.RestTestClient;
 
 public class AssertionResponse {
 
+    private static final String NULLAWAY_HINT = "that assert only for NullAway";
+
     private final RestTestClient.ResponseSpec responseSpec;
 
     public AssertionResponse(RestTestClient.ResponseSpec responseSpec) {
@@ -131,7 +133,7 @@ public class AssertionResponse {
     public <T> T extractBodyAs(Class<T> type) {
         T responseBody = responseSpec.returnResult(type).getResponseBody();
         Assertions.assertThat(responseBody).as("Response body must be not null").isNotNull();
-        return Objects.requireNonNull(responseBody, "that assert only for NullAway");
+        return Objects.requireNonNull(responseBody, NULLAWAY_HINT);
     }
 
     public String extractBodyAsString() {
@@ -161,7 +163,7 @@ public class AssertionResponse {
                 .isNotNull()
                 .as("Location header must starts with <%s>", pathPrefix)
                 .startsWith(pathPrefix);
-        return Objects.requireNonNull(location, "that assert only for NullAway").substring(pathPrefix.length());
+        return Objects.requireNonNull(location, NULLAWAY_HINT).substring(pathPrefix.length());
     }
 
     /**

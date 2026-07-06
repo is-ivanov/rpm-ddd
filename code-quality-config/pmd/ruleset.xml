@@ -210,7 +210,7 @@
   </rule>
   <!-- "Looks like a test class but has no test cases" heuristic. Its default pattern flags names that
        *start or end* with Test/Tests/TestCase, catching Test-prefixed infrastructure that is not a test
-       (TestRpmDddApplication, TestcontainersConfiguration, TestContextValidator, TestResources). Anchor
+       (TestRpmDddApplication, TestcontainersConfiguration, TestResources). Anchor
        it to the project's test-suffix convention (AGENTS.md: *Test / *IntegrationTest) so only real *Test
        classes are checked; the Test-prefixed infra is exempt. -->
   <!-- Tightened: a String literal repeated even twice should be a named constant (default threshold is 4).

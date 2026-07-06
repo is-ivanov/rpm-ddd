@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.client.ExchangeResult;
  * beyond the scenarios it needs to build authenticated state.
  */
 @Component
+// admin login and password share the value "admin" in tests; distinct named constants, intentional.
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class AuthSessionFactory {
 
     private static final String ADMIN_LOGIN = "admin";
