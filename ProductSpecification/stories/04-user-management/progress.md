@@ -216,8 +216,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] red-frontend-api (client-side filter — reuses fetchAdminUsers)
 - [S] green-frontend-api
 - [x] align-design (filter inputs on all 5 text columns; per-column `filters` record → filterRowsByColumns)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (users-grid.spec.ts Scn 3.4 GREEN — 6/6 grid suite pass)
+- [~] demo
 
 ### Scenario 3.5: Every column header sorts the rows (timestamps by instant)
 > Sort affordance on all 8 headers. Lexical columns reuse the Login category; NEW category = timestamp

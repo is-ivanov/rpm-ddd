@@ -150,13 +150,6 @@ test.describe('Users Grid', () => {
       'And the active column filters combine with AND (a row must match every one), ' +
       'And no additional network request is made',
     async () => {
-      // RED (expected-fail): only the Full name column has a filter input wired
-      // (users-filter-name); the Login/Updated-by column filters (users-filter-login,
-      // users-filter-updated-by) and the multi-column AND composition are not built yet.
-      // assertLoginFilterIsVisible() fails fast at the 5s bound (never a 30s whole-test
-      // timeout). Remove test.fail() in green-playwright once red-frontend/green-frontend adds
-      // per-column filter state + AND combination and align-design renders every text-column filter.
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser({ firstName: 'John', lastName: 'Doe' });
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
