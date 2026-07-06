@@ -236,10 +236,10 @@ email is asserted as a side effect of backend Scenario 3.1)
 > Inactive); selecting a subset keeps only those rows. New control + set-membership filter logic.
 - [x] red-playwright (users-grid-status-filter.spec.ts + .statements.ts — options in lifecycle order + Pending∧Locked subset)
 - [x] red-frontend (users-grid.logic.test.ts — filterRowsByStatuses set-membership + empty-selection guard)
-- [~] green-frontend
+- [x] green-frontend (filterRowsByStatuses — empty-guard pass-through + set-membership)
 - [S] red-frontend-api (client-side filter)
 - [S] green-frontend-api
-- [ ] align-design (status multi-select dropdown per mockup)
+- [~] align-design (status multi-select dropdown per mockup)
 - [ ] green-playwright
 - [ ] demo
 

@@ -57,8 +57,11 @@ export function filterRowsByColumns(rows: UserRow[], filters: Partial<Record<Tex
   return rows.filter((row) => activeTerms.every(([column, needle]) => row[column].toLowerCase().includes(needle)));
 }
 
-export function filterRowsByStatuses(rows: UserRow[], _selected: readonly string[]): UserRow[] {
-  return rows;
+export function filterRowsByStatuses(rows: UserRow[], selected: readonly string[]): UserRow[] {
+  if (selected.length === 0) {
+    return rows;
+  }
+  return rows.filter((row) => selected.includes(row.status));
 }
 
 function toActiveTerms(filters: Partial<Record<TextFilterColumn, string>>): [TextFilterColumn, string][] {

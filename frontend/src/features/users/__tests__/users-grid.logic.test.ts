@@ -145,7 +145,7 @@ describe('Status column filter (multi-select, set membership)', () => {
     aUserSummary({ login: 'd.lee', status: 'INACTIVE' }),
   ]);
 
-  it.fails('keeps only rows whose status is in the selected set, preserving render order', () => {
+  it('keeps only rows whose status is in the selected set, preserving render order', () => {
     const filtered = filterRowsByStatuses(rows, ['Pending', 'Locked']);
 
     expect(
