@@ -140,6 +140,7 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
     - [x] 5b·7: RegisterUserRequestTest (5) — field-name constants (extend EMAIL_FIELD scheme) + MALFORMED_EMAIL value; ceiling 58→53
     - [x] 5b·8: validation-message tests (Email/Login/Password/PersonName/ActivateAccountRequest) — test-local message + value constants (11 dups, pin independent of prod); ceiling 53→42
     - [x] 5b·9: remainder (16 dups) — test-local constants (JSESSIONID, SYSTEM, NOT_EXERCISED_BY_JOB, POSTGRES_PROPERTY_PREFIX, NULLAWAY_HINT, NO_EVENTS_MESSAGE, MESSAGE_FOR_PROPERTY, StringTrimmer bodies/NAME_PARAM, UserResourceTest ALREADY_EXISTS/LOGIN_FIELD/EMAIL_FIELD [ALREADY_EXISTS overlaps #272]); Constants + AuthSessionFactory point-wise @SuppressWarnings (distinct named constants sharing a value); deleted unused TestContextValidator (also cleared 5 SystemPrintln). ceiling 42→21 (5 below target 26 thanks to the deletion)
+  - [x] 5c·1: MissingSerialVersionUID (7) — @SuppressWarnings("serial") on all 7 domain exceptions (Spring's own idiom; PMD 7.26 honors the javac "serial" key — verified; rule stays ON to catch genuinely-serializable classes; exceptions serialize to RFC 9457 JSON not Java binary), ceiling 21→14
 
 ## Final
 - [ ] green-acceptance (`./mvnw verify -B` green; ceiling at its final value, ideally 0)
