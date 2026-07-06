@@ -16,5 +16,5 @@ Type: refactoring
 - [x] run vitest users-grid.logic.test.ts (green)
 
 ### Step 3: Sweep the remaining FE Vitest logic + API-client tests
-- [~] refactor (apply the hybrid rule across FE Vitest tests)
-- [ ] run npm run lint + full FE test suite (green)
+- [x] refactor (apply the hybrid rule across FE Vitest tests)
+- [x] run npm run lint + full FE test suite (green)

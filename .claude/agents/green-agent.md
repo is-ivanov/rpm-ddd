@@ -76,7 +76,7 @@ The RED-phase marker name differs per concern — look it up in the **Convention
 
 ### RED-Comment Reframing
 
-When you strip the RED marker, do not silently discard the per-assertion rationale the RED comment carried. **Reframe** it: move the "why THIS expected value / what a wrong impl produces" part into the Vitest failure message — `expect(actual, 'AND ⇒ 2 rows; OR ⇒ 4 — pinned so an OR impl differs').toEqual(...)` — so it surfaces on failure instead of rotting in a now-stranded comment. Block/setup/dataset-level context stays a comment (no single-assertion anchor); delete a comment only when nothing but a restatement of the test title survives. See `.claude/tech/vue-ts/tdd.md` → "Assertion Messages (rationale over comments)".
+When you strip the RED marker (step 5), do not silently discard the per-assertion rationale the RED comment carried. **Reframe** it — move the "why THIS expected value" explanation into the assertion's failure message so it surfaces on failure instead of rotting in a now-stranded comment. The concrete idiom (message-arg syntax, which context stays a comment, when to delete) lives in the tech binding: `.claude/tech/{frontend}/tdd.md` → "Assertion Messages (rationale over comments)".
 
 ## Context Files
 
