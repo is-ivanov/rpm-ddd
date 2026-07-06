@@ -77,7 +77,7 @@ describe('Timestamp column sort (by the underlying Created instant)', () => {
 
   // RED — created/updated columns have no comparator yet; sortUserRows falls through to statusRank
   // and yields the lifecycle order instead of the createdAt-instant order.
-  it.fails('sorts rows ascending by the Created instant, oldest first', () => {
+  it('sorts rows ascending by the Created instant, oldest first', () => {
     const sorted = sortUserRows(rows, 'created', 'asc');
 
     expect(
@@ -87,7 +87,7 @@ describe('Timestamp column sort (by the underlying Created instant)', () => {
   });
 
   // RED — same reason; descending must reverse the instant order, not the lifecycle order.
-  it.fails('sorts rows descending by the Created instant, newest first', () => {
+  it('sorts rows descending by the Created instant, newest first', () => {
     const sorted = sortUserRows(rows, 'created', 'desc');
 
     expect(sorted.map((row) => row.login)).toEqual(['d.lee', 'm.scott', 'e.carter', 's.connor']);

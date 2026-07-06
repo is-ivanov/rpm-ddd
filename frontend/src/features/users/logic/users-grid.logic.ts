@@ -77,10 +77,20 @@ function statusRank(status: string): number {
 }
 
 function compareByColumn(left: UserRow, right: UserRow, column: SortColumn): number {
-  if (column === 'login') {
-    return left.login.localeCompare(right.login);
+  switch (column) {
+    case 'login':
+      return left.login.localeCompare(right.login);
+    case 'created':
+      return instant(left.createdAt) - instant(right.createdAt);
+    case 'updated':
+      return instant(left.updatedAt) - instant(right.updatedAt);
+    case 'status':
+      return statusRank(left.status) - statusRank(right.status);
   }
-  return statusRank(left.status) - statusRank(right.status);
+}
+
+function instant(isoTimestamp: string): number {
+  return new Date(isoTimestamp).getTime();
 }
 
 export function sortUserRows(rows: UserRow[], column: SortColumn, direction: SortDirection): UserRow[] {

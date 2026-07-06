@@ -224,10 +224,10 @@ email is asserted as a side effect of backend Scenario 3.1)
 > sort (Created/Updated) by the underlying instant, not the relative label.
 - [x] red-playwright (users-grid.spec.ts Scn 3.5 — Created-header sort by createdAt instant; admin-users-sort.fixture.ts)
 - [x] red-frontend (users-grid.sort.logic.test.ts — timestamp sort by createdAt instant; SortColumn +created/+updated)
-- [~] green-frontend
+- [x] green-frontend (compareByColumn switch: created/updated by instant; see summaries/3.5-every-column-sort.md)
 - [S] red-frontend-api (client-side sort)
 - [S] green-frontend-api
-- [ ] align-design (sortable headers on all columns)
+- [~] align-design (sortable headers on all columns)
 - [ ] green-playwright
 - [ ] demo
 
