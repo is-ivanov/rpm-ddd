@@ -40,6 +40,8 @@ class RegisterUserRequestTest {
     private static final Selector EMAIL = field(RegisterUserRequest::email);
     private static final Selector TIME_ZONE = field(RegisterUserRequest::timeZone);
 
+    private static final String EMAIL_FIELD = "email";
+
     private final Validator validator =
             Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -106,15 +108,16 @@ class RegisterUserRequestTest {
                 blankCase("login", LOGIN, blank),
                 tooLongCase("login", LOGIN, tooLongLogin, LOGIN_MAX),
                 // A non-empty blank email is also malformed, so @NotBlank and @Email both fire.
-                invalidField("Invalid email: blank", EMAIL, blank, notBlank("email", blank), email("email", blank)),
-                invalidField("Invalid email: malformed", EMAIL, "not-an-email", email("email", "not-an-email")),
+                invalidField(
+                        "Invalid email: blank", EMAIL, blank, notBlank(EMAIL_FIELD, blank), email(EMAIL_FIELD, blank)),
+                invalidField("Invalid email: malformed", EMAIL, "not-an-email", email(EMAIL_FIELD, "not-an-email")),
                 // A 254-char local part exceeds @Size and is rejected by @Email, so both fire.
                 invalidField(
                         "Invalid email: too long",
                         EMAIL,
                         longLocalPart,
-                        size("email", longLocalPart, 0, EMAIL_MAX),
-                        email("email", longLocalPart)),
+                        size(EMAIL_FIELD, longLocalPart, 0, EMAIL_MAX),
+                        email(EMAIL_FIELD, longLocalPart)),
                 blankCase("timeZone", TIME_ZONE, blank),
                 tooLongCase("timeZone", TIME_ZONE, tooLongTimeZone, TIME_ZONE_MAX));
     }

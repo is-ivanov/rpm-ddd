@@ -132,6 +132,8 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
   - [x] 5a·9: LoosePackageCoupling excluded (was a <configerror>, never counted; silences per-build misconfig warning), ceiling 43 unchanged
   - [x] 5b·1: FieldNamingConventions kept ON — log via constantPattern alt, ArchitectureTest class-wide @SuppressWarnings (9→0), ceiling 43→34
   - [x] 5b·2: TooManyMethods disabled (duplicated by 200-line file limit; method-rich patterns legit, 4→0), ceiling 34→30
+  - [x] 5b·3: AvoidDuplicateLiterals FIX — extracted name/email constants in PersonNameTest + RegisterUserRequestTest (4→0), ceiling 30→26
+  - [~] 5b·4: tighten AvoidDuplicateLiterals threshold 4→2 (show new findings before fixing)
 
 ## Final
 - [ ] green-acceptance (`./mvnw verify -B` green; ceiling at its final value, ideally 0)

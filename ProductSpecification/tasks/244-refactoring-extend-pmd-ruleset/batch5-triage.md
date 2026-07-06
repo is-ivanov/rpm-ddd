@@ -32,7 +32,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 |------|---|----------|-----|----------|
 | `FieldNamingConventions` | 9 | Allow lowercase `log` (SLF4J/Lombok idiom) and ArchUnit camelCase fields. NOT covered by Checkstyle (no `ConstantName`) — rule kept ON. Sites: `log` in 5 files (4 test-infra + 1 prod UserRegisteredEventListener); ArchUnit fields `dddRules`/`onion`/`classesShouldBeNullSafe`/`modules` in `ArchitectureTest`. | CONFIGURE | ✅ **DECIDED** — `log` allowed via `constantPattern="[A-Z][A-Z_0-9]*\|log"` (rule's own config, global); `ArchitectureTest` (entirely ArchUnit descriptors) suppressed class-wide with `@SuppressWarnings("PMD.FieldNamingConventions")` + Javadoc rationale. Verified 9→0. Applied in 5b·1. |
 | `TooManyMethods` | 4 | Pure method-count heuristic (default 10). The project's hard 200-line file limit already guards bloat on every file; the 4 hits are legit method-rich patterns (projection accessors, 3-tier test DSL, fluent asserts, transport overloads). A god-class can't exist under 200 lines. | DISABLE | ✅ **DECIDED** — excluded (design); the 200-line cap is the adopted bloat guard and this duplicates/conflicts with it. Verified 4→0. Applied in 5b·2. |
-| `AvoidDuplicateLiterals` | 4 | All test-data literals (`"Ivanovich"`, `"Ivanov"`, `"Ivan"` in `PersonNameTest`; `"email"` in `RegisterUserRequestTest`). Raise threshold or exclude tests. | CONFIGURE | — |
+| `AvoidDuplicateLiterals` | 4 | Test-data literals (`"Ivan"`/`"Ivanov"`/`"Ivanovich"` name fillers in `PersonNameTest`; `"email"` property-name in `RegisterUserRequestTest`). Extracting to constants reads better and matches the project's own pattern (RegisterUserRequestTest is already constant-driven). | FIX + TIGHTEN | ✅ **DECIDED** — FIX: extracted `FIRST_NAME`/`MIDDLE_NAME`/`LAST_NAME` + `EMAIL_FIELD` constants (4→0). User also wants the rule TIGHTENED: lower `threshold` 4→2 (a literal repeated twice should be a constant) as a follow-up step. Applied FIX in 5b·3; threshold drop in 5b·4. |
 | `AvoidLiteralsInIfCondition` | 3 | Test infra comparing to 0/1; add `1` to `ignoreMagicNumbers` (0 already ignored) — or disable. Sites: `ControllerDependencyAutoMockRegistrar:79`, `AssertionResponse:123`, `ConstraintViolationExceptionAssert:85`. | CONFIGURE | — |
 | `UncommentedEmptyConstructor` | 1 | `UserSummaryView:74` empty ctor required by framework; `ignoreAnnotations` or disable (conflicts with the no-comments rule vs "Document empty constructor"). | CONFIGURE | — |
 
@@ -92,3 +92,8 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
   project's hard 200-line file limit (the adopted bloat guard, applies to prod too); the 4 hits are legit
   method-rich patterns (projection accessors, 3-tier test DSL, fluent asserts, transport overloads).
   pmd:check green.
+- **5b·3** (ceiling 30 → 26): `AvoidDuplicateLiterals` FIX — extracted constants (4→0): `FIRST_NAME`/
+  `MIDDLE_NAME`/`LAST_NAME` in `PersonNameTest` (name fillers), `EMAIL_FIELD` in `RegisterUserRequestTest`
+  (property name). Both edited tests green (26✓). Trap: an earlier `replace_all "email"→EMAIL_FIELD` also
+  rewrote the constant's own initializer into a self-reference (`EMAIL_FIELD = EMAIL_FIELD` → null); same in
+  PersonNameTest — fixed both back to the literal before running. pmd:check green.
