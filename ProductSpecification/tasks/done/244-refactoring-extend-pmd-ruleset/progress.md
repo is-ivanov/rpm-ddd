@@ -120,7 +120,7 @@ local 72 → 65 and CI 73 → 63; ceiling set to 65 (the higher env, local), rat
 
 ### Batch 5 — real fixes + long tail (in parts; full triage + decisions in `batch5-triage.md`)
 Discussed per-rule with the user, applied in slices; ceiling ratchets down per slice.
-- [~] refactor (curate ruleset + fix code, part by part)
+- [x] refactor (curate ruleset + fix code, part by part)
   - [x] 5a·1: AvoidUncheckedExceptionsInSignatures (suppress @Override) + ImplicitFunctionalInterface (disable), ceiling 65→58
   - [x] 5a·2: ClassWithOnlyPrivateConstructorsShouldBeFinal (suppress @Table + final on 2 test leaves), ceiling 58→55
   - [x] 5a·3: LiteralsFirstInComparisons disabled (Yoda notation; NPE owned by NullAway), ceiling 55→52
@@ -147,4 +147,4 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
   - [x] 5c·5: FieldDeclarationsShouldBeAtStartOfClass (2) + UseVarargs (1) — ArchitectureTest `modules` field moved above helper methods; PostgresContainersLifecycleManager merged the two static init blocks into one (field declared at top, container build appended to the env-loading block, init order preserved); UseVarargs is a PMD FP on private array-processing helper AssertionResponse.tail → point-wise @SuppressWarnings("PMD.UseVarargs"). ceiling 3→0
 
 ## Final
-- [ ] green-acceptance (`./mvnw verify -B` green; ceiling at its final value, ideally 0)
+- [x] green-acceptance — `./mvnw verify -B` BUILD SUCCESS (161 tests, 0 fail/err/skip; Spotless+SpotBugs green); `./mvnw pmd:check -B` exit 0 with 0 violations. Removed `<maxAllowedViolations>` from pom.xml entirely (default 0 → any new violation fails the build).
