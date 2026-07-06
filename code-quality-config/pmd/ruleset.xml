@@ -141,6 +141,13 @@
          (UserStatus.PENDING); the rest are unavoidable fluent/builder/stream API navigations and library
          type traversal (jjwt, HTTP, Jakarta). Zero genuine object-graph navigation violations. -->
     <exclude name="LawOfDemeter"/>
+    <!-- Measures coupling between a hand-maintained list of packages, which requires a mandatory
+         `packages` property. Off: unconfigured it is dead weight — PMD logs "Removed misconfigured rule:
+         LoosePackageCoupling cause: No packages or classes specified" on every build and emits a
+         <configerror> (never a violation, so it never counted). Configuring it would duplicate module
+         boundaries already owned and CI-enforced by Spring Modulith + ArchUnit. Excluding it silences the
+         per-build warning. -->
+    <exclude name="LoosePackageCoupling"/>
   </rule>
   <!-- Keep the rule ON (we agree unchecked exceptions don't belong in signatures we own), but suppress it
        on @Override methods — there the throws clause is dictated by the framework interface we implement,

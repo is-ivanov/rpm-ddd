@@ -24,7 +24,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 | `AvoidSynchronizedAtMethodLevel` | 2 | Rule kept ON (valuable for prod / virtual-thread era). The 2 hits are one-shot idempotent test-infra singleton starts (`GreenMailServer.start`, `PostgresContainersLifecycleManager.init`) whose whole body is the critical section — not a hot path, vthreads off, no prod `synchronized` methods. | POINT-WISE SUPPRESS | ✅ **DECIDED** — added `"PMD.AvoidSynchronizedAtMethodLevel"` to the existing `@SuppressWarnings` on both. Applied in 5a·6. |
 | `DataClass` | 1 | `UserSummaryView` is a read projection; being a data class is by design. Rule kept ON (catches anemic domain objects — a core DDD concern). | POINT-WISE / SUFFIX SUPPRESS | ✅ **DECIDED** — suppress via `violationSuppressXPath` on the `*View` suffix (project convention: `{Name}View` = read-only projection; recorded in `coding-rules.md` Naming). Same approach as LinguisticNaming/`*Assert`; verified 1→0. Applied in 5a·7. |
 | `ImmutableField` | 1 | `User.login` was left non-`final` only for a *future* "login is editable" feature; that is a later concern. Currently assigned once in the ctor, never reassigned — same as the 8 existing `final` fields on `User`. | FIX (`final`) | ✅ **DECIDED** — made `final`; Hibernate still hydrates it (UserRepositorySqlInjectionTest 2✓). Applied in 5a·8. |
-| `LoosePackageCoupling` | 1 | Needs a hand-maintained package list we don't keep; boundaries enforced by Modulith + ArchUnit. Also the cross-platform-flaky 0/1 rule. | DISABLE | — |
+| `LoosePackageCoupling` | 0 | **Correction:** never counted — PMD emits a `<configerror>` (not a `<violation>`) because the mandatory `packages` property is unset, and logs `Removed misconfigured rule` on every build. The earlier "flaps 0/1" note was a misattribution (the cross-platform flap was GuardLogStatement/LiteralsFirstInComparisons, already disabled). Configuring it would duplicate Modulith + ArchUnit boundaries. | DISABLE | ✅ **DECIDED** — excluded to silence the per-build misconfiguration warning; count stays 43 (it never counted). Applied in 5a·9. |
 
 ## 🟡 Proposed CONFIGURE — narrow to fit the project
 
@@ -80,3 +80,7 @@ Planned execution: **5a** = ruleset-only changes (disable + configure), **5b** =
 - **5a·8** (ceiling 44 → 43): `ImmutableField` — `User.login` made `final` (1→0). It was non-final only for a
   future "editable login" feature (a later concern); assigned once in the ctor, never reassigned, like the 8
   existing `final` fields. Hibernate hydration verified (UserRepositorySqlInjectionTest 2✓). pmd:check green.
+- **5a·9** (ceiling 43, unchanged): `LoosePackageCoupling` excluded. It was never a violation — PMD dropped it
+  as misconfigured (`<configerror>`, mandatory `packages` unset) and warned on every build. Cleanup only:
+  silences the per-build `Removed misconfigured rule` warning; boundaries stay owned by Modulith + ArchUnit.
+  Corrected the earlier "flaps 0/1" misattribution. pmd:check green at 43.
