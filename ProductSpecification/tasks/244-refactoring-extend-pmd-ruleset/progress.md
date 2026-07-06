@@ -136,7 +136,7 @@ Discussed per-rule with the user, applied in slices; ceiling ratchets down per s
   - AvoidDuplicateLiterals TIGHTEN (threshold 4→2 + skipAnnotations) — burn down 44 surfaced dups in sub-batches (Variant A: one-time ceiling bump then ratchet down):
     - [x] 5b·4: flip maxDuplicateLiterals=2 + skipAnnotations=true; ceiling 26→70 (one-time tightening bump, documented)
     - [x] 5b·5: PROD (3) — SecurityConfig ACTIVATE_PATH, Email/LoginAlreadyExistsExceptionHandler EMAIL_FIELD/LOGIN_FIELD → constants; ceiling 70→67. Error-code dups (VALIDATION_FAILED/ALREADY_EXISTS) split off to Task #272 (not PMD-flagged, cross-file)
-    - [ ] 5b·6: AuthResourceTest (9) — tokens/messages/JSON body → constants; ceiling 67→58
+    - [x] 5b·6: AuthResourceTest (9) — token/message/field-name/JSON-body constants (test-local, values unchanged); ceiling 67→58
     - [ ] 5b·7: RegisterUserRequestTest (5) — field-name constants (extend EMAIL_FIELD scheme); ceiling 58→53
     - [ ] 5b·8: validation-message tests (PasswordTest/PersonNameTest/EmailAddressTest/LoginTest/ActivateAccountRequestTest) — test-local msg constants (pin stays independent of prod)
     - [ ] 5b·9: remainder — UserResourceTest, StringTrimmerControllerAdviceTest, test-infra singletons/misc → ceiling to 26

@@ -22,6 +22,21 @@ import org.springframework.http.HttpStatus;
 @WebTest
 class AuthResourceTest {
 
+    private static final String VALID_TOKEN = "valid-token";
+    private static final String INVALID_TOKEN = "invalid-token";
+    private static final String INVALID_TOKEN_MESSAGE = "Invalid token";
+    private static final String EXPIRED_TOKEN = "expired-token";
+    private static final String JWT_EXPIRED = "JWT expired";
+    private static final String EXPIRED_DETAIL = "Activation token has expired";
+    private static final String TOKEN_FIELD = "token";
+    private static final String PASSWORD_FIELD = "password";
+    private static final String VALID_ACTIVATE_REQUEST = """
+            {
+              "token": "some.jwt.token",
+              "password": "ValidPass12!@"
+            }
+            """;
+
     private final AuthApi authApi;
     private final ActivationService activationService;
 
@@ -63,7 +78,7 @@ class AuthResourceTest {
         void should_returnUserInfo_when_validActivationToken() {
             givenUserWithActivationToken();
 
-            var response = authApi.validateActivationToken("valid-token");
+            var response = authApi.validateActivationToken(VALID_TOKEN);
 
             response.assertOk("""
                 {
@@ -76,23 +91,23 @@ class AuthResourceTest {
         private void givenUserWithActivationToken() {
             var user =
                     aUser().withLogin("testuser").withEmail("test@example.com").build();
-            given(activationService.validateToken("valid-token")).willReturn(user);
+            given(activationService.validateToken(VALID_TOKEN)).willReturn(user);
         }
 
         @Test
         @DisplayName("Invalid activation token returns 422")
         void should_return422_when_invalidActivationToken() {
-            givenTokenValidationFails("invalid-token", new MalformedJwtException("Invalid token"));
-            var response = authApi.validateActivationToken("invalid-token");
-            assertUnprocessable(response, "Invalid token");
+            givenTokenValidationFails(INVALID_TOKEN, new MalformedJwtException(INVALID_TOKEN_MESSAGE));
+            var response = authApi.validateActivationToken(INVALID_TOKEN);
+            assertUnprocessable(response, INVALID_TOKEN_MESSAGE);
         }
 
         @Test
         @DisplayName("Expired activation token returns 422")
         void should_return422_when_expiredActivationToken() {
-            givenTokenValidationFails("expired-token", new ExpiredJwtException(null, null, "JWT expired"));
-            var response = authApi.validateActivationToken("expired-token");
-            assertUnprocessable(response, "Activation token has expired");
+            givenTokenValidationFails(EXPIRED_TOKEN, new ExpiredJwtException(null, null, JWT_EXPIRED));
+            var response = authApi.validateActivationToken(EXPIRED_TOKEN);
+            assertUnprocessable(response, EXPIRED_DETAIL);
         }
 
         private void givenTokenValidationFails(String token, RuntimeException exception) {
@@ -120,15 +135,15 @@ class AuthResourceTest {
             // THEN:
             response.assertBindingError(
                     FieldError.notBlank()
-                            .property("token")
+                            .property(TOKEN_FIELD)
                             .message("must not be blank")
                             .rejectedValue(null)
-                            .path("token"),
+                            .path(TOKEN_FIELD),
                     FieldError.size()
-                            .property("password")
+                            .property(PASSWORD_FIELD)
                             .message("size must be between 12 and 128")
                             .rejectedValue(password)
-                            .path("password"));
+                            .path(PASSWORD_FIELD));
         }
 
         @Test
@@ -136,12 +151,7 @@ class AuthResourceTest {
         void should_return422_when_tamperedActivationToken() {
             givenActivationFailsSignature();
 
-            var response = authApi.activate("""
-                {
-                  "token": "some.jwt.token",
-                  "password": "ValidPass12!@"
-                }
-                """);
+            var response = authApi.activate(VALID_ACTIVATE_REQUEST);
 
             assertUnprocessable(response, "Invalid activation token");
         }
@@ -157,18 +167,13 @@ class AuthResourceTest {
         void should_return422_when_expiredActivationToken() {
             givenActivationFailsExpired();
 
-            var response = authApi.activate("""
-                {
-                  "token": "some.jwt.token",
-                  "password": "ValidPass12!@"
-                }
-                """);
+            var response = authApi.activate(VALID_ACTIVATE_REQUEST);
 
-            assertUnprocessable(response, "Activation token has expired");
+            assertUnprocessable(response, EXPIRED_DETAIL);
         }
 
         private void givenActivationFailsExpired() {
-            willThrow(new ExpiredJwtException(null, null, "JWT expired"))
+            willThrow(new ExpiredJwtException(null, null, JWT_EXPIRED))
                     .given(activationService)
                     .activate(anyString(), anyString());
         }
