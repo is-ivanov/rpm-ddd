@@ -93,7 +93,7 @@
   }
 
   .status-filter-panel {
-    @apply absolute left-0 top-[calc(100%+4px)] z-40 min-w-40 py-1;
+    @apply fixed z-40 min-w-40 py-1;
   }
 
   .status-filter-option {

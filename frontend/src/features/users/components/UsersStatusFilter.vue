@@ -6,12 +6,20 @@ import { STATUS_FILTER_OPTIONS } from '../logic/users-grid.logic';
 const selected = defineModel<string[]>({ required: true });
 
 const open = ref(false);
+const anchor = ref<HTMLElement | null>(null);
+const position = ref({ top: 0, left: 0 });
 
 const triggerLabel = computed(() =>
   selected.value.length === 0 ? 'All statuses' : `${selected.value.length} selected`,
 );
 
 function toggleOpen(): void {
+  if (!open.value) {
+    const rect = anchor.value?.getBoundingClientRect();
+    if (rect) {
+      position.value = { top: rect.bottom + 4, left: rect.left };
+    }
+  }
   open.value = !open.value;
 }
 
@@ -29,6 +37,7 @@ function toggleStatus(status: string): void {
 <template>
   <div class="relative" @keydown.esc="open = false">
     <button
+      ref="anchor"
       data-testid="users-filter-status"
       type="button"
       class="filter-control filter-control-between"
@@ -37,24 +46,30 @@ function toggleStatus(status: string): void {
       <span>{{ triggerLabel }}</span>
       <ChevronDown :size="14" class="shrink-0" aria-hidden="true" />
     </button>
-    <div v-if="open" class="dropdown-panel status-filter-panel">
-      <button
-        v-for="status in STATUS_FILTER_OPTIONS"
-        :key="status"
-        data-testid="users-filter-status-option"
-        type="button"
-        class="status-filter-option"
-        :aria-pressed="isSelected(status)"
-        @click="toggleStatus(status)"
+    <Teleport to="body">
+      <div
+        v-if="open"
+        class="dropdown-panel status-filter-panel"
+        :style="{ top: `${position.top}px`, left: `${position.left}px` }"
       >
-        <Check
-          :size="14"
-          class="shrink-0"
-          :class="isSelected(status) ? 'text-accent' : 'invisible'"
-          aria-hidden="true"
-        />
-        {{ status }}
-      </button>
-    </div>
+        <button
+          v-for="status in STATUS_FILTER_OPTIONS"
+          :key="status"
+          data-testid="users-filter-status-option"
+          type="button"
+          class="status-filter-option"
+          :aria-pressed="isSelected(status)"
+          @click="toggleStatus(status)"
+        >
+          <Check
+            :size="14"
+            class="shrink-0"
+            :class="isSelected(status) ? 'text-accent' : 'invisible'"
+            aria-hidden="true"
+          />
+          {{ status }}
+        </button>
+      </div>
+    </Teleport>
   </div>
 </template>
