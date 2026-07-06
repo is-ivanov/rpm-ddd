@@ -68,3 +68,9 @@
 **Where:** `code-quality-config/spotbugs/exclude-filter.xml`.
 **Implication:** future ApiExceptionHandlers are already covered by the scoped filter — don't remove it, and don't rewrite as pattern-match-with-throw (that trades the FP for a permanently-uncovered branch).
 **From:** scenario 2.1 (2.1-duplicate-login-422)
+
+## Quirk: grid popovers must Teleport to body — table-card overflow clips absolute panels
+**Quirk:** A dropdown/popover positioned `absolute` inside the users grid is clipped by `.table-card`'s `overflow-hidden` (kept for the card's rounded corners), so options/panels hanging below the filter row are cut off.
+**Where:** `frontend/src/features/users/components/UsersStatusFilter.vue`, `TimeCell.vue`, `.table-card` in `frontend/src/styles/components.css`.
+**Implication:** any grid popover (status dropdown, Created/Updated date-range calendar in Scn 3.7) must `Teleport to="body"` and position `fixed` from the trigger's `getBoundingClientRect()`; `absolute` positioning will be clipped.
+**From:** scenario 3.6 (3.6-status-filter)
