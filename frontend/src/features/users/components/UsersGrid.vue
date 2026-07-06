@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, reactive, ref, type Component } from 'vue';
 import { ArrowDown, ArrowUp, ChevronsUpDown } from '@lucide/vue';
-import { filterRowsByColumns, sortUserRows } from '../logic/users-grid.logic';
+import { filterRowsByColumns, filterRowsByStatuses, sortUserRows } from '../logic/users-grid.logic';
 import type { SortColumn, SortDirection, TextFilterColumn, UserRow } from '../logic/users-grid.types';
 import TimeCell from './TimeCell.vue';
+import UsersStatusFilter from './UsersStatusFilter.vue';
 
 const props = defineProps<{ rows: readonly UserRow[]; viewerTimeZone: string }>();
 
@@ -15,6 +16,7 @@ interface Column {
   readonly center?: boolean;
   readonly filterTestId?: string;
   readonly filterKey?: TextFilterColumn;
+  readonly statusFilter?: boolean;
   readonly sortKey?: SortColumn;
 }
 
@@ -40,7 +42,7 @@ const COLUMNS: readonly Column[] = [
     filterTestId: 'users-filter-email',
     filterKey: 'email',
   },
-  { testId: 'users-grid-header-status', label: 'Status', center: true, sortKey: 'status' },
+  { testId: 'users-grid-header-status', label: 'Status', center: true, sortKey: 'status', statusFilter: true },
   { testId: 'users-grid-header-created', label: 'Created', sortKey: 'created' },
   {
     testId: 'users-grid-header-created-by',
@@ -82,6 +84,7 @@ const filters = reactive<Record<TextFilterColumn, string>>({
   createdBy: '',
   updatedBy: '',
 });
+const statuses = ref<string[]>([]);
 const sort = ref<SortState | null>(null);
 
 function onHeaderClick(col: Column): void {
@@ -115,7 +118,8 @@ function sortIconFor(col: Column): Component {
 }
 
 const displayedRows = computed(() => {
-  const filtered = filterRowsByColumns([...props.rows], filters);
+  const textFiltered = filterRowsByColumns([...props.rows], filters);
+  const filtered = filterRowsByStatuses(textFiltered, statuses.value);
   if (sort.value === null) {
     return filtered;
   }
@@ -145,8 +149,9 @@ const displayedRows = computed(() => {
         </tr>
         <tr>
           <td v-for="col in COLUMNS" :key="col.testId" class="filter-cell">
+            <UsersStatusFilter v-if="col.statusFilter" v-model="statuses" />
             <input
-              v-if="col.filterKey"
+              v-else-if="col.filterKey"
               v-model="filters[col.filterKey]"
               :data-testid="col.filterTestId"
               :aria-label="`Filter by ${col.label}`"

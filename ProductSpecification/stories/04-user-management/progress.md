@@ -239,8 +239,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] green-frontend (filterRowsByStatuses — empty-guard pass-through + set-membership)
 - [S] red-frontend-api (client-side filter)
 - [S] green-frontend-api
-- [~] align-design (status multi-select dropdown per mockup)
-- [ ] green-playwright
+- [x] align-design (UsersStatusFilter.vue multi-select dropdown; UsersGrid statuses ref → filterRowsByStatuses)
+- [~] green-playwright
 - [ ] demo
 
 ### Scenario 3.7: Created / Updated date-range filter narrows by the underlying instant (promoted from UI Extended E3)

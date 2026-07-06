@@ -77,6 +77,8 @@ const STATUS_LIFECYCLE_RANK: Record<string, number> = {
   Inactive: 3,
 };
 
+export const STATUS_FILTER_OPTIONS: readonly string[] = Object.keys(STATUS_LIFECYCLE_RANK);
+
 const UNKNOWN_STATUS_RANK = Number.MAX_SAFE_INTEGER;
 
 function statusRank(status: string): number {
