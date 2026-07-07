@@ -28,6 +28,10 @@ public class UserApi extends AbstractApi {
         return get(BASE_URI, session);
     }
 
+    public AssertionResponse listUsers() {
+        return get(BASE_URI);
+    }
+
     public String extractCreatedUserId(AssertionResponse response) {
         return response.extractCreatedId(PATH_PREFIX);
     }
