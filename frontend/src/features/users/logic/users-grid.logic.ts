@@ -64,6 +64,18 @@ export function filterRowsByStatuses(rows: UserRow[], selected: readonly string[
   return rows.filter((row) => selected.includes(row.status));
 }
 
+export function filterRowsByDateRange(
+  rows: UserRow[],
+  column: 'created' | 'updated',
+  from: string,
+  to: string,
+): UserRow[] {
+  void column;
+  void from;
+  void to;
+  return rows;
+}
+
 function toActiveTerms(filters: Partial<Record<TextFilterColumn, string>>): [TextFilterColumn, string][] {
   return (Object.entries(filters) as [TextFilterColumn, string][])
     .map(([column, term]): [TextFilterColumn, string] => [column, term.trim().toLowerCase()])

@@ -246,8 +246,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 ### Scenario 3.7: Created / Updated date-range filter narrows by the underlying instant (promoted from UI Extended E3)
 > from–to date-range control on Created and Updated; filters on the absolute instant, not the relative label.
 - [x] red-playwright (users-grid-date-filter.spec.ts + .statements.ts — Created from–to 06-15→06-21 keeps m.scott+e.carter)
-- [~] red-frontend (date-range predicate on the instant, inclusive bounds)
-- [ ] green-frontend
+- [x] red-frontend (users-grid.date-filter.logic.test.ts — filterRowsByDateRange inclusive from–to on the instant + column dispatch)
+- [~] green-frontend
 - [S] red-frontend-api (client-side filter)
 - [S] green-frontend-api
 - [ ] align-design (date-range controls per mockup)
