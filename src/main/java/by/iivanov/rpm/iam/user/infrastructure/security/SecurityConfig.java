@@ -1,10 +1,6 @@
 package by.iivanov.rpm.iam.user.infrastructure.security;
 
 import by.iivanov.rpm.shared.infrastructure.web.SpaRoutes;
-import io.github.wimdeblauwe.errorhandlingspringbootstarter.UnauthorizedEntryPoint;
-import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.ErrorCodeMapper;
-import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.ErrorMessageMapper;
-import io.github.wimdeblauwe.errorhandlingspringbootstarter.mapper.HttpStatusMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -35,7 +32,9 @@ class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(
-            HttpSecurity http, UnauthorizedEntryPoint unauthorizedEntryPoint, AccessDeniedHandler accessDeniedHandler) {
+            HttpSecurity http,
+            AuthenticationEntryPoint authenticationEntryPoint,
+            AccessDeniedHandler accessDeniedHandler) {
         return http.authorizeHttpRequests(
                         auth -> auth.requestMatchers(HttpMethod.GET, "/", "/index.html", "/favicon.svg", "/assets/**")
                                 .permitAll()
@@ -62,7 +61,7 @@ class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
-                        .authenticationEntryPoint(unauthorizedEntryPoint)
+                        .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler))
                 .build();
     }
@@ -73,12 +72,8 @@ class SecurityConfig {
     }
 
     @Bean
-    UnauthorizedEntryPoint unauthorizedEntryPoint(
-            HttpStatusMapper httpStatusMapper,
-            ErrorCodeMapper errorCodeMapper,
-            ErrorMessageMapper errorMessageMapper,
-            ObjectMapper objectMapper) {
-        return new UnauthorizedEntryPoint(httpStatusMapper, errorCodeMapper, errorMessageMapper, objectMapper);
+    AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper) {
+        return new ProblemDetailAuthenticationEntryPoint(objectMapper);
     }
 
     @Bean

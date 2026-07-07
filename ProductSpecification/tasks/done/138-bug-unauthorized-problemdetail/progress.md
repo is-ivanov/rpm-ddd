@@ -19,4 +19,4 @@ domain/usecase logic, so `red-usecase` / `green-usecase` are `[S]`. Twin of #130
   - Check 1 (ports): [S] — infrastructure-only fix, no usecase, no outbound ports
   - Check 2 (exceptions): [S] — AuthenticationException is framework-thrown, dispatched by ExceptionTranslationFilter to the AuthenticationEntryPoint, not a @ControllerAdvice mapping
   - Check 3 (response shape): [S] — simple delegation (fixed 401 ProblemDetail, no validation/error-mapping); acceptance test covers behavior + wiring; ProblemDetailAuthenticationEntryPoint + ErrorConstants.UNAUTHORIZED_TYPE + SecurityConfig rewiring created in green-acceptance
-- [~] green-acceptance
+- [x] green-acceptance (ProblemDetailAuthenticationEntryPoint + ErrorConstants.UNAUTHORIZED_TYPE, rewired SecurityConfig; UnauthorizedEntryPointIntegrationTest GREEN — 1 pass)
