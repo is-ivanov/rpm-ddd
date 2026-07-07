@@ -35,6 +35,13 @@ export type SortColumn = 'name' | 'login' | 'email' | 'status' | 'created' | 'cr
 
 export type TextFilterColumn = 'name' | 'login' | 'email' | 'createdBy' | 'updatedBy';
 
+export type DateFilterColumn = 'created' | 'updated';
+
+export interface DateRange {
+  readonly from: string;
+  readonly to: string;
+}
+
 export type SortDirection = 'asc' | 'desc';
 
 export interface AbsoluteTimeParts {

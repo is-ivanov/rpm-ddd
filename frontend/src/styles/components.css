@@ -96,6 +96,14 @@
     @apply fixed z-40 min-w-40 py-1;
   }
 
+  .date-range-panel {
+    @apply fixed z-40 flex flex-col gap-2 p-3;
+  }
+
+  .date-range-field {
+    @apply flex flex-col gap-1 text-[13px] text-muted;
+  }
+
   .status-filter-option {
     @apply flex w-full cursor-pointer items-center gap-2 border-none bg-transparent px-3 py-1.5;
     @apply text-left text-[13px] text-ink hover:bg-column;

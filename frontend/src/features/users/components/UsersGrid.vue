@@ -1,65 +1,28 @@
 <script setup lang="ts">
 import { computed, reactive, ref, type Component } from 'vue';
 import { ArrowDown, ArrowUp, ChevronsUpDown } from '@lucide/vue';
-import { filterRowsByColumns, filterRowsByStatuses, sortUserRows } from '../logic/users-grid.logic';
-import type { SortColumn, SortDirection, TextFilterColumn, UserRow } from '../logic/users-grid.types';
+import {
+  filterRowsByColumns,
+  filterRowsByDateRange,
+  filterRowsByStatuses,
+  sortUserRows,
+} from '../logic/users-grid.logic';
+import { COLUMNS, type Column } from '../logic/users-grid.columns';
+import type {
+  DateFilterColumn,
+  DateRange,
+  SortColumn,
+  SortDirection,
+  TextFilterColumn,
+  UserRow,
+} from '../logic/users-grid.types';
 import TimeCell from './TimeCell.vue';
 import UsersStatusFilter from './UsersStatusFilter.vue';
+import UsersDateRangeFilter from './UsersDateRangeFilter.vue';
 
 const props = defineProps<{ rows: readonly UserRow[]; viewerTimeZone: string }>();
 
 const now = new Date();
-
-interface Column {
-  readonly testId: string;
-  readonly label: string;
-  readonly center?: boolean;
-  readonly filterTestId?: string;
-  readonly filterKey?: TextFilterColumn;
-  readonly statusFilter?: boolean;
-  readonly sortKey?: SortColumn;
-}
-
-const COLUMNS: readonly Column[] = [
-  {
-    testId: 'users-grid-header-name',
-    label: 'Full name',
-    sortKey: 'name',
-    filterTestId: 'users-filter-name',
-    filterKey: 'name',
-  },
-  {
-    testId: 'users-grid-header-login',
-    label: 'Login',
-    sortKey: 'login',
-    filterTestId: 'users-filter-login',
-    filterKey: 'login',
-  },
-  {
-    testId: 'users-grid-header-email',
-    label: 'Email',
-    sortKey: 'email',
-    filterTestId: 'users-filter-email',
-    filterKey: 'email',
-  },
-  { testId: 'users-grid-header-status', label: 'Status', center: true, sortKey: 'status', statusFilter: true },
-  { testId: 'users-grid-header-created', label: 'Created', sortKey: 'created' },
-  {
-    testId: 'users-grid-header-created-by',
-    label: 'Created by',
-    sortKey: 'createdBy',
-    filterTestId: 'users-filter-created-by',
-    filterKey: 'createdBy',
-  },
-  { testId: 'users-grid-header-updated', label: 'Updated', sortKey: 'updated' },
-  {
-    testId: 'users-grid-header-updated-by',
-    label: 'Updated by',
-    sortKey: 'updatedBy',
-    filterTestId: 'users-filter-updated-by',
-    filterKey: 'updatedBy',
-  },
-];
 
 const STATUS_BADGE_CLASS: Record<string, string> = {
   Active: 'status-active',
@@ -85,6 +48,10 @@ const filters = reactive<Record<TextFilterColumn, string>>({
   updatedBy: '',
 });
 const statuses = ref<string[]>([]);
+const dateRanges = reactive<Record<DateFilterColumn, DateRange>>({
+  created: { from: '', to: '' },
+  updated: { from: '', to: '' },
+});
 const sort = ref<SortState | null>(null);
 
 function onHeaderClick(col: Column): void {
@@ -119,7 +86,14 @@ function sortIconFor(col: Column): Component {
 
 const displayedRows = computed(() => {
   const textFiltered = filterRowsByColumns([...props.rows], filters);
-  const filtered = filterRowsByStatuses(textFiltered, statuses.value);
+  const statusFiltered = filterRowsByStatuses(textFiltered, statuses.value);
+  const createdFiltered = filterRowsByDateRange(
+    statusFiltered,
+    'created',
+    dateRanges.created.from,
+    dateRanges.created.to,
+  );
+  const filtered = filterRowsByDateRange(createdFiltered, 'updated', dateRanges.updated.from, dateRanges.updated.to);
   if (sort.value === null) {
     return filtered;
   }
@@ -150,6 +124,13 @@ const displayedRows = computed(() => {
         <tr>
           <td v-for="col in COLUMNS" :key="col.testId" class="filter-cell">
             <UsersStatusFilter v-if="col.statusFilter" v-model="statuses" />
+            <UsersDateRangeFilter
+              v-else-if="col.dateFilter"
+              v-model:from="dateRanges[col.dateFilter].from"
+              v-model:to="dateRanges[col.dateFilter].to"
+              :column="col.dateFilter"
+              :label="col.label"
+            />
             <input
               v-else-if="col.filterKey"
               v-model="filters[col.filterKey]"

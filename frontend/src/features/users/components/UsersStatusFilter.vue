@@ -1,27 +1,16 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { Check, ChevronDown } from '@lucide/vue';
+import { useAnchoredPanel } from '@/app/logic/use-anchored-panel';
 import { STATUS_FILTER_OPTIONS } from '../logic/users-grid.logic';
 
 const selected = defineModel<string[]>({ required: true });
 
-const open = ref(false);
-const anchor = ref<HTMLElement | null>(null);
-const position = ref({ top: 0, left: 0 });
+const { open, anchor, position, toggle: toggleOpen } = useAnchoredPanel();
 
 const triggerLabel = computed(() =>
   selected.value.length === 0 ? 'All statuses' : `${selected.value.length} selected`,
 );
-
-function toggleOpen(): void {
-  if (!open.value) {
-    const rect = anchor.value?.getBoundingClientRect();
-    if (rect) {
-      position.value = { top: rect.bottom + 4, left: rect.left };
-    }
-  }
-  open.value = !open.value;
-}
 
 function isSelected(status: string): boolean {
   return selected.value.includes(status);

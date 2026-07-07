@@ -250,7 +250,9 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] green-frontend (filterRowsByDateRange — inclusive whole-day bounds + column dispatch via TIMESTAMP_FIELD)
 - [S] red-frontend-api (client-side filter)
 - [S] green-frontend-api
-- [~] align-design (date-range controls per mockup)
+- [x] align-design (UsersDateRangeFilter.vue on Created+Updated; useAnchoredPanel composable extracted from status filter)
+- [~] red-frontend (coverage: open-ended range — empty from / empty to unbounded side)
+- [ ] green-frontend (coverage: empty-bound already implemented)
 - [ ] green-playwright
 - [ ] demo
 
