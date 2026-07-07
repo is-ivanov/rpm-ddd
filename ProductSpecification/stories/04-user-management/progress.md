@@ -247,10 +247,10 @@ email is asserted as a side effect of backend Scenario 3.1)
 > from–to date-range control on Created and Updated; filters on the absolute instant, not the relative label.
 - [x] red-playwright (users-grid-date-filter.spec.ts + .statements.ts — Created from–to 06-15→06-21 keeps m.scott+e.carter)
 - [x] red-frontend (users-grid.date-filter.logic.test.ts — filterRowsByDateRange inclusive from–to on the instant + column dispatch)
-- [~] green-frontend
+- [x] green-frontend (filterRowsByDateRange — inclusive whole-day bounds + column dispatch via TIMESTAMP_FIELD)
 - [S] red-frontend-api (client-side filter)
 - [S] green-frontend-api
-- [ ] align-design (date-range controls per mockup)
+- [~] align-design (date-range controls per mockup)
 - [ ] green-playwright
 - [ ] demo
 

@@ -64,16 +64,21 @@ export function filterRowsByStatuses(rows: UserRow[], selected: readonly string[
   return rows.filter((row) => selected.includes(row.status));
 }
 
+const MILLIS_PER_DAY = 86_400_000;
+
 export function filterRowsByDateRange(
   rows: UserRow[],
   column: 'created' | 'updated',
   from: string,
   to: string,
 ): UserRow[] {
-  void column;
-  void from;
-  void to;
-  return rows;
+  const field = TIMESTAMP_FIELD[column];
+  const lowerBound = from === '' ? Number.NEGATIVE_INFINITY : instant(from);
+  const upperBound = to === '' ? Number.POSITIVE_INFINITY : instant(to) + MILLIS_PER_DAY;
+  return rows.filter((row) => {
+    const at = instant(row[field]);
+    return at >= lowerBound && at < upperBound;
+  });
 }
 
 function toActiveTerms(filters: Partial<Record<TextFilterColumn, string>>): [TextFilterColumn, string][] {

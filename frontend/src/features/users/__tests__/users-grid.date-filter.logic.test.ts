@@ -32,9 +32,7 @@ describe('Created date-range filter (by the underlying created instant)', () => 
     aUserSummary({ name: DAVID_LEE, login: 'd.lee', audit: createdAt('2026-06-12T09:14:37.482Z') }),
   ]);
 
-  // RED — filterRowsByDateRange is a no-op pass-through stub; it returns all 4 rows unchanged,
-  // so the 2-row hand-listed survivor set fails on the exact predicted mismatch.
-  it.fails('keeps only rows whose created instant falls inside the from–to range', () => {
+  it('keeps only rows whose created instant falls inside the from–to range', () => {
     const filtered = filterRowsByDateRange(rows, 'created', CREATED_FROM, CREATED_TO);
 
     expect(
@@ -43,10 +41,10 @@ describe('Created date-range filter (by the underlying created instant)', () => 
     ).toEqual(['m.scott', 'e.carter']);
   });
 
-  // RED — same no-op stub. Boundary rows: a user created late on the `from` day (00:12) and late on the
-  // `to` day (23:10) must BOTH survive — a naive `new Date(to)` (midnight) impl drops the 23:10 to-day
-  // user, and a naive lower bound could drop the 00:12 from-day user. This is the inclusive-bound pin.
-  it.fails('treats both bounds as inclusive across the whole from and to days', () => {
+  // Boundary rows: a user created late on the `from` day (00:12) and late on the `to` day (23:10) must
+  // BOTH survive — a naive `new Date(to)` (midnight) impl drops the 23:10 to-day user, and a naive lower
+  // bound could drop the 00:12 from-day user. This is the inclusive-bound pin.
+  it('treats both bounds as inclusive across the whole from and to days', () => {
     const boundaryRows = buildUserRows([
       aUserSummary({ name: MICHAEL_SCOTT, login: 'm.scott', audit: createdAt('2026-06-15T00:12:07.334Z') }),
       aUserSummary({ name: JOHN_DOE, login: 'j.doe', audit: createdAt('2026-06-21T23:10:44.612Z') }),
@@ -81,8 +79,7 @@ describe('Updated date-range filter (column selects which audit instant to compa
     }),
   ]);
 
-  // RED — same no-op stub returns both rows; the hand-listed single survivor fails the predicted mismatch.
-  it.fails('compares the updated instant, not the created instant, when column is "updated"', () => {
+  it('compares the updated instant, not the created instant, when column is "updated"', () => {
     const filtered = filterRowsByDateRange(rows, 'updated', CREATED_FROM, CREATED_TO);
 
     expect(
