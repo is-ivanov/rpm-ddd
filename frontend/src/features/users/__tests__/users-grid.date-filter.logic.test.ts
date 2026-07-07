@@ -89,6 +89,53 @@ describe('Updated date-range filter (column selects which audit instant to compa
   });
 });
 
+describe('Open-ended date-range filter (one bound left empty)', () => {
+  // An empty bound means "unbounded on that side" (NEGATIVE_INFINITY lower / POSITIVE_INFINITY upper).
+  // Each fixture includes a row FAR outside the closed side — a very old (2020) or far-future (2030) row —
+  // that MUST survive purely because the empty side is open. A naive impl that treated '' as instant('')
+  // (⇒ NaN, so `at >= NaN`/`at < NaN` is always false, dropping every row) would fail these.
+
+  it('keeps every row up to the whole to-day when from is empty (unbounded lower bound)', () => {
+    // login | createdAt
+    //   d.lee     2020-01-03T04:05:06.789Z  → survives ONLY because lower bound is open (far past)
+    //   e.carter  2026-06-16T16:45:02.733Z  → survives (before `to`)
+    //   j.doe     2026-06-21T23:10:44.612Z  → survives (to-day, whole day inclusive)
+    //   s.connor  2026-06-22T14:30:51.217Z  → EXCLUDED (after `to` 06-21)
+    const rows = buildUserRows([
+      aUserSummary({ name: DAVID_LEE, login: 'd.lee', audit: createdAt('2020-01-03T04:05:06.789Z') }),
+      aUserSummary({ name: EMILY_CARTER, login: 'e.carter', audit: createdAt('2026-06-16T16:45:02.733Z') }),
+      aUserSummary({ name: JOHN_DOE, login: 'j.doe', audit: createdAt('2026-06-21T23:10:44.612Z') }),
+      aUserSummary({ name: SARAH_CONNOR, login: 's.connor', audit: createdAt('2026-06-22T14:30:51.217Z') }),
+    ]);
+
+    const filtered = filterRowsByDateRange(rows, 'created', '', CREATED_TO);
+
+    expect(
+      filtered.map((row) => row.login),
+      'empty from ⇒ unbounded lower — the 2020 row survives; only s.connor (after 06-21) is dropped',
+    ).toEqual(['d.lee', 'e.carter', 'j.doe']);
+  });
+
+  it('keeps every row from the from-day onward when to is empty (unbounded upper bound)', () => {
+    // login | createdAt
+    //   d.lee     2026-06-12T09:14:37.482Z  → EXCLUDED (before `from` 06-15)
+    //   m.scott   2026-06-20T11:02:09.310Z  → survives (after `from`)
+    //   s.connor  2030-11-27T21:38:53.104Z  → survives ONLY because upper bound is open (far future)
+    const rows = buildUserRows([
+      aUserSummary({ name: DAVID_LEE, login: 'd.lee', audit: createdAt('2026-06-12T09:14:37.482Z') }),
+      aUserSummary({ name: MICHAEL_SCOTT, login: 'm.scott', audit: createdAt('2026-06-20T11:02:09.310Z') }),
+      aUserSummary({ name: SARAH_CONNOR, login: 's.connor', audit: createdAt('2030-11-27T21:38:53.104Z') }),
+    ]);
+
+    const filtered = filterRowsByDateRange(rows, 'created', CREATED_FROM, '');
+
+    expect(
+      filtered.map((row) => row.login),
+      'empty to ⇒ unbounded upper — the 2030 row survives; only d.lee (before 06-15) is dropped',
+    ).toEqual(['m.scott', 's.connor']);
+  });
+});
+
 function createdAt(instant: string): UserAudit {
   return audit(instant, '2026-06-24T08:11:42.905Z');
 }
