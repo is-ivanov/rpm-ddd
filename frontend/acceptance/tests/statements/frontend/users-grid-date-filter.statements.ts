@@ -4,11 +4,9 @@ import {
   CREATED_RANGE_TO,
   FULL_NAMES_IN_CREATED_RANGE,
 } from '../support/admin-users-date-filter.fixture';
+import { UsersGridLocators } from '../support/users-grid-locators';
 
 const TEST_ID = {
-  grid: 'users-grid',
-  row: 'users-grid-row',
-  nameCell: 'users-cell-name',
   createdRangeFilter: 'users-filter-created-range',
   createdFrom: 'users-filter-created-from',
   createdTo: 'users-filter-created-to',
@@ -20,7 +18,11 @@ const TEST_ID = {
 const FILTER_VISIBLE_TIMEOUT_MS = 5000;
 
 export class UsersGridDateFilterStatements {
-  constructor(private readonly page: Page) {}
+  private readonly grid: UsersGridLocators;
+
+  constructor(private readonly page: Page) {
+    this.grid = new UsersGridLocators(page);
+  }
 
   async assertCreatedRangeFilterIsVisible(): Promise<void> {
     await expect(
@@ -42,11 +44,11 @@ export class UsersGridDateFilterStatements {
 
   async assertOnlyRowsInCreatedRangeRemain(): Promise<void> {
     await expect(
-      this.rows(),
+      this.grid.rows(),
       'only rows whose underlying created instant falls within the from–to range remain visible',
     ).toHaveCount(FULL_NAMES_IN_CREATED_RANGE.length);
     await expect(
-      this.nameCells(),
+      this.grid.nameCells(),
       'the surviving rows are exactly the users created within the range, in original render order',
     ).toHaveText([...FULL_NAMES_IN_CREATED_RANGE]);
   }
@@ -61,17 +63,5 @@ export class UsersGridDateFilterStatements {
 
   private createdTo(): Locator {
     return this.page.getByTestId(TEST_ID.createdTo);
-  }
-
-  private nameCells(): Locator {
-    return this.grid().getByTestId(TEST_ID.nameCell);
-  }
-
-  private rows(): Locator {
-    return this.grid().getByTestId(TEST_ID.row);
-  }
-
-  private grid(): Locator {
-    return this.page.getByTestId(TEST_ID.grid);
   }
 }

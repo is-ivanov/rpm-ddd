@@ -6,9 +6,9 @@ import {
   LOGINS_DESCENDING,
   STATUSES_IN_LIFECYCLE_ORDER,
 } from '../support/admin-users-sort.fixture';
+import { UsersGridLocators } from '../support/users-grid-locators';
 
 const TEST_ID = {
-  grid: 'users-grid',
   loginHeader: 'users-grid-header-login',
   statusHeader: 'users-grid-header-status',
   createdHeader: 'users-grid-header-created',
@@ -17,7 +17,11 @@ const TEST_ID = {
 } as const;
 
 export class UsersGridSortStatements {
-  constructor(private readonly page: Page) {}
+  private readonly grid: UsersGridLocators;
+
+  constructor(private readonly page: Page) {
+    this.grid = new UsersGridLocators(page);
+  }
 
   async clickLoginHeader(): Promise<void> {
     await this.loginHeader().click();
@@ -77,14 +81,10 @@ export class UsersGridSortStatements {
   }
 
   private loginCells(): Locator {
-    return this.grid().getByTestId(TEST_ID.loginCell);
+    return this.grid.grid().getByTestId(TEST_ID.loginCell);
   }
 
   private statusBadgeCells(): Locator {
-    return this.grid().getByTestId(TEST_ID.statusBadge);
-  }
-
-  private grid(): Locator {
-    return this.page.getByTestId(TEST_ID.grid);
+    return this.grid.grid().getByTestId(TEST_ID.statusBadge);
   }
 }

@@ -8,13 +8,11 @@ import {
   SEED_ACTOR_DISPLAY,
 } from '../support/admin-users-fixture';
 import { NEW_PENDING_USER_ROW } from '../support/register-user-fixture';
+import { USERS_GRID_TEST_ID, UsersGridLocators } from '../support/users-grid-locators';
 
 const TEST_ID = {
   usersPage: 'users-page',
   registerUserButton: 'register-user-button',
-  grid: 'users-grid',
-  row: 'users-grid-row',
-  loading: 'users-grid-loading',
   fullNameFilter: 'users-filter-name',
 } as const;
 
@@ -32,7 +30,7 @@ const COLUMN_HEADERS = [
 ] as const;
 
 const CELL = {
-  name: 'users-cell-name',
+  name: USERS_GRID_TEST_ID.nameCell,
   login: 'users-cell-login',
   email: 'users-cell-email',
   statusBadge: 'users-status-badge',
@@ -48,7 +46,11 @@ const ACTOR_CELL: Record<AuditActorField, string> = {
 };
 
 export class UsersPageStatements {
-  constructor(private readonly page: Page) {}
+  private readonly gridLocators: UsersGridLocators;
+
+  constructor(private readonly page: Page) {
+    this.gridLocators = new UsersGridLocators(page);
+  }
 
   async assertUsersPageIsVisible(): Promise<void> {
     await expect(this.usersPage(), 'Users page content is visible').toBeVisible();
@@ -66,22 +68,24 @@ export class UsersPageStatements {
   }
 
   async assertGridIsVisible(): Promise<void> {
-    await expect(this.grid(), 'users grid is visible').toBeVisible();
-    await expect(this.rows(), 'grid shows one row per user from the API').toHaveCount(EXPECTED_USER_ROWS.length);
+    await expect(this.gridLocators.grid(), 'users grid is visible').toBeVisible();
+    await expect(this.gridLocators.rows(), 'grid shows one row per user from the API').toHaveCount(
+      EXPECTED_USER_ROWS.length,
+    );
   }
 
   async assertLoadingStateIsVisible(): Promise<void> {
     await expect(
-      this.loadingIndicator(),
+      this.gridLocators.loading(),
       'grid loading indicator is visible while the request is in flight',
     ).toBeVisible();
-    await expect(this.rows(), 'no rows render while the request is still in flight').toHaveCount(0);
+    await expect(this.gridLocators.rows(), 'no rows render while the request is still in flight').toHaveCount(0);
   }
 
   async assertRowsRenderAfterResponse(): Promise<void> {
-    await expect(this.loadingIndicator(), 'loading indicator disappears once the response arrives').toHaveCount(0);
-    await expect(this.grid(), 'users grid is visible after the response arrives').toBeVisible();
-    await expect(this.rows(), 'grid shows one row per user once the response arrives').toHaveCount(
+    await expect(this.gridLocators.loading(), 'loading indicator disappears once the response arrives').toHaveCount(0);
+    await expect(this.gridLocators.grid(), 'users grid is visible after the response arrives').toBeVisible();
+    await expect(this.gridLocators.rows(), 'grid shows one row per user once the response arrives').toHaveCount(
       EXPECTED_USER_ROWS.length,
     );
   }
@@ -135,17 +139,21 @@ export class UsersPageStatements {
   }
 
   async assertOnlyMatchingFullNamesRemain(): Promise<void> {
-    await expect(this.rows(), 'only rows whose full name contains the filter text remain visible').toHaveCount(
-      FULL_NAMES_MATCHING_FILTER.length,
-    );
-    await expect(this.nameCells(), 'remaining rows are exactly the full names that contain the filter text').toHaveText(
-      [...FULL_NAMES_MATCHING_FILTER],
-    );
+    await expect(
+      this.gridLocators.rows(),
+      'only rows whose full name contains the filter text remain visible',
+    ).toHaveCount(FULL_NAMES_MATCHING_FILTER.length);
+    await expect(
+      this.gridLocators.nameCells(),
+      'remaining rows are exactly the full names that contain the filter text',
+    ).toHaveText([...FULL_NAMES_MATCHING_FILTER]);
   }
 
   async assertNewPendingUserRowIsVisible(): Promise<void> {
     const expected = NEW_PENDING_USER_ROW;
-    await expect(this.rows(), 'grid refreshed with one extra row').toHaveCount(EXPECTED_USER_ROWS.length + 1);
+    await expect(this.gridLocators.rows(), 'grid refreshed with one extra row').toHaveCount(
+      EXPECTED_USER_ROWS.length + 1,
+    );
     const newRow = this.newUserRow();
     await expect(newRow, 'exactly one new-user row is visible').toHaveCount(1);
     await expect(newRow.getByTestId(CELL.name), 'new row full name').toHaveText(expected.name);
@@ -159,31 +167,15 @@ export class UsersPageStatements {
   }
 
   private newUserRow(): Locator {
-    return this.rows().filter({ hasText: NEW_PENDING_USER_ROW.login });
+    return this.gridLocators.rows().filter({ hasText: NEW_PENDING_USER_ROW.login });
   }
 
   private fullNameFilter(): Locator {
     return this.page.getByTestId(TEST_ID.fullNameFilter);
   }
 
-  private nameCells(): Locator {
-    return this.grid().getByTestId(CELL.name);
-  }
-
   private cell(rowIndex: number, cellTestId: string): Locator {
-    return this.rows().nth(rowIndex).getByTestId(cellTestId);
-  }
-
-  private rows(): Locator {
-    return this.grid().getByTestId(TEST_ID.row);
-  }
-
-  private loadingIndicator(): Locator {
-    return this.page.getByTestId(TEST_ID.loading);
-  }
-
-  private grid(): Locator {
-    return this.page.getByTestId(TEST_ID.grid);
+    return this.gridLocators.rows().nth(rowIndex).getByTestId(cellTestId);
   }
 
   private usersPage(): Locator {
