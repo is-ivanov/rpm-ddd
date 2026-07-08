@@ -253,8 +253,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] align-design (UsersDateRangeFilter.vue on Created+Updated; useAnchoredPanel composable extracted from status filter)
 - [x] red-frontend (coverage: open-ended empty-from/empty-to; users-grid.date-filter.logic.test.ts +2 cases)
 - [x] green-frontend (coverage: green-on-arrival — branches implemented at align-design, no impl needed)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (users-grid-date-filter.spec.ts — 1/1 pass, marker removed)
+- [~] demo
 
 ### Scenario 3.8: Filtering with no matches shows an empty-result state (promoted from UI Extended E2)
 > When a filter matches zero rows, show an empty-result message; clearing the filter restores all rows.

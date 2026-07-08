@@ -27,13 +27,6 @@ test.describe('Users Grid Created Date-Range Filter', () => {
       'Then only rows whose underlying created instant falls within the range remain visible, ' +
       'And the range filter operates on the absolute instant, not the relative label',
     async () => {
-      // RED: the Created column from–to date-range filter (data-testid="users-filter-created-range")
-      // is not yet wired into the grid. The bounded assertCreatedRangeFilterIsVisible() below throws a
-      // fast 5s toBeVisible assertion that test.fail() absorbs — NOT a 30s whole-test timeout (see
-      // carryover: "test.fail() absorbs assertions but not a whole-test timeout"). Remove test.fail()
-      // in green.
-      test.fail();
-
       await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();
