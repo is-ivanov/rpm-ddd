@@ -170,6 +170,15 @@ const displayedRows = computed(() => {
           />
           <td data-testid="users-cell-updated-by" class="grid-cell">{{ row.updatedBy }}</td>
         </tr>
+        <tr v-if="displayedRows.length === 0">
+          <td
+            :colspan="COLUMNS.length"
+            data-testid="users-grid-empty"
+            class="px-4 py-12 text-center text-sm text-muted"
+          >
+            No users match your filters.
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
