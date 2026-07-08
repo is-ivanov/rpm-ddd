@@ -80,6 +80,14 @@ it('maps an unexpected login failure to the generic error view', async () => {
 - `allure-js-commons` is a direct devDependency. Other runtime tags exist (`tags`, `label`, `link`) but bug tests use `issue`.
 - Only tag tests created for a bug task. Story-scenario tests are NOT tagged.
 
+## Test Review Grep Patterns
+
+Grep patterns for the test-review-agent checklist (the frontend counterpart of the java-spring table). Each entry maps to a checklist item number in `.claude/templates/workflow/test-review-checklist.md`.
+
+| # | Check | Grep pattern |
+|---|-------|-------------|
+| 21 | Calculated expected values | `\.sort(\|\.toSorted(\|\.filter(\|\.map(\|\.reduce(\|\.reverse(\|localeCompare\|Date\.parse` (these catch re-applying the sort/filter/map/transform under test to build the expected array — the disguised, arithmetic-free form of a calculated expectation) |
+
 ## Base URL Configuration
 
 - Base URL resolved via `import.meta.env.VITE_API_URL`.

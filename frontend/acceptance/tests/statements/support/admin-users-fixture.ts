@@ -138,12 +138,16 @@ export const EXPECTED_USER_ROWS: readonly ExpectedUserRow[] = [
 // so the client-side filter must keep exactly those two rows in their original render order.
 export const FULL_NAME_FILTER_TERM = 'ar';
 
-// The full names that survive FULL_NAME_FILTER_TERM, derived from EXPECTED_USER_ROWS (render
-// order preserved) so the filter assertion stays in lock-step with the row data and needs no
-// hand-maintained literal list.
-export const FULL_NAMES_MATCHING_FILTER: readonly string[] = EXPECTED_USER_ROWS.filter((row) =>
-  row.name.includes(FULL_NAME_FILTER_TERM),
-).map((row) => row.name);
+// The full names that survive FULL_NAME_FILTER_TERM, in render order. HAND-LISTED, not computed via
+// the production `.includes()` predicate — deriving the expectation by re-running the filter under
+// test is the "smart test" anti-pattern (a buggy contains-filter would produce a matching-buggy
+// expectation). Same reason as FULL_NAMES_MATCHING_LOGIN_AND_UPDATED_BY / STATUSES_IN_LIFECYCLE_ORDER.
+export const FULL_NAMES_MATCHING_FILTER: readonly string[] = ['Sarah Jane Connor', 'Emily Carter'];
+
+// Scenario 3.8 — empty-result state. A Full name "contains" probe that appears in NO fixture full
+// name ("Sarah Jane Connor", "Michael Scott", "Emily Carter", "David Lee"), so the client-side filter
+// keeps zero rows and the grid must surface an empty-result message instead of any user rows.
+export const NO_MATCH_FULL_NAME_FILTER_TERM = 'zzz-no-such-user';
 
 // Scenario 3.4 — multi-column AND filtering. Two "contains" probes on TWO DIFFERENT text columns,
 // chosen so neither term alone isolates the target — only their AND does:
@@ -154,24 +158,26 @@ export const LOGIN_FILTER_TERM = 'e';
 export const UPDATED_BY_FILTER_TERM = 'connor';
 export const FULL_NAMES_MATCHING_LOGIN_AND_UPDATED_BY: readonly string[] = ['David Lee'];
 
-// Expected Login-column ordering after clicking the Login header, derived from EXPECTED_USER_ROWS
-// (not hand-maintained) so the sort assertions stay in lock-step with the row data: ascending is
-// the logins sorted, descending is that same ordering reversed. The default render order is
-// createdAt DESC, so ascending differs from it — that difference is what the RED assertion catches.
-export const LOGINS_ASCENDING: readonly string[] = EXPECTED_USER_ROWS.map((row) => row.login).toSorted((left, right) =>
-  left.localeCompare(right),
-);
+// Scenario 3.6 — the Status column filter is a lifecycle-ordered multi-select (not a text "contains"
+// input). The selection under test is Pending + Locked; the fixture holds exactly one row per status,
+// so those two statuses map to exactly the two rows below.
+//   Fixture rows in render order (createdAt DESC):
+//     s.connor  ACTIVE   -> 'Active'
+//     m.scott   PENDING  -> 'Pending'   ✔ selected
+//     e.carter  LOCKED   -> 'Locked'    ✔ selected
+//     d.lee     INACTIVE -> 'Inactive'
+// Michael Scott (Pending) renders BEFORE Emily Carter (Locked) because createdAt DESC keeps the
+// original render order for the surviving rows — the multi-select filters, it does not reorder.
+export const STATUS_FILTER_SELECTION: readonly string[] = ['Pending', 'Locked'];
 
-export const LOGINS_DESCENDING: readonly string[] = LOGINS_ASCENDING.toReversed();
+// The full names that survive selecting Pending + Locked, in render order. HAND-LISTED, not computed by
+// running the status predicate over the fixture — deriving the expectation by re-running the filter
+// under test is the "smart test" anti-pattern (a buggy status-filter would produce a matching-buggy
+// expectation). Same reason as STATUSES_IN_LIFECYCLE_ORDER / FULL_NAMES_MATCHING_LOGIN_AND_UPDATED_BY.
+export const FULL_NAMES_MATCHING_STATUS_FILTER: readonly string[] = ['Michael Scott', 'Emily Carter'];
 
-// The Status column sorts by lifecycle order — Pending, Active, Locked, Inactive — NOT
-// alphabetically. This ordering IS the business rule under test, so the expected Status-column
-// sequence is HAND-LISTED as an explicit literal — never derived by sorting the row statuses with
-// the production lifecycle comparator. Replicating the rule to compute the expectation would make
-// the test "smart": a buggy lifecycle sort could still match an expectation produced the same buggy
-// way. The fixture holds exactly one row per status, so after the lifecycle sort the rendered Status
-// column is precisely this sequence.
-export const STATUSES_IN_LIFECYCLE_ORDER: readonly string[] = ['Pending', 'Active', 'Locked', 'Inactive'];
+// Column-sort expectations (LOGINS_ASCENDING/DESCENDING, LOGINS_BY_CREATED_INSTANT_*,
+// STATUSES_IN_LIFECYCLE_ORDER) live in ./admin-users-sort.fixture.ts to keep both files under the cap.
 
 export type AuditActorField = 'createdBy' | 'updatedBy';
 

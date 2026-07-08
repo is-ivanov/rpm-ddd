@@ -1,8 +1,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
+import { UsersGridLocators } from '../support/users-grid-locators';
 
 const TEST_ID = {
-  grid: 'users-grid',
-  loading: 'users-grid-loading',
   error: 'users-grid-error',
   errorMessage: 'users-grid-error-message',
   retryButton: 'users-grid-error-retry',
@@ -11,7 +10,11 @@ const TEST_ID = {
 const RETRY_BUTTON_TEXT = 'Retry';
 
 export class UsersGridErrorStatements {
-  constructor(private readonly page: Page) {}
+  private readonly grid: UsersGridLocators;
+
+  constructor(private readonly page: Page) {
+    this.grid = new UsersGridLocators(page);
+  }
 
   async assertErrorStateIsVisible(): Promise<void> {
     await expect(this.error(), 'users grid error state is visible after the list request fails').toBeVisible();
@@ -28,11 +31,11 @@ export class UsersGridErrorStatements {
   }
 
   async assertGridIsNotShown(): Promise<void> {
-    await expect(this.grid(), 'the users grid is not rendered while the load failed').toHaveCount(0);
+    await expect(this.grid.grid(), 'the users grid is not rendered while the load failed').toHaveCount(0);
   }
 
   async assertLoadingIndicatorIsGone(): Promise<void> {
-    await expect(this.loading(), 'the loading indicator is gone once the request fails').toHaveCount(0);
+    await expect(this.grid.loading(), 'the loading indicator is gone once the request fails').toHaveCount(0);
   }
 
   async assertLoadFailureStateIsShown(): Promise<void> {
@@ -53,13 +56,5 @@ export class UsersGridErrorStatements {
 
   private retryButton(): Locator {
     return this.page.getByTestId(TEST_ID.retryButton);
-  }
-
-  private grid(): Locator {
-    return this.page.getByTestId(TEST_ID.grid);
-  }
-
-  private loading(): Locator {
-    return this.page.getByTestId(TEST_ID.loading);
   }
 }

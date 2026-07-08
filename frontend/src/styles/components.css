@@ -83,6 +83,32 @@
     @apply placeholder:text-placeholder focus:border-accent-focus focus:shadow-[0_0_0_3px_rgba(77,171,247,0.2)];
   }
 
+  .filter-control {
+    @apply flex h-[30px] w-full cursor-pointer items-center gap-1.5 rounded-md border border-line bg-white px-2;
+    @apply whitespace-nowrap text-[13px] text-muted;
+  }
+
+  .filter-control-between {
+    @apply justify-between;
+  }
+
+  .status-filter-panel {
+    @apply fixed z-40 min-w-40 py-1;
+  }
+
+  .date-range-panel {
+    @apply fixed z-40 flex flex-col gap-2 p-3;
+  }
+
+  .date-range-field {
+    @apply flex flex-col gap-1 text-[13px] text-muted;
+  }
+
+  .status-filter-option {
+    @apply flex w-full cursor-pointer items-center gap-2 border-none bg-transparent px-3 py-1.5;
+    @apply text-left text-[13px] text-ink hover:bg-column;
+  }
+
   .ts-rel {
     @apply cursor-help text-muted underline decoration-line decoration-dotted underline-offset-2;
   }

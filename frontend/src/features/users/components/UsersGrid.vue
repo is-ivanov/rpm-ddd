@@ -1,49 +1,28 @@
 <script setup lang="ts">
 import { computed, reactive, ref, type Component } from 'vue';
 import { ArrowDown, ArrowUp, ChevronsUpDown } from '@lucide/vue';
-import { filterRowsByColumns, sortUserRows } from '../logic/users-grid.logic';
-import type { SortColumn, SortDirection, TextFilterColumn, UserRow } from '../logic/users-grid.types';
+import {
+  filterRowsByColumns,
+  filterRowsByDateRange,
+  filterRowsByStatuses,
+  sortUserRows,
+} from '../logic/users-grid.logic';
+import { COLUMNS, type Column } from '../logic/users-grid.columns';
+import type {
+  DateFilterColumn,
+  DateRange,
+  SortColumn,
+  SortDirection,
+  TextFilterColumn,
+  UserRow,
+} from '../logic/users-grid.types';
 import TimeCell from './TimeCell.vue';
+import UsersStatusFilter from './UsersStatusFilter.vue';
+import UsersDateRangeFilter from './UsersDateRangeFilter.vue';
 
 const props = defineProps<{ rows: readonly UserRow[]; viewerTimeZone: string }>();
 
 const now = new Date();
-
-interface Column {
-  readonly testId: string;
-  readonly label: string;
-  readonly center?: boolean;
-  readonly filterTestId?: string;
-  readonly filterKey?: TextFilterColumn;
-  readonly sortKey?: SortColumn;
-}
-
-const COLUMNS: readonly Column[] = [
-  { testId: 'users-grid-header-name', label: 'Full name', filterTestId: 'users-filter-name', filterKey: 'name' },
-  {
-    testId: 'users-grid-header-login',
-    label: 'Login',
-    sortKey: 'login',
-    filterTestId: 'users-filter-login',
-    filterKey: 'login',
-  },
-  { testId: 'users-grid-header-email', label: 'Email', filterTestId: 'users-filter-email', filterKey: 'email' },
-  { testId: 'users-grid-header-status', label: 'Status', center: true, sortKey: 'status' },
-  { testId: 'users-grid-header-created', label: 'Created' },
-  {
-    testId: 'users-grid-header-created-by',
-    label: 'Created by',
-    filterTestId: 'users-filter-created-by',
-    filterKey: 'createdBy',
-  },
-  { testId: 'users-grid-header-updated', label: 'Updated' },
-  {
-    testId: 'users-grid-header-updated-by',
-    label: 'Updated by',
-    filterTestId: 'users-filter-updated-by',
-    filterKey: 'updatedBy',
-  },
-];
 
 const STATUS_BADGE_CLASS: Record<string, string> = {
   Active: 'status-active',
@@ -67,6 +46,11 @@ const filters = reactive<Record<TextFilterColumn, string>>({
   email: '',
   createdBy: '',
   updatedBy: '',
+});
+const statuses = ref<string[]>([]);
+const dateRanges = reactive<Record<DateFilterColumn, DateRange>>({
+  created: { from: '', to: '' },
+  updated: { from: '', to: '' },
 });
 const sort = ref<SortState | null>(null);
 
@@ -101,7 +85,15 @@ function sortIconFor(col: Column): Component {
 }
 
 const displayedRows = computed(() => {
-  const filtered = filterRowsByColumns([...props.rows], filters);
+  const textFiltered = filterRowsByColumns([...props.rows], filters);
+  const statusFiltered = filterRowsByStatuses(textFiltered, statuses.value);
+  const createdFiltered = filterRowsByDateRange(
+    statusFiltered,
+    'created',
+    dateRanges.created.from,
+    dateRanges.created.to,
+  );
+  const filtered = filterRowsByDateRange(createdFiltered, 'updated', dateRanges.updated.from, dateRanges.updated.to);
   if (sort.value === null) {
     return filtered;
   }
@@ -131,8 +123,16 @@ const displayedRows = computed(() => {
         </tr>
         <tr>
           <td v-for="col in COLUMNS" :key="col.testId" class="filter-cell">
+            <UsersStatusFilter v-if="col.statusFilter" v-model="statuses" />
+            <UsersDateRangeFilter
+              v-else-if="col.dateFilter"
+              v-model:from="dateRanges[col.dateFilter].from"
+              v-model:to="dateRanges[col.dateFilter].to"
+              :column="col.dateFilter"
+              :label="col.label"
+            />
             <input
-              v-if="col.filterKey"
+              v-else-if="col.filterKey"
               v-model="filters[col.filterKey]"
               :data-testid="col.filterTestId"
               :aria-label="`Filter by ${col.label}`"
@@ -169,6 +169,15 @@ const displayedRows = computed(() => {
             tooltip-test-id="users-updated-tooltip"
           />
           <td data-testid="users-cell-updated-by" class="grid-cell">{{ row.updatedBy }}</td>
+        </tr>
+        <tr v-if="displayedRows.length === 0">
+          <td
+            :colspan="COLUMNS.length"
+            data-testid="users-grid-empty"
+            class="px-4 py-12 text-center text-sm text-muted"
+          >
+            No users match your filters.
+          </td>
         </tr>
       </tbody>
     </table>

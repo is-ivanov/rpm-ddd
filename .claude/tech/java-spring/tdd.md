@@ -242,7 +242,7 @@ Grep patterns for the test-review-agent checklist. Each entry maps to a checklis
 | 4 | Loose mock matchers | `any(` |
 | 6 | Partial collection coverage | `get(0)` |
 | 12 | Assertions in test class | `assertThat\|assertThatThrownBy` |
-| 21 | Calculated expected values | `Math\.\|ceil\|floor\|% \|/ \(double\)\|totalElements.*pageSize` |
+| 21 | Calculated expected values | `Math\.\|ceil\|floor\|% \|/ \(double\)\|totalElements.*pageSize\|\.sorted(\|\.stream()\|Comparator\|Sort\.by` (the `.sorted(`/`Comparator`/`Sort.by`/stream forms catch re-applying the operation under test to build the expectation) |
 | 23 | Private methods or inner types in test class | `private .* \|private record\|private class\|private static` |
 | 26 | HTTP client code in acceptance Statements | `RestAssured\|given()\|baseUri\|\.get(\|\.post(\|\.put(\|\.delete(\|HttpClient\|fetch(` |
 

@@ -7,10 +7,9 @@ import {
   RELATIVE_TIME_ROW_INDEX,
   VIEWER_TIME_ZONE_ID,
 } from '../support/users-grid-time.fixture';
+import { UsersGridLocators } from '../support/users-grid-locators';
 
 const TEST_ID = {
-  grid: 'users-grid',
-  row: 'users-grid-row',
   createdCell: 'users-cell-created',
   tooltip: 'users-created-tooltip',
   tooltipDate: 'tooltip-date',
@@ -20,7 +19,11 @@ const TEST_ID = {
 } as const;
 
 export class UsersGridTimeStatements {
-  constructor(private readonly page: Page) {}
+  private readonly grid: UsersGridLocators;
+
+  constructor(private readonly page: Page) {
+    this.grid = new UsersGridLocators(page);
+  }
 
   async hoverOverCreatedCell(rowIndex: number): Promise<void> {
     await this.createdCell(rowIndex).hover();
@@ -64,11 +67,7 @@ export class UsersGridTimeStatements {
   }
 
   private createdCell(rowIndex: number): Locator {
-    return this.rows().nth(rowIndex).getByTestId(TEST_ID.createdCell);
-  }
-
-  private rows(): Locator {
-    return this.grid().getByTestId(TEST_ID.row);
+    return this.grid.rows().nth(rowIndex).getByTestId(TEST_ID.createdCell);
   }
 
   private tooltip(): Locator {
@@ -89,9 +88,5 @@ export class UsersGridTimeStatements {
 
   private tooltipTzId(): Locator {
     return this.tooltip().getByTestId(TEST_ID.tooltipTzId);
-  }
-
-  private grid(): Locator {
-    return this.page.getByTestId(TEST_ID.grid);
   }
 }

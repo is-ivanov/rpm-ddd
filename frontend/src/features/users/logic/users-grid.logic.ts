@@ -57,6 +57,30 @@ export function filterRowsByColumns(rows: UserRow[], filters: Partial<Record<Tex
   return rows.filter((row) => activeTerms.every(([column, needle]) => row[column].toLowerCase().includes(needle)));
 }
 
+export function filterRowsByStatuses(rows: UserRow[], selected: readonly string[]): UserRow[] {
+  if (selected.length === 0) {
+    return rows;
+  }
+  return rows.filter((row) => selected.includes(row.status));
+}
+
+const MILLIS_PER_DAY = 86_400_000;
+
+export function filterRowsByDateRange(
+  rows: UserRow[],
+  column: 'created' | 'updated',
+  from: string,
+  to: string,
+): UserRow[] {
+  const field = TIMESTAMP_FIELD[column];
+  const lowerBound = from === '' ? Number.NEGATIVE_INFINITY : instant(from);
+  const upperBound = to === '' ? Number.POSITIVE_INFINITY : instant(to) + MILLIS_PER_DAY;
+  return rows.filter((row) => {
+    const at = instant(row[field]);
+    return at >= lowerBound && at < upperBound;
+  });
+}
+
 function toActiveTerms(filters: Partial<Record<TextFilterColumn, string>>): [TextFilterColumn, string][] {
   return (Object.entries(filters) as [TextFilterColumn, string][])
     .map(([column, term]): [TextFilterColumn, string] => [column, term.trim().toLowerCase()])
@@ -70,17 +94,29 @@ const STATUS_LIFECYCLE_RANK: Record<string, number> = {
   Inactive: 3,
 };
 
+export const STATUS_FILTER_OPTIONS: readonly string[] = Object.keys(STATUS_LIFECYCLE_RANK);
+
 const UNKNOWN_STATUS_RANK = Number.MAX_SAFE_INTEGER;
 
 function statusRank(status: string): number {
   return STATUS_LIFECYCLE_RANK[status] ?? UNKNOWN_STATUS_RANK;
 }
 
+const TIMESTAMP_FIELD = { created: 'createdAt', updated: 'updatedAt' } as const;
+
 function compareByColumn(left: UserRow, right: UserRow, column: SortColumn): number {
-  if (column === 'login') {
-    return left.login.localeCompare(right.login);
+  if (column === 'status') {
+    return statusRank(left.status) - statusRank(right.status);
   }
-  return statusRank(left.status) - statusRank(right.status);
+  if (column === 'created' || column === 'updated') {
+    const field = TIMESTAMP_FIELD[column];
+    return instant(left[field]) - instant(right[field]);
+  }
+  return left[column].localeCompare(right[column]);
+}
+
+function instant(isoTimestamp: string): number {
+  return new Date(isoTimestamp).getTime();
 }
 
 export function sortUserRows(rows: UserRow[], column: SortColumn, direction: SortDirection): UserRow[] {
@@ -93,7 +129,7 @@ function timeAgo(count: number, unit: string): string {
 }
 
 export function toRelativeTimeLabel(isoTimestamp: string, now: Date): string {
-  const elapsedSeconds = Math.floor((now.getTime() - new Date(isoTimestamp).getTime()) / 1000);
+  const elapsedSeconds = Math.floor((now.getTime() - instant(isoTimestamp)) / 1000);
   if (elapsedSeconds < 60) {
     return 'just now';
   }

@@ -31,9 +31,16 @@ export interface UserRow {
   readonly updatedAt: string;
 }
 
-export type SortColumn = 'login' | 'status';
+export type SortColumn = 'name' | 'login' | 'email' | 'status' | 'created' | 'createdBy' | 'updated' | 'updatedBy';
 
 export type TextFilterColumn = 'name' | 'login' | 'email' | 'createdBy' | 'updatedBy';
+
+export type DateFilterColumn = 'created' | 'updated';
+
+export interface DateRange {
+  readonly from: string;
+  readonly to: string;
+}
 
 export type SortDirection = 'asc' | 'desc';
 

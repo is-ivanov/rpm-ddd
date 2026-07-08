@@ -222,69 +222,71 @@ email is asserted as a side effect of backend Scenario 3.1)
 ### Scenario 3.5: Every column header sorts the rows (timestamps by instant)
 > Sort affordance on all 8 headers. Lexical columns reuse the Login category; NEW category = timestamp
 > sort (Created/Updated) by the underlying instant, not the relative label.
-- [~] red-playwright
-- [ ] red-frontend (instant/timestamp sort comparator)
-- [ ] green-frontend
+- [x] red-playwright (users-grid.spec.ts Scn 3.5 — Created-header sort by createdAt instant; admin-users-sort.fixture.ts)
+- [x] red-frontend (users-grid.sort.logic.test.ts — timestamp sort by createdAt instant; SortColumn +created/+updated)
+- [x] green-frontend (compareByColumn switch: created/updated by instant; see summaries/3.5-every-column-sort.md)
 - [S] red-frontend-api (client-side sort)
 - [S] green-frontend-api
-- [ ] align-design (sortable headers on all columns)
-- [ ] green-playwright
-- [ ] demo
+- [x] align-design (sortKey on all 8 headers; compareByColumn lexical fallback + status/timestamp branches)
+- [x] green-playwright (users-grid.spec.ts Scn 3.5 GREEN — 7/7 grid suite pass)
+- [x] demo (users-grid.spec.ts Scn 3.5)
 
 ### Scenario 3.6: Status column filter is a lifecycle-ordered multi-select (promoted from UI Extended E1)
 > Status filter = multi-select dropdown listing statuses in lifecycle order (Pending, Active, Locked,
 > Inactive); selecting a subset keeps only those rows. New control + set-membership filter logic.
-- [ ] red-playwright
-- [ ] red-frontend (multi-select status filter — set membership + lifecycle-ordered options)
-- [ ] green-frontend
+- [x] red-playwright (users-grid-status-filter.spec.ts + .statements.ts — options in lifecycle order + Pending∧Locked subset)
+- [x] red-frontend (users-grid.logic.test.ts — filterRowsByStatuses set-membership + empty-selection guard)
+- [x] green-frontend (filterRowsByStatuses — empty-guard pass-through + set-membership)
 - [S] red-frontend-api (client-side filter)
 - [S] green-frontend-api
-- [ ] align-design (status multi-select dropdown per mockup)
-- [ ] green-playwright
-- [ ] demo
+- [x] align-design (UsersStatusFilter.vue multi-select dropdown; UsersGrid statuses ref → filterRowsByStatuses)
+- [x] green-playwright (users-grid-status-filter.spec.ts GREEN — 1/1; users E2E 15/15)
+- [x] demo (users-grid-status-filter.spec.ts)
 
 ### Scenario 3.7: Created / Updated date-range filter narrows by the underlying instant (promoted from UI Extended E3)
 > from–to date-range control on Created and Updated; filters on the absolute instant, not the relative label.
-- [ ] red-playwright
-- [ ] red-frontend (date-range predicate on the instant, inclusive bounds)
-- [ ] green-frontend
+- [x] red-playwright (users-grid-date-filter.spec.ts + .statements.ts — Created from–to 06-15→06-21 keeps m.scott+e.carter)
+- [x] red-frontend (users-grid.date-filter.logic.test.ts — filterRowsByDateRange inclusive from–to on the instant + column dispatch)
+- [x] green-frontend (filterRowsByDateRange — inclusive whole-day bounds + column dispatch via TIMESTAMP_FIELD)
 - [S] red-frontend-api (client-side filter)
 - [S] green-frontend-api
-- [ ] align-design (date-range controls per mockup)
-- [ ] green-playwright
-- [ ] demo
+- [x] align-design (UsersDateRangeFilter.vue on Created+Updated; useAnchoredPanel composable extracted from status filter)
+- [x] red-frontend (coverage: open-ended empty-from/empty-to; users-grid.date-filter.logic.test.ts +2 cases)
+- [x] green-frontend (coverage: green-on-arrival — branches implemented at align-design, no impl needed)
+- [x] green-playwright (users-grid-date-filter.spec.ts — 1/1 pass, marker removed)
+- [x] demo (users-grid-date-filter.spec.ts)
 
 ### Scenario 3.8: Filtering with no matches shows an empty-result state (promoted from UI Extended E2)
 > When a filter matches zero rows, show an empty-result message; clearing the filter restores all rows.
 > Presentational (length check on displayedRows) — no .logic.ts seam. No mockup for the empty state →
 > simple centered message decided at align-design.
-- [ ] red-playwright
+- [x] red-playwright (users-grid-empty-result.spec.ts — no-match filter → empty message + clear restores rows)
 - [S] red-frontend (presentational empty-state — length check; no .logic.ts seam)
 - [S] green-frontend
 - [S] red-frontend-api (client-side — reuses fetchAdminUsers)
 - [S] green-frontend-api
-- [ ] align-design (empty-result message block)
-- [ ] green-playwright
-- [ ] demo
+- [x] align-design (UsersGrid empty-result row when displayedRows empty; inline utilities, no mockup)
+- [x] green-playwright (users-grid-empty-result.spec.ts GREEN — 1/1 pass, marker removed)
+- [x] demo (users-grid-empty-result.spec.ts)
 
 ### Scenario 5.3: Cancelling the register modal discards input and leaves the grid unchanged (promoted from UI Extended E4)
 > Cancel closes the modal, discards entered values, adds no grid row. Presentational (emit close) — no
 > .logic.ts seam. Existence-check red-frontend: modal likely unmounts on close already → [S] if so.
-- [ ] red-playwright
+- [x] red-playwright (register-user-modal.spec.ts Scn 5.3 — green-on-arrival: v-if unmounts modal on cancel, no refetch)
 - [S] red-frontend (presentational — cancel closes modal; no .logic.ts seam)
 - [S] green-frontend
 - [S] red-frontend-api (no network on cancel)
 - [S] green-frontend-api
-- [ ] align-design (Cancel button wired to close + discard per mockup)
-- [ ] green-playwright
-- [ ] demo
+- [x] align-design (verify-only — Cancel button already matches mockup .btn-secondary; no new control, no component change)
+- [x] green-playwright (register-user-modal.spec.ts Scn 5.3 — 1/1 pass; no marker, FE-mocked tier)
+- [x] demo (register-user-modal.spec.ts Scn 5.3)
 
 ## Full-Stack Journey (07_FullStack_Journey.md)
 > Verdict: **extend** — weave the real Story 4 create-user UI into
 > frontend/acceptance/tests/fullstack/account-lifecycle.fullstack.spec.ts (replace the direct
 > `realAuthBackend.createUserAsAdmin` call with the Admin Center → Users → Register user modal flow).
 > Runs once after the frontend scenarios are green, reusing the page Statements built there.
-- [ ] fullstack-journey
+- [x] fullstack-journey (extended account-lifecycle.fullstack.spec.ts — real Admin Center → Users → Register modal create; 1/1 green)
 
 ## Security Scenarios (05_Security_Tests.md)
 

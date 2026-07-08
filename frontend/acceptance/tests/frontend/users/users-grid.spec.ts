@@ -165,4 +165,26 @@ test.describe('Users Grid', () => {
       adminUsersBackend.assertAdminUserListRequestedOnce();
     },
   );
+
+  test(
+    'UI Test Scenario 3.5: Every column header sorts the rows, timestamps by the underlying instant - ' +
+      'Given the Users page shows multiple users, ' +
+      'When the user clicks the Created column header, ' +
+      'Then the rows are sorted ascending by the underlying Created instant (not the relative-time label), ' +
+      'When the user clicks the Created column header again, ' +
+      'Then the rows are sorted descending by the underlying Created instant',
+    async () => {
+      await currentUserBackend.givenAuthenticatedUser();
+      await adminUsersBackend.givenSeveralUsers();
+      await homePage.navigateToHomePage();
+      await homePage.clickUsersNavItem();
+      await usersPage.assertGridIsVisible();
+
+      await usersSort.clickCreatedHeader();
+      await usersSort.assertRowsSortedByCreatedInstantAscending();
+
+      await usersSort.clickCreatedHeader();
+      await usersSort.assertRowsSortedByCreatedInstantDescending();
+    },
+  );
 });
