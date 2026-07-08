@@ -279,7 +279,7 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-frontend-api
 - [x] align-design (verify-only — Cancel button already matches mockup .btn-secondary; no new control, no component change)
 - [x] green-playwright (register-user-modal.spec.ts Scn 5.3 — 1/1 pass; no marker, FE-mocked tier)
-- [~] demo
+- [x] demo (register-user-modal.spec.ts Scn 5.3)
 
 ## Full-Stack Journey (07_FullStack_Journey.md)
 > Verdict: **extend** — weave the real Story 4 create-user UI into
