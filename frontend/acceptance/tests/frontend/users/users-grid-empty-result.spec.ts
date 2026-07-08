@@ -27,9 +27,6 @@ test.describe('Users Grid Empty-Result State', () => {
       'Then the grid shows an empty-result message, ' +
       'And clearing the filter restores all rows',
     async () => {
-      // RED: UsersGrid.vue renders no empty-result message yet — the `users-grid-empty` element is
-      // absent, so assertEmptyResultMessageIsVisible() times out. Implemented at align-design (Scn 3.8).
-      test.fail();
       await currentUserBackend.givenAuthenticatedUser();
       await adminUsersBackend.givenSeveralUsers();
       await homePage.navigateToHomePage();

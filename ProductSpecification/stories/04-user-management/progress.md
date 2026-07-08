@@ -266,8 +266,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] red-frontend-api (client-side — reuses fetchAdminUsers)
 - [S] green-frontend-api
 - [x] align-design (UsersGrid empty-result row when displayedRows empty; inline utilities, no mockup)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (users-grid-empty-result.spec.ts GREEN — 1/1 pass, marker removed)
+- [~] demo
 
 ### Scenario 5.3: Cancelling the register modal discards input and leaves the grid unchanged (promoted from UI Extended E4)
 > Cancel closes the modal, discards entered values, adds no grid row. Presentational (emit close) — no
