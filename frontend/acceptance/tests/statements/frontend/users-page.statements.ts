@@ -13,7 +13,6 @@ import { USERS_GRID_TEST_ID, UsersGridLocators } from '../support/users-grid-loc
 const TEST_ID = {
   usersPage: 'users-page',
   registerUserButton: 'register-user-button',
-  fullNameFilter: 'users-filter-name',
 } as const;
 
 const REGISTER_USER_BUTTON_TEXT = 'Register user';
@@ -131,11 +130,14 @@ export class UsersPageStatements {
   }
 
   async assertFullNameFilterIsVisible(): Promise<void> {
-    await expect(this.fullNameFilter(), 'the Full name column filter input is visible in the grid').toBeVisible();
+    await expect(
+      this.gridLocators.nameFilter(),
+      'the Full name column filter input is visible in the grid',
+    ).toBeVisible();
   }
 
   async enterFullNameFilter(): Promise<void> {
-    await this.fullNameFilter().fill(FULL_NAME_FILTER_TERM);
+    await this.gridLocators.nameFilter().fill(FULL_NAME_FILTER_TERM);
   }
 
   async assertOnlyMatchingFullNamesRemain(): Promise<void> {
@@ -168,10 +170,6 @@ export class UsersPageStatements {
 
   private newUserRow(): Locator {
     return this.gridLocators.rows().filter({ hasText: NEW_PENDING_USER_ROW.login });
-  }
-
-  private fullNameFilter(): Locator {
-    return this.page.getByTestId(TEST_ID.fullNameFilter);
   }
 
   private cell(rowIndex: number, cellTestId: string): Locator {

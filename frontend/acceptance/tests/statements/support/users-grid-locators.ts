@@ -4,13 +4,17 @@ import { type Locator, type Page } from '@playwright/test';
 // (filter, sort, time, error, status-filter, date-filter) and the UsersPage page object drives the
 // SAME grid container, rows, and name cells; before this helper each of those files redeclared
 // `grid`/`row`/`nameCell` and their own private grid()/rows()/nameCells() locators — the "shared
-// per-page locators belong in ONE place" rule (frontend-rules.md → Playwright Tests). Concern-specific
-// cells (login, status badge, created cell, filter inputs) stay in their own Statements, scoped off
+// per-page locators belong in ONE place" rule (frontend-rules.md → Playwright Tests). The Full name
+// filter input (`nameFilter`) is likewise shared: both the page object (Scn 3.1 full-name filtering)
+// and the empty-result concern (Scn 3.8) drive it, so it is single-sourced here. Single-concern
+// filter inputs (login, updated-by — only UsersGridFilterStatements) stay in their own Statements.
+// Other concern-specific cells (status badge, created cell) also stay per-concern, scoped off
 // grid()/rows() here.
 export const USERS_GRID_TEST_ID = {
   grid: 'users-grid',
   row: 'users-grid-row',
   nameCell: 'users-cell-name',
+  nameFilter: 'users-filter-name',
   loading: 'users-grid-loading',
 } as const;
 
@@ -27,6 +31,12 @@ export class UsersGridLocators {
 
   nameCells(): Locator {
     return this.grid().getByTestId(USERS_GRID_TEST_ID.nameCell);
+  }
+
+  // The Full name column filter input. Page-level (not scoped under grid()): it drives the whole
+  // grid's row set, matching the pre-single-source page-level lookup in both consuming Statements.
+  nameFilter(): Locator {
+    return this.page.getByTestId(USERS_GRID_TEST_ID.nameFilter);
   }
 
   // The grid's loading indicator — shown in place of the grid while the list request is in flight.

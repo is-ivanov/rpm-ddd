@@ -260,12 +260,12 @@ email is asserted as a side effect of backend Scenario 3.1)
 > When a filter matches zero rows, show an empty-result message; clearing the filter restores all rows.
 > Presentational (length check on displayedRows) — no .logic.ts seam. No mockup for the empty state →
 > simple centered message decided at align-design.
-- [~] red-playwright
+- [x] red-playwright (users-grid-empty-result.spec.ts — no-match filter → empty message + clear restores rows)
 - [S] red-frontend (presentational empty-state — length check; no .logic.ts seam)
 - [S] green-frontend
 - [S] red-frontend-api (client-side — reuses fetchAdminUsers)
 - [S] green-frontend-api
-- [ ] align-design (empty-result message block)
+- [~] align-design (empty-result message block)
 - [ ] green-playwright
 - [ ] demo
 

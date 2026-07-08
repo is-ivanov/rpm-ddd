@@ -144,6 +144,11 @@ export const FULL_NAME_FILTER_TERM = 'ar';
 // expectation). Same reason as FULL_NAMES_MATCHING_LOGIN_AND_UPDATED_BY / STATUSES_IN_LIFECYCLE_ORDER.
 export const FULL_NAMES_MATCHING_FILTER: readonly string[] = ['Sarah Jane Connor', 'Emily Carter'];
 
+// Scenario 3.8 — empty-result state. A Full name "contains" probe that appears in NO fixture full
+// name ("Sarah Jane Connor", "Michael Scott", "Emily Carter", "David Lee"), so the client-side filter
+// keeps zero rows and the grid must surface an empty-result message instead of any user rows.
+export const NO_MATCH_FULL_NAME_FILTER_TERM = 'zzz-no-such-user';
+
 // Scenario 3.4 — multi-column AND filtering. Two "contains" probes on TWO DIFFERENT text columns,
 // chosen so neither term alone isolates the target — only their AND does:
 //   • 'e' on Login keeps Emily Carter + David Lee;  'connor' on Updated-by keeps Sarah + David.
