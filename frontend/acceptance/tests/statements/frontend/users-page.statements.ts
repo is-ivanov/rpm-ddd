@@ -7,7 +7,7 @@ import {
   SEED_ACTOR_CELLS,
   SEED_ACTOR_DISPLAY,
 } from '../support/admin-users-fixture';
-import { NEW_PENDING_USER_ROW } from '../support/register-user-fixture';
+import { NEW_PENDING_USER_ROW, NEW_USER_INPUT } from '../support/register-user-fixture';
 import { USERS_GRID_TEST_ID, UsersGridLocators } from '../support/users-grid-locators';
 
 const TEST_ID = {
@@ -166,6 +166,17 @@ export class UsersPageStatements {
     await expect(badge, 'new row status badge reads "Pending"').toHaveText(expected.status);
     await expect(newRow.getByTestId(CELL.createdBy), 'new row created-by actor').toHaveText(expected.createdBy);
     await expect(newRow.getByTestId(CELL.updatedBy), 'new row updated-by actor').toHaveText(expected.updatedBy);
+  }
+
+  async assertGridRowCountUnchanged(): Promise<void> {
+    await expect(
+      this.gridLocators.rows(),
+      'the grid still shows exactly the seeded rows — cancelling added no row',
+    ).toHaveCount(EXPECTED_USER_ROWS.length);
+    await expect(
+      this.gridLocators.rows().filter({ hasText: NEW_USER_INPUT.login }),
+      'no row for the cancelled input login appears in the grid',
+    ).toHaveCount(0);
   }
 
   private newUserRow(): Locator {

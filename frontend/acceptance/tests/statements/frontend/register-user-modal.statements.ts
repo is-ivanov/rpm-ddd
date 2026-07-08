@@ -31,6 +31,15 @@ const VALID_INPUT_VALUES = [
   { control: 'register-user-email', value: NEW_USER_INPUT.email },
 ] as const;
 
+// A subset of fields the E2E types before cancelling (scenario 5.3): enough to prove the modal
+// held partial input. On reopen every one of these must be empty again — the cancelled input is
+// discarded because the modal unmounts (v-if) and remounts with a fresh, empty form.
+const PARTIAL_INPUT_VALUES = [
+  { control: 'register-user-first-name', value: NEW_USER_INPUT.firstName },
+  { control: 'register-user-last-name', value: NEW_USER_INPUT.lastName },
+  { control: 'register-user-login', value: NEW_USER_INPUT.login },
+] as const;
+
 export class RegisterUserModalStatements {
   constructor(private readonly page: Page) {}
 
@@ -68,13 +77,29 @@ export class RegisterUserModalStatements {
   }
 
   async fillWithValidValues(): Promise<void> {
-    for (const field of VALID_INPUT_VALUES) {
-      await this.page.getByTestId(field.control).fill(field.value);
-    }
+    await this.fillFields(VALID_INPUT_VALUES);
   }
 
   async clickRegister(): Promise<void> {
     await this.submitButton().click();
+  }
+
+  async fillPartialValues(): Promise<void> {
+    await this.fillFields(PARTIAL_INPUT_VALUES);
+  }
+
+  async clickCancel(): Promise<void> {
+    await this.cancelButton().click();
+  }
+
+  async assertFieldsAreDiscardedOnReopen(): Promise<void> {
+    await expect(this.modal(), 'the Register user modal reopens for the discard check').toBeVisible({ timeout: 5000 });
+    for (const field of PARTIAL_INPUT_VALUES) {
+      await expect(
+        this.page.getByTestId(field.control),
+        `the "${field.control}" field is empty on reopen — the cancelled input was discarded`,
+      ).toHaveValue('');
+    }
   }
 
   async assertSubmitButtonShowsLoadingIndicator(): Promise<void> {
@@ -115,6 +140,12 @@ export class RegisterUserModalStatements {
         this.page.getByTestId(field.control),
         `the "${field.control}" field still holds the submitted value after the rejection`,
       ).toHaveValue(field.value);
+    }
+  }
+
+  private async fillFields(fields: readonly { control: string; value: string }[]): Promise<void> {
+    for (const field of fields) {
+      await this.page.getByTestId(field.control).fill(field.value);
     }
   }
 

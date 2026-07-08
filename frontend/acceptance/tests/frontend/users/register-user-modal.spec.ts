@@ -115,4 +115,29 @@ test.describe('Register User Modal', () => {
       await modal.assertEnteredValuesArePreserved();
     },
   );
+
+  test(
+    'UI Test Scenario 5.3: Cancelling the register modal discards input and leaves the grid unchanged - ' +
+      'Given the Register user modal is open with partially entered values, ' +
+      'When the user clicks "Cancel", ' +
+      'Then the modal closes, ' +
+      'And no new row is added to the grid, ' +
+      'And the entered input is discarded',
+    async () => {
+      await currentUserBackend.givenAuthenticatedUser();
+      await adminUsersBackend.givenSeveralUsers();
+      await homePage.navigateToHomePage();
+      await homePage.clickUsersNavItem();
+      await usersPage.clickRegisterUserButton();
+      await modal.assertModalIsOpen();
+      await modal.fillPartialValues();
+
+      await modal.clickCancel();
+
+      await modal.assertModalIsClosed();
+      await usersPage.assertGridRowCountUnchanged();
+      await usersPage.clickRegisterUserButton();
+      await modal.assertFieldsAreDiscardedOnReopen();
+    },
+  );
 });

@@ -272,12 +272,12 @@ email is asserted as a side effect of backend Scenario 3.1)
 ### Scenario 5.3: Cancelling the register modal discards input and leaves the grid unchanged (promoted from UI Extended E4)
 > Cancel closes the modal, discards entered values, adds no grid row. Presentational (emit close) — no
 > .logic.ts seam. Existence-check red-frontend: modal likely unmounts on close already → [S] if so.
-- [~] red-playwright
+- [x] red-playwright (register-user-modal.spec.ts Scn 5.3 — green-on-arrival: v-if unmounts modal on cancel, no refetch)
 - [S] red-frontend (presentational — cancel closes modal; no .logic.ts seam)
 - [S] green-frontend
 - [S] red-frontend-api (no network on cancel)
 - [S] green-frontend-api
-- [ ] align-design (Cancel button wired to close + discard per mockup)
+- [~] align-design (Cancel button wired to close + discard per mockup)
 - [ ] green-playwright
 - [ ] demo
 
