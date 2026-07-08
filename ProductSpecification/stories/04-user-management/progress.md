@@ -254,13 +254,13 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [x] red-frontend (coverage: open-ended empty-from/empty-to; users-grid.date-filter.logic.test.ts +2 cases)
 - [x] green-frontend (coverage: green-on-arrival — branches implemented at align-design, no impl needed)
 - [x] green-playwright (users-grid-date-filter.spec.ts — 1/1 pass, marker removed)
-- [~] demo
+- [x] demo (users-grid-date-filter.spec.ts)
 
 ### Scenario 3.8: Filtering with no matches shows an empty-result state (promoted from UI Extended E2)
 > When a filter matches zero rows, show an empty-result message; clearing the filter restores all rows.
 > Presentational (length check on displayedRows) — no .logic.ts seam. No mockup for the empty state →
 > simple centered message decided at align-design.
-- [ ] red-playwright
+- [~] red-playwright
 - [S] red-frontend (presentational empty-state — length check; no .logic.ts seam)
 - [S] green-frontend
 - [S] red-frontend-api (client-side — reuses fetchAdminUsers)
