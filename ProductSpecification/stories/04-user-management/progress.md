@@ -277,8 +277,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] green-frontend
 - [S] red-frontend-api (no network on cancel)
 - [S] green-frontend-api
-- [~] align-design (Cancel button wired to close + discard per mockup)
-- [ ] green-playwright
+- [x] align-design (verify-only — Cancel button already matches mockup .btn-secondary; no new control, no component change)
+- [~] green-playwright
 - [ ] demo
 
 ## Full-Stack Journey (07_FullStack_Journey.md)
