@@ -278,8 +278,8 @@ email is asserted as a side effect of backend Scenario 3.1)
 - [S] red-frontend-api (no network on cancel)
 - [S] green-frontend-api
 - [x] align-design (verify-only — Cancel button already matches mockup .btn-secondary; no new control, no component change)
-- [~] green-playwright
-- [ ] demo
+- [x] green-playwright (register-user-modal.spec.ts Scn 5.3 — 1/1 pass; no marker, FE-mocked tier)
+- [~] demo
 
 ## Full-Stack Journey (07_FullStack_Journey.md)
 > Verdict: **extend** — weave the real Story 4 create-user UI into
