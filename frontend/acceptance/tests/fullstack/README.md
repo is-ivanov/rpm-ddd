@@ -6,8 +6,9 @@ frontend test pyramid (above the mocked UI tests and the Vitest logic/api unit t
 the actual frontend↔backend HTTP contract along the critical user-lifecycle path.
 
 - **Scope:** ONE growing critical journey — `account-lifecycle.fullstack.spec.ts`: admin logs in
-  (UI) → admin creates a user via the admin API → the new user reads the activation link from
-  Mailpit → activates (UI) → logs in (UI). Edge cases stay in the fast mocked UI suite.
+  (UI) → admin registers a user via the Admin Center → Users → Register user modal (UI) → the new
+  user appears in the grid as Pending → the new user reads the activation link from Mailpit →
+  activates (UI) → logs in (UI). Edge cases stay in the fast mocked UI suite.
 - **Cadence:** runs **nightly** (CI: `.github/workflows/nightly-fullstack-e2e.yml`), **not** on
   every PR. The `fullstack` Playwright project sets `retries: 2`.
 - **Isolation:** matched only by the `*.fullstack.spec.ts` suffix; the default `npm run test:e2e`

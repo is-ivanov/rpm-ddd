@@ -40,6 +40,14 @@ const PARTIAL_INPUT_VALUES = [
   { control: 'register-user-login', value: NEW_USER_INPUT.login },
 ] as const;
 
+export interface RegisterUserIdentity {
+  readonly firstName: string;
+  readonly middleName: string;
+  readonly lastName: string;
+  readonly login: string;
+  readonly email: string;
+}
+
 export class RegisterUserModalStatements {
   constructor(private readonly page: Page) {}
 
@@ -78,6 +86,18 @@ export class RegisterUserModalStatements {
 
   async fillWithValidValues(): Promise<void> {
     await this.fillFields(VALID_INPUT_VALUES);
+  }
+
+  // Fill the modal from a unique-per-run identity (full-stack journey), so retries
+  // never collide on a duplicate login/email against the persistent Postgres.
+  async fillFromIdentity(identity: RegisterUserIdentity): Promise<void> {
+    await this.fillFields([
+      { control: 'register-user-first-name', value: identity.firstName },
+      { control: 'register-user-middle-name', value: identity.middleName },
+      { control: 'register-user-last-name', value: identity.lastName },
+      { control: 'register-user-login', value: identity.login },
+      { control: 'register-user-email', value: identity.email },
+    ]);
   }
 
   async clickRegister(): Promise<void> {

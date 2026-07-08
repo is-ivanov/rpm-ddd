@@ -286,7 +286,7 @@ email is asserted as a side effect of backend Scenario 3.1)
 > frontend/acceptance/tests/fullstack/account-lifecycle.fullstack.spec.ts (replace the direct
 > `realAuthBackend.createUserAsAdmin` call with the Admin Center → Users → Register user modal flow).
 > Runs once after the frontend scenarios are green, reusing the page Statements built there.
-- [ ] fullstack-journey
+- [x] fullstack-journey (extended account-lifecycle.fullstack.spec.ts — real Admin Center → Users → Register modal create; 1/1 green)
 
 ## Security Scenarios (05_Security_Tests.md)
 

@@ -1,6 +1,9 @@
 import { test } from '@playwright/test';
 import { LoginPageStatements } from '../statements/frontend/login-page.statements';
 import { ActivationPageStatements } from '../statements/frontend/activation-page.statements';
+import { HomePageStatements } from '../statements/frontend/home-page.statements';
+import { UsersPageStatements } from '../statements/frontend/users-page.statements';
+import { RegisterUserModalStatements } from '../statements/frontend/register-user-modal.statements';
 import { type CreatedUser, RealAuthBackendStatements } from '../statements/backend/real-auth-backend.statements';
 import { MailpitStatements } from '../statements/backend/mailpit.statements';
 
@@ -10,12 +13,18 @@ const ADMIN_PASSWORD = 'admin'; // NOSONAR -- pre-seeded local-dev admin fixture
 test.describe('Account Lifecycle Full-Stack E2E (real backend + Postgres + Mailpit)', () => {
   let loginPage: LoginPageStatements;
   let activationPage: ActivationPageStatements;
+  let homePage: HomePageStatements;
+  let usersPage: UsersPageStatements;
+  let registerModal: RegisterUserModalStatements;
   let realAuthBackend: RealAuthBackendStatements;
   let mailpit: MailpitStatements;
 
   test.beforeEach(({ page, baseURL }) => {
     loginPage = new LoginPageStatements(page, baseURL!);
     activationPage = new ActivationPageStatements(page, baseURL!);
+    homePage = new HomePageStatements(page, baseURL);
+    usersPage = new UsersPageStatements(page);
+    registerModal = new RegisterUserModalStatements(page);
     realAuthBackend = new RealAuthBackendStatements(page);
     mailpit = new MailpitStatements();
   });
@@ -23,15 +32,17 @@ test.describe('Account Lifecycle Full-Stack E2E (real backend + Postgres + Mailp
   test(
     'Full-stack account lifecycle against the real stack - ' +
       'Given the pre-seeded ACTIVE admin exists in the real backend, ' +
-      'When the admin logs in via the UI and creates a new user via the admin API, ' +
-      'Then the new user receives an activation email in Mailpit, ' +
+      'When the admin logs in via the UI and registers a new user through ' +
+      'Admin Center → Users → the Register user modal, ' +
+      'Then the new user appears in the grid with status Pending, ' +
+      'And the new user receives an activation email in Mailpit, ' +
       'And the new user activates the account via the activation link and sets a password, ' +
       'And the new user logs in via the UI with the new credentials',
     async () => {
       const newUser: CreatedUser = realAuthBackend.uniqueUserIdentity();
 
       await adminLogsInViaUi();
-      await realAuthBackend.registerUserAsAdmin(newUser);
+      await adminRegistersUserViaUi(newUser);
 
       const activationToken = await mailpit.readActivationTokenFor(newUser.email);
 
@@ -47,6 +58,20 @@ test.describe('Account Lifecycle Full-Stack E2E (real backend + Postgres + Mailp
     await loginPage.clickSubmitButton();
     await loginPage.assertErrorBannerIsAbsent();
     await realAuthBackend.assertSessionCookieIsSet();
+  }
+
+  async function adminRegistersUserViaUi(newUser: CreatedUser): Promise<void> {
+    // Drive the real Story 4 create-user UI (Admin Center → Users → Register user
+    // modal) that this journey previously bypassed with a direct admin-API call.
+    await homePage.assertDashboardShellIsVisible();
+    await homePage.clickUsersNavItem();
+    await usersPage.assertUsersPageIsVisible();
+    await usersPage.clickRegisterUserButton();
+    await registerModal.assertModalIsOpen();
+    await registerModal.fillFromIdentity(newUser);
+    await registerModal.clickRegister();
+    await registerModal.assertModalIsClosed();
+    await usersPage.assertUserAppearsWithPendingStatus(newUser.login);
   }
 
   async function newUserActivatesViaUi(activationToken: string, password: string): Promise<void> {

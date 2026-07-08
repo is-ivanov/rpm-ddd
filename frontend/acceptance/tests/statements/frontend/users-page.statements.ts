@@ -16,6 +16,7 @@ const TEST_ID = {
 } as const;
 
 const REGISTER_USER_BUTTON_TEXT = 'Register user';
+const PENDING_STATUS_LABEL = 'Pending';
 
 const COLUMN_HEADERS = [
   { testId: 'users-grid-header-name', text: 'Full name' },
@@ -166,6 +167,18 @@ export class UsersPageStatements {
     await expect(badge, 'new row status badge reads "Pending"').toHaveText(expected.status);
     await expect(newRow.getByTestId(CELL.createdBy), 'new row created-by actor').toHaveText(expected.createdBy);
     await expect(newRow.getByTestId(CELL.updatedBy), 'new row updated-by actor').toHaveText(expected.updatedBy);
+  }
+
+  // Full-stack journey: the grid runs against a persistent Postgres that accumulates
+  // fsuser_* rows across runs, so the total row count is non-deterministic. Assert the
+  // newly-created user by its unique login instead of a fixed count/fixture.
+  async assertUserAppearsWithPendingStatus(login: string): Promise<void> {
+    const row = this.gridLocators.rows().filter({ hasText: login });
+    await expect(row, `exactly one grid row for the newly created user "${login}"`).toHaveCount(1);
+    await expect(row.getByTestId(CELL.login), 'new row login matches the created identity').toHaveText(login);
+    const badge = row.getByTestId(CELL.statusBadge);
+    await expect(badge, 'new row status badge is visible').toBeVisible();
+    await expect(badge, 'new row status badge reads "Pending"').toHaveText(PENDING_STATUS_LABEL);
   }
 
   async assertGridRowCountUnchanged(): Promise<void> {
