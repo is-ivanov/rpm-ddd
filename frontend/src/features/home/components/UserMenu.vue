@@ -29,9 +29,11 @@ async function handleLogout(): Promise<void> {
 
 <template>
   <div class="relative">
-    <div
+    <button
+      type="button"
       class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 transition-colors"
       :class="open ? 'bg-surface' : 'hover:bg-surface'"
+      :aria-expanded="open"
       @click="toggleMenu"
     >
       <div
@@ -42,7 +44,7 @@ async function handleLogout(): Promise<void> {
       </div>
       <span data-testid="user-name" class="text-sm font-medium text-ink">{{ dashboardUser?.displayName }}</span>
       <component :is="open ? ChevronUp : ChevronDown" :size="16" class="text-muted" aria-hidden="true" />
-    </div>
+    </button>
 
     <div v-if="open" data-testid="user-menu" class="dropdown-panel dropdown-anchor min-w-55">
       <div class="p-3">

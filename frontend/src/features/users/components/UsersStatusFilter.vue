@@ -24,6 +24,11 @@ function toggleStatus(status: string): void {
 </script>
 
 <template>
+  <!-- The wrapper's Esc handler only ADDS keyboard support; the trigger is a real <button> nested
+       inside, and Esc must also close while focus is in the popup panel (events bubble to here).
+       `no-static-element-interactions` hardcodes `keydown` as interactive and takes no options
+       (`schema: []`), so it cannot distinguish this from a pointer handler. See ADR app-level-a11y. -->
+  <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
   <div class="relative" @keydown.esc="open = false">
     <button
       ref="anchor"

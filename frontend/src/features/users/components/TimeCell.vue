@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, useId } from 'vue';
 import { toAbsoluteTooltipParts, toRelativeTimeLabel } from '../logic/users-grid.logic';
 
 const props = defineProps<{
@@ -13,6 +13,7 @@ const props = defineProps<{
 const hovered = ref(false);
 const anchor = ref<HTMLElement | null>(null);
 const position = ref({ top: 0, left: 0 });
+const tooltipId = useId();
 
 const relativeLabel = computed(() => toRelativeTimeLabel(props.iso, props.now));
 const tooltipParts = computed(() => toAbsoluteTooltipParts(props.iso, props.timeZone));
@@ -32,10 +33,22 @@ function hide(): void {
 
 <template>
   <td :data-testid="cellTestId" class="grid-cell">
-    <span ref="anchor" class="ts-rel" @mouseenter="show" @mouseleave="hide">{{ relativeLabel }}</span>
+    <button
+      ref="anchor"
+      type="button"
+      class="ts-rel"
+      :aria-describedby="hovered ? tooltipId : undefined"
+      @mouseenter="show"
+      @mouseleave="hide"
+      @focusin="show"
+      @focusout="hide"
+    >
+      {{ relativeLabel }}
+    </button>
     <Teleport to="body">
       <div
         v-if="hovered"
+        :id="tooltipId"
         :data-testid="tooltipTestId"
         role="tooltip"
         class="ts-tooltip"

@@ -17,8 +17,8 @@ Type: refactoring
 - [x] write ADR `app-level-a11y` — see `decisions/app-level-a11y-decision.md`
 
 ### Step 2: App-level — a11y lint gate
-- [ ] add `eslint-plugin-vuejs-accessibility` to `npm run lint` (CI gate); tune `label-has-for` + `no-static-element-interactions` per ADR
-- [ ] fix the 10 audited violations (`UserMenu`, `TimeCell`, `RegisterUserModal`, incl. modal Esc-to-close)
+- [x] add `eslint-plugin-vuejs-accessibility` to `npm run lint` (CI gate); `label-has-for` tuned, `no-static-element-interactions` untunable → ADR amended
+- [x] fix the 10 audited violations (`UserMenu`, `TimeCell`, `RegisterUserModal`, incl. modal Esc-to-close)
 
 ### Step 3: Framework-level — encode a11y rules
 - [ ] add an Accessibility section to `.claude/rules/frontend-rules.md`

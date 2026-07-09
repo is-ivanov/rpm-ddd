@@ -112,6 +112,10 @@ export class RegisterUserModalStatements {
     await this.cancelButton().click();
   }
 
+  async pressEscape(): Promise<void> {
+    await this.page.keyboard.press('Escape');
+  }
+
   async assertFieldsAreDiscardedOnReopen(): Promise<void> {
     await expect(this.modal(), 'the Register user modal reopens for the discard check').toBeVisible({ timeout: 5000 });
     for (const field of PARTIAL_INPUT_VALUES) {

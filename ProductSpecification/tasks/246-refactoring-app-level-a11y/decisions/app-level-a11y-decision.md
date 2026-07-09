@@ -29,10 +29,15 @@ suppressions); encode the rules in `frontend-rules.md` and enforce them via a ne
 
 - `vuejs-accessibility/label-has-for` → `required: { some: ['nesting','id'] }`. Accept *either*
   association form; the default demands both and flags correct markup.
-- `vuejs-accessibility/no-static-element-interactions` → `handlers` limited to pointer/click events.
-  A keyboard-only handler on a wrapper *adds* accessibility; flagging it inverts the rule's intent.
-  Pointer handlers on static elements stay flagged. Step 2 verifies the option behaves as intended.
+- `vuejs-accessibility/no-static-element-interactions` → **cannot be tuned.** Step 2 verified the
+  rule declares `schema: []` (no options) and treats a hardcoded handler list — `keydown` included —
+  as interactive. The documented fallback applies: a targeted `eslint-disable-next-line` plus a
+  written justification at the two wrapper sites.
 - Remaining `flat/recommended` rules stay at default.
+
+Both `no-static-element-interactions` and `click-events-have-key-events` skip elements carrying
+`role="presentation"`. That is not a loophole but the correct markup for a modal backdrop: the
+overlay is presentational, and the card it wraps is the actual `role="dialog"`.
 
 **Framework source-of-truth** is the project's `.claude/` — confirmed no external master copy
 (`~/.claude/rules/` holds only `context7.md`; `~/.claude/skills/` only plugin skills; no submodules).
@@ -54,15 +59,16 @@ suppressions); encode the rules in `frontend-rules.md` and enforce them via a ne
 | `UserMenu` L32 | `<div @click>` menu trigger — keyboard users cannot open the menu | native `<button>` + `aria-expanded` / `aria-haspopup` |
 | `TimeCell` L35 | `<span @mouseenter/@mouseleave>` tooltip — keyboard-unreachable | pair with `@focusin`/`@focusout` on a focusable element |
 | `RegisterUserModal` L110 | `<label>` decorates a static read-only timezone `<div>`, not a control | drop `<label>`; it is a caption, not a label |
-| `RegisterUserModal` L80 | backdrop `@click.self` dismiss; modal has **no** Esc-to-close at all | add Esc-to-close (the keyboard equivalent of the backdrop click) |
-| `UsersStatusFilter` L27, `UsersDateRangeFilter` L24 | wrapper `@keydown.esc` with a real `<button>` nested inside | none — resolved by the `no-static-element-interactions` tuning |
+| `RegisterUserModal` L80 | backdrop `@click.self` dismiss; modal has **no** Esc-to-close at all | `role="presentation"` backdrop + `role="dialog"`/`aria-modal` card; Esc-to-close via a window `keydown` listener |
+| `UsersStatusFilter` L27, `UsersDateRangeFilter` L24 | wrapper `@keydown.esc` with a real `<button>` nested inside | targeted `eslint-disable-next-line` + justification (rule takes no options) |
 
 ## Edge Cases
 
 | Case | Behavior |
 |------|----------|
 | `label-has-for` tuning hides a genuinely unassociated label | Still caught: `some` requires at least one of nesting/`id` — zero association fails |
-| `no-static-element-interactions` `handlers` option does not accept keyboard-event exclusion as expected | Step 2 falls back to a targeted `eslint-disable-next-line` + written justification at the 2 wrapper sites |
+| Esc-to-close while focus sits outside the modal (e.g. on the trigger button that opened it) | A `keydown` handler on the overlay would never fire; the listener is registered on `window` and removed on unmount |
+| Tooltip trigger must be focusable for `@focusin`/`@focusout` to fire | `<span>` is never an interactive element, so `TimeCell`'s trigger becomes a `<button>` and links to the tooltip via `aria-describedby` |
 | A future wrapper needs a genuine pointer handler on a static element | Rule fires by design — convert to a native interactive element, do not suppress |
 | Contrast / focus order / reading order | Out of lint's reach — covered by `design-review` Check C, not the gate |
 | `UsersGrid` filter input (the trigger example) | Already hot-fixed with `:aria-label` in `4d969ea`; the gate now prevents recurrence |
