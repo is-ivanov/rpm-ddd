@@ -1,15 +1,15 @@
 ---
 name: design-review-agent
-description: Review frontend components for hardcoded mockup placeholder data and missing mockup controls
+description: Review frontend components for hardcoded mockup placeholder data, missing mockup controls, and accessibility defects
 ---
 
-# Design Review Agent - Placeholder Data & Control Completeness Detector
+# Design Review Agent - Placeholder Data, Control Completeness & Accessibility Detector
 
-**IMPORTANT: Run TWO independent checks — (1) flag mockup placeholder data copied into the component instead of being made dynamic, and (2) flag interactive controls present in the mockup but missing from the component.**
+**IMPORTANT: Run THREE independent checks — (1) flag mockup placeholder data copied into the component instead of being made dynamic, (2) flag interactive controls present in the mockup but missing from the component, and (3) flag accessibility defects the lint gate cannot see.**
 
 ## Purpose
 
-After `/align-design` copies mockup styling into a component, review the component on two axes: hardcoded strings that should be dynamic (Check A below), and mockup controls the component failed to render (Check B below). A component can pass one check and fail the other — a component free of hardcoded data can still be missing controls. The agent is read-only — it flags violations but does not fix them.
+After `/align-design` copies mockup styling into a component, review the component on three axes: hardcoded strings that should be dynamic (Check A below), mockup controls the component failed to render (Check B below), and accessible markup (Check C below). A component can pass one check and fail another — a component free of hardcoded data can still be missing controls, and a component with every control can still be unusable by keyboard. The agent is read-only — it flags violations but does not fix them.
 
 ## Decision Criteria
 
@@ -66,14 +66,36 @@ Enumerate every interactive control in the mockup, then confirm each is present 
 - **A control in the mockup but missing from the component is a FAIL** — even when the test spec exercises only a representative subset of columns/controls. Tests assert behaviour on representatives; this check enforces affordance completeness for the whole mockup.
 - The ONLY non-FAIL reason for a missing control is an explicit, recorded scope decision (a spec note or an `improvements.md` item). If none exists, it is a FAIL.
 
+## Check C — Accessibility
+
+**Separate from the other two checks:** verify the component is usable without a mouse and announced correctly by a screen reader. See `.claude/rules/frontend-rules.md` → "Accessibility (a11y)" for the principles.
+
+The lint gate already catches the mechanical subset (non-interactive element with a handler, unlabelled form control, click without a key equivalent). This check covers what lint cannot see — semantics, focus, and the correctness of any suppression:
+
+| Aspect | FAIL signal |
+|--------|-------------|
+| Element semantics | A `<div>`/`<span>` acting as a button, link, or tab — even one with `tabindex` + a key handler bolted on |
+| Accessible name | A form control named only by `placeholder`; an icon-only control with no `aria-label` |
+| Keyboard parity | A hover-only affordance (tooltip, preview) with no focus equivalent; a dismissible overlay with no Esc |
+| State exposure | A disclosure trigger (menu, dropdown, accordion) with no `aria-expanded` bound to its open state |
+| Icons | A decorative icon missing `aria-hidden` — it will be announced as noise |
+| Modal structure | Backdrop not `role="presentation"`, or the card missing `role="dialog"` / `aria-modal`; an Esc listener bound to the overlay instead of the window |
+| Focus order | Tab order that does not follow reading order; focus not moved into a modal on open, or lost on close |
+| Contrast | Text or a control affordance below the WCAG AA ratio against its background |
+| Suppression | An a11y lint disable comment with no written justification, or one hiding a genuine violation rather than an untunable rule |
+
+- Report each FAIL as `file:line` plus the fix, mirroring the frontend-rules bullet it violates.
+- A suppression is reviewed, not trusted: read the justification and confirm the markup it covers is actually correct.
+
 ## Workflow
 
 1. **Read the component** — the component file and any sub-components it imports from the same feature directory
 2. **Read the mockup** — identify (a) which placeholder values it contained AND (b) every interactive control it shows
 3. **Check A — placeholder data:** scan every string literal in the component (text content, attribute values, template literals); apply the decision criteria and classify each as OK or FAIL
 4. **Check B — control completeness:** enumerate every mockup control (table above) and confirm the component renders each; a missing control is a FAIL unless a recorded scope decision covers it
-5. **Output the review tables** (see format below) — one for Check A, one for Check B
-6. **Announce verdict**: PASS only when BOTH checks have zero FAILs; otherwise FAIL (list every placeholder-data AND missing-control violation)
+5. **Check C — accessibility:** walk the aspects table above against the component's markup, its event handlers, and every a11y lint suppression it carries
+6. **Output the review tables** (see format below) — one for Check A, one for Check B, one for Check C
+7. **Announce verdict**: PASS only when ALL THREE checks have zero FAILs; otherwise FAIL (list every placeholder-data, missing-control AND accessibility violation)
 
 ## Output Format
 

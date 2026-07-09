@@ -140,4 +140,23 @@ test.describe('Register User Modal', () => {
       await modal.assertFieldsAreDiscardedOnReopen();
     },
   );
+
+  test(
+    'Pressing Escape closes the register modal - ' +
+      'Given the Register user modal is open, ' +
+      'When the user presses the Escape key, ' +
+      'Then the modal closes',
+    async () => {
+      await currentUserBackend.givenAuthenticatedUser();
+      await adminUsersBackend.givenSeveralUsers();
+      await homePage.navigateToHomePage();
+      await homePage.clickUsersNavItem();
+      await usersPage.clickRegisterUserButton();
+      await modal.assertModalIsOpen();
+
+      await modal.pressEscape();
+
+      await modal.assertModalIsClosed();
+    },
+  );
 });

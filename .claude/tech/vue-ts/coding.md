@@ -44,6 +44,29 @@ Tech binding for `frontend-rules.md`. Shared section structure: `.claude/templat
 - Template expressions use Vue directives: `v-if`, `v-for`, `v-model`, `v-bind`, `v-on` (shorthand `:` and `@`).
 - Component display name: do **not** add an explicit `name` option. A `<script setup>` SFC built with `@vitejs/plugin-vue` (Vue ≥ 3.2.34) infers the name from the filename for devtools inspection, warning traces, and `<KeepAlive>` include/exclude — declaring it would force a redundant second `<script>` block. The `vue/multi-word-component-names` ESLint rule (`error` in `eslint.config.ts`) enforces meaningful multi-word names. This is the framework mechanism behind the role-suffix naming rule in `frontend-rules.md`.
 
+## Accessibility Lint Gate
+
+Tech binding for the **Accessibility (a11y)** section of `frontend-rules.md`. The mechanical a11y
+subset is enforced by `eslint-plugin-vuejs-accessibility` at its `flat/recommended` preset, wired
+into `frontend/eslint.config.ts` and run as part of the existing `npm run lint` CI gate (`oxlint`'s
+jsx-a11y rules do not parse Vue SFC templates, so they cannot cover this markup). Two rules are
+tuned; the rest of `flat/recommended` stays at default (decided in Task 246 —
+`ProductSpecification/tasks/done/246-refactoring-app-level-a11y/decisions/app-level-a11y-decision.md`).
+
+- `vuejs-accessibility/label-has-for` → `required: { some: ['nesting', 'id'] }`. Accept *either*
+  association form (a wrapping `<label>` **or** a `<label for>` + `id` pair). The stock default
+  demands both and flags already-correct markup (`LoginPage`, `ActivationPage`).
+- `vuejs-accessibility/no-static-element-interactions` → **cannot be tuned** — it declares
+  `schema: []` (no options) and treats any hardcoded handler, `keydown` included, as interactive.
+  When the markup is already correct but the rule still fires — e.g. a wrapper `@keydown.esc` around
+  a real nested `<button>` — apply a targeted `eslint-disable-next-line` with a written
+  justification at the site. Never disable it to silence a genuine `<div @click>`-style defect;
+  convert the markup to a native interactive element instead.
+
+`no-static-element-interactions` and `click-events-have-key-events` both skip elements carrying
+`role="presentation"` — the correct markup for a modal backdrop (the presentational overlay wraps
+the actual `role="dialog"` card), not a loophole.
+
 ## Icon Library
 
 - Vue 3 icon library: `lucide-vue-next` (not `lucide-react`).

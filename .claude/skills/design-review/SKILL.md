@@ -1,9 +1,9 @@
 ---
 name: design-review
-description: Review frontend component for hardcoded mockup placeholder data after align-design. Flags emails, dates, prices, and other user-specific values that should be dynamic. Use when user mentions /design-review command.
+description: Review frontend component after align-design on three axes — hardcoded mockup placeholder data, missing mockup controls, and accessibility defects. Use when user mentions /design-review command.
 ---
 
-# /design-review - Mockup Placeholder Data Review
+# /design-review - Placeholder Data, Control Completeness & Accessibility Review
 
 ## Usage
 ```
@@ -23,7 +23,7 @@ description: Review frontend component for hardcoded mockup placeholder data aft
 1. Load `.claude/agents/design-review-agent.md`
 2. Locate the component TSX file(s) and the mockup HTML
 3. Run the agent's review workflow against the component
-4. Output the review table and verdict
+4. Output the three review tables (Check A, B, C) and verdict
 
 ## Available Templates
 

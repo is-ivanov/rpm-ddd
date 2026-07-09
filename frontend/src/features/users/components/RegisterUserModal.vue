@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { onBeforeUnmount, onMounted, reactive, ref, useId } from 'vue';
 import { ChevronDown, X } from '@lucide/vue';
 import RegisterUserTextField from './RegisterUserTextField.vue';
 import LoadingButton from '@/app/components/LoadingButton.vue';
@@ -49,6 +49,17 @@ const fieldErrors = reactive<Record<FieldKey, string>>({
 
 const emit = defineEmits<{ close: []; created: [] }>();
 
+const titleId = useId();
+
+function closeOnEscape(event: KeyboardEvent): void {
+  if (event.key === 'Escape') {
+    emit('close');
+  }
+}
+
+onMounted(() => window.addEventListener('keydown', closeOnEscape));
+onBeforeUnmount(() => window.removeEventListener('keydown', closeOnEscape));
+
 async function submitRegister(): Promise<void> {
   submitting.value = true;
   clearFieldErrors();
@@ -77,10 +88,16 @@ function applyFieldErrors(mapped: RegisterUserFieldErrors): void {
 </script>
 
 <template>
-  <div class="modal-overlay" @click.self="$emit('close')">
-    <div data-testid="register-user-modal" class="modal-card">
+  <div class="modal-overlay" role="presentation" @click.self="$emit('close')">
+    <div
+      data-testid="register-user-modal"
+      class="modal-card"
+      role="dialog"
+      aria-modal="true"
+      :aria-labelledby="titleId"
+    >
       <div class="flex items-center justify-between px-6 pt-5">
-        <div class="text-lg font-semibold">Register user</div>
+        <div :id="titleId" class="text-lg font-semibold">Register user</div>
         <button
           data-testid="register-user-close"
           type="button"
@@ -107,7 +124,7 @@ function applyFieldErrors(mapped: RegisterUserFieldErrors): void {
           />
 
           <div class="flex flex-col gap-1.5">
-            <label data-testid="register-user-timezone-label" class="text-sm font-medium"> Timezone </label>
+            <div data-testid="register-user-timezone-label" class="text-sm font-medium">Timezone</div>
             <div data-testid="register-user-timezone" class="select-control">
               <span>{{ APP_DEFAULT_TIMEZONE_LABEL }}</span>
               <ChevronDown :size="16" class="shrink-0 text-muted" aria-hidden="true" />

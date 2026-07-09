@@ -3,6 +3,7 @@ import { defineConfig } from 'eslint/config';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import oxlint from 'eslint-plugin-oxlint';
 import pluginVue from 'eslint-plugin-vue';
+import vueA11y from 'eslint-plugin-vuejs-accessibility';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -13,6 +14,7 @@ export default defineConfig(
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   ...pluginVue.configs['flat/recommended'],
+  ...vueA11y.configs['flat/recommended'],
   {
     files: ['**/*.{ts,vue}'],
     languageOptions: {
@@ -28,6 +30,13 @@ export default defineConfig(
     },
     rules: {
       'vue/multi-word-component-names': ['error', { ignores: ['App'] }],
+      // Task 246: accept EITHER `for`/id association OR nesting. The rule's default
+      // (`required: {every: ['nesting','id']}`) demands both and flags correct markup
+      // such as `<label for="login">` + `<input id="login">`. See the ADR
+      // `app-level-a11y-decision.md`. Sibling rule `no-static-element-interactions`
+      // takes no options (`schema: []`), so keyboard-only wrapper handlers are
+      // suppressed per-site with a justification comment instead.
+      'vuejs-accessibility/label-has-for': ['error', { required: { some: ['nesting', 'id'] } }],
       // Task 205: forbid blind `as` casts on an unvalidated network response body.
       // Validate at the boundary with a schema (`schema.parse(await response.json())`)
       // instead — a trust-cast hides backend-contract drift. See frontend-rules.md
