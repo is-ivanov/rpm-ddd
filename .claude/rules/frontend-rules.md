@@ -24,6 +24,18 @@ Mockups contain placeholder values (`user@example.com`, fake dates, sample price
 - A control present in the mockup but absent from the component is a fidelity gap, not an intentional scope cut. Omit a mockup control only on an explicit, recorded decision (a spec note or an `improvements.md` backlog item) — never silently.
 - design-review enforces this: it enumerates every interactive control in the mockup and flags any that the component fails to render (see the design-review agent). This is a distinct check from placeholder-data — a component can be free of hardcoded data yet still be missing controls.
 
+## Accessibility (a11y)
+
+Every component ships accessible markup. The mechanical subset is enforced by the a11y lint rules in the CI lint gate (see the tech binding for the plugin and its tuning); the rest — focus order, semantics, contrast — is verified by design-review Check C.
+
+- **Interactive controls are natively interactive elements.** A thing the user clicks, toggles, or activates is a `<button>`, `<a href>`, or `<input>` — never a `<div>`/`<span>` carrying a click handler. Native elements are focusable, keyboard-operable, and announced with the right role for free.
+- **Every form control has an accessible name** — a `<label for>`/id pair, a wrapping `<label>`, or an `aria-label`. A `placeholder` is a hint, not a name: a screen reader cannot announce a placeholder-only field's purpose.
+- **A pointer affordance carries a keyboard equivalent.** A behavior triggered by hover pairs with focus (`focusin`/`focusout`); one triggered by click lives on a focusable element. If the trigger is not focusable, make it a `<button>` — do not bolt a `tabindex` onto a `<span>`.
+- **Disclosure triggers expose `aria-expanded`** bound to the open state, so the control announces whether its menu/panel/section is open.
+- **Decorative icons are `aria-hidden`.** An icon that repeats adjacent text, or is pure ornament, must not be announced. An icon that IS the control's only content needs an `aria-label` on the control.
+- **Modals: presentational backdrop, `role="dialog"` card.** The overlay a click-outside handler sits on is `role="presentation"` (it is not the dialog); the card it wraps carries `role="dialog"` + `aria-modal`. Every dismissible modal closes on Esc, and the Esc listener is registered on the window — not on the overlay — so it fires no matter where focus sits; remove it on unmount.
+- **Suppress an a11y lint rule only when the markup is already correct and the rule takes no options to express that.** The suppression is a targeted single-line disable with a written justification at the site. Never suppress to silence a genuine violation — convert the markup instead.
+
 ## Component Size
 
 - When a component file exceeds ~70-100 lines, extract sub-components (views, sections, cards) into their own files in the same `components/` directory.

@@ -21,6 +21,6 @@ Type: refactoring
 - [x] fix the 10 audited violations (`UserMenu`, `TimeCell`, `RegisterUserModal`, incl. modal Esc-to-close)
 
 ### Step 3: Framework-level — encode a11y rules
-- [ ] add an Accessibility section to `.claude/rules/frontend-rules.md`
-- [ ] add `Check C — Accessibility` to `.claude/agents/design-review-agent.md`
+- [x] add an Accessibility section to `.claude/rules/frontend-rules.md`
+- [x] add `Check C — Accessibility` to `.claude/agents/design-review-agent.md`
 - [S] propagate to master copy (none exists; `.opencode/` is a stale unmaintained mirror — ADR)
