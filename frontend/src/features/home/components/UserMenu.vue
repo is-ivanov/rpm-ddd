@@ -36,12 +36,12 @@ async function handleLogout(): Promise<void> {
       :aria-expanded="open"
       @click="toggleMenu"
     >
-      <div
+      <span
         data-testid="user-avatar"
         class="flex h-8 w-8 items-center justify-center rounded-full bg-accent-surface text-xs font-semibold text-accent"
       >
         {{ dashboardUser?.initials }}
-      </div>
+      </span>
       <span data-testid="user-name" class="text-sm font-medium text-ink">{{ dashboardUser?.displayName }}</span>
       <component :is="open ? ChevronUp : ChevronDown" :size="16" class="text-muted" aria-hidden="true" />
     </button>
