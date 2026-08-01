@@ -22,9 +22,9 @@ Type: bug
 - [x] commit
 
 ### Step 3: build.yml — drop trigger `paths:`, gate inside jobs
-- [ ] implement (remove `paths:` from `pull_request`; `build`/`frontend-build`/`frontend-e2e` use the in-job pattern; `allure-report` gated at job level on upstream job outputs, since it consumes their artifacts)
-- [ ] verify (actionlint clean; `deploy-report` and the `main` branch behaviour unchanged)
-- [ ] commit
+- [x] implement (`build`/`frontend-build`/`frontend-e2e` use the in-job pattern and publish `outputs.ran`; `allure-report` and each of its downloads gated on those outputs; also dropped the wrong no-dashes claim from Step 1)
+- [x] verify (actionlint 0 errors; Codecov `fail_ci_if_error` step gated; `deploy-report` perms, `concurrency` and main-only steps unchanged)
+- [x] commit
 
 ### Step 4: Observe on real PRs
 - [ ] verify (doc-only PR → all three required checks report real green; code PR → `Checkstyle`/`PMD`/`build` actually execute and can fail)

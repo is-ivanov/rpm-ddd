@@ -7,8 +7,7 @@
 # the `main` ruleset stay Pending forever and block the merge (#296). Filtering
 # inside the jobs lets every required check report a real conclusion on every PR.
 #
-# Filter names are consumed as `steps.filter.outputs.<name>` / `needs.changes.outputs.<name>`.
-# Keep them free of dashes: GitHub expressions parse `outputs.a-b` as subtraction.
+# Filter names are consumed as `steps.filter.outputs.<name>`.
 
 # ── building blocks (not consumed directly) ────────────────────────────────────
 
