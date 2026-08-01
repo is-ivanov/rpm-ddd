@@ -27,7 +27,8 @@ Type: bug
 - [x] commit
 
 ### Step 4: Observe on real PRs
-- [ ] verify (doc-only PR → all three required checks report real green; code PR → `Checkstyle`/`PMD`/`build` actually execute and can fail)
+- [x] verify — code PR (#297: all 10 checks pass; per-step conclusions confirm every gated step ran, `skipped` only on main-only steps)
+- [ ] verify — doc-only PR (this PR: `build`/`Checkstyle`/`PMD` must report real green with their gated steps `skipped`)
 - [ ] commit (progress only)
 
 ## Full-Stack Journey
