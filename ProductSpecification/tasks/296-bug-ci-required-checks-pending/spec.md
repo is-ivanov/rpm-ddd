@@ -42,10 +42,23 @@ always reports a real conclusion.
    `dorny/paths-filter` step itself (no `needs`), and its expensive steps carry
    `if: steps.filter.outputs.<name> == 'true'`. A doc-only PR produces a *genuine* `success` in
    ~20 s instead of a `skipped` conclusion.
-4. **Non-required jobs — gate at job level** (`SpotBugs`, `Spotless`, `Frontend Lint`,
-   `frontend-build`, `frontend-e2e`, `allure-report`) via a shared `changes` job, so they skip
-   without burning a runner. `allure-report` must additionally stay skipped when no upstream job
-   produced Allure artifacts, otherwise its `download-artifact` steps fail.
+4. **Non-required jobs — the same in-job pattern** (`SpotBugs`, `Spotless`, `Frontend Lint`,
+   `frontend-build`, `frontend-e2e`). A shared `changes` job feeding job-level `if:` was considered
+   and rejected: `needs: changes` puts that job's runner spin-up (~15 s) on the critical path of
+   *every* PR — including the common code-PR path — to save a few spin-ups on rare doc-only PRs.
+   The exception is `allure-report`, which consumes artifacts produced by other jobs and so must be
+   gated at job level; it reads job outputs from `build` / `frontend-build` / `frontend-e2e`
+   rather than a `changes` job.
+5. **Push runs are never gated.** The `paths-filter` step carries
+   `if: github.event_name == 'pull_request'`, and every gate reads
+   `github.event_name != 'pull_request' || steps.filter.outputs.<name> == 'true'`. A skipped step
+   has empty outputs, so non-PR runs take the first arm and do the full job — no reliance on
+   `paths-filter`'s push-event git-diff semantics. The `push: main` triggers keep their `paths:`
+   lists, which is what narrows main runs.
+6. **Explicit least-privilege permissions.** `dorny/paths-filter` reads the PR's changed-file list
+   through the REST API, which needs `pull-requests: read`. `code-quality.yml` had no
+   `permissions:` block and inherited the repo default; it now declares
+   `contents: read` + `pull-requests: read`, matching the style `build.yml` already uses.
 
 ### Why the required jobs do NOT use job-level `if:`
 

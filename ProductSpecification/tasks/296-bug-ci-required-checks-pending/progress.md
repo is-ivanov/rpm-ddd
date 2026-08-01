@@ -17,12 +17,12 @@ Type: bug
 - [x] commit
 
 ### Step 2: code-quality.yml — drop trigger `paths:`, gate inside jobs
-- [ ] implement (remove `paths:` from `pull_request`; `Checkstyle`/`PMD` run always with step-level `if:` on an in-job `dorny/paths-filter`; `SpotBugs`/`Spotless`/`Frontend Lint` gated by a `changes` job)
-- [ ] verify (actionlint clean; `push: main` filter untouched; no `if:` on the `Checkstyle`/`PMD` job level)
-- [ ] commit
+- [x] implement (all 5 jobs use an in-job `dorny/paths-filter@v4` + step-level `if:`; no `changes` job — see spec §4; added `contents`/`pull-requests: read`)
+- [x] verify (actionlint 0 errors across 5 workflows; `pull_request` has no `paths:`, `push: main` still filtered; no job-level `if:` on `Checkstyle`/`PMD`; every `run:` step gated)
+- [x] commit
 
 ### Step 3: build.yml — drop trigger `paths:`, gate inside jobs
-- [ ] implement (remove `paths:` from `pull_request`; `build` runs always with step-level `if:`; `frontend-build`/`frontend-e2e`/`allure-report` gated by a `changes` job, incl. the no-artifacts guard on `allure-report`)
+- [ ] implement (remove `paths:` from `pull_request`; `build`/`frontend-build`/`frontend-e2e` use the in-job pattern; `allure-report` gated at job level on upstream job outputs, since it consumes their artifacts)
 - [ ] verify (actionlint clean; `deploy-report` and the `main` branch behaviour unchanged)
 - [ ] commit
 
