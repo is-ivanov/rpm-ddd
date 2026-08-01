@@ -12,9 +12,9 @@ Type: bug
 ## Fix
 
 ### Step 1: Single-source path filters
-- [ ] implement (`.github/path-filters.yml`: `backend`, `frontend`, `tooling` + composite filter, covering the union of today's two `paths:` lists)
-- [ ] verify (actionlint clean; every glob in both current `paths:` blocks is present in the new file)
-- [ ] commit
+- [x] implement (`.github/path-filters.yml`: anchors `java`/`web`/`tooling`/`ci` → consumer filters `build`, `frontend`, `analysis`)
+- [x] verify (YAML parses, anchors expand; every glob of both current `paths:` blocks covered; no dashes in filter names; IDEA inspections clean)
+- [x] commit
 
 ### Step 2: code-quality.yml — drop trigger `paths:`, gate inside jobs
 - [ ] implement (remove `paths:` from `pull_request`; `Checkstyle`/`PMD` run always with step-level `if:` on an in-job `dorny/paths-filter`; `SpotBugs`/`Spotless`/`Frontend Lint` gated by a `changes` job)

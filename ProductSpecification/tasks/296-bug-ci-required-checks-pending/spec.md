@@ -31,10 +31,11 @@ only, not file paths. The fix therefore has to live in the workflows.
 Move path filtering out of the workflow **trigger** and into the **jobs**, so every required check
 always reports a real conclusion.
 
-1. **Single source of filters.** New `.github/path-filters.yml` holding the named filters
-   (`backend`, `frontend`, `tooling`, plus a composite used by the report jobs). Both workflows
-   reference it via `dorny/paths-filter`'s `filters:` file form, so the drift that caused failure
-   class 1 cannot recur.
+1. **Single source of filters.** New `.github/path-filters.yml` holding YAML-anchor building blocks
+   (`java`, `web`, `tooling`, `ci`) composed into one filter per consuming job (`build`, `frontend`,
+   `analysis`). Both workflows reference it via `dorny/paths-filter`'s `filters:` file form, so the
+   drift that caused failure class 1 cannot recur. Filter names avoid dashes — GitHub expressions
+   parse `outputs.a-b` as subtraction.
 2. **Drop `paths:` from the `pull_request` trigger** of `build.yml` and `code-quality.yml`. The
    `push: main` trigger keeps its filter — nothing is gated on `main`.
 3. **Required jobs — always run, gate the steps** (`build`, `Checkstyle`, `PMD`). Each job runs a
