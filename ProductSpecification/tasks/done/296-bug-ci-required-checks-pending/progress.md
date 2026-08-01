@@ -27,8 +27,9 @@ Type: bug
 - [x] commit
 
 ### Step 4: Observe on real PRs
-- [ ] verify (doc-only PR → all three required checks report real green; code PR → `Checkstyle`/`PMD`/`build` actually execute and can fail)
-- [ ] commit (progress only)
+- [x] verify — code PR (#297: all 10 checks pass; per-step conclusions confirm every gated step ran, `skipped` only on main-only steps)
+- [x] verify — doc-only PR (#298: all 10 checks green, `MERGEABLE`/`CLEAN`; every gated step `skipped`, `allure-report` skipped not failed)
+- [x] commit (progress only)
 
 ## Full-Stack Journey
 - [S] fullstack-journey (no-impact: pure CI/infra, no rendered critical-path or UI surface)
