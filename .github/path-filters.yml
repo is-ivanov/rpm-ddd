@@ -1,0 +1,59 @@
+# Single source of truth for the change-detection filters used by build.yml and
+# code-quality.yml. Both load this file with `dorny/paths-filter` and gate work
+# *inside* their jobs instead of filtering at the `pull_request` trigger.
+#
+# Why not a trigger-level `paths:` — a workflow skipped by path filtering never
+# reports its checks, so the `build`, `Checkstyle` and `PMD` contexts required by
+# the `main` ruleset stay Pending forever and block the merge (#296). Filtering
+# inside the jobs lets every required check report a real conclusion on every PR.
+#
+# Filter names are consumed as `steps.filter.outputs.<name>`.
+
+# ── building blocks (not consumed directly) ────────────────────────────────────
+
+# Java sources plus everything that changes how they are compiled or analysed.
+java: &java
+  - 'src/**'
+  - 'pom.xml'
+  - '.mvn/**'
+  - 'mvnw'
+  - 'mvnw.cmd'
+  - 'code-quality-config/**'
+
+web: &web
+  - 'frontend/**'
+
+# Repo-root Allure renderer package (rpm-ddd-tooling) — not the frontend app.
+tooling: &tooling
+  - 'package.json'
+  - 'package-lock.json'
+  - 'allurerc.mjs'
+
+# A change to either pipeline re-verifies everything it can gate.
+ci: &ci
+  - '.github/workflows/build.yml'
+  - '.github/workflows/code-quality.yml'
+  - '.github/path-filters.yml'
+
+# ── consumers (named after the job that reads them) ────────────────────────────
+
+# build.yml → job `build` (required check). Includes `web` because the main-branch
+# deploy jar bundles the SPA via -Pfrontend; PR builds are backend-only, so this
+# could be narrowed later — it is kept as-is here to preserve today's behaviour.
+build:
+  - *java
+  - *web
+  - *tooling
+  - *ci
+  - 'Dockerfile'
+
+# build.yml → jobs `frontend-build`, `frontend-e2e`; code-quality.yml → `Frontend Lint`.
+frontend:
+  - *web
+  - *tooling
+  - *ci
+
+# code-quality.yml → jobs `Checkstyle`, `PMD` (required checks), `SpotBugs`, `Spotless`.
+analysis:
+  - *java
+  - *ci

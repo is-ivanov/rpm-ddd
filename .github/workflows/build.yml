@@ -24,29 +24,28 @@ on:
       - "mvnw"
       - "Dockerfile"
       - ".github/workflows/build.yml"
+      - ".github/path-filters.yml"
       - "code-quality-config/**"
       - "package.json"
       - "package-lock.json"
       - "allurerc.mjs"
+  # Deliberately NO `paths:` filter on pull_request. A workflow skipped by path
+  # filtering never reports its checks, so the `build` context required by the
+  # `main` ruleset would stay Pending forever and block the PR (#296). Every job
+  # instead evaluates .github/path-filters.yml itself and gates its own expensive
+  # steps, so `build` always reports a *real* conclusion — not the `skipped` one a
+  # job-level `if:` would give, which branch protection counts as success and which
+  # would therefore make the gate fail open. See
+  # ProductSpecification/tasks/296-bug-ci-required-checks-pending/spec.md.
   pull_request:
     branches: ["main"]
-    paths:
-      - "src/**"
-      - "frontend/**"
-      - "pom.xml"
-      - ".mvn/**"
-      - "mvnw"
-      - "Dockerfile"
-      - ".github/workflows/build.yml"
-      - "code-quality-config/**"
-      - "package.json"
-      - "package-lock.json"
-      - "allurerc.mjs"
 
-# Least privilege by default: only checkout needs read. The elevated pages/id-token
-# scopes are granted per-job on deploy-report (the only job that deploys to Pages).
+# Least privilege by default: checkout needs contents, and dorny/paths-filter reads
+# the PR's changed-file list over the REST API. The elevated pages/id-token scopes
+# are granted per-job on deploy-report (the only job that deploys to Pages).
 permissions:
   contents: read
+  pull-requests: read
 
 # Cancel a superseded run on the same ref so a new push doesn't run a full
 # build + e2e in parallel with the previous one. main is exempt
@@ -60,6 +59,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Consumed by allure-report, which must not try to download an artifact this
+    # job never produced. Mirrors the step gates below: true on any non-PR run.
+    outputs:
+      ran: ${{ github.event_name != 'pull_request' || steps.filter.outputs.build == 'true' }}
     # Shared-first Postgres for DB-tagged tests: DbContainerTestExecutionListener
     # probes localhost:54034 and reuses this service instead of cold-starting a
     # Testcontainer (image pull + ryuk + boot) on every run. Creds/port/db match
@@ -83,6 +86,15 @@ jobs:
           --health-retries 10
     steps:
     - uses: actions/checkout@v7
+    # Skipped on push: the push trigger above already narrows by path, and a
+    # skipped step yields empty outputs, so the `event_name != 'pull_request'`
+    # arm of every gate below takes over and the job runs in full.
+    - name: Detect relevant changes
+      id: filter
+      if: github.event_name == 'pull_request'
+      uses: dorny/paths-filter@v4
+      with:
+        filters: .github/path-filters.yml
     - name: Set up JDK 25
       uses: actions/setup-java@v5
       with:
@@ -100,8 +112,10 @@ jobs:
     # carry the bundled SPA, so re-enable `-Pfrontend` to run copy-frontend-dist —
     # but skip vitest (`-Dnpm.test.skip=true`), which already runs in frontend-build.
     - name: Build with Maven (PR — backend only)
-      if: github.ref != 'refs/heads/main'
+      if: github.ref != 'refs/heads/main' && (github.event_name != 'pull_request' || steps.filter.outputs.build == 'true')
       run: mvn verify -B -Dspotless.check.skip=true -Dspotbugs.skip=true
+    # main-only, so the change filter never applies: a pull_request run cannot have
+    # github.ref == refs/heads/main.
     - name: Build with Maven (main — bundle SPA into deploy jar, vitest runs in frontend-build)
       if: github.ref == 'refs/heads/main'
       run: mvn verify -B -Pfrontend -Dspotless.check.skip=true -Dspotbugs.skip=true -Dnpm.test.skip=true
@@ -109,15 +123,18 @@ jobs:
     # Report generation moved to the `allure-report` job so backend + vitest
     # results (here) can be merged with Playwright results from `frontend-e2e`.
     - name: Upload Allure results
-      if: always() && github.actor != 'dependabot[bot]'
+      if: always() && github.actor != 'dependabot[bot]' && (github.event_name != 'pull_request' || steps.filter.outputs.build == 'true')
       uses: actions/upload-artifact@v7
       with:
         name: allure-results-build
         path: target/allure-results
         retention-days: 1
 
+    # Gated on the change filter as well as the actor: fail_ci_if_error turns a
+    # missing jacoco.xml into a failure, which on a PR that skipped the Maven run
+    # would fail this required check for no reason.
     - name: Upload coverage to Codecov
-      if: always() && github.actor != 'dependabot[bot]'
+      if: always() && github.actor != 'dependabot[bot]' && (github.event_name != 'pull_request' || steps.filter.outputs.build == 'true')
       uses: codecov/codecov-action@v7
       with:
         files: target/site/jacoco/jacoco.xml
@@ -155,11 +172,19 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      ran: ${{ github.event_name != 'pull_request' || steps.filter.outputs.frontend == 'true' }}
     defaults:
       run:
         working-directory: frontend
     steps:
     - uses: actions/checkout@v7
+    - name: Detect relevant changes
+      id: filter
+      if: github.event_name == 'pull_request'
+      uses: dorny/paths-filter@v4
+      with:
+        filters: .github/path-filters.yml
     - name: Set up Node.js
       uses: actions/setup-node@v7
       with:
@@ -167,13 +192,16 @@ jobs:
         cache: npm
         cache-dependency-path: frontend/package-lock.json
     - name: Install dependencies
+      if: github.event_name != 'pull_request' || steps.filter.outputs.frontend == 'true'
       run: npm ci
     - name: Build frontend
+      if: github.event_name != 'pull_request' || steps.filter.outputs.frontend == 'true'
       run: npm run build
     - name: Run vitest
+      if: github.event_name != 'pull_request' || steps.filter.outputs.frontend == 'true'
       run: npm run test
     - name: Upload frontend Allure results
-      if: always()
+      if: always() && (github.event_name != 'pull_request' || steps.filter.outputs.frontend == 'true')
       uses: actions/upload-artifact@v7
       with:
         name: allure-results-frontend
@@ -188,11 +216,19 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      ran: ${{ github.event_name != 'pull_request' || steps.filter.outputs.frontend == 'true' }}
     defaults:
       run:
         working-directory: frontend
     steps:
     - uses: actions/checkout@v7
+    - name: Detect relevant changes
+      id: filter
+      if: github.event_name == 'pull_request'
+      uses: dorny/paths-filter@v4
+      with:
+        filters: .github/path-filters.yml
     - name: Set up Node.js
       uses: actions/setup-node@v7
       with:
@@ -200,13 +236,16 @@ jobs:
         cache: npm
         cache-dependency-path: frontend/package-lock.json
     - name: Install dependencies
+      if: github.event_name != 'pull_request' || steps.filter.outputs.frontend == 'true'
       run: npm ci
     - name: Install Playwright browsers
+      if: github.event_name != 'pull_request' || steps.filter.outputs.frontend == 'true'
       run: npx playwright install --with-deps chromium
     - name: Run Playwright e2e
+      if: github.event_name != 'pull_request' || steps.filter.outputs.frontend == 'true'
       run: npm run test:e2e
     - name: Upload e2e Allure results
-      if: always()
+      if: always() && (github.event_name != 'pull_request' || steps.filter.outputs.frontend == 'true')
       uses: actions/upload-artifact@v7
       with:
         name: allure-results-e2e
@@ -216,9 +255,19 @@ jobs:
   # Merges Allure results from `build` (backend + vitest) and `frontend-e2e`
   # (Playwright) into one unified report. Runs even if upstream tests failed so
   # the report always reflects the latest run.
+  #
+  # Each upstream job publishes a `ran` output saying whether the change filter let
+  # it execute. This job skips when none of them ran, and each download below is
+  # gated on its own producer — download-artifact fails hard on a missing artifact,
+  # so downloading unconditionally would break the report on partial runs (e.g. a
+  # backend-only PR, where the frontend jobs produce nothing).
   allure-report:
     needs: [build, frontend-build, frontend-e2e]
-    if: always() && github.actor != 'dependabot[bot]'
+    if: >-
+      always() && github.actor != 'dependabot[bot]'
+      && (needs.build.outputs.ran == 'true'
+          || needs.frontend-build.outputs.ran == 'true'
+          || needs.frontend-e2e.outputs.ran == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -229,16 +278,19 @@ jobs:
         node-version-file: .nvmrc
         cache: npm
     - name: Download build Allure results
+      if: needs.build.outputs.ran == 'true'
       uses: actions/download-artifact@v8
       with:
         name: allure-results-build
         path: target/allure-results
     - name: Download frontend Allure results
+      if: needs.frontend-build.outputs.ran == 'true'
       uses: actions/download-artifact@v8
       with:
         name: allure-results-frontend
         path: target/allure-results
     - name: Download e2e Allure results
+      if: needs.frontend-e2e.outputs.ran == 'true'
       uses: actions/download-artifact@v8
       with:
         name: allure-results-e2e
