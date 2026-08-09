@@ -146,3 +146,26 @@ jobs:
           fi
 
           gh issue create --title "Nightly full-stack E2E failed" --label "$LABEL" --body "$BODY"
+
+      # Counterpart of the step above: without it the umbrella issue is only ever opened/reopened and
+      # never closed, so it outlives the breakage it tracks (#217 stayed open a month after the
+      # journey recovered). A green run closes the open occurrence; the failure step reopens it later.
+      - name: Close the nightly-failure issue once the journey is green
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          LABEL="nightly-failure"
+
+          # `|| true`: a repo where the label was never created makes `gh issue list --label` exit non-zero.
+          OPEN=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty' 2>/dev/null || true)
+          if [ -z "$OPEN" ]; then
+            echo "No open $LABEL issue — nothing to close."
+            exit 0
+          fi
+
+          gh issue comment "$OPEN" --body "Nightly full-stack E2E journey is green again — run: $RUN_URL. Closed automatically by the nightly-fullstack-e2e workflow; it will be reopened if the journey breaks again."
+          gh issue close "$OPEN" --reason completed
+          echo "Closed issue #$OPEN"
