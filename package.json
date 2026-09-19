@@ -4,7 +4,7 @@
   "private": true,
   "description": "Repo-wide tooling (Allure 3 test report renderer). Not the frontend app.",
   "devDependencies": {
-    "allure": "^3.9.0"
+    "allure": "^3.18.0"
   },
   "scripts": {
     "report:serve": "allure watch target/allure-results",
