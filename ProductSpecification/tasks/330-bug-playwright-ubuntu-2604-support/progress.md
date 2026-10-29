@@ -11,9 +11,9 @@ Type: bug
 ## Fix
 
 ### Step 1: Upgrade Playwright
-- [ ] implement (`@playwright/test` → latest 1.64.x; `allure-playwright` if required; regenerate `frontend/package-lock.json`)
-- [ ] verify (`npm run lint`; `npm run test:e2e` locally)
-- [ ] commit
+- [x] implement (`@playwright/test` 1.60.0 → 1.64.1; `allure-playwright` 3.9.0 kept, its peer range is `>=1.53.0`)
+- [x] verify (`npm run lint`; `npm run test:e2e` locally)
+- [x] commit
 
 ### Step 2: Observe on CI
 - [ ] verify — PR: `frontend-e2e` and `allure-report` pass
