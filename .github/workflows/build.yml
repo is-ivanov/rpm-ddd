@@ -169,7 +169,6 @@ jobs:
   # backend `build` job no longer runs vitest (the main deploy build bundles the
   # SPA but skips vitest via -Dnpm.test.skip=true).
   frontend-build:
-    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -213,7 +212,6 @@ jobs:
   # webServer config boots vite itself. Emits Allure results, uploaded as an
   # artifact that the `allure-report` job merges into the unified report.
   frontend-e2e:
-    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
