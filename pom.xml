@@ -28,7 +28,7 @@
     <findsecbugs.version>1.14.0</findsecbugs.version>
     <greenmail.version>2.1.12</greenmail.version>
     <guava.version>33.7.1-jre</guava.version>
-    <instancio.version>5.6.0</instancio.version>
+    <instancio.version>6.1.0</instancio.version>
     <jetbrains-annotations.version>26.1.0</jetbrains-annotations.version>
     <jjwt.version>0.13.0</jjwt.version>
     <jmolecules.version>2025.0.2</jmolecules.version>
