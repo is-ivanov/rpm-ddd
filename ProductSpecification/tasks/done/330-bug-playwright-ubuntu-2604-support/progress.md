@@ -16,9 +16,9 @@ Type: bug
 - [x] commit
 
 ### Step 2: Observe on CI
-- [ ] verify — PR: `frontend-e2e` and `allure-report` pass
-- [ ] verify — `nightly-fullstack-e2e` started with `workflow_dispatch` on the branch passes
-- [ ] commit (progress only)
+- [x] verify — PR: `frontend-e2e` and `allure-report` pass (#331, run 40956507691)
+- [x] verify — `nightly-fullstack-e2e` started with `workflow_dispatch` on the branch passes (run 40956519349)
+- [x] commit (progress only)
 
 ## Full-Stack Journey
 - [S] fullstack-journey (no-impact: tooling upgrade, no rendered critical-path change; journey is run in Step 2 only as a check)
